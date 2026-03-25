@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CryptoSteuer — Swiss Crypto Tax Reporting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #0D1117;
+    --ink-muted: #3D4451;
+    --ink-faint: #8A909E;
+    --paper: #F5F2EB;
+    --paper-warm: #EDE9DF;
+    --gold: #B8960C;
+    --gold-light: #D4AF37;
+    --gold-pale: #F7F0D4;
+    --red: #C0392B;
+    --rule: rgba(13,17,23,0.12);
+    --radius: 3px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid overlay (very subtle) ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(245,242,235,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-logo-mark {
+    width: 28px; height: 28px;
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+  }
+
+  .nav-logo-mark svg { width: 16px; height: 16px; fill: var(--gold-light); }
+
+  .nav-logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo-text span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--paper) !important;
+    padding: 8px 20px;
+    border-radius: var(--radius);
+    letter-spacing: 0.04em !important;
+    transition: background 0.2s !important;
+  }
+
+  .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    right: -40px;
+    transform: translateY(-50%);
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(180px, 22vw, 320px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(13,17,23,0.07);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .hero-inner {
+    position: relative;
+    max-width: 720px;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-headline {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(52px, 7vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink-muted);
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover { background: var(--gold); color: var(--ink); transform: translateY(-1px); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-secondary:hover { color: var(--ink); border-color: var(--ink); }
+
+  .hero-badge {
+    position: absolute;
+    right: 48px;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    z-index: 2;
+  }
+
+  .hero-badge-flag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+  }
+
+  .ch-flag {
+    width: 20px; height: 20px;
+    background: var(--red);
+    border-radius: 1px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ch-flag::before {
+    content: '';
+    width: 8px; height: 2px;
+    background: white;
+    box-shadow: 0 -3px 0 white, 0 3px 0 white, -3px 0 0 white, 3px 0 0 white;
+    border-radius: 0.5px;
+  }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--ink);
+    overflow: hidden;
+    padding: 12px 0;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 0;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: rgba(245,242,235,0.5);
+    text-transform: uppercase;
+  }
+
+  .ticker-item strong {
+    color: var(--gold-light);
+    font-weight: 500;
+  }
+
+  .ticker-dot {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── HOW IT WORKS ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 72px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 24px;
+  }
+
+  .section-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 4vw, 52px);
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  /* Steps */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .step {
+    padding: 48px 40px;
+    border-right: 1px solid var(--rule);
+    position: relative;
+    background: var(--paper);
+    transition: background 0.3s;
+  }
+
+  .step:last-child { border-right: none; }
+
+  .step:hover { background: var(--paper-warm); }
+
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 64px;
+    font-weight: 400;
+    color: var(--rule);
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -0.04em;
+  }
+
+  .step-icon {
+    width: 44px; height: 44px;
+    background: var(--ink);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .step-icon svg { width: 20px; height: 20px; }
+
+  .step-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+
+  .step-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .feature {
+    background: var(--paper);
+    padding: 40px;
+    transition: background 0.2s;
+  }
+
+  .feature:hover { background: var(--gold-pale); }
+
+  .feature-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .feature-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .feature-body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+  }
+
+  .feature-wide {
+    grid-column: span 2;
+  }
+
+  /* ── REPORT PREVIEW ── */
+  .report-preview {
+    position: relative;
+    z-index: 1;
+    padding: 0 48px 120px;
+  }
+
+  .report-card {
+    background: var(--ink);
+    border-radius: 6px;
+    padding: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .report-card::before {
+    content: 'STEUER';
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'DM Serif Display', serif;
+    font-size: 200px;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245,242,235,0.06);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .report-left { position: relative; z-index: 2; }
+
+  .report-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+  }
+
+  .report-headline {
+    font-family: 'DM Serif Display', serif;
+    font-size: 40px;
+    letter-spacing: -0.025em;
+    color: var(--paper);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .report-headline em { font-style: italic; color: var(--gold-light); }
+
+  .report-body {
+    font-size: 15px;
+    color: rgba(245,242,235,0.6);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .btn-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold-light);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-gold:hover { background: #e5c84f; transform: translateY(-1px); }
+
+  .report-right { position: relative; z-index: 2; }
+
+  .report-doc {
+    background: var(--paper);
+    border-radius: 4px;
+    padding: 32px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  }
+
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .doc-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .doc-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  .doc-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .doc-flag {
+    width: 16px; height: 16px;
+    background: var(--red);
+    border-radius: 1px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .doc-flag::before {
+    content: '';
+    width: 6px; height: 1.5px;
+    background: white;
+    box-shadow: 0 -2.5px 0 white, 0 2.5px 0 white, -2.5px 0 0 white, 2.5px 0 0 white;
+  }
+
+  .doc-rows { display: flex; flex-direction: column; gap: 10px; }
+
+  .doc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 8px 10px;
+    background: var(--paper-warm);
+    border-radius: 2px;
+  }
+
+  .doc-row-label { color: var(--ink-muted); font-weight: 500; }
+
+  .doc-row-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .doc-row-val.gain { color: #1a7a4a; }
+  .doc-row-val.loss { color: var(--red); }
+
+  .doc-total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .doc-total-label {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .doc-total-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ── EXCHANGES ── */
+  .exchanges {
+    position: relative;
+    z-index: 1;
+    padding: 0 48px 120px;
+  }
+
+  .exchange-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .exchange-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    background: var(--paper);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .exchange-pill:hover {
+    border-color: var(--gold);
+    color: var(--ink);
+    background: var(--gold-pale);
+  }
+
+  .exchange-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 0;
+  }
+
+  .pricing-card {
+    background: var(--paper);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.2s;
+  }
+
+  .pricing-card.featured {
+    background: var(--ink);
+  }
+
+  .pricing-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .featured .pricing-name { color: var(--gold-light); }
+
+  .pricing-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .featured .pricing-price { color: var(--paper); }
+
+  .pricing-period {
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin-bottom: 32px;
+  }
+
+  .featured .pricing-period { color: rgba(245,242,235,0.4); }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex: 1;
+  }
+
+  .pricing-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .featured .pricing-features li { color: rgba(245,242,235,0.65); }
+
+  .pricing-features li::before {
+    content: '';
+    width: 14px; height: 14px;
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    flex-shrink: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7l3 3 5-5' stroke='%23B8960C' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain;
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover { background: var(--ink); color: var(--paper); }
+  .featured .btn-outline { border-color: rgba(245,242,235,0.3); color: var(--paper); }
+  .featured .btn-outline:hover { background: rgba(245,242,235,0.1); }
+
+  /* ── FAQ ── */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .faq-item:last-child { border-bottom: none; }
+
+  .faq-q {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: background 0.2s;
+  }
+
+  .faq-q:hover { background: var(--paper-warm); }
+
+  .faq-q-icon {
+    width: 24px; height: 24px;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.25s, background 0.2s;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .faq-item.open .faq-q-icon { transform: rotate(45deg); background: var(--ink); color: var(--paper); }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.25s;
+    padding: 0 32px;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+  }
+
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding: 0 32px 24px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    background: var(--ink);
+    padding: 64px 48px 40px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .footer-brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--paper);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-brand-name span { color: var(--gold-light); }
+
+  .footer-brand-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(245,242,235,0.45);
+    max-width: 280px;
+  }
+
+  .footer-col-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    font-size: 14px;
+    color: rgba(245,242,235,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--paper); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-legal {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(245,242,235,0.25);
+  }
+
+  .footer-ch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(245,242,235,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow { animation: fadeUp 0.6s ease both 0.1s; }
+  .hero-headline { animation: fadeUp 0.7s ease both 0.25s; }
+  .hero-sub { animation: fadeUp 0.7s ease both 0.4s; }
+  .hero-actions { animation: fadeUp 0.7s ease both 0.55s; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-badge { display: none; }
+    .section { padding: 80px 24px; }
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid var(--rule); }
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-wide { grid-column: span 1; }
+    .report-preview { padding: 0 24px 80px; }
+    .report-card { grid-template-columns: 1fr; gap: 32px; padding: 32px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .exchanges { padding: 0 24px 80px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 16 16"><path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z"/></svg>
+    </div>
+    <span class="nav-logo-text">Crypto<span>Steuer</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="navScrollTo('how');return false;">How it works</a></li>
+    <li><a href="#" onclick="navScrollTo('features');return false;">Features</a></li>
+    <li><a href="#" onclick="navScrollTo('pricing');return false;">Pricing</a></li>
+    <li><a href="#" onclick="navScrollTo('faq');return false;">FAQ</a></li>
+    <li><a href="#" onclick="navScrollTo('start');return false;" class="nav-cta">Get started</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">CHF</div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Swiss crypto tax reporting</div>
+    <h1 class="hero-headline">
+      Your crypto.<br>
+      <em>Tax-ready</em> in<br>
+      minutes.
+    </h1>
+    <p class="hero-sub">
+      Upload your exchange transactions, declare manually, and receive a compliant Swiss tax report — ready to submit to your cantonal authority.
+    </p>
+    <div class="hero-actions">
+      <a href="#" onclick="navScrollTo('pricing');return false;" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Declare now — it's free
+      </a>
+      <a href="#" onclick="navScrollTo('how');return false;" class="btn-secondary">
+        See how it works
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="hero-badge">
+    <div class="hero-badge-flag">
+      <div class="ch-flag"></div>
+      Made in Switzerland
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--ink-faint);text-transform:uppercase;">ESTV-compliant · 2024 tax year</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <!-- doubled for seamless loop -->
+    <span class="ticker-item"><strong>BTC</strong> Bitcoin <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>ETH</strong> Ethereum <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>SOL</strong> Solana <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>USDC</strong> USD Coin <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>BNB</strong> BNB Chain <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>ADA</strong> Cardano <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>DOT</strong> Polkadot <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>AVAX</strong> Avalanche <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>XRP</strong> Ripple <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>MATIC</strong> Polygon <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>BTC</strong> Bitcoin <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>ETH</strong> Ethereum <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>SOL</strong> Solana <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>USDC</strong> USD Coin <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>BNB</strong> BNB Chain <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>ADA</strong> Cardano <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>DOT</strong> Polkadot <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>AVAX</strong> Avalanche <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>XRP</strong> Ripple <span class="ticker-dot"></span></span>
+    <span class="ticker-item"><strong>MATIC</strong> Polygon <span class="ticker-dot"></span></span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-header">
+    <span class="section-number">01 — Process</span>
+    <h2 class="section-title">Three steps to a<br><em>clean declaration</em></h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 14l4-4 3 3 5-6" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="2" y="2" width="16" height="16" rx="3" stroke="#F5F2EB" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <h3 class="step-title">Import transactions</h3>
+      <p class="step-body">Upload a CSV from any major exchange — Kraken, Binance, Coinbase — or enter trades manually. We support all major Swiss-accessible platforms.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="#F5F2EB" stroke-width="1.2"/>
+          <path d="M10 6v4l3 2" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3 class="step-title">We calculate</h3>
+      <p class="step-body">Our engine applies Swiss FIFO accounting, converts all values to CHF using official ESTV exchange rates, and identifies taxable events.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M5 10l4 4 6-7" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 17h14" stroke="#F5F2EB" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3 class="step-title">Download your report</h3>
+      <p class="step-body">Receive a PDF report formatted for Swiss tax authorities. Attach it to your annual declaration — no accountant required.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features" style="padding-top:0">
+  <div class="section-header">
+    <span class="section-number">02 — Features</span>
+    <h2 class="section-title">Built for<br><em>Swiss residents</em></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-label">Compliance</div>
+      <div class="feature-title">ESTV exchange rates</div>
+      <div class="feature-body">All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">Accounting</div>
+      <div class="feature-title">FIFO & LIFO methods</div>
+      <div class="feature-body">Choose your cost basis method. FIFO is the Swiss standard, but we support LIFO for edge cases where your canton allows it.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">Multi-year</div>
+      <div class="feature-title">Full tax history</div>
+      <div class="feature-body">Declare multiple tax years at once. Import your full transaction history from 2017 to today and get a report for each year.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">Privacy</div>
+      <div class="feature-title">Your data stays yours</div>
+      <div class="feature-body">We never sell your data. Transaction data is processed ephemerally — we don't store your positions longer than your session.</div>
+    </div>
+    <div class="feature feature-wide">
+      <div class="feature-label">Coverage</div>
+      <div class="feature-title">50+ supported assets and all major exchanges</div>
+      <div class="feature-body">From Bitcoin to DeFi tokens, staking rewards, and NFT sales — our engine handles the full complexity of a modern crypto portfolio across Kraken, Binance, Coinbase, Swissquote, and more.</div>
+    </div>
+  </div>
+</section>
+
+<!-- REPORT PREVIEW -->
+<div class="report-preview" id="report">
+  <div class="report-card">
+    <div class="report-left">
+      <div class="report-eyebrow">Your output</div>
+      <h2 class="report-headline">A report your<br>Gemeinde will<br><em>actually accept</em></h2>
+      <p class="report-body">Clean, structured, and compliant. Your PDF report includes a full transaction log, capital gains summary, and end-of-year portfolio valuation — exactly what Swiss tax forms require.</p>
+      <a href="#" onclick="navScrollTo('pricing');return false;" class="btn-gold">
+        Generate my report
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="report-right">
+      <div class="report-doc">
+        <div class="doc-header">
+          <div>
+            <div class="doc-title">Krypto-Steuerbericht 2024</div>
+            <div class="doc-sub">Muster AG · Zürich · Steuerjahr 2024</div>
+          </div>
+          <div class="doc-logo">
+            <div class="doc-flag"></div>
+          </div>
+        </div>
+        <div class="doc-rows">
+          <div class="doc-row">
+            <span class="doc-row-label">BTC — 0.842 BTC</span>
+            <span class="doc-row-val gain">+CHF 18,420</span>
+          </div>
+          <div class="doc-row">
+            <span class="doc-row-label">ETH — 4.2 ETH</span>
+            <span class="doc-row-val gain">+CHF 6,104</span>
+          </div>
+          <div class="doc-row">
+            <span class="doc-row-label">SOL — 22 SOL</span>
+            <span class="doc-row-val loss">–CHF 890</span>
+          </div>
+          <div class="doc-row">
+            <span class="doc-row-label">Staking rewards</span>
+            <span class="doc-row-val gain">+CHF 312</span>
+          </div>
+        </div>
+        <div class="doc-total">
+          <span class="doc-total-label">Netto-Gewinn</span>
+          <span class="doc-total-val">CHF 23,946</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXCHANGES -->
+<div class="exchanges" id="exchanges">
+  <div style="display:flex;align-items:baseline;gap:24px;margin-bottom:12px;border-bottom:1px solid var(--rule);padding-bottom:24px;">
+    <span class="section-number">03 — Integrations</span>
+    <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(28px,3vw,40px);letter-spacing:-0.025em;color:var(--ink);">Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em></h2>
+  </div>
+  <div class="exchange-list">
+    <span class="exchange-pill"><span class="exchange-dot"></span>Kraken</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Binance</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Coinbase</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Swissquote</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Bitcoin Suisse</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Bitpanda</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Bybit</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>OKX</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Ledger</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>MetaMask (ETH)</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Trezor</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Exodus</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Uniswap</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Manual CSV</span>
+    <span class="exchange-pill" style="border-style:dashed;opacity:0.6">+ more coming</span>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="section" id="pricing" style="padding-top:0">
+  <div class="section-header">
+    <span class="section-number">04 — Pricing</span>
+    <h2 class="section-title">Simple,<br><em>transparent</em> pricing</h2>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-name">Starter</div>
+      <div class="pricing-price">Free</div>
+      <div class="pricing-period">Up to 50 transactions</div>
+      <ul class="pricing-features">
+        <li>CSV import (1 exchange)</li>
+        <li>Manual entry</li>
+        <li>CHF conversion</li>
+        <li>Basic PDF report</li>
+      </ul>
+      <a href="#" onclick="navScrollTo('start-form');return false;" class="btn-outline">Get started</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-name">Professional</div>
+      <div class="pricing-price" style="color:var(--paper)">CHF 49</div>
+      <div class="pricing-period">Per tax year</div>
+      <ul class="pricing-features">
+        <li>Unlimited transactions</li>
+        <li>All exchanges & wallets</li>
+        <li>Multi-year support</li>
+        <li>Full PDF + CSV export</li>
+        <li>FIFO / LIFO choice</li>
+      </ul>
+      <a href="#" onclick="navScrollTo('start-form');return false;" class="btn-outline">Declare now</a>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-name">Business</div>
+      <div class="pricing-price">CHF 199</div>
+      <div class="pricing-period">Per entity / year</div>
+      <ul class="pricing-features">
+        <li>Everything in Pro</li>
+        <li>Multiple portfolios</li>
+        <li>Accountant sharing</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="#" onclick="navScrollTo('footer-contact');return false;" class="btn-outline">Contact us</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="padding-top:0">
+  <div class="section-header">
+    <span class="section-number">05 — FAQ</span>
+    <h2 class="section-title">Common<br><em>questions</em></h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item open">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is crypto taxable in Switzerland?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        Yes. Capital gains on crypto are generally tax-free for private individuals in Switzerland — but the holdings must be declared as assets, and income from staking, mining, or professional trading is taxable. We calculate all of this for you.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Which cantons does the report work for?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        Our report is compliant with federal ESTV guidelines, which all cantons accept. We include cantonal notes for Zurich, Geneva, Zug, Vaud, and Bern where local variations apply.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What exchange rate do you use?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        We use the official daily exchange rates published by the Swiss Federal Tax Administration (ESTV). These are the rates your canton will use to verify your declaration.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        My exchange isn't listed — can I still use this?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        Yes. You can enter transactions manually or upload a standard CSV with date, asset, quantity, and price columns. We map it automatically.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is my data secure?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="site-footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">Crypto<span>Steuer</span></div>
+      <p class="footer-brand-text">Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <ul class="footer-links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#exchanges">Exchanges</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="#">Privacy policy</a></li>
+        <li><a href="#">Terms of service</a></li>
+        <li><a href="#">Cookie policy</a></li>
+        <li><a href="#">Impressum</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Support</div>
+      <ul class="footer-links">
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">API docs</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-legal">© 2025 CryptoSteuer GmbH · Zürich · CHE-000.000.000</span>
+    <div class="footer-ch">
+      <div class="ch-flag"></div>
+      Switzerland
+    </div>
+  </div>
+</footer>
+
+<script>
+  function navScrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (id === 'start-form' || id === 'start') {
+      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (id === 'footer-contact') {
+      document.getElementById('site-footer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.step, .feature, .pricing-card, .faq-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
