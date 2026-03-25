@@ -2123,9 +2123,7 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          // Use first sheet
+          const workbook = XLSX.read(e.target.result, { type: 'binary' });
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
           const csv = XLSX.utils.sheet_to_csv(sheet);
@@ -2134,8 +2132,8 @@
           reject(new Error('Could not parse Excel file: ' + err.message));
         }
       };
-      reader.onerror = () => reject(new Error('Could not read file'));
-      reader.readAsArrayBuffer(file);
+      reader.onerror = (e) => reject(new Error('Could not read file'));
+      reader.readAsBinaryString(file);
     });
   }
 
