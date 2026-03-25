@@ -10,9 +10,11 @@ export default async function handler(req) {
       }
     });
   }
+
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
+
   try {
     const body = await req.json();
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -24,7 +26,7 @@ export default async function handler(req) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        max_tokens: 4000,
         messages: body.messages,
       }),
     });
