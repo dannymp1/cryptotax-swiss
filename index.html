@@ -933,6 +933,489 @@
     text-transform: uppercase;
   }
 
+  /* ── TRIAL BANNER ── */
+  .trial-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .trial-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .trial-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--gold-light);
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .trial-text {
+    font-size: 13px;
+    color: rgba(245,242,235,0.6);
+    line-height: 1.5;
+  }
+
+  .trial-text strong {
+    color: rgba(245,242,235,0.9);
+    display: block;
+    margin-bottom: 1px;
+  }
+
+  .trial-used-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--gold-light);
+  }
+
+  .upload-area.locked {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* ── UPLOAD / APP SECTION ── */
+  .app-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    background: var(--ink);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .app-section .section-number { color: var(--gold-light); }
+  .app-section .section-title { color: var(--paper); }
+  .app-section .section-title em { color: var(--gold-light); }
+  .app-section .section-header { border-bottom-color: rgba(255,255,255,0.08); }
+
+  .upload-area {
+    border: 1.5px dashed rgba(212,175,55,0.4);
+    border-radius: 6px;
+    padding: 64px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: rgba(245,242,235,0.03);
+    position: relative;
+  }
+
+  .upload-area:hover, .upload-area.drag-over {
+    border-color: var(--gold-light);
+    background: rgba(212,175,55,0.06);
+  }
+
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    width: 56px; height: 56px;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .upload-icon svg { width: 24px; height: 24px; }
+
+  .upload-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--paper);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .upload-sub {
+    font-size: 14px;
+    color: rgba(245,242,235,0.45);
+    margin-bottom: 24px;
+  }
+
+  .upload-formats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .upload-format-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 100px;
+    color: rgba(212,175,55,0.7);
+  }
+
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .app-left {}
+
+  .app-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .app-info-box {
+    background: rgba(245,242,235,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 28px;
+  }
+
+  .app-info-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+  }
+
+  .app-info-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--paper);
+    margin-bottom: 8px;
+  }
+
+  .app-info-body {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(245,242,235,0.45);
+  }
+
+  /* ── PROCESSING STATE ── */
+  .processing-indicator {
+    display: none;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+
+  .processing-indicator.visible { display: flex; }
+
+  .processing-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(212,175,55,0.2);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .processing-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--gold-light);
+  }
+
+  /* ── REPORT OUTPUT ── */
+  #report-output {
+    display: none;
+    margin-top: 64px;
+    padding-top: 64px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  #report-output.visible { display: block; }
+
+  .report-output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .report-output-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--paper);
+    letter-spacing: -0.025em;
+  }
+
+  .report-output-title em { color: var(--gold-light); font-style: italic; }
+
+  .report-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .report-generated {
+    background: rgba(245,242,235,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .report-generated-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(245,242,235,0.03);
+  }
+
+  .report-generated-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+  }
+
+  .report-generated-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #4caf82;
+  }
+
+  .report-generated-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #4caf82;
+    border-radius: 50%;
+  }
+
+  .report-generated-body {
+    padding: 32px 28px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(245,242,235,0.75);
+    white-space: pre-wrap;
+  }
+
+  .report-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .report-stat {
+    background: rgba(245,242,235,0.03);
+    padding: 24px 20px;
+  }
+
+  .report-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,242,235,0.35);
+    margin-bottom: 8px;
+  }
+
+  .report-stat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--paper);
+    letter-spacing: -0.02em;
+  }
+
+  .report-stat-val.positive { color: #4caf82; }
+  .report-stat-val.negative { color: #e05c5c; }
+
+  /* ── STRIPE MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--paper);
+    border-radius: 6px;
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    animation: modalIn 0.25s ease both;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    background: var(--ink);
+    padding: 28px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .modal-plan-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+
+  .modal-plan-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 40px;
+    color: var(--paper);
+    letter-spacing: -0.04em;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: rgba(245,242,235,0.4);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--paper); }
+
+  .modal-body {
+    padding: 32px;
+  }
+
+  .modal-body p {
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .modal-stripe-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+  }
+
+  .modal-stripe-note svg { flex-shrink: 0; }
+
+  .modal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .modal-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .modal-input:focus { border-color: var(--gold); }
+
+  .modal-input::placeholder { color: var(--ink-faint); }
+
+  .btn-stripe {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #635BFF;
+    color: white;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px 24px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+
+  .btn-stripe:hover { background: #4f46e5; transform: translateY(-1px); }
+
+  .modal-terms {
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: center;
+    line-height: 1.6;
+  }
+
   /* ── Animations ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
@@ -977,8 +1460,9 @@
     <li><a href="#" onclick="navScrollTo('how');return false;">How it works</a></li>
     <li><a href="#" onclick="navScrollTo('features');return false;">Features</a></li>
     <li><a href="#" onclick="navScrollTo('pricing');return false;">Pricing</a></li>
+    <li><a href="#" onclick="navScrollTo('declare');return false;">Declare</a></li>
     <li><a href="#" onclick="navScrollTo('faq');return false;">FAQ</a></li>
-    <li><a href="#" onclick="navScrollTo('start');return false;" class="nav-cta">Get started</a></li>
+    <li><a href="#" onclick="navScrollTo('declare');return false;" class="nav-cta">Get started</a></li>
   </ul>
 </nav>
 
@@ -1212,7 +1696,7 @@
         <li>CHF conversion</li>
         <li>Basic PDF report</li>
       </ul>
-      <a href="#" onclick="navScrollTo('start-form');return false;" class="btn-outline">Get started</a>
+      <a href="#" onclick="navScrollTo('declare');return false;" class="btn-outline">Get started free</a>
     </div>
     <div class="pricing-card featured">
       <div class="pricing-name">Professional</div>
@@ -1225,7 +1709,7 @@
         <li>Full PDF + CSV export</li>
         <li>FIFO / LIFO choice</li>
       </ul>
-      <a href="#" onclick="navScrollTo('start-form');return false;" class="btn-outline">Declare now</a>
+      <a href="#" onclick="openModal('professional');return false;" class="btn-outline">Declare now — CHF 49</a>
     </div>
     <div class="pricing-card">
       <div class="pricing-name">Business</div>
@@ -1237,7 +1721,104 @@
         <li>Accountant sharing</li>
         <li>Priority support</li>
       </ul>
-      <a href="#" onclick="navScrollTo('footer-contact');return false;" class="btn-outline">Contact us</a>
+      <a href="#" onclick="openModal('business');return false;" class="btn-outline">Get Business — CHF 199</a>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD / APP SECTION -->
+<section class="app-section" id="declare">
+  <div class="section-header">
+    <span class="section-number">05 — Declare</span>
+    <h2 class="section-title">Upload your<br><em>transactions</em></h2>
+  </div>
+
+  <div class="app-layout">
+    <div class="app-left">
+      <!-- FREE TRIAL BANNER -->
+      <div class="trial-banner" id="trial-banner">
+        <div class="trial-banner-left">
+          <div class="trial-badge">FREE TRIAL</div>
+          <div class="trial-text">
+            <strong>Try your first report at no cost.</strong>
+            <span>Upload any transaction file — we'll generate a full Swiss tax report instantly.</span>
+          </div>
+        </div>
+        <div class="trial-used-msg" id="trial-used-msg" style="display:none;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a6 6 0 100 12A6 6 0 007 1z" stroke="#D4AF37" stroke-width="1.2"/><path d="M7 6v3M7 4.5v.5" stroke="#D4AF37" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Free trial used — upgrade to Pro to generate more reports
+        </div>
+      </div>
+
+      <div class="upload-area" id="upload-area">
+        <input type="file" id="csv-input" accept=".csv,.xlsx,.xls,.xlsm" />
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="upload-title">Drop your file here</div>
+        <div class="upload-sub">CSV or Excel (.xlsx) — your first report is <span style="color:var(--gold-light);font-weight:600;">free</span></div>
+        <div class="upload-formats">
+          <span class="upload-format-pill">Kraken CSV</span>
+          <span class="upload-format-pill">Binance CSV</span>
+          <span class="upload-format-pill">Coinbase CSV</span>
+          <span class="upload-format-pill">Excel .xlsx</span>
+          <span class="upload-format-pill">Generic CSV</span>
+        </div>
+      </div>
+
+      <div class="processing-indicator" id="processing-indicator">
+        <div class="processing-spinner"></div>
+        <span class="processing-text" id="processing-text">Reading your transactions...</span>
+      </div>
+    </div>
+
+    <div class="app-right">
+      <div class="app-info-box">
+        <div class="app-info-label">What we need</div>
+        <div class="app-info-title">A standard transaction export</div>
+        <div class="app-info-body">Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.</div>
+      </div>
+      <div class="app-info-box">
+        <div class="app-info-label">What you get</div>
+        <div class="app-info-title">A compliant Swiss tax report</div>
+        <div class="app-info-body">Our AI engine calculates your gains and losses using Swiss FIFO accounting, converts everything to CHF using ESTV rates, and produces a structured report ready for your cantonal authority.</div>
+      </div>
+      <div class="app-info-box">
+        <div class="app-info-label">Privacy</div>
+        <div class="app-info-title">Processed in your session only</div>
+        <div class="app-info-body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORT OUTPUT -->
+  <div id="report-output">
+    <div class="report-output-header">
+      <div class="report-output-title">Your <em>tax report</em> is ready</div>
+      <div class="report-actions">
+        <button class="btn-gold" onclick="downloadReport()" style="font-size:12px;padding:10px 20px;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download PDF
+        </button>
+        <button class="btn-outline" onclick="openModal('professional')" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
+          Upgrade to Pro
+        </button>
+      </div>
+    </div>
+
+    <div class="report-summary-grid" id="report-stats"></div>
+
+    <div class="report-generated">
+      <div class="report-generated-header">
+        <span class="report-generated-title">Krypto-Steuerbericht — AI Generated Report</span>
+        <span class="report-generated-badge">ESTV Compliant</span>
+      </div>
+      <div class="report-generated-body" id="report-content">
+      </div>
     </div>
   </div>
 </section>
@@ -1245,7 +1826,7 @@
 <!-- FAQ -->
 <section class="section" id="faq" style="padding-top:0">
   <div class="section-header">
-    <span class="section-number">05 — FAQ</span>
+    <span class="section-number">06 — FAQ</span>
     <h2 class="section-title">Common<br><em>questions</em></h2>
   </div>
   <div class="faq-list">
@@ -1297,6 +1878,34 @@
   </div>
 </section>
 
+<!-- STRIPE MODAL -->
+<div class="modal-overlay" id="stripe-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-plan-name" id="modal-plan-name">Professional</div>
+        <div class="modal-plan-price" id="modal-plan-price">CHF 49</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Enter your email to continue to secure checkout via Stripe. You'll receive your report download link immediately after payment.</p>
+      <div class="modal-stripe-note">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z" stroke="#8A909E" stroke-width="1.2"/><path d="M8 7v4M8 5.5v.5" stroke="#8A909E" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Payments are processed securely by Stripe. We never see your card details.
+      </div>
+      <div class="modal-input-group">
+        <input class="modal-input" type="email" id="modal-email" placeholder="your@email.com" />
+      </div>
+      <a class="btn-stripe" id="stripe-checkout-btn" href="#" onclick="proceedToStripe(event)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.5h12M4 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Continue to Stripe Checkout
+      </a>
+      <div class="modal-terms">By continuing you agree to our Terms of Service and Privacy Policy.<br>Secure payment via Stripe · SSL encrypted</div>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer id="site-footer">
   <div class="footer-top">
@@ -1340,13 +1949,15 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+  // ── Navigation ──
   function navScrollTo(id) {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (id === 'start-form' || id === 'start') {
-      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('declare').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (id === 'footer-contact') {
       document.getElementById('site-footer').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -1359,7 +1970,275 @@
     if (!isOpen) item.classList.add('open');
   }
 
-  // Scroll reveal
+  // ── Stripe Modal ──
+  const STRIPE_LINKS = {
+    professional: 'https://buy.stripe.com/YOUR_PROFESSIONAL_LINK', // Replace with your Stripe payment link
+    business: 'https://buy.stripe.com/YOUR_BUSINESS_LINK'          // Replace with your Stripe payment link
+  };
+
+  const PLAN_DETAILS = {
+    professional: { name: 'Professional', price: 'CHF 49' },
+    business: { name: 'Business', price: 'CHF 199' }
+  };
+
+  let currentPlan = 'professional';
+
+  function openModal(plan) {
+    currentPlan = plan;
+    const details = PLAN_DETAILS[plan];
+    document.getElementById('modal-plan-name').textContent = details.name;
+    document.getElementById('modal-plan-price').textContent = details.price;
+    document.getElementById('stripe-modal').classList.add('open');
+    document.getElementById('modal-email').focus();
+  }
+
+  function closeModal() {
+    document.getElementById('stripe-modal').classList.remove('open');
+  }
+
+  function proceedToStripe(e) {
+    e.preventDefault();
+    const email = document.getElementById('modal-email').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('modal-email').style.borderColor = '#C0392B';
+      document.getElementById('modal-email').focus();
+      return;
+    }
+    const base = STRIPE_LINKS[currentPlan];
+    const url = base + '?prefilled_email=' + encodeURIComponent(email);
+    window.open(url, '_blank');
+    closeModal();
+  }
+
+  // Close modal on overlay click
+  document.getElementById('stripe-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── Free Trial Logic ──
+  const TRIAL_KEY = 'cryptotax_trial_used';
+
+  function hasUsedTrial() {
+    return localStorage.getItem(TRIAL_KEY) === 'true';
+  }
+
+  function markTrialUsed() {
+    localStorage.setItem(TRIAL_KEY, 'true');
+  }
+
+  function updateTrialUI() {
+    const used = hasUsedTrial();
+    const uploadArea = document.getElementById('upload-area');
+    const trialBanner = document.getElementById('trial-banner');
+    const trialUsedMsg = document.getElementById('trial-used-msg');
+    const trialBannerLeft = trialBanner.querySelector('.trial-banner-left');
+
+    if (used) {
+      uploadArea.classList.add('locked');
+      trialUsedMsg.style.display = 'flex';
+      if (trialBannerLeft) trialBannerLeft.style.display = 'none';
+    } else {
+      uploadArea.classList.remove('locked');
+      trialUsedMsg.style.display = 'none';
+      if (trialBannerLeft) trialBannerLeft.style.display = 'flex';
+    }
+  }
+
+  // Run on load
+  updateTrialUI();
+
+  // ── CSV / Excel Upload ──
+  const uploadArea = document.getElementById('upload-area');
+  const csvInput = document.getElementById('csv-input');
+
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (!hasUsedTrial()) uploadArea.classList.add('drag-over');
+  });
+
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    if (hasUsedTrial()) return;
+    const file = e.dataTransfer.files[0];
+    if (file) processFile(file);
+  });
+
+  csvInput.addEventListener('change', (e) => {
+    if (hasUsedTrial()) return;
+    const file = e.target.files[0];
+    if (file) processFile(file);
+  });
+
+  function setProcessingText(text) {
+    document.getElementById('processing-text').textContent = text;
+  }
+
+  async function processFile(file) {
+    const indicator = document.getElementById('processing-indicator');
+    indicator.classList.add('visible');
+    setProcessingText('Reading your file...');
+
+    let csvText;
+    try {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'xlsx' || ext === 'xls' || ext === 'xlsm') {
+        setProcessingText('Parsing Excel file...');
+        csvText = await readExcelAsCSV(file);
+      } else {
+        csvText = await readFileAsText(file);
+      }
+    } catch (err) {
+      setProcessingText('Could not read file: ' + err.message);
+      setTimeout(() => indicator.classList.remove('visible'), 4000);
+      return;
+    }
+
+    setProcessingText('Analysing transactions with AI...');
+
+    try {
+      const result = await generateTaxReport(csvText, file.name);
+      markTrialUsed();
+      updateTrialUI();
+      displayReport(result);
+    } catch (err) {
+      setProcessingText('Error: ' + err.message);
+      setTimeout(() => indicator.classList.remove('visible'), 4000);
+    }
+  }
+
+  function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsText(file);
+    });
+  }
+
+  function readExcelAsCSV(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          // Use first sheet
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          const csv = XLSX.utils.sheet_to_csv(sheet);
+          resolve(csv);
+        } catch (err) {
+          reject(new Error('Could not parse Excel file: ' + err.message));
+        }
+      };
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  async function generateTaxReport(csvContent, filename) {
+    // Truncate if very large
+    const truncated = csvContent.length > 8000 ? csvContent.slice(0, 8000) + '\n[... truncated for processing ...]' : csvContent;
+
+    const prompt = `You are a Swiss crypto tax expert. Analyse the following transaction CSV export and generate a professional Swiss tax report (Krypto-Steuerbericht) in English.
+
+The report must include:
+1. A summary section with: total transactions found, date range, assets detected
+2. Capital gains/losses per asset in CHF (use approximate current CHF rates if exact rates unavailable, and note this)
+3. Staking/income events if present
+4. End-of-year portfolio valuation estimate
+5. A compliance note for Swiss ESTV requirements
+6. Total net gain/loss in CHF
+
+Format the report clearly with sections. Be specific with numbers where the data allows. If data is unclear or incomplete, note what's missing.
+
+Also provide a JSON summary at the very end in this exact format (after the report text):
+SUMMARY_JSON:{"transactions": NUMBER, "totalGainCHF": NUMBER_OR_NULL, "assets": NUMBER, "taxYear": "YEAR_OR_UNKNOWN"}
+
+Filename: ${filename}
+
+CSV DATA:
+${truncated}`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) throw new Error('AI processing failed. Please try again.');
+
+    const data = await response.json();
+    const fullText = data.content.map(c => c.text || '').join('');
+    return parseReport(fullText);
+  }
+
+  function parseReport(fullText) {
+    let reportText = fullText;
+    let summary = { transactions: '—', totalGainCHF: null, assets: '—', taxYear: '—' };
+
+    const jsonMatch = fullText.match(/SUMMARY_JSON:(\{[^}]+\})/);
+    if (jsonMatch) {
+      try {
+        summary = JSON.parse(jsonMatch[1]);
+        reportText = fullText.replace(/SUMMARY_JSON:[^\n]+/, '').trim();
+      } catch(e) {}
+    }
+
+    return { reportText, summary };
+  }
+
+  function displayReport({ reportText, summary }) {
+    document.getElementById('processing-indicator').classList.remove('visible');
+
+    // Stats grid
+    const gain = summary.totalGainCHF;
+    const gainStr = gain !== null && gain !== undefined
+      ? (gain >= 0 ? '+CHF ' + Number(gain).toLocaleString('de-CH') : '−CHF ' + Math.abs(Number(gain)).toLocaleString('de-CH'))
+      : '—';
+    const gainClass = gain > 0 ? 'positive' : gain < 0 ? 'negative' : '';
+
+    document.getElementById('report-stats').innerHTML = `
+      <div class="report-stat">
+        <div class="report-stat-label">Tax Year</div>
+        <div class="report-stat-val">${summary.taxYear || '—'}</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-label">Transactions</div>
+        <div class="report-stat-val">${summary.transactions || '—'}</div>
+      </div>
+      <div class="report-stat">
+        <div class="report-stat-label">Net Gain / Loss</div>
+        <div class="report-stat-val ${gainClass}">${gainStr}</div>
+      </div>
+    `;
+
+    document.getElementById('report-content').textContent = reportText;
+
+    const output = document.getElementById('report-output');
+    output.classList.add('visible');
+    output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function downloadReport() {
+    const content = document.getElementById('report-content').textContent;
+    if (!content) return;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'CryptoTax-Swiss-Report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ── Scroll reveal ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
