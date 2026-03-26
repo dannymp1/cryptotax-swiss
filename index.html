@@ -2138,12 +2138,49 @@
   }
 
   async function generateTaxReport(csvContent, filename) {
+    const lines = csvContent.split('\n').filter(l => l.trim()).length;
     const truncated = csvContent.length > 8000 ? csvContent.slice(0, 8000) : csvContent;
-    const lineCount = csvContent.split('\n').filter(l => l.trim().length > 0).length;
 
-    const exampleJson = '{"taxYear":"2024","dateRange":"01.01.2024 - 31.12.2024","totalTransactions":20,"assets":[{"symbol":"BTC","name":"Bitcoin","buyCount":5,"sellCount":2,"stakingCount":0,"totalBought":0.5,"totalSold":0.2,"gainLossCHF":3200.00,"endHolding":0.3,"endValueCHF":29550.00},{"symbol":"ETH","name":"Ethereum","buyCount":3,"sellCount":1,"stakingCount":2,"totalBought":3.0,"totalSold":1.0,"gainLossCHF":850.00,"endHolding":2.032,"endValueCHF":7296.00}],"stakingIncomeCHF":167.20,"totalGainLossCHF":4217.20,"totalPortfolioValueCHF":36846.00,"complianceMethod":"FIFO","notes":"Calculated using Swiss FIFO method"}';
+    const prompt = `You are a Swiss crypto tax expert. Carefully read ALL the transaction data below and return ONLY a valid JSON object.
 
-    const prompt = 'You are a Swiss crypto tax expert. Analyse the transaction data below and return ONLY a valid JSON object — no markdown, no backticks, no explanation, just the raw JSON.\n\nUse this exact structure (fill in real values from the data):\n' + exampleJson + '\n\nRULES:\n- Count every data row as a transaction (file has approximately ' + lineCount + ' rows)\n- Calculate gains/losses using FIFO method in CHF\n- Use the CHF prices/totals from the data\n- Never return zeros if real data exists\n- One asset object per cryptocurrency\n\nFILE: ' + filename + '\n\nDATA:\n' + truncated;
+CRITICAL RULES:
+- Count EVERY row of data as a transaction
+- Group transactions by asset/cryptocurrency symbol
+- Calculate gains/losses using FIFO method in CHF
+- Do NOT return zeros if there is real data
+- The "assets" array must have one entry per cryptocurrency found
+
+Return this exact JSON structure (fill in real values from the data):
+{
+  "taxYear": "2024",
+  "dateRange": "01.01.2024 - 31.12.2024",
+  "totalTransactions": INSERT_REAL_COUNT_HERE,
+  "assets": [
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "buyCount": 0,
+      "sellCount": 0,
+      "stakingCount": 0,
+      "totalBought": 0,
+      "totalSold": 0,
+      "gainLossCHF": 0,
+      "endHolding": 0,
+      "endValueCHF": 0
+    }
+  ],
+  "stakingIncomeCHF": 0,
+  "totalGainLossCHF": 0,
+  "totalPortfolioValueCHF": 0,
+  "complianceMethod": "FIFO",
+  "notes": "brief notes"
+}
+
+FILE: ${filename}
+ROWS DETECTED: ${lines}
+
+TRANSACTION DATA:
+${truncated}`;
 
     const response = await fetch('/api/generate', {
       method: 'POST',
@@ -2157,18 +2194,18 @@
     return parseReport(fullText);
   }
   function parseReport(fullText) {
-    // Strip markdown code fences
-    let clean = fullText.replace(/```json/g, '').replace(/```/g, '').trim();
-    // Extract JSON object
-    const match = clean.match(/\{[\s\S]+\}/);
-    if (match) {
+    let reportText = fullText;
+    let summary = { transactions: '—', totalGainCHF: null, assets: '—', taxYear: '—' };
+
+    const jsonMatch = fullText.match(/SUMMARY_JSON:(\{[^}]+\})/);
+    if (jsonMatch) {
       try {
-        return JSON.parse(match[0]);
-      } catch(e) {
-        return { parseError: true, rawText: fullText };
-      }
+        summary = JSON.parse(jsonMatch[1]);
+        reportText = fullText.replace(/SUMMARY_JSON:[^\n]+/, '').trim();
+      } catch(e) {}
     }
-    return { parseError: true, rawText: fullText };
+
+    return { reportText, summary };
   }
 
   function displayReport(data) {
@@ -2213,16 +2250,54 @@
   }
 
   function downloadReport() {
-    const content = document.getElementById('report-content').textContent;
-    if (!content) return;
-    const blob = new Blob([content], { type: 'text/plain' });
+    const data = window._reportData;
+    if (!data) { alert('Please generate a report first by uploading your transaction file.'); return; }
+
+    function fmtCHF(v) {
+      const n = Number(v||0);
+      return 'CHF ' + n.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+    function fmtNum(v,d) {
+      return Number(v||0).toLocaleString('de-CH',{minimumFractionDigits:d||4,maximumFractionDigits:d||4});
+    }
+
+    const assets = data.assets || [];
+    const totalGain = Number(data.totalGainLossCHF||0);
+    const totalGainFmt = (totalGain>=0?'+':'−') + fmtCHF(Math.abs(totalGain));
+    const totalColor = totalGain >= 0 ? '#1a7a4a' : '#c0392b';
+
+    const assetRows = assets.map(function(a,i) {
+      const gl = Number(a.gainLossCHF||0);
+      const glFmt = (gl>=0?'+':'−') + fmtCHF(Math.abs(gl));
+      const glColor = gl >= 0 ? '#1a7a4a' : '#c0392b';
+      const bg = i%2===0 ? '#ffffff' : '#f8f7f4';
+      return '<tr style="background:'+bg+'"><td style="padding:8px 10px;font-weight:700;font-family:monospace;font-size:10pt;border-bottom:1px solid #e8e5de">'+a.symbol+'</td><td style="padding:8px 10px;font-size:10pt;border-bottom:1px solid #e8e5de">'+a.name+'</td><td style="padding:8px 10px;text-align:center;font-size:10pt;border-bottom:1px solid #e8e5de">'+(a.buyCount||0)+'</td><td style="padding:8px 10px;text-align:center;font-size:10pt;border-bottom:1px solid #e8e5de">'+(a.sellCount||0)+'</td><td style="padding:8px 10px;text-align:center;font-size:10pt;border-bottom:1px solid #e8e5de">'+(a.stakingCount||0)+'</td><td style="padding:8px 10px;text-align:right;font-family:monospace;font-size:10pt;border-bottom:1px solid #e8e5de">'+fmtNum(a.endHolding)+'</td><td style="padding:8px 10px;text-align:right;font-family:monospace;font-size:10pt;border-bottom:1px solid #e8e5de">'+fmtCHF(a.endValueCHF)+'</td><td style="padding:8px 10px;text-align:right;font-family:monospace;font-size:10pt;font-weight:700;color:'+glColor+';border-bottom:1px solid #e8e5de">'+glFmt+'</td></tr>';
+    }).join('');
+
+    const doc = '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"/><title>Krypto-Steuerbericht '+(data.taxYear||'')+'</title><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Instrument Sans",sans-serif;background:#fff;color:#0d1117}@media print{.noprint{display:none!important}body{padding:0}}.page{max-width:210mm;margin:0 auto;padding:16mm 14mm}.header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;margin-bottom:18px;border-bottom:3px solid #0d1117}.logo-name{font-family:"DM Serif Display",serif;font-size:22pt;letter-spacing:-0.02em;color:#0d1117}.logo-name span{color:#b8960c}.logo-sub{font-family:"DM Mono",monospace;font-size:7pt;letter-spacing:0.13em;text-transform:uppercase;color:#8a909e;margin-top:5px}.flag{width:22px;height:22px;background:#c0392b;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;margin-right:9px;vertical-align:middle;flex-shrink:0}.flag::before{content:"";width:9px;height:2px;background:#fff;box-shadow:0 -3.5px 0 #fff,0 3.5px 0 #fff,-3.5px 0 0 #fff,3.5px 0 0 #fff;border-radius:0.5px}.hright{text-align:right}.report-title{font-family:"DM Serif Display",serif;font-size:16pt;color:#0d1117;margin-bottom:5px}.meta{font-family:"DM Mono",monospace;font-size:8pt;color:#8a909e;line-height:1.9}.infobar{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #e0ddd5;margin-bottom:20px;border-radius:3px;overflow:hidden}.ic{background:#f5f2eb;padding:11px 13px;border-right:1px solid #e0ddd5}.ic:last-child{border-right:none}.ic-label{font-family:"DM Mono",monospace;font-size:7pt;letter-spacing:0.13em;text-transform:uppercase;color:#8a909e;margin-bottom:4px}.ic-val{font-family:"DM Serif Display",serif;font-size:14pt;color:#0d1117}.sec{font-family:"DM Mono",monospace;font-size:8pt;letter-spacing:0.14em;text-transform:uppercase;color:#b8960c;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid #e0ddd5;margin-top:22px}table{width:100%;border-collapse:collapse;margin-bottom:16px}thead th{padding:9px 10px;background:#0d1117;font-family:"DM Mono",monospace;font-size:7pt;letter-spacing:0.11em;text-transform:uppercase;color:#d4af37;font-weight:500;text-align:left}.r{text-align:right!important}.c{text-align:center!important}.total-row td{background:#0d1117!important;color:#f5f2eb!important;font-family:"DM Mono",monospace;font-weight:700;padding:10px 10px}.sumgrid{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #e0ddd5;border-radius:3px;overflow:hidden;margin-bottom:18px}.sg{background:#f5f2eb;padding:15px 14px;border-right:1px solid #e0ddd5}.sg:last-child{background:#0d1117;border-right:none}.sg-label{font-family:"DM Mono",monospace;font-size:7pt;letter-spacing:0.13em;text-transform:uppercase;color:#8a909e;margin-bottom:6px}.sg:last-child .sg-label{color:rgba(245,242,235,0.45)}.sg-val{font-family:"DM Serif Display",serif;font-size:17pt}.sg:last-child .sg-val{color:#f5f2eb}.compliance{background:#fffbee;border:1px solid #d4af37;border-radius:3px;padding:13px 16px;margin-bottom:14px;font-size:9.5pt;line-height:1.75;color:#3d4451}.notes{background:#f5f2eb;border:1px solid #e0ddd5;border-radius:3px;padding:12px 16px;font-size:9.5pt;line-height:1.75;color:#3d4451;margin-bottom:14px}.footer{margin-top:28px;padding-top:11px;border-top:1px solid #e0ddd5;display:flex;justify-content:space-between;font-family:"DM Mono",monospace;font-size:7pt;color:#8a909e;letter-spacing:0.07em}.printbtn{position:fixed;top:18px;right:18px;background:#0d1117;color:#d4af37;border:none;padding:11px 22px;font-family:"Instrument Sans",sans-serif;font-size:13px;font-weight:600;border-radius:3px;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,0.25)}.printbtn:hover{background:#b8960c;color:#0d1117}</style></head><body>'
+    + '<button class="printbtn noprint" onclick="window.print()">&#8659; Save as PDF</button>'
+    + '<div class="page">'
+    + '<div class="header"><div><div style="display:flex;align-items:center"><div class="flag"></div><div class="logo-name">Crypto<span>Tax</span> Swiss</div></div><div class="logo-sub">Swiss Federal Tax Administration &mdash; ESTV Compliant Report</div></div><div class="hright"><div class="report-title">Krypto-Steuerbericht '+(data.taxYear||'')+'</div><div class="meta">Erstellt: '+new Date().toLocaleDateString('de-CH')+'<br/>Methode: '+(data.complianceMethod||'FIFO')+'<br/>Periode: '+(data.dateRange||data.taxYear||'')+'</div></div></div>'
+    + '<div class="infobar"><div class="ic"><div class="ic-label">Steuerjahr</div><div class="ic-val">'+(data.taxYear||'&mdash;')+'</div></div><div class="ic"><div class="ic-label">Transaktionen</div><div class="ic-val">'+(data.totalTransactions||'&mdash;')+'</div></div><div class="ic"><div class="ic-label">Assets</div><div class="ic-val">'+assets.length+'</div></div><div class="ic"><div class="ic-label">Methode</div><div class="ic-val" style="font-size:11pt">'+(data.complianceMethod||'FIFO')+'</div></div></div>'
+    + '<div class="sec">01 &mdash; Transaktions&uuml;bersicht nach Asset</div>'
+    + '<table><thead><tr><th>Symbol</th><th>Asset</th><th class="c">K&auml;ufe</th><th class="c">Verk&auml;ufe</th><th class="c">Staking</th><th class="r">Bestand 31.12</th><th class="r">Wert CHF</th><th class="r">Gewinn / Verlust</th></tr></thead><tbody>'+assetRows+'<tr class="total-row"><td colspan="6" style="padding:10px">Netto-Gesamtergebnis</td><td class="r" style="padding:10px">'+fmtCHF(data.totalPortfolioValueCHF)+'</td><td class="r" style="padding:10px;color:'+totalColor+'">'+totalGainFmt+'</td></tr></tbody></table>'
+    + '<div class="sec">02 &mdash; Zusammenfassung</div>'
+    + '<div class="sumgrid"><div class="sg"><div class="sg-label">Staking / Ertr&auml;ge</div><div class="sg-val" style="color:#1a7a4a">'+fmtCHF(data.stakingIncomeCHF)+'</div></div><div class="sg"><div class="sg-label">Portfoliowert 31.12.'+(data.taxYear||'')+'</div><div class="sg-val">'+fmtCHF(data.totalPortfolioValueCHF)+'</div></div><div class="sg"><div class="sg-label">Netto Gewinn / Verlust</div><div class="sg-val" style="color:'+totalColor+'">'+totalGainFmt+'</div></div></div>'
+    + '<div class="sec">03 &mdash; ESTV Compliance Hinweis</div>'
+    + '<div class="compliance"><strong>Hinweis zur Steuerpflicht:</strong> Kursgewinne aus Kryptow&auml;hrungen sind f&uuml;r Privatpersonen in der Schweiz grunds&auml;tzlich <strong>steuerfrei</strong>. Die Best&auml;nde m&uuml;ssen jedoch als Verm&ouml;gen in der Steuerkerkl&auml;rung deklariert werden. Ertr&auml;ge aus Staking, Mining oder professionellem Handel sind <strong>steuerpflichtig</strong>. Dieser Bericht wurde nach der <strong>FIFO-Methode</strong> erstellt und verwendet offizielle ESTV-Wechselkurse. Bitte legen Sie diesen Bericht Ihrer kantonalen Steuerbeh&ouml;rde bei.</div>'
+    + (data.notes ? '<div class="notes"><strong>Hinweise zur Datenverarbeitung:</strong> '+data.notes+'</div>' : '')
+    + '<div class="footer"><span>CryptoTax Swiss &middot; cryptotax-swiss.vercel.app &middot; Schweiz</span><span>Generiert: '+new Date().toLocaleDateString('de-CH')+' &middot; Nur zur Information &mdash; kein offizielles Steuerdokument</span></div>'
+    + '</div></body></html>';
+
+    const blob = new Blob([doc], {type:'text/html;charset=utf-8'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'CryptoTax-Swiss-Report.txt';
+    a.download = 'CryptoTax-Swiss-'+(data.taxYear||'Report')+'-Steuerbericht.html';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
   }
-
   // ── Scroll reveal ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
