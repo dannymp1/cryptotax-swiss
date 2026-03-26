@@ -2231,18 +2231,22 @@ ${truncated}`;
     return parseReport(fullText);
   }
   function parseReport(fullText) {
-    let reportText = fullText;
-    let summary = { transactions: '—', totalGainCHF: null, assets: '—', taxYear: '—' };
-
-    const jsonMatch = fullText.match(/SUMMARY_JSON:(\{[^}]+\})/);
-    if (jsonMatch) {
+    // Strip markdown code fences and whitespace
+    let clean = fullText
+      .replace(/```json/gi, '')
+      .replace(/```/g, '')
+      .trim();
+    // Extract JSON object
+    const start = clean.indexOf('{');
+    const end = clean.lastIndexOf('}');
+    if (start !== -1 && end !== -1 && end > start) {
       try {
-        summary = JSON.parse(jsonMatch[1]);
-        reportText = fullText.replace(/SUMMARY_JSON:[^\n]+/, '').trim();
-      } catch(e) {}
+        return JSON.parse(clean.slice(start, end + 1));
+      } catch(e) {
+        return { parseError: true, rawText: fullText };
+      }
     }
-
-    return { reportText, summary };
+    return { parseError: true, rawText: fullText };
   }
 
   function displayReport(data) {
