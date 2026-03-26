@@ -2138,8 +2138,49 @@
   }
 
   async function generateTaxReport(csvContent, filename) {
-    const truncated = csvContent.length > 6000 ? csvContent.slice(0, 6000) + '\n[truncated]' : csvContent;
-    const prompt = 'You are a Swiss crypto tax expert. Analyse these transactions and return ONLY a valid JSON object with this exact structure: {"taxYear":"2024","dateRange":"DD.MM.YYYY - DD.MM.YYYY","totalTransactions":0,"assets":[{"symbol":"BTC","name":"Bitcoin","buyCount":0,"sellCount":0,"stakingCount":0,"totalBought":0,"totalSold":0,"gainLossCHF":0,"endHolding":0,"endValueCHF":0}],"stakingIncomeCHF":0,"totalGainLossCHF":0,"totalPortfolioValueCHF":0,"complianceMethod":"FIFO","notes":"notes here"}\n\nFile: ' + filename + '\n\nData:\n' + truncated;
+    const lines = csvContent.split('\n').filter(l => l.trim()).length;
+    const truncated = csvContent.length > 8000 ? csvContent.slice(0, 8000) : csvContent;
+
+    const prompt = `You are a Swiss crypto tax expert. Carefully read ALL the transaction data below and return ONLY a valid JSON object.
+
+CRITICAL RULES:
+- Count EVERY row of data as a transaction
+- Group transactions by asset/cryptocurrency symbol
+- Calculate gains/losses using FIFO method in CHF
+- Do NOT return zeros if there is real data
+- The "assets" array must have one entry per cryptocurrency found
+
+Return this exact JSON structure (fill in real values from the data):
+{
+  "taxYear": "2024",
+  "dateRange": "01.01.2024 - 31.12.2024",
+  "totalTransactions": INSERT_REAL_COUNT_HERE,
+  "assets": [
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "buyCount": 0,
+      "sellCount": 0,
+      "stakingCount": 0,
+      "totalBought": 0,
+      "totalSold": 0,
+      "gainLossCHF": 0,
+      "endHolding": 0,
+      "endValueCHF": 0
+    }
+  ],
+  "stakingIncomeCHF": 0,
+  "totalGainLossCHF": 0,
+  "totalPortfolioValueCHF": 0,
+  "complianceMethod": "FIFO",
+  "notes": "brief notes"
+}
+
+FILE: ${filename}
+ROWS DETECTED: ${lines}
+
+TRANSACTION DATA:
+${truncated}`;
 
     const response = await fetch('/api/generate', {
       method: 'POST',
@@ -2152,7 +2193,6 @@
     const fullText = data.content.map(c => c.text || '').join('');
     return parseReport(fullText);
   }
-
   function parseReport(fullText) {
     let reportText = fullText;
     let summary = { transactions: '—', totalGainCHF: null, assets: '—', taxYear: '—' };
