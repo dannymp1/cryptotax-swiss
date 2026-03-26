@@ -1450,6 +1450,95 @@
     .exchanges { padding: 0 24px 80px; }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
   }
+
+  /* ── CONTACT SECTION ── */
+  .contact-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    background: var(--paper-warm);
+    border-top: 1px solid var(--rule);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .contact-left {}
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .contact-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 3vw, 40px);
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .contact-title em { font-style: italic; color: var(--gold); }
+  .contact-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+  }
+  .contact-email-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .contact-email-link:hover { color: var(--gold); }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .contact-input, .contact-textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .contact-input:focus, .contact-textarea:focus { border-color: var(--gold); }
+  .contact-input::placeholder, .contact-textarea::placeholder { color: var(--ink-faint); }
+  .contact-textarea { height: 120px; }
+  .contact-success {
+    display: none;
+    padding: 16px;
+    background: rgba(26,122,74,0.08);
+    border: 1px solid rgba(26,122,74,0.25);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: #1a7a4a;
+    text-align: center;
+  }
+  @media (max-width: 900px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .contact-section { padding: 80px 24px; }
+  }
 </style>
 </head>
 <body>
@@ -1468,6 +1557,7 @@
     <li><a href="#" onclick="navScrollTo('pricing');return false;">Pricing</a></li>
     <li><a href="#" onclick="navScrollTo('declare');return false;">Declare</a></li>
     <li><a href="#" onclick="navScrollTo('faq');return false;">FAQ</a></li>
+    <li><a href="#" onclick="navScrollTo('contact');return false;">Contact</a></li>
     <li><a href="#" onclick="navScrollTo('declare');return false;" class="nav-cta">Get started</a></li>
   </ul>
   <div class="lang-switcher">
@@ -1918,6 +2008,37 @@
   </div>
 </div>
 
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-grid">
+    <div class="contact-left">
+      <div class="contact-label">07 — Contact</div>
+      <h2 class="contact-title">Get in <em>touch</em></h2>
+      <p class="contact-body">Have a question about your crypto taxes, need help with a complex case, or want to learn more about our Business plan? We'd love to hear from you.</p>
+      <a href="mailto:hello@cryptodeclare.ch" class="contact-email-link">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 3.5h12v8H1v-8z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 3.5l6 4.5 6-4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        hello@cryptodeclare.ch
+      </a>
+    </div>
+    <div class="contact-right">
+      <form class="contact-form" id="contact-form" onsubmit="submitContactForm(event)">
+        <input class="contact-input" type="text" id="contact-name" placeholder="Your name" required />
+        <input class="contact-input" type="email" id="contact-email" placeholder="Your email address" required />
+        <input class="contact-input" type="text" id="contact-subject" placeholder="Subject (e.g. Question about Pro plan)" />
+        <textarea class="contact-textarea" id="contact-message" placeholder="Your message..." required></textarea>
+        <button type="submit" class="btn-primary" style="justify-content:center">
+          Send message
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="contact-success" id="contact-success">
+          ✅ Message sent! We'll get back to you at hello@cryptodeclare.ch within 24 hours.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer id="site-footer">
   <div class="footer-top">
@@ -1988,6 +2109,30 @@
     if (typeof updateTrialUI === 'function') updateTrialUI();
   }
   window.setLang = setLang;
+
+
+  // ── Contact Form ──
+  async function submitContactForm(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const name = document.getElementById('contact-name').value;
+    const email = document.getElementById('contact-email').value;
+    const subject = document.getElementById('contact-subject').value || 'Website enquiry';
+    const message = document.getElementById('contact-message').value;
+
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    // Use mailto as fallback — opens email client with prefilled content
+    const mailtoLink = 'mailto:hello@cryptodeclare.ch?subject=' + encodeURIComponent(subject + ' — from ' + name) + '&body=' + encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + message);
+    
+    // Show success and open mailto
+    document.getElementById('contact-success').style.display = 'block';
+    document.getElementById('contact-form').reset();
+    btn.textContent = 'Send message';
+    btn.disabled = false;
+    window.location.href = mailtoLink;
+  }
 
   // ── Navigation ──
   function navScrollTo(id) {
