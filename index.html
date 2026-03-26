@@ -2138,49 +2138,12 @@
   }
 
   async function generateTaxReport(csvContent, filename) {
-    const lines = csvContent.split('\n').filter(l => l.trim()).length;
     const truncated = csvContent.length > 8000 ? csvContent.slice(0, 8000) : csvContent;
+    const lineCount = csvContent.split('\n').filter(l => l.trim().length > 0).length;
 
-    const prompt = `You are a Swiss crypto tax expert. Carefully read ALL the transaction data below and return ONLY a valid JSON object.
+    const exampleJson = '{"taxYear":"2024","dateRange":"01.01.2024 - 31.12.2024","totalTransactions":20,"assets":[{"symbol":"BTC","name":"Bitcoin","buyCount":5,"sellCount":2,"stakingCount":0,"totalBought":0.5,"totalSold":0.2,"gainLossCHF":3200.00,"endHolding":0.3,"endValueCHF":29550.00},{"symbol":"ETH","name":"Ethereum","buyCount":3,"sellCount":1,"stakingCount":2,"totalBought":3.0,"totalSold":1.0,"gainLossCHF":850.00,"endHolding":2.032,"endValueCHF":7296.00}],"stakingIncomeCHF":167.20,"totalGainLossCHF":4217.20,"totalPortfolioValueCHF":36846.00,"complianceMethod":"FIFO","notes":"Calculated using Swiss FIFO method"}';
 
-CRITICAL RULES:
-- Count EVERY row of data as a transaction
-- Group transactions by asset/cryptocurrency symbol
-- Calculate gains/losses using FIFO method in CHF
-- Do NOT return zeros if there is real data
-- The "assets" array must have one entry per cryptocurrency found
-
-Return this exact JSON structure (fill in real values from the data):
-{
-  "taxYear": "2024",
-  "dateRange": "01.01.2024 - 31.12.2024",
-  "totalTransactions": INSERT_REAL_COUNT_HERE,
-  "assets": [
-    {
-      "symbol": "BTC",
-      "name": "Bitcoin",
-      "buyCount": 0,
-      "sellCount": 0,
-      "stakingCount": 0,
-      "totalBought": 0,
-      "totalSold": 0,
-      "gainLossCHF": 0,
-      "endHolding": 0,
-      "endValueCHF": 0
-    }
-  ],
-  "stakingIncomeCHF": 0,
-  "totalGainLossCHF": 0,
-  "totalPortfolioValueCHF": 0,
-  "complianceMethod": "FIFO",
-  "notes": "brief notes"
-}
-
-FILE: ${filename}
-ROWS DETECTED: ${lines}
-
-TRANSACTION DATA:
-${truncated}`;
+    const prompt = 'You are a Swiss crypto tax expert. Analyse the transaction data below and return ONLY a valid JSON object — no markdown, no backticks, no explanation, just the raw JSON.\n\nUse this exact structure (fill in real values from the data):\n' + exampleJson + '\n\nRULES:\n- Count every data row as a transaction (file has approximately ' + lineCount + ' rows)\n- Calculate gains/losses using FIFO method in CHF\n- Use the CHF prices/totals from the data\n- Never return zeros if real data exists\n- One asset object per cryptocurrency\n\nFILE: ' + filename + '\n\nDATA:\n' + truncated;
 
     const response = await fetch('/api/generate', {
       method: 'POST',
@@ -2194,18 +2157,18 @@ ${truncated}`;
     return parseReport(fullText);
   }
   function parseReport(fullText) {
-    let reportText = fullText;
-    let summary = { transactions: '—', totalGainCHF: null, assets: '—', taxYear: '—' };
-
-    const jsonMatch = fullText.match(/SUMMARY_JSON:(\{[^}]+\})/);
-    if (jsonMatch) {
+    // Strip markdown code fences
+    let clean = fullText.replace(/```json/g, '').replace(/```/g, '').trim();
+    // Extract JSON object
+    const match = clean.match(/\{[\s\S]+\}/);
+    if (match) {
       try {
-        summary = JSON.parse(jsonMatch[1]);
-        reportText = fullText.replace(/SUMMARY_JSON:[^\n]+/, '').trim();
-      } catch(e) {}
+        return JSON.parse(match[0]);
+      } catch(e) {
+        return { parseError: true, rawText: fullText };
+      }
     }
-
-    return { reportText, summary };
+    return { parseError: true, rawText: fullText };
   }
 
   function displayReport(data) {
