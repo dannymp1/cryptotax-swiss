@@ -1983,6 +1983,8 @@
     const ts = document.querySelector('.trial-text strong'); if(ts) ts.textContent = t.trial_strong;
     const tsp = document.querySelector('.trial-text span'); if(tsp) tsp.textContent = t.trial_span;
     const rt = document.querySelector('.report-output-title'); if(rt) rt.innerHTML = t.report_ready;
+    // Always re-check trial state after language switch
+    if (typeof updateTrialUI === 'function') updateTrialUI();
   }
   window.setLang = setLang;
 
