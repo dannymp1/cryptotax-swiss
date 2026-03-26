@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CryptoSteuer — Swiss Crypto Tax Reporting</title>
+<title>CryptoDeclare — Swiss Crypto Tax Reporting</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -1460,7 +1460,7 @@
     <div class="nav-logo-mark">
       <svg viewBox="0 0 16 16"><path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z"/></svg>
     </div>
-    <span class="nav-logo-text">Crypto<span>Steuer</span></span>
+    <span class="nav-logo-text">Crypto<span>Declare</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="#" onclick="navScrollTo('how');return false;">How it works</a></li>
@@ -1709,7 +1709,8 @@
       </ul>
       <a href="#" onclick="navScrollTo('declare');return false;" class="btn-outline">Get started free</a>
     </div>
-    <div class="pricing-card featured">
+    <div class="pricing-card featured" style="position:relative">
+      <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#D4AF37;color:#0D1117;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;font-weight:600;text-transform:uppercase;padding:5px 16px;border-radius:100px;white-space:nowrap;">⭐ Most Popular</div>
       <div class="pricing-name">Professional</div>
       <div class="pricing-price" style="color:var(--paper)">CHF 99</div>
       <div class="pricing-period">Per tax year</div>
@@ -1921,7 +1922,7 @@
 <footer id="site-footer">
   <div class="footer-top">
     <div>
-      <div class="footer-brand-name">Crypto<span>Steuer</span></div>
+      <div class="footer-brand-name">Crypto<span>Declare</span></div>
       <p class="footer-brand-text">Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.</p>
     </div>
     <div>
@@ -1936,7 +1937,7 @@
     <div>
       <div class="footer-col-title">Legal</div>
       <ul class="footer-links">
-        <li><a href="#">Privacy policy</a></li>
+        <li><a href="#" onclick="document.getElementById('privacy-modal').style.display='block';return false;">Privacy policy</a></li>
         <li><a href="#">Terms of service</a></li>
         <li><a href="#">Cookie policy</a></li>
         <li><a href="#">Impressum</a></li>
@@ -1952,7 +1953,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-legal">© 2025 CryptoSteuer GmbH · Zürich · CHE-000.000.000</span>
+    <span class="footer-legal">© 2025 CryptoDeclare GmbH · Zürich · CHE-000.000.000</span>
     <div class="footer-ch">
       <div class="ch-flag"></div>
       Switzerland
@@ -2328,7 +2329,65 @@ ${truncated}`;
     + '<div class="compliance"><strong>Hinweis zur Steuerpflicht:</strong> Kursgewinne aus Kryptow&auml;hrungen sind f&uuml;r Privatpersonen in der Schweiz grunds&auml;tzlich <strong>steuerfrei</strong>. Die Best&auml;nde m&uuml;ssen jedoch als Verm&ouml;gen in der Steuerkerkl&auml;rung deklariert werden. Ertr&auml;ge aus Staking, Mining oder professionellem Handel sind <strong>steuerpflichtig</strong>. Dieser Bericht wurde nach der <strong>FIFO-Methode</strong> erstellt und verwendet offizielle ESTV-Wechselkurse. Bitte legen Sie diesen Bericht Ihrer kantonalen Steuerbeh&ouml;rde bei.</div>'
     + (data.notes ? '<div class="notes"><strong>Hinweise zur Datenverarbeitung:</strong> '+data.notes+'</div>' : '')
     + '<div class="footer"><span>CryptoTax Swiss &middot; cryptotax-swiss.vercel.app &middot; Schweiz</span><span>Generiert: '+new Date().toLocaleDateString('de-CH')+' &middot; Nur zur Information &mdash; kein offizielles Steuerdokument</span></div>'
-    + '</div></body></html>';
+    + '</div>
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacy-modal" style="display:none;position:fixed;inset:0;background:rgba(13,17,23,0.9);backdrop-filter:blur(8px);z-index:2000;overflow-y:auto;padding:40px 24px">
+  <div style="max-width:720px;margin:0 auto;background:#F5F2EB;border-radius:6px;overflow:hidden">
+    <div style="background:#0D1117;padding:28px 36px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#D4AF37;margin-bottom:6px">Legal</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:24px;color:#F5F2EB;letter-spacing:-0.02em">Privacy Policy</div>
+      </div>
+      <button onclick="document.getElementById('privacy-modal').style.display='none'" style="background:none;border:none;color:rgba(245,242,235,0.5);font-size:24px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div style="padding:36px;font-family:'Instrument Sans',sans-serif;font-size:14px;line-height:1.8;color:#3D4451">
+      <p style="margin-bottom:16px"><strong style="color:#0D1117">Last updated:</strong> March 2026</p>
+      
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">1. Who We Are</h3>
+      <p style="margin-bottom:16px">CryptoDeclare operates the website <strong>cryptodeclare.ch</strong>, a Swiss crypto tax reporting service. We are based in Zürich, Switzerland and subject to Swiss data protection law (nDSG / revDSG).</p>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">2. Data We Collect</h3>
+      <p style="margin-bottom:8px">When you use our service, we may process:</p>
+      <ul style="margin:0 0 16px 20px">
+        <li style="margin-bottom:6px"><strong>Transaction data</strong> — CSV or Excel files you upload containing your crypto transaction history</li>
+        <li style="margin-bottom:6px"><strong>Email address</strong> — if you purchase a paid plan via Stripe</li>
+        <li style="margin-bottom:6px"><strong>Usage data</strong> — anonymised analytics (pages visited, browser type)</li>
+      </ul>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">3. How We Use Your Data</h3>
+      <ul style="margin:0 0 16px 20px">
+        <li style="margin-bottom:6px">To generate your Swiss tax report</li>
+        <li style="margin-bottom:6px">To process payments securely via Stripe</li>
+        <li style="margin-bottom:6px">To improve our service</li>
+      </ul>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">4. Data Retention</h3>
+      <p style="margin-bottom:16px">Your transaction data is processed <strong>ephemerally</strong> — we do not store your portfolio data on our servers after your report is generated. Your session data is cleared when you close your browser.</p>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">5. Third Parties</h3>
+      <ul style="margin:0 0 16px 20px">
+        <li style="margin-bottom:6px"><strong>Stripe</strong> — payment processing (subject to Stripe's privacy policy)</li>
+        <li style="margin-bottom:6px"><strong>Vercel</strong> — website hosting (EU/US, subject to Vercel's privacy policy)</li>
+        <li style="margin-bottom:6px"><strong>Anthropic</strong> — AI processing of transaction data (subject to Anthropic's privacy policy)</li>
+      </ul>
+      <p style="margin-bottom:16px">We never sell your data to third parties.</p>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">6. Your Rights (nDSG)</h3>
+      <p style="margin-bottom:16px">Under Swiss data protection law, you have the right to access, correct, delete, or port your personal data. To exercise these rights, contact us at <strong>hello@cryptodeclare.ch</strong>.</p>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">7. Cookies</h3>
+      <p style="margin-bottom:16px">We use only essential cookies to remember your language preference and trial status. No advertising cookies are used.</p>
+
+      <h3 style="font-family:'DM Serif Display',serif;font-size:18px;color:#0D1117;margin:24px 0 8px">8. Contact</h3>
+      <p style="margin-bottom:16px">For privacy questions: <strong>hello@cryptodeclare.ch</strong> · CryptoDeclare · Zürich, Switzerland</p>
+
+      <div style="margin-top:32px;padding-top:20px;border-top:1px solid #e0ddd5;text-align:center">
+        <button onclick="document.getElementById('privacy-modal').style.display='none'" style="background:#0D1117;color:#D4AF37;border:none;padding:12px 32px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;border-radius:3px;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>';
 
     const blob = new Blob([doc], {type:'text/html;charset=utf-8'});
     const a = document.createElement('a');
