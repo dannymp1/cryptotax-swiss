@@ -683,6 +683,7 @@
 
   /* ── PRICING ── */
   .pricing-grid {
+    padding-top: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 2px;
@@ -707,22 +708,23 @@
     margin-top: 20px;
   }
   .pricing-card.featured::before {
-    content: '★ Most Popular';
+    content: "★ Most Popular";
     position: absolute;
-    top: -14px;
+    top: -16px;
     left: 50%;
     transform: translateX(-50%);
     background: #D4AF37;
     color: #0D1117;
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.14em;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 4px 18px;
+    padding: 5px 20px;
     border-radius: 100px;
     white-space: nowrap;
     z-index: 10;
+    box-shadow: 0 2px 8px rgba(212,175,55,0.4);
   }
 
   .pricing-name {
@@ -2159,7 +2161,6 @@
   function navScrollTo(id) {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
     } else if (id === 'start-form' || id === 'start') {
       document.getElementById('declare').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (id === 'footer-contact') {
@@ -2233,6 +2234,7 @@
   function updateTrialUI() {
     const area = document.getElementById('upload-area');
     if (area) area.classList.remove('locked');
+    document.getElementById('trial-used-msg') && (document.getElementById('trial-used-msg').style.display = 'none');
   }
 
   // Run on load
@@ -2385,9 +2387,10 @@ ${truncated}`;
     return parseReport(fullText);
   }
   function parseReport(fullText) {
-    let clean = (fullText||'').replace(/```json/gi,'').replace(/```/g,'').trim();
+    if (!fullText) return { parseError: true, rawText: '' };
+    let clean = fullText.replace(/```json/gi, '').replace(/```/g, '').trim();
     const s = clean.indexOf('{'), e = clean.lastIndexOf('}');
-    if (s !== -1 && e > s) { try { return JSON.parse(clean.slice(s,e+1)); } catch(err) {} }
+    if (s !== -1 && e > s) { try { return JSON.parse(clean.slice(s, e+1)); } catch(x) {} }
     return { parseError: true, rawText: fullText };
   }
 
