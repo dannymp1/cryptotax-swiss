@@ -701,8 +701,28 @@
     transition: background 0.2s;
   }
 
+  
   .pricing-card.featured {
-    background: var(--ink);
+    position: relative;
+    margin-top: 20px;
+  }
+  .pricing-card.featured::before {
+    content: '★ Most Popular';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #D4AF37;
+    color: #0D1117;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 18px;
+    border-radius: 100px;
+    white-space: nowrap;
+    z-index: 10;
   }
 
   .pricing-name {
@@ -1799,8 +1819,8 @@
       </ul>
       <a href="#" onclick="navScrollTo('declare');return false;" class="btn-outline">Get started free</a>
     </div>
-    <div class="pricing-card featured" style="position:relative">
-      <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#D4AF37;color:#0D1117;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;font-weight:600;text-transform:uppercase;padding:5px 16px;border-radius:100px;white-space:nowrap;">⭐ Most Popular</div>
+    <div class="pricing-card featured" >
+      
       <div class="pricing-name">Professional</div>
       <div class="pricing-price" style="color:var(--paper)">CHF 99</div>
       <div class="pricing-period">Per tax year</div>
@@ -2135,10 +2155,11 @@
   }
 
   // ── Navigation ──
+  
   function navScrollTo(id) {
     const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
     } else if (id === 'start-form' || id === 'start') {
       document.getElementById('declare').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (id === 'footer-contact') {
@@ -2210,21 +2231,8 @@
   }
 
   function updateTrialUI() {
-    const used = hasUsedTrial();
-    const uploadArea = document.getElementById('upload-area');
-    const trialBanner = document.getElementById('trial-banner');
-    const trialUsedMsg = document.getElementById('trial-used-msg');
-    const trialBannerLeft = trialBanner.querySelector('.trial-banner-left');
-
-    if (used) {
-      uploadArea.classList.add('locked');
-      trialUsedMsg.style.display = 'flex';
-      if (trialBannerLeft) trialBannerLeft.style.display = 'none';
-    } else {
-      uploadArea.classList.remove('locked');
-      trialUsedMsg.style.display = 'none';
-      if (trialBannerLeft) trialBannerLeft.style.display = 'flex';
-    }
+    const area = document.getElementById('upload-area');
+    if (area) area.classList.remove('locked');
   }
 
   // Run on load
@@ -2377,21 +2385,9 @@ ${truncated}`;
     return parseReport(fullText);
   }
   function parseReport(fullText) {
-    // Strip markdown code fences and whitespace
-    let clean = fullText
-      .replace(/```json/gi, '')
-      .replace(/```/g, '')
-      .trim();
-    // Extract JSON object
-    const start = clean.indexOf('{');
-    const end = clean.lastIndexOf('}');
-    if (start !== -1 && end !== -1 && end > start) {
-      try {
-        return JSON.parse(clean.slice(start, end + 1));
-      } catch(e) {
-        return { parseError: true, rawText: fullText };
-      }
-    }
+    let clean = (fullText||'').replace(/```json/gi,'').replace(/```/g,'').trim();
+    const s = clean.indexOf('{'), e = clean.lastIndexOf('}');
+    if (s !== -1 && e > s) { try { return JSON.parse(clean.slice(s,e+1)); } catch(err) {} }
     return { parseError: true, rawText: fullText };
   }
 
