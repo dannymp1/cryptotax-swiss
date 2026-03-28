@@ -2220,10 +2220,12 @@
     setProcessingText('Analysing transactions with AI...');
 
     try {
-      // For Kraken files, warn user that historical prices are being fetched
-      const firstLines = csvText.slice(0, 200).toLowerCase();
+      // Update status text based on format
+      const firstLines = csvText.slice(0, 300).toLowerCase();
       if (firstLines.includes('txid') && firstLines.includes('aclass')) {
         setProcessingText('Fetching historical CHF prices for Kraken transactions...');
+      } else if (firstLines.includes('__swissborg__') || (firstLines.includes('local time') && firstLines.includes('net amount'))) {
+        setProcessingText('Parsing SwissBorg account statement...');
       }
       const result = await generateTaxReport(csvText, file.name);
       markTrialUsed();
@@ -2252,11 +2254,36 @@
           const workbook = XLSX.read(e.target.result, { type: 'binary' });
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
-          const csv = XLSX.utils.sheet_to_csv(sheet);
-          if (!csv || csv.trim().length < 10) {
-            reject(new Error('Excel file appears to be empty or unreadable'));
+          // Detect SwissBorg: has metadata rows before real headers
+          // Convert all rows as JSON to find real header row
+          const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null });
+          // Look for SwissBorg header row (contains 'Local time' and 'Currency')
+          let headerRowIdx = -1;
+          for (let i = 0; i < Math.min(20, allRows.length); i++) {
+            const row = allRows[i];
+            if (row && row.some(c => c === 'Local time') && row.some(c => c === 'Currency')) {
+              headerRowIdx = i;
+              break;
+            }
+          }
+          if (headerRowIdx >= 0) {
+            // SwissBorg format — slice from real header row and convert to CSV
+            const dataRows = allRows.slice(headerRowIdx);
+            const csv = dataRows.map(row =>
+              (row || []).map(cell => {
+                if (cell === null || cell === undefined) return '';
+                const s = String(cell);
+                return s.includes(',') || s.includes('"') ? '"' + s.replace(/"/g, '""') + '"' : s;
+              }).join(',')
+            ).join('\n');
+            resolve('__swissborg__\n' + csv);
           } else {
-            resolve(csv);
+            const csv = XLSX.utils.sheet_to_csv(sheet);
+            if (!csv || csv.trim().length < 10) {
+              reject(new Error('Excel file appears to be empty or unreadable'));
+            } else {
+              resolve(csv);
+            }
           }
         } catch (err) {
           reject(new Error('Could not parse Excel file: ' + err.message));
@@ -2284,7 +2311,12 @@
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
   function parseCSVRows(csvText) {
-    const lines = csvText.trim().split('\n').filter(l => l.trim());
+    let text = csvText.trim();
+    // Strip SwissBorg sentinel if present
+    if (text.startsWith('__swissborg__')) {
+      text = text.slice(text.indexOf('\n') + 1).trim();
+    }
+    const lines = text.split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
     const headers = lines[0].split(',').map(h => h.replace(/['"]/g,'').trim().toLowerCase());
     return lines.slice(1).map(line => {
@@ -2303,10 +2335,13 @@
 
   function detectFormat(headers) {
     const h = headers.join(',');
+    if (h.includes('__swissborg__')) return 'swissborg';
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
     if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
+    // Also detect SwissBorg by headers in case it comes as CSV
+    if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     return 'unknown';
   }
 
@@ -2382,6 +2417,26 @@
           const dateKey = date.slice(0,10); // YYYY-MM-DD
           priceCHF = await getHistoricalPriceCHF(asset, dateKey);
           totalCHF = qty * priceCHF;
+        }
+        else if (format === 'swissborg') {
+          // SwissBorg: columns are Local time, Type, Currency, Gross amount,
+          // Gross amount (CHF), Fee, Fee (CHF), Net amount, Net amount (CHF), Note
+          date = r['local time'] || r['time in utc'] || '';
+          const t = (r['type'] || '').toLowerCase();
+          const currency = (r['currency'] || '').toUpperCase().trim();
+          // Skip fiat rows — they are the CHF side of an exchange pair
+          if (currency === 'CHF' || currency === 'EUR' || currency === 'USD') continue;
+          // Map SwissBorg types to internal types
+          // Deposits = assets arriving (treat as buy for cost basis)
+          // Withdrawals = assets leaving (treat as sell for proceeds)
+          if (t === 'buy' || t === 'deposit') type = 'buy';
+          else if (t === 'sell' || t === 'withdrawal') type = 'sell';
+          else if (t === 'payouts') type = 'staking';
+          else continue;
+          asset = currency;
+          qty = Math.abs(parseFloat(r['net amount']) || parseFloat(r['gross amount']) || 0);
+          totalCHF = Math.abs(parseFloat(r['net amount (chf)']) || 0);
+          priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
         else if (format === 'binance') {
           date = r['date(utc)']||r['date']||'';
@@ -2540,9 +2595,11 @@
     const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD converted at 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    let notes = format === 'kraken'
-      ? `Exchange format detected: kraken. Historical CHF prices fetched via CoinGecko API per transaction date. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`
-      : `Exchange format detected: ${format}. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`;
+    const notesMap = {
+      kraken: `Exchange format detected: Kraken. Historical CHF prices fetched via CoinGecko API per transaction date. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`,
+      swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`,
+    };
+    let notes = notesMap[format] || `Exchange format detected: ${format}. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]})});
       if (res.ok) {
