@@ -2220,6 +2220,11 @@
     setProcessingText('Analysing transactions with AI...');
 
     try {
+      // For Kraken files, warn user that historical prices are being fetched
+      const firstLines = csvText.slice(0, 200).toLowerCase();
+      if (firstLines.includes('txid') && firstLines.includes('aclass')) {
+        setProcessingText('Fetching historical CHF prices for Kraken transactions...');
+      }
       const result = await generateTaxReport(csvText, file.name);
       markTrialUsed();
       updateTrialUI();
@@ -2305,7 +2310,52 @@
     return 'unknown';
   }
 
-  function normaliseRows(rows, format) {
+  // ── Historical price cache for Kraken (no prices in ledger export) ──────
+  const _krakenPriceCache = {};
+  const COINGECKO_ID = {
+    BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin',
+    ADA:'cardano', XRP:'ripple', DOT:'polkadot', AVAX:'avalanche-2',
+    MATIC:'matic-network', LINK:'chainlink', UNI:'uniswap', ATOM:'cosmos',
+    LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
+  };
+
+  async function getHistoricalPriceCHF(asset, dateStr) {
+    // dateStr: 'YYYY-MM-DD'
+    const key = asset + '_' + dateStr;
+    if (_krakenPriceCache[key] !== undefined) return _krakenPriceCache[key];
+    // Use YEAREND_PRICES_2024 as fallback if date is Dec 31 2024
+    if (dateStr === '2024-12-31' && YEAREND_PRICES_2024[asset]) {
+      _krakenPriceCache[key] = YEAREND_PRICES_2024[asset];
+      return YEAREND_PRICES_2024[asset];
+    }
+    const cgId = COINGECKO_ID[asset];
+    if (!cgId) {
+      // Unknown asset — fall back to year-end price or 0
+      const fallback = YEAREND_PRICES_2024[asset] || 0;
+      _krakenPriceCache[key] = fallback;
+      return fallback;
+    }
+    try {
+      // CoinGecko history endpoint: date must be dd-mm-yyyy
+      const [y, m, d] = dateStr.split('-');
+      const cgDate = `${d}-${m}-${y}`;
+      const url = `https://api.coingecko.com/api/v3/coins/${cgId}/history?date=${cgDate}&localization=false`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) throw new Error('cg_hist_' + res.status);
+      const data = await res.json();
+      const usdPrice = data?.market_data?.current_price?.usd || 0;
+      const chfPrice = usdPrice * 0.8967; // Use standard ESTV rate
+      _krakenPriceCache[key] = chfPrice;
+      return chfPrice;
+    } catch (e) {
+      // Fallback: use year-end price if available
+      const fallback = YEAREND_PRICES_2024[asset] || 0;
+      _krakenPriceCache[key] = fallback;
+      return fallback;
+    }
+  }
+
+  async function normaliseRows(rows, format) {
     const USD_CHF = 0.90;
     const out = [];
     for (const r of rows) {
@@ -2316,9 +2366,15 @@
           const t = (r['type']||'').toLowerCase();
           if (!['buy','sell','staking','reward'].some(x=>t.includes(x))) continue;
           type = t.includes('buy')?'buy':t.includes('sell')?'sell':'staking';
-          const raw = (r['asset']||'').replace(/^X{1,2}|Z{1,2}/,'');
-          asset = raw==='XBT'?'BTC':raw==='XDG'?'DOGE':raw;
+          // Fix: properly strip Kraken ISO 4217 prefixes (X, XX, Z, ZZ)
+          // e.g. XXBT→XBT→BTC, XETH→ETH, XLTC→LTC, ZUSD→USD
+          let raw = (r['asset']||'').replace(/^X(?=X[A-Z])/,'').replace(/^[XZ]/,'');
+          asset = raw==='XBT'?'BTC':raw==='XDG'?'DOGE':raw==='ETH'?'ETH':raw;
           qty = Math.abs(parseFloat(r['amount'])||0);
+          // Kraken ledger has no price column — fetch historical CHF price
+          const dateKey = date.slice(0,10); // YYYY-MM-DD
+          priceCHF = await getHistoricalPriceCHF(asset, dateKey);
+          totalCHF = qty * priceCHF;
         }
         else if (format === 'binance') {
           date = r['date(utc)']||r['date']||'';
@@ -2461,7 +2517,7 @@
     if (!rows.length) throw new Error('No transactions found in file');
     const headers = Object.keys(rows[0]);
     const format = detectFormat(headers);
-    const transactions = normaliseRows(rows, format);
+    const transactions = await normaliseRows(rows, format);
     if (!transactions.length) throw new Error('Could not parse transactions — check file format');
 
     const dates = transactions.map(t=>t.date).filter(Boolean).sort();
@@ -2477,7 +2533,9 @@
     const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD converted at 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    let notes = 'Exchange format: '+format+'. USD converted at CHF 0.90. Portfolio valued at Dec 31, '+taxYear+' closing prices (ESTV-approximate).';
+    let notes = format === 'kraken'
+      ? `Exchange format detected: kraken. Historical CHF prices fetched via CoinGecko API per transaction date. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`
+      : `Exchange format detected: ${format}. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]})});
       if (res.ok) {
