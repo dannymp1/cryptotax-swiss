@@ -2224,7 +2224,7 @@
       const firstLines = csvText.slice(0, 300).toLowerCase();
       if (firstLines.includes('txid') && firstLines.includes('aclass')) {
         setProcessingText('Fetching historical CHF prices for Kraken transactions...');
-      } else if (firstLines.includes('__swissborg__') || (firstLines.includes('local time') && firstLines.includes('net amount'))) {
+      } else if (firstLines.includes('local time') && firstLines.includes('net amount (chf)')) {
         setProcessingText('Parsing SwissBorg account statement...');
       }
       const result = await generateTaxReport(csvText, file.name);
@@ -2254,29 +2254,30 @@
           const workbook = XLSX.read(e.target.result, { type: 'binary' });
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
-          // Detect SwissBorg: has metadata rows before real headers
-          // Convert all rows as JSON to find real header row
-          const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null });
-          // Look for SwissBorg header row (contains 'Local time' and 'Currency')
+          // Read all rows as array-of-arrays to find the real header row
+          const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+          // Look for SwissBorg: real headers start after metadata rows
+          // Signature: a row where first cell is 'Local time' and contains 'Net amount (CHF)'
           let headerRowIdx = -1;
-          for (let i = 0; i < Math.min(20, allRows.length); i++) {
-            const row = allRows[i];
-            if (row && row.some(c => c === 'Local time') && row.some(c => c === 'Currency')) {
+          for (let i = 0; i < Math.min(25, allRows.length); i++) {
+            const row = allRows[i].map(c => String(c||'').trim());
+            if (row[0] === 'Local time' && row.some(c => c === 'Net amount (CHF)')) {
               headerRowIdx = i;
               break;
             }
           }
           if (headerRowIdx >= 0) {
-            // SwissBorg format — slice from real header row and convert to CSV
+            // Build clean CSV from the real header row onwards
             const dataRows = allRows.slice(headerRowIdx);
             const csv = dataRows.map(row =>
-              (row || []).map(cell => {
-                if (cell === null || cell === undefined) return '';
-                const s = String(cell);
-                return s.includes(',') || s.includes('"') ? '"' + s.replace(/"/g, '""') + '"' : s;
+              row.map(cell => {
+                const s = String(cell === null || cell === undefined ? '' : cell);
+                return (s.includes(',') || s.includes('"') || s.includes('\n'))
+                  ? '"' + s.replace(/"/g, '""') + '"'
+                  : s;
               }).join(',')
             ).join('\n');
-            resolve('__swissborg__\n' + csv);
+            resolve(csv);
           } else {
             const csv = XLSX.utils.sheet_to_csv(sheet);
             if (!csv || csv.trim().length < 10) {
@@ -2312,10 +2313,6 @@
   // ── CSV PARSER ───────────────────────────────────────────────────────────
   function parseCSVRows(csvText) {
     let text = csvText.trim();
-    // Strip SwissBorg sentinel if present
-    if (text.startsWith('__swissborg__')) {
-      text = text.slice(text.indexOf('\n') + 1).trim();
-    }
     const lines = text.split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
     const headers = lines[0].split(',').map(h => h.replace(/['"]/g,'').trim().toLowerCase());
@@ -2335,13 +2332,11 @@
 
   function detectFormat(headers) {
     const h = headers.join(',');
-    if (h.includes('__swissborg__')) return 'swissborg';
+    if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
     if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
-    // Also detect SwissBorg by headers in case it comes as CSV
-    if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     return 'unknown';
   }
 
