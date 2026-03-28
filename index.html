@@ -1491,11 +1491,10 @@
     .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
   }
 
-  /* LIVE TICKER */
-  .ticker-price { color: var(--paper); font-weight: 500; }
-  .ticker-change.pos { color: #4caf82; }
-  .ticker-change.neg { color: #e05c5c; }
   .ticker-symbol { color: var(--gold-light); font-weight: 500; }
+  .ticker-price { color: rgba(245,242,235,0.9); font-weight: 500; }
+  .ticker-chg-pos { color: #4caf82; }
+  .ticker-chg-neg { color: #e05c5c; }
 </style>
 </head>
 <body>
@@ -1559,10 +1558,10 @@
 <!-- TICKER -->
 <div class="ticker-wrap" id="live-ticker-wrap">
   <div class="ticker" id="live-ticker">
-    <!-- populated by JS -->
-    <span class="ticker-item"><span class="ticker-dot"></span>Loading live prices...</span>
+    <span class="ticker-item" style="color:rgba(245,242,235,0.5)">Loading live prices...</span>
   </div>
 </div>
+
 
 <!-- HOW IT WORKS -->
 <section class="section" id="how">
@@ -2473,26 +2472,28 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     const totalColor = totalGain >= 0 ? '#1a7a4a' : '#C0392B';
 
     const pdfHTML = `<!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<title>CryptoDeclare — Crypto Tax Report ${data.taxYear}</title>
+<title>Krypto-Steuerbericht ${data.taxYear}</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Instrument Sans', sans-serif; font-size: 11pt; color: #0D1117; background: white; }
+  body { font-family: 'Instrument Sans', sans-serif; font-size: 11pt; color: #0D1117; background: white; padding: 0; }
   @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
-  @media print { .no-print { display: none; } }
+  @media print { body { padding: 0; } .no-print { display: none; } }
+
   .page { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; }
 
   /* Header */
   .doc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 3px solid #0D1117; }
+  .doc-header-left {}
   .doc-logo-line { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .ch-flag { width: 20px; height: 20px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; flex-shrink: 0; }
+  .ch-flag { width: 20px; height: 20px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; }
   .ch-flag::before { content:''; width:8px; height:2px; background:white; box-shadow: 0 -3px 0 white,0 3px 0 white,-3px 0 0 white,3px 0 0 white; }
   .doc-brand { font-family: 'DM Serif Display', serif; font-size: 20pt; letter-spacing: -0.02em; color: #0D1117; }
   .doc-brand span { color: #B8960C; }
-  .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #8A909E; margin-top: 3px; }
+  .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #8A909E; }
   .doc-header-right { text-align: right; }
   .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 15pt; color: #0D1117; margin-bottom: 4px; }
   .doc-meta { font-family: 'DM Mono', monospace; font-size: 8pt; color: #8A909E; line-height: 1.8; letter-spacing: 0.06em; }
@@ -2506,24 +2507,26 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   /* Section title */
   .sec-title { font-family:'DM Mono',monospace; font-size:8pt; letter-spacing:0.14em; text-transform:uppercase; color:#B8960C; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #e0ddd5; margin-top:22px; }
 
-  /* Tables */
-  table { width:100%; border-collapse:collapse; font-size:9pt; margin-bottom:16px; }
+  /* Table */
+  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:16px; }
   thead tr { background:#0D1117; }
-  thead th { padding:8px 7px; font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.1em; text-transform:uppercase; color:#D4AF37; font-weight:500; text-align:left; }
+  thead th { padding:8px 7px; font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.1em; text-transform:uppercase; color:#D4AF37; font-weight:500; }
   thead th.right { text-align:right; }
   thead th.center { text-align:center; }
   tbody tr { border-bottom:1px solid #EDE9DF; }
   tbody tr:nth-child(even) { background:#F5F2EB; }
-  tbody td { padding:6px 7px; color:#0D1117; vertical-align:middle; font-size:8.5pt; }
-  .mono { font-family:'DM Mono',monospace; font-size:8.5pt; }
+  tbody td { padding:7px 7px; color:#0D1117; vertical-align:middle; }
+  .mono { font-family:'DM Mono',monospace; font-size:9pt; }
   .right { text-align:right; }
   .center { text-align:center; }
+
+  /* Total row */
   .total-row { background:#0D1117 !important; border:none !important; }
-  .total-row td { color:#F5F2EB; font-weight:700; padding:9px 7px; font-family:'DM Mono',monospace; font-size:9pt; }
+  .total-row td { color:#F5F2EB; font-weight:700; padding:9px 7px; font-family:'DM Mono',monospace; font-size:9.5pt; }
 
   /* Summary boxes */
   .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#e0ddd5; border:1px solid #e0ddd5; margin-bottom:20px; }
-  .summary-box { background:#F5F2EB; padding:14px; }
+  .summary-box { background:#F5F2EB; padding:14px 14px; }
   .summary-box.highlight { background:#0D1117; }
   .summary-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
   .summary-box.highlight .summary-label { color:rgba(245,242,235,0.4); }
@@ -2531,16 +2534,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .summary-box.highlight .summary-val { color:#F5F2EB; }
 
   /* Compliance */
-  .compliance-box { background:#F7F0D4; border:1px solid #D4AF37; border-radius:3px; padding:12px 16px; margin-bottom:10px; font-size:8.5pt; line-height:1.7; color:#3D4451; }
+  .compliance-box { background:#F7F0D4; border:1px solid #D4AF37; border-radius:3px; padding:12px 16px; margin-bottom:16px; font-size:9pt; line-height:1.7; color:#3D4451; }
   .compliance-box strong { color:#0D1117; }
 
   /* Notes */
-  .notes-box { background:#F5F2EB; border:1px solid #e0ddd5; border-radius:3px; padding:12px 16px; font-size:8.5pt; line-height:1.7; color:#3D4451; margin-bottom:12px; }
-
-  /* FIFO detail */
-  .fifo-table td { font-size:8pt; padding:5px 7px; }
-  .gain-pos { color:#1a7a4a; font-weight:600; }
-  .gain-neg { color:#C0392B; font-weight:600; }
+  .notes-box { background:#F5F2EB; border:1px solid #e0ddd5; border-radius:3px; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:16px; }
 
   /* Footer */
   .doc-footer { margin-top:28px; padding-top:12px; border-top:1px solid #e0ddd5; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#8A909E; letter-spacing:0.08em; }
@@ -2551,36 +2549,34 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 </style>
 </head>
 <body>
-<button class="no-print" onclick="window.print()">⎙ Print / Save PDF</button>
+<button class="no-print" onclick="window.print()">⬇ Print / Save PDF</button>
 <div class="page">
 
-  <!-- HEADER -->
   <div class="doc-header">
-    <div>
+    <div class="doc-header-left">
       <div class="doc-logo-line">
         <div class="ch-flag"></div>
-        <div class="doc-brand">Crypto<span>Declare</span></div>
+        <div class="doc-brand">Crypto<span>Tax</span> Swiss</div>
       </div>
       <div class="doc-subtitle">Swiss Federal Tax Administration · ESTV Compliant Report</div>
     </div>
     <div class="doc-header-right">
-      <div class="doc-report-title">Crypto Tax Report ${data.taxYear}</div>
+      <div class="doc-report-title">Krypto-Steuerbericht ${data.taxYear}</div>
       <div class="doc-meta">
-        Generated: ${new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'})}<br/>
-        Method: ${data.complianceMethod || 'FIFO'}<br/>
-        Period: ${data.dateRange || data.taxYear}
+        Erstellt: ${new Date().toLocaleDateString('de-CH')}<br/>
+        Methode: ${data.complianceMethod || 'FIFO'}<br/>
+        Periode: ${data.dateRange || data.taxYear}
       </div>
     </div>
   </div>
 
-  <!-- INFO BAR -->
   <div class="info-bar">
     <div class="info-cell">
-      <div class="info-label">Tax Year</div>
+      <div class="info-label">Steuerjahr</div>
       <div class="info-val">${data.taxYear}</div>
     </div>
     <div class="info-cell">
-      <div class="info-label">Transactions</div>
+      <div class="info-label">Transaktionen</div>
       <div class="info-val">${data.totalTransactions}</div>
     </div>
     <div class="info-cell">
@@ -2588,101 +2584,64 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
       <div class="info-val">${(data.assets||[]).length}</div>
     </div>
     <div class="info-cell">
-      <div class="info-label">Method</div>
+      <div class="info-label">Methode</div>
       <div class="info-val" style="font-size:11pt">${data.complianceMethod || 'FIFO'}</div>
     </div>
   </div>
 
-  <!-- SECTION 01: ASSET SUMMARY -->
-  <div class="sec-title">01 — Asset Summary by Position</div>
+  <div class="sec-title">01 — Transaktionsübersicht nach Asset</div>
   <table>
     <thead>
       <tr>
-        <th>Symbol</th>
-        <th>Asset Name</th>
-        <th class="center">Buys</th>
-        <th class="center">Sells</th>
-        <th class="center">Staking</th>
-        <th class="right">Holdings 31.12</th>
-        <th class="right">Value CHF</th>
-        <th class="right">Gain / Loss</th>
+        <th>Symbol</th><th>Asset</th>
+        <th class="center">Käufe</th><th class="center">Verkäufe</th><th class="center">Staking</th>
+        <th class="right">Bestand 31.12</th>
+        <th class="right">Wert CHF</th>
+        <th class="right">Gewinn / Verlust</th>
       </tr>
     </thead>
     <tbody>
       ${assetRows}
       <tr class="total-row">
-        <td colspan="6">Total Portfolio Value</td>
+        <td colspan="6">Netto-Gesamtergebnis</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
         <td class="right" style="color:${totalColor}">${totalGainStr}</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- SECTION 02: FINANCIAL SUMMARY -->
-  <div class="sec-title">02 — Financial Summary</div>
+  <div class="sec-title">02 — Zusammenfassung</div>
   <div class="summary-grid">
     <div class="summary-box">
-      <div class="summary-label">Staking / Income</div>
+      <div class="summary-label">Staking / Erträge</div>
       <div class="summary-val" style="color:#1a7a4a">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</div>
     </div>
     <div class="summary-box">
-      <div class="summary-label">Portfolio Value 31.12.${data.taxYear}</div>
+      <div class="summary-label">Portfoliowert 31.12.${data.taxYear}</div>
       <div class="summary-val">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</div>
     </div>
     <div class="summary-box highlight">
-      <div class="summary-label">Net Taxable Gain / Loss</div>
+      <div class="summary-label">Netto Gewinn / Verlust</div>
       <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
     </div>
   </div>
 
-  <!-- SECTION 03: TAX CLASSIFICATION -->
-  <div class="sec-title">03 — Swiss Tax Classification</div>
-  <table class="fifo-table">
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Amount (CHF)</th>
-        <th>Swiss Tax Treatment</th>
-        <th>Form Reference</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Capital Gains (private)</strong></td>
-        <td class="mono right ${totalGain>=0?'gain-pos':'gain-neg'}">${totalGainStr}</td>
-        <td style="color:#1a7a4a"><strong>Tax-free</strong> for private individuals (Art. 16 para. 3 DBG)</td>
-        <td class="mono">Wertschriftenverzeichnis</td>
-      </tr>
-      <tr>
-        <td><strong>Staking / Mining Income</strong></td>
-        <td class="mono right gain-pos">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-        <td style="color:#C0392B"><strong>Taxable income</strong> — declare as other income (Art. 23 DBG)</td>
-        <td class="mono">Wertschriftenverzeichnis</td>
-      </tr>
-      <tr>
-        <td><strong>Wealth (portfolio value)</strong></td>
-        <td class="mono right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-        <td><strong>Declarable as wealth</strong> — year-end market value (Art. 13 StHG)</td>
-        <td class="mono">Wertschriftenverzeichnis col. 5</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- SECTION 04: COMPLIANCE & DISCLAIMER -->
-  <div class="sec-title">04 — ESTV Compliance &amp; Legal Notice</div>
+  <div class="sec-title">03 — ESTV Compliance &amp; Disclaimer</div>
   <div class="compliance-box">
-    <strong>🇨🇭 Swiss Tax Notice:</strong> Capital gains from cryptocurrencies are generally <strong>tax-free</strong> for private individuals in Switzerland (Art. 16 para. 3 DBG). However, all holdings must be declared as taxable <strong>wealth</strong> at year-end market value, and income from staking, mining or professional trading is <strong>taxable income</strong>. This report has been prepared using the <strong>FIFO (First-In, First-Out) cost basis method</strong> in accordance with Swiss Federal Tax Administration (ESTV) guidelines, using official ESTV exchange rates where available. <em>This document is intended as a supporting annex to your cantonal tax return (Steuererklärung) and does not constitute an official tax filing. For complex cases (DeFi, NFTs, professional trading), please consult a qualified Swiss tax advisor (Treuhänder).</em>
+    <strong>🇩🇪 DE — Hinweis zur Steuerpflicht:</strong> Kursgewinne aus Kryptowährungen sind für Privatpersonen in der Schweiz grundsätzlich <strong>steuerfrei</strong>. Die Bestände müssen jedoch als Vermögen deklariert werden. Erträge aus Staking, Mining oder professionellem Handel sind steuerpflichtig. Dieser Bericht wurde nach der <strong>FIFO-Methode</strong> erstellt und verwendet offizielle ESTV-Wechselkurse soweit verfügbar. <em>Dieser Bericht ist als Beilage zur kantonalen Steuererklärung vorgesehen und stellt kein offizielles Steuerdokument dar. Bei komplexen Sachverhalten wenden Sie sich an einen qualifizierten Steuerberater (Treuhänder).</em>
   </div>
-  <div class="compliance-box" style="background:#F5F2EB; border-color:#e0ddd5;">
-    <strong>Report Details:</strong> Generated by CryptoDeclare (cryptodeclare.ch) · AI-assisted analysis using Claude (Anthropic) · Exchange rates: ESTV approximations based on transaction data · Cost basis: FIFO · All values in CHF · This report covers the period ${data.dateRange || data.taxYear}.
+  <div class="compliance-box" style="margin-top:10px">
+    <strong>🇬🇧 EN — Tax Compliance Notice:</strong> Capital gains from cryptocurrencies are generally <strong>tax-free</strong> for private individuals in Switzerland. However, holdings must be declared as assets in your tax return. Income from staking, mining or professional trading is taxable. This report has been prepared using the <strong>FIFO method</strong> and uses official ESTV exchange rates where available. <em>This document is intended as a supporting annex to your cantonal tax return and does not constitute an official tax document. For complex cases, please consult a qualified Swiss tax advisor (Treuhänder).</em>
+  </div>
+  <div class="compliance-box" style="margin-top:10px">
+    <strong>🇫🇷 FR — Avis de conformité fiscale:</strong> Les gains en capital sur les cryptomonnaies sont généralement <strong>exonérés d'impôt</strong> pour les particuliers en Suisse. Cependant, les avoirs doivent être déclarés comme fortune. Les revenus du staking, du minage ou du trading professionnel sont imposables. Ce rapport a été établi selon la <strong>méthode FIFO</strong> et utilise les taux de change officiels ESTV dans la mesure du possible. <em>Ce document est destiné à être joint en annexe à votre déclaration d'impôt cantonale et ne constitue pas un document fiscal officiel. Pour les cas complexes, veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).</em>
   </div>
 
-  ${data.notes ? `<div class="notes-box"><strong>Notes &amp; Assumptions:</strong> ${data.notes}</div>` : ''}
+  ${data.notes ? `<div class="notes-box"><strong>Hinweise / Notes / Remarques:</strong> ${data.notes}</div>` : ''}
 
-  <!-- FOOTER -->
   <div class="doc-footer">
-    <span>CryptoDeclare · cryptodeclare.ch · Swiss nDSG &amp; GDPR Compliant</span>
-    <span>Generated: ${new Date().toLocaleDateString('en-GB')} · Supporting document only — not an official tax filing</span>
+    <span>CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
+    <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
   </div>
 
 </div>
@@ -2692,7 +2651,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     const blob = new Blob([pdfHTML], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `CryptoDeclare-${data.taxYear}-Tax-Report.html`;
+    a.download = `CryptoDeclare-${data.taxYear}-Steuerbericht.html`;
     a.click();
     URL.revokeObjectURL(a.href);
   }
@@ -2715,66 +2674,82 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   });
 
 
-  // ── LIVE CRYPTO TICKER ──
+  // ── LIVE CRYPTO TICKER (Coinbase API + CoinGecko fallback) ──
   const TICKER_COINS = [
-    { id: 'bitcoin',      sym: 'BTC', name: 'Bitcoin' },
-    { id: 'ethereum',     sym: 'ETH', name: 'Ethereum' },
-    { id: 'solana',       sym: 'SOL', name: 'Solana' },
-    { id: 'binancecoin',  sym: 'BNB', name: 'BNB Chain' },
-    { id: 'cardano',      sym: 'ADA', name: 'Cardano' },
-    { id: 'ripple',       sym: 'XRP', name: 'Ripple' },
-    { id: 'polkadot',     sym: 'DOT', name: 'Polkadot' },
-    { id: 'avalanche-2',  sym: 'AVAX', name: 'Avalanche' },
-    { id: 'matic-network',sym: 'MATIC', name: 'Polygon' },
-    { id: 'usd-coin',     sym: 'USDC', name: 'USD Coin' },
+    { id: 'bitcoin',       sym: 'BTC',  name: 'Bitcoin',    cb: 'BTC-CHF' },
+    { id: 'ethereum',      sym: 'ETH',  name: 'Ethereum',   cb: 'ETH-CHF' },
+    { id: 'solana',        sym: 'SOL',  name: 'Solana',     cb: 'SOL-CHF' },
+    { id: 'binancecoin',   sym: 'BNB',  name: 'BNB',        cb: null },
+    { id: 'cardano',       sym: 'ADA',  name: 'Cardano',    cb: 'ADA-CHF' },
+    { id: 'ripple',        sym: 'XRP',  name: 'Ripple',     cb: 'XRP-CHF' },
+    { id: 'polkadot',      sym: 'DOT',  name: 'Polkadot',   cb: 'DOT-CHF' },
+    { id: 'avalanche-2',   sym: 'AVAX', name: 'Avalanche',  cb: null },
+    { id: 'matic-network', sym: 'MATIC',name: 'Polygon',    cb: null },
+    { id: 'usd-coin',      sym: 'USDC', name: 'USD Coin',   cb: 'USDC-CHF' },
   ];
 
   function fmtPrice(p) {
-    if (p >= 1000) return p.toLocaleString('de-CH', {minimumFractionDigits:0, maximumFractionDigits:0});
-    if (p >= 1)    return p.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2});
+    if (p >= 10000) return p.toLocaleString('de-CH', {maximumFractionDigits:0});
+    if (p >= 100)   return p.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2});
+    if (p >= 1)     return p.toLocaleString('de-CH', {minimumFractionDigits:3, maximumFractionDigits:3});
     return p.toLocaleString('de-CH', {minimumFractionDigits:4, maximumFractionDigits:4});
   }
 
-  function buildTickerHTML(prices) {
-    // Double the items for seamless loop
+  function renderTicker(prices) {
     const items = [...TICKER_COINS, ...TICKER_COINS].map(c => {
-      const data = prices[c.id];
-      if (!data) return '';
-      const chf = data.chf;
-      const chg = data.chf_24h_change;
+      const d = prices[c.id];
+      if (!d) return '';
+      const chg = d.chg;
       const chgStr = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
-      const chgClass = chg >= 0 ? 'pos' : 'neg';
-      return `<span class="ticker-item">
-        <span class="ticker-symbol">${c.sym}</span>
-        <span class="ticker-price">CHF ${fmtPrice(chf)}</span>
-        <span class="ticker-change ${chgClass}">${chgStr}</span>
-        <span class="ticker-dot"></span>
-      </span>`;
+      const chgClass = chg >= 0 ? 'ticker-chg-pos' : 'ticker-chg-neg';
+      return '<span class="ticker-item">' +
+        '<span class="ticker-symbol">' + c.sym + '</span> ' +
+        '<span class="ticker-price">CHF ' + fmtPrice(d.chf) + '</span> ' +
+        '<span class="' + chgClass + '">' + chgStr + '</span>' +
+        '<span class="ticker-dot"></span></span>';
     }).join('');
-    return items;
+    const el = document.getElementById('live-ticker');
+    if (el) el.innerHTML = items;
   }
 
-  async function fetchLivePrices() {
+  async function fetchTickerPrices() {
     try {
+      // Primary: CoinGecko (free, no key, CHF + 24h change in one call)
       const ids = TICKER_COINS.map(c => c.id).join(',');
       const res = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=chf&include_24hr_change=true`
+        'https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=chf&include_24hr_change=true',
+        { signal: AbortSignal.timeout(5000) }
       );
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw new Error('CoinGecko ' + res.status);
       const data = await res.json();
-      const ticker = document.getElementById('live-ticker');
-      if (ticker) {
-        ticker.innerHTML = buildTickerHTML(data);
+      const prices = {};
+      TICKER_COINS.forEach(c => {
+        if (data[c.id]) prices[c.id] = { chf: data[c.id].chf, chg: data[c.id].chf_24h_change || 0 };
+      });
+      renderTicker(prices);
+    } catch(e) {
+      // Fallback: Coinbase spot prices (no 24h change available)
+      try {
+        const cbCoins = TICKER_COINS.filter(c => c.cb);
+        const fetches = cbCoins.map(c =>
+          fetch('https://api.coinbase.com/v2/prices/' + c.cb + '/spot', { signal: AbortSignal.timeout(5000) })
+            .then(r => r.json())
+            .then(d => ({ id: c.id, chf: parseFloat(d.data.amount), chg: 0 }))
+            .catch(() => null)
+        );
+        const results = await Promise.all(fetches);
+        const prices = {};
+        results.forEach(r => { if (r) prices[r.id] = { chf: r.chf, chg: r.chg }; });
+        if (Object.keys(prices).length > 0) renderTicker(prices);
+      } catch(e2) {
+        console.warn('Ticker fallback also failed');
       }
-    } catch (e) {
-      // Silently fail — keep whatever is showing
-      console.warn('Ticker fetch failed:', e.message);
     }
   }
 
-  // Fetch immediately then every 30 seconds
-  fetchLivePrices();
-  setInterval(fetchLivePrices, 30000);
+  // Start immediately, then refresh every 30 seconds
+  fetchTickerPrices();
+  setInterval(fetchTickerPrices, 30000);
 
 </script>
 </body>
