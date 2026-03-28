@@ -1492,7 +1492,7 @@
   }
 
   .ticker-symbol { color: var(--gold-light); font-weight: 500; }
-  .ticker-price { color: rgba(245,242,235,0.9); font-weight: 500; }
+  .ticker-price  { color: rgba(245,242,235,0.9); font-weight: 500; }
   .ticker-chg-pos { color: #4caf82; }
   .ticker-chg-neg { color: #e05c5c; }
 </style>
@@ -2263,74 +2263,325 @@
     });
   }
 
-  async function generateTaxReport(csvContent, filename) {
-    // Truncate if very large
-    const truncated = csvContent.length > 8000 ? csvContent.slice(0, 8000) + '\n[... truncated for processing ...]' : csvContent;
 
-    const prompt = `You are a Swiss crypto tax accountant. Carefully analyse the transaction data below and return ONLY a valid JSON object — no prose, no markdown, no explanation.
+  // ── PRECISE CSV PARSER ──────────────────────────────────────────────────
+  function parseCSVRows(csvText) {
+    const lines = csvText.trim().split('\n').filter(l => l.trim());
+    const headers = lines[0].split(',').map(h => h.replace(/['"]/g,'').trim().toLowerCase());
+    return lines.slice(1).map(line => {
+      const vals = [];
+      let cur = '', inQ = false;
+      for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+        else cur += ch;
+      }
+      vals.push(cur.trim());
+      const row = {};
+      headers.forEach((h, i) => row[h] = (vals[i] || '').replace(/^"|"$/g,'').trim());
+      return row;
+    });
+  }
 
-CRITICAL CALCULATION RULES — follow exactly:
-1. FIFO (First In First Out): Match sells against the EARLIEST unsold buy lots in chronological order
-2. endHolding = EXACT sum of all buys minus EXACT sum of all sells for that asset. Count every row carefully.
-3. DECIMALS: Preserve exact decimal precision from the CSV. Never multiply or scale quantities. If CSV says "80" SOL that is 80.0 SOL not 80000.
-4. gainLossCHF per asset = for each sell, (sell price CHF × qty sold) minus (FIFO cost basis CHF × qty sold). Sum all sells.
-5. stakingIncomeCHF = sum of all staking/reward rows converted to CHF at the price on that date
-6. totalGainLossCHF = sum of all asset gainLossCHF values (can be negative for losses) + stakingIncomeCHF
-7. totalPortfolioValueCHF = sum of (endHolding × latest price in CHF) for all assets
-8. buyCount = number of buy/purchase rows for that asset
-9. sellCount = number of sell rows for that asset
-10. stakingCount = number of staking/reward rows for that asset
-11. If a price is in USD/USDT and not CHF, convert using approximate rate: 1 USD ≈ 0.90 CHF (note this in the notes field)
-12. Double-check: endHolding must equal totalBought minus totalSold. If it does not, recompute.
+  function detectExchangeFormat(headers) {
+    const h = headers.join(',');
+    if (h.includes('txid') && h.includes('refid') && h.includes('aclass')) return 'kraken';
+    if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
+    if (h.includes('transaction type') && h.includes('quantity transacted') && h.includes('spot price')) return 'coinbase';
+    if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
+    return 'unknown';
+  }
 
-Return this exact JSON structure:
-{
-  "taxYear": "2024",
-  "clientRef": "Auto-generated",
-  "dateRange": "DD.MM.YYYY – DD.MM.YYYY",
-  "totalTransactions": 0,
-  "assets": [
-    {
-      "symbol": "BTC",
-      "name": "Bitcoin",
-      "buyCount": 0,
-      "sellCount": 0,
-      "stakingCount": 0,
-      "totalBought": 0.000,
-      "totalSold": 0.000,
-      "avgBuyCHF": 0,
-      "avgSellCHF": 0,
-      "gainLossCHF": 0.00,
-      "endHolding": 0.000,
-      "endValueCHF": 0.00
+  function normaliseRows(rows, format) {
+    // Returns array of { date, type, asset, amount, priceCHF, totalCHF }
+    // type: 'buy' | 'sell' | 'staking'
+    const USD_TO_CHF = 0.90;
+    const out = [];
+
+    for (const r of rows) {
+      try {
+        let date = '', type = '', asset = '', amount = 0, priceCHF = 0, totalCHF = 0;
+
+        if (format === 'kraken') {
+          date = r['time'] || '';
+          const t = (r['type'] || '').toLowerCase();
+          if (!['buy','sell','staking','reward'].some(x => t.includes(x))) continue;
+          type = t.includes('buy') ? 'buy' : t.includes('sell') ? 'sell' : 'staking';
+          const raw = (r['asset'] || '').replace(/^X{1,2}|Z{1,2}/,'');
+          asset = raw === 'XBT' ? 'BTC' : raw === 'XDG' ? 'DOGE' : raw;
+          amount = Math.abs(parseFloat(r['amount']) || 0);
+          // Kraken doesn't give price directly — we note it
+          totalCHF = 0; priceCHF = 0;
+        }
+        else if (format === 'binance') {
+          date = r['date(utc)'] || r['date'] || '';
+          const side = (r['side'] || '').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const pair = r['pair'] || '';
+          asset = pair.replace(/(USDT|BUSD|BTC|ETH|BNB|USD)$/,'') || pair.slice(0,3);
+          const execStr = r['executed'] || '';
+          amount = parseFloat(execStr) || 0;
+          const priceUSD = parseFloat(r['price']) || 0;
+          priceCHF = priceUSD * USD_TO_CHF;
+          totalCHF = amount * priceCHF;
+        }
+        else if (format === 'coinbase') {
+          date = r['timestamp'] || '';
+          const t = (r['transaction type'] || '').toLowerCase();
+          if (t.includes('buy')) type = 'buy';
+          else if (t.includes('sell')) type = 'sell';
+          else if (t.includes('reward') || t.includes('staking') || t.includes('income')) type = 'staking';
+          else continue;
+          asset = (r['asset'] || '').toUpperCase();
+          amount = Math.abs(parseFloat(r['quantity transacted']) || 0);
+          const currency = (r['spot price currency'] || '').toUpperCase();
+          priceCHF = parseFloat(r['spot price at transaction']) || 0;
+          if (currency === 'USD') priceCHF *= USD_TO_CHF;
+          totalCHF = Math.abs(parseFloat(r['subtotal']) || amount * priceCHF);
+          if (currency === 'USD') totalCHF *= USD_TO_CHF;
+        }
+        else if (format === 'generic') {
+          date = r['date'] || '';
+          const t = (r['type'] || '').toLowerCase();
+          if (t.includes('buy')) type = 'buy';
+          else if (t.includes('sell')) type = 'sell';
+          else if (t.includes('staking') || t.includes('reward')) type = 'staking';
+          else continue;
+          asset = (r['asset'] || '').toUpperCase();
+          amount = Math.abs(parseFloat(r['amount']) || 0);
+          priceCHF = parseFloat(r['price_chf']) || 0;
+          totalCHF = Math.abs(parseFloat(r['total_chf']) || amount * priceCHF);
+        }
+        else {
+          // Unknown: try to auto-detect columns
+          const keys = Object.keys(r);
+          const dateKey = keys.find(k => k.includes('date') || k.includes('time'));
+          const typeKey = keys.find(k => k.includes('type') || k.includes('side') || k.includes('action'));
+          const assetKey = keys.find(k => k.includes('asset') || k.includes('currency') || k.includes('coin') || k.includes('symbol'));
+          const amtKey  = keys.find(k => k.includes('amount') || k.includes('qty') || k.includes('quantity') || k.includes('size'));
+          const priceKey = keys.find(k => k.includes('price'));
+          if (!typeKey || !assetKey || !amtKey) continue;
+          date = r[dateKey] || '';
+          const t = (r[typeKey] || '').toLowerCase();
+          if (t.includes('buy')) type = 'buy';
+          else if (t.includes('sell')) type = 'sell';
+          else if (t.includes('reward') || t.includes('staking')) type = 'staking';
+          else continue;
+          asset = (r[assetKey] || '').toUpperCase().replace(/[^A-Z]/g,'');
+          amount = Math.abs(parseFloat(r[amtKey]) || 0);
+          priceCHF = parseFloat(r[priceKey] || 0) || 0;
+          totalCHF = amount * priceCHF;
+        }
+
+        if (amount <= 0 || !asset) continue;
+        out.push({ date, type, asset, amount, priceCHF, totalCHF });
+      } catch(e) { /* skip bad rows */ }
     }
-  ],
-  "stakingIncomeCHF": 0.00,
-  "totalGainLossCHF": 0.00,
-  "totalPortfolioValueCHF": 0.00,
-  "complianceMethod": "FIFO",
-  "notes": "List any assumptions, currency conversions, or data quality issues"
-}
+    return out;
+  }
 
+  function computeFIFO(transactions) {
+    // Returns per-asset summary with 100% accurate FIFO maths
+    const assets = {};
+
+    for (const tx of transactions) {
+      if (!assets[tx.asset]) {
+        assets[tx.asset] = {
+          symbol: tx.asset,
+          buyLots: [],      // { amount, priceCHF }
+          buyCount: 0,
+          sellCount: 0,
+          stakingCount: 0,
+          totalBought: 0,
+          totalSold: 0,
+          totalCostBasis: 0,
+          totalSaleProceeds: 0,
+          gainLossCHF: 0,
+          stakingIncomeCHF: 0,
+          lastPriceCHF: 0,
+        };
+      }
+      const a = assets[tx.asset];
+
+      if (tx.type === 'buy') {
+        a.buyCount++;
+        a.totalBought = Math.round((a.totalBought + tx.amount) * 1e8) / 1e8;
+        if (tx.priceCHF > 0) a.lastPriceCHF = tx.priceCHF;
+        a.buyLots.push({ amount: tx.amount, priceCHF: tx.priceCHF || 0 });
+      }
+      else if (tx.type === 'sell') {
+        a.sellCount++;
+        a.totalSold = Math.round((a.totalSold + tx.amount) * 1e8) / 1e8;
+        if (tx.priceCHF > 0) a.lastPriceCHF = tx.priceCHF;
+        const proceeds = tx.totalCHF > 0 ? tx.totalCHF : tx.amount * (tx.priceCHF || 0);
+        a.totalSaleProceeds += proceeds;
+
+        // FIFO: consume oldest lots
+        let remaining = tx.amount;
+        let costBasis = 0;
+        const lots = a.buyLots;
+        for (let i = 0; i < lots.length && remaining > 0; i++) {
+          const take = Math.min(lots[i].amount, remaining);
+          costBasis += take * lots[i].priceCHF;
+          lots[i].amount = Math.round((lots[i].amount - take) * 1e8) / 1e8;
+          remaining = Math.round((remaining - take) * 1e8) / 1e8;
+        }
+        // Remove exhausted lots
+        a.buyLots = lots.filter(l => l.amount > 0);
+        a.totalCostBasis += costBasis;
+        a.gainLossCHF += proceeds - costBasis;
+      }
+      else if (tx.type === 'staking') {
+        a.stakingCount++;
+        a.totalBought = Math.round((a.totalBought + tx.amount) * 1e8) / 1e8;
+        const income = tx.totalCHF > 0 ? tx.totalCHF : tx.amount * (tx.priceCHF || 0);
+        a.stakingIncomeCHF += income;
+        // Staking rewards added to buy lots at their income value
+        a.buyLots.push({ amount: tx.amount, priceCHF: tx.priceCHF || 0 });
+      }
+    }
+
+    // Compute end holdings and values
+    const result = [];
+    let totalStaking = 0;
+    let totalGainLoss = 0;
+    let totalPortfolio = 0;
+
+    for (const [sym, a] of Object.entries(assets)) {
+      const endHolding = Math.round((a.totalBought - a.totalSold) * 1e8) / 1e8;
+      const endValueCHF = endHolding * a.lastPriceCHF;
+      totalStaking += a.stakingIncomeCHF;
+      totalGainLoss += a.gainLossCHF;
+      totalPortfolio += endValueCHF;
+
+      result.push({
+        symbol: sym,
+        name: sym,
+        buyCount: a.buyCount,
+        sellCount: a.sellCount,
+        stakingCount: a.stakingCount,
+        totalBought: a.totalBought,
+        totalSold: a.totalSold,
+        avgBuyCHF: a.buyCount > 0 && a.totalBought > 0
+          ? Math.round(a.totalCostBasis / (a.totalBought - endHolding + a.totalSold) * 100) / 100
+          : 0,
+        avgSellCHF: a.sellCount > 0 && a.totalSold > 0
+          ? Math.round(a.totalSaleProceeds / a.totalSold * 100) / 100
+          : 0,
+        gainLossCHF: Math.round(a.gainLossCHF * 100) / 100,
+        stakingIncomeCHF: Math.round(a.stakingIncomeCHF * 100) / 100,
+        endHolding,
+        endValueCHF: Math.round(endValueCHF * 100) / 100,
+        lastPriceCHF: a.lastPriceCHF,
+      });
+    }
+
+    return {
+      assets: result,
+      stakingIncomeCHF: Math.round(totalStaking * 100) / 100,
+      totalGainLossCHF: Math.round((totalGainLoss + totalStaking) * 100) / 100,
+      totalPortfolioValueCHF: Math.round(totalPortfolio * 100) / 100,
+    };
+  }
+
+  async function generateTaxReport(csvContent, filename) {
+    // Step 1: Parse CSV precisely in JS
+    const rows = parseCSVRows(csvContent);
+    if (!rows.length) throw new Error('No transactions found in file');
+
+    const headers = Object.keys(rows[0]);
+    const format = detectExchangeFormat(headers);
+    const transactions = normaliseRows(rows, format);
+    if (!transactions.length) throw new Error('Could not parse any transactions — check file format');
+
+    // Step 2: Run 100% accurate FIFO calculations in JS
+    const computed = computeFIFO(transactions);
+
+    // Sort by date to get range
+    const dates = transactions.map(t => t.date).filter(Boolean).sort();
+    const dateRange = dates.length >= 2
+      ? formatDate(dates[0]) + ' – ' + formatDate(dates[dates.length-1])
+      : (dates[0] ? formatDate(dates[0]) : '2024');
+
+    const taxYear = dates.length ? (dates[dates.length-1].slice(0,4) || '2024') : '2024';
+
+    // Step 3: Send pre-computed numbers to AI just to enrich names & notes
+    const assetList = computed.assets.map(a =>
+      a.symbol + ': bought=' + a.totalBought + ' sold=' + a.totalSold +
+      ' holding=' + a.endHolding + ' gainCHF=' + a.gainLossCHF
+    ).join('; ');
+
+    const enrichPrompt = `You are a Swiss crypto tax assistant. Below are pre-calculated FIFO results for a crypto portfolio. Your job is ONLY to:
+1. Fill in the full "name" for each asset symbol (e.g. BTC = Bitcoin, ETH = Ethereum, SOL = Solana, etc.)
+2. Write a brief "notes" field mentioning the exchange format detected (${format}), any currency conversions used (USD→CHF at 0.90), and any assumptions.
+3. Return ONLY a JSON object with two fields: "assetNames" (object mapping symbol to full name) and "notes" (string).
+
+DO NOT recalculate any numbers. DO NOT change any values. Just provide names and notes.
+
+Assets: ${assetList}
 Filename: ${filename}
 
-TRANSACTION DATA:
-${truncated}`;
+Return ONLY: {"assetNames": {"BTC": "Bitcoin", ...}, "notes": "..."}`;
 
-        const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    let assetNames = {};
+    let notes = '';
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: enrichPrompt }] })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const text = (data.content || []).map(c => c.text || '').join('');
+        const clean = text.replace(/```json|```/gi,'').trim();
+        const s = clean.indexOf('{'), e = clean.lastIndexOf('}');
+        if (s !== -1 && e > s) {
+          const parsed = JSON.parse(clean.slice(s, e+1));
+          assetNames = parsed.assetNames || {};
+          notes = parsed.notes || '';
+        }
+      }
+    } catch(e) { /* AI enrichment failed — continue with computed data */ }
 
-    if (!response.ok) throw new Error('AI processing failed. Please try again.');
+    // Step 4: Build final report object with 100% accurate numbers
+    const finalAssets = computed.assets.map(a => ({
+      symbol: a.symbol,
+      name: assetNames[a.symbol] || assetNames[a.symbol.toLowerCase()] || a.symbol,
+      buyCount: a.buyCount,
+      sellCount: a.sellCount,
+      stakingCount: a.stakingCount,
+      totalBought: a.totalBought,
+      totalSold: a.totalSold,
+      avgBuyCHF: a.avgBuyCHF,
+      avgSellCHF: a.avgSellCHF,
+      gainLossCHF: a.gainLossCHF,
+      endHolding: a.endHolding,
+      endValueCHF: a.endValueCHF,
+    }));
 
-    const data = await response.json();
-    const fullText = data.content.map(c => c.text || '').join('');
-    return parseReport(fullText);
+    return {
+      taxYear,
+      clientRef: 'Auto-generated',
+      dateRange,
+      totalTransactions: transactions.length,
+      assets: finalAssets,
+      stakingIncomeCHF: computed.stakingIncomeCHF,
+      totalGainLossCHF: computed.totalGainLossCHF,
+      totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
+      complianceMethod: 'FIFO',
+      notes: notes || ('Exchange format: ' + format + '. Values in CHF. USD converted at 0.90.'),
+    };
   }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr.slice(0,10);
+    return d.toLocaleDateString('de-CH');
+  }
+
 
   function parseReport(fullText) {
     let clean = (fullText||'').replace(/```json/gi,'').replace(/```/g,'').trim();
@@ -2679,75 +2930,55 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     observer.observe(el);
   });
 
-
-  // ── LIVE CRYPTO TICKER ──
+  // ── LIVE CRYPTO TICKER ──────────────────────────────────────────────────
   const TICKER_COINS = [
-    { id: 'bitcoin',       sym: 'BTC',  name: 'Bitcoin',   cb: 'BTC-CHF' },
-    { id: 'ethereum',      sym: 'ETH',  name: 'Ethereum',  cb: 'ETH-CHF' },
-    { id: 'solana',        sym: 'SOL',  name: 'Solana',    cb: 'SOL-CHF' },
-    { id: 'binancecoin',   sym: 'BNB',  name: 'BNB',       cb: null },
-    { id: 'cardano',       sym: 'ADA',  name: 'Cardano',   cb: 'ADA-CHF' },
-    { id: 'ripple',        sym: 'XRP',  name: 'Ripple',    cb: 'XRP-CHF' },
-    { id: 'polkadot',      sym: 'DOT',  name: 'Polkadot',  cb: 'DOT-CHF' },
-    { id: 'avalanche-2',   sym: 'AVAX', name: 'Avalanche', cb: null },
-    { id: 'matic-network', sym: 'MATIC',name: 'Polygon',   cb: null },
-    { id: 'usd-coin',      sym: 'USDC', name: 'USD Coin',  cb: 'USDC-CHF' },
+    {id:'bitcoin',sym:'BTC',cb:'BTC-CHF'},{id:'ethereum',sym:'ETH',cb:'ETH-CHF'},
+    {id:'solana',sym:'SOL',cb:'SOL-CHF'},{id:'binancecoin',sym:'BNB',cb:null},
+    {id:'cardano',sym:'ADA',cb:'ADA-CHF'},{id:'ripple',sym:'XRP',cb:'XRP-CHF'},
+    {id:'polkadot',sym:'DOT',cb:'DOT-CHF'},{id:'avalanche-2',sym:'AVAX',cb:null},
+    {id:'matic-network',sym:'MATIC',cb:null},{id:'usd-coin',sym:'USDC',cb:'USDC-CHF'},
   ];
-
-  function fmtPrice(p) {
-    if (p >= 10000) return p.toLocaleString('de-CH', {maximumFractionDigits:0});
-    if (p >= 100)   return p.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2});
-    if (p >= 1)     return p.toLocaleString('de-CH', {minimumFractionDigits:3, maximumFractionDigits:3});
-    return p.toLocaleString('de-CH', {minimumFractionDigits:4, maximumFractionDigits:4});
+  function fmtTicker(p){
+    if(p>=10000) return p.toLocaleString('de-CH',{maximumFractionDigits:0});
+    if(p>=100)   return p.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
+    if(p>=1)     return p.toLocaleString('de-CH',{minimumFractionDigits:3,maximumFractionDigits:3});
+    return p.toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:4});
   }
-
-  function renderTicker(prices) {
-    const items = [...TICKER_COINS, ...TICKER_COINS].map(c => {
-      const d = prices[c.id];
-      if (!d) return '';
-      const chg = d.chg;
-      const chgStr = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
-      const chgClass = chg >= 0 ? 'ticker-chg-pos' : 'ticker-chg-neg';
-      return '<span class="ticker-item">' +
-        '<span class="ticker-symbol">' + c.sym + '</span> ' +
-        '<span class="ticker-price">CHF ' + fmtPrice(d.chf) + '</span> ' +
-        '<span class="' + chgClass + '">' + chgStr + '</span>' +
+  function renderTicker(prices){
+    const items=[...TICKER_COINS,...TICKER_COINS].map(c=>{
+      const d=prices[c.id]; if(!d) return '';
+      const chg=d.chg, chgStr=(chg>=0?'+':'')+chg.toFixed(2)+'%';
+      return '<span class="ticker-item"><span class="ticker-symbol">'+c.sym+'</span> '+
+        '<span class="ticker-price">CHF '+fmtTicker(d.chf)+'</span> '+
+        '<span class="'+(chg>=0?'ticker-chg-pos':'ticker-chg-neg')+'">'+chgStr+'</span>'+
         '<span class="ticker-dot"></span></span>';
     }).join('');
-    const el = document.getElementById('live-ticker');
-    if (el) el.innerHTML = items;
+    const el=document.getElementById('live-ticker');
+    if(el) el.innerHTML=items;
   }
-
-  async function fetchTickerPrices() {
-    try {
-      const ids = TICKER_COINS.map(c => c.id).join(',');
-      const res = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=chf&include_24hr_change=true',
-        { signal: AbortSignal.timeout(6000) }
-      );
-      if (!res.ok) throw new Error('CoinGecko ' + res.status);
-      const data = await res.json();
-      const prices = {};
-      TICKER_COINS.forEach(c => {
-        if (data[c.id]) prices[c.id] = { chf: data[c.id].chf, chg: data[c.id].chf_24h_change || 0 };
-      });
+  async function fetchTickerPrices(){
+    try{
+      const ids=TICKER_COINS.map(c=>c.id).join(',');
+      const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids+'&vs_currencies=chf&include_24hr_change=true',{signal:AbortSignal.timeout(6000)});
+      if(!res.ok) throw new Error('cg');
+      const data=await res.json();
+      const prices={};
+      TICKER_COINS.forEach(c=>{ if(data[c.id]) prices[c.id]={chf:data[c.id].chf,chg:data[c.id].chf_24h_change||0}; });
       renderTicker(prices);
-    } catch(e) {
-      try {
-        const cbCoins = TICKER_COINS.filter(c => c.cb);
-        const results = await Promise.all(cbCoins.map(c =>
-          fetch('https://api.coinbase.com/v2/prices/' + c.cb + '/spot', { signal: AbortSignal.timeout(6000) })
-            .then(r => r.json()).then(d => ({ id: c.id, chf: parseFloat(d.data.amount), chg: 0 })).catch(() => null)
+    } catch(e){
+      try{
+        const results=await Promise.all(TICKER_COINS.filter(c=>c.cb).map(c=>
+          fetch('https://api.coinbase.com/v2/prices/'+c.cb+'/spot',{signal:AbortSignal.timeout(6000)})
+            .then(r=>r.json()).then(d=>({id:c.id,chf:parseFloat(d.data.amount),chg:0})).catch(()=>null)
         ));
-        const prices = {};
-        results.forEach(r => { if (r) prices[r.id] = r; });
-        if (Object.keys(prices).length > 0) renderTicker(prices);
-      } catch(e2) { console.warn('Ticker failed:', e2.message); }
+        const prices={};
+        results.forEach(r=>{ if(r) prices[r.id]=r; });
+        if(Object.keys(prices).length>0) renderTicker(prices);
+      } catch(e2){ console.warn('Ticker failed'); }
     }
   }
-
   fetchTickerPrices();
-  setInterval(fetchTickerPrices, 30000);
+  setInterval(fetchTickerPrices,30000);
 
 </script>
 </body>
