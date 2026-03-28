@@ -1490,6 +1490,12 @@
     .exchanges { padding: 0 24px 80px; }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
   }
+
+  /* LIVE TICKER */
+  .ticker-price { color: var(--paper); font-weight: 500; }
+  .ticker-change.pos { color: #4caf82; }
+  .ticker-change.neg { color: #e05c5c; }
+  .ticker-symbol { color: var(--gold-light); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -1551,29 +1557,10 @@
 </section>
 
 <!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker">
-    <!-- doubled for seamless loop -->
-    <span class="ticker-item"><strong>BTC</strong> Bitcoin <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>ETH</strong> Ethereum <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>SOL</strong> Solana <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>USDC</strong> USD Coin <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>BNB</strong> BNB Chain <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>ADA</strong> Cardano <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>DOT</strong> Polkadot <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>AVAX</strong> Avalanche <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>XRP</strong> Ripple <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>MATIC</strong> Polygon <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>BTC</strong> Bitcoin <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>ETH</strong> Ethereum <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>SOL</strong> Solana <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>USDC</strong> USD Coin <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>BNB</strong> BNB Chain <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>ADA</strong> Cardano <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>DOT</strong> Polkadot <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>AVAX</strong> Avalanche <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>XRP</strong> Ripple <span class="ticker-dot"></span></span>
-    <span class="ticker-item"><strong>MATIC</strong> Polygon <span class="ticker-dot"></span></span>
+<div class="ticker-wrap" id="live-ticker-wrap">
+  <div class="ticker" id="live-ticker">
+    <!-- populated by JS -->
+    <span class="ticker-item"><span class="ticker-dot"></span>Loading live prices...</span>
   </div>
 </div>
 
@@ -2726,6 +2713,69 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     observer.observe(el);
   });
+
+
+  // ── LIVE CRYPTO TICKER ──
+  const TICKER_COINS = [
+    { id: 'bitcoin',      sym: 'BTC', name: 'Bitcoin' },
+    { id: 'ethereum',     sym: 'ETH', name: 'Ethereum' },
+    { id: 'solana',       sym: 'SOL', name: 'Solana' },
+    { id: 'binancecoin',  sym: 'BNB', name: 'BNB Chain' },
+    { id: 'cardano',      sym: 'ADA', name: 'Cardano' },
+    { id: 'ripple',       sym: 'XRP', name: 'Ripple' },
+    { id: 'polkadot',     sym: 'DOT', name: 'Polkadot' },
+    { id: 'avalanche-2',  sym: 'AVAX', name: 'Avalanche' },
+    { id: 'matic-network',sym: 'MATIC', name: 'Polygon' },
+    { id: 'usd-coin',     sym: 'USDC', name: 'USD Coin' },
+  ];
+
+  function fmtPrice(p) {
+    if (p >= 1000) return p.toLocaleString('de-CH', {minimumFractionDigits:0, maximumFractionDigits:0});
+    if (p >= 1)    return p.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2});
+    return p.toLocaleString('de-CH', {minimumFractionDigits:4, maximumFractionDigits:4});
+  }
+
+  function buildTickerHTML(prices) {
+    // Double the items for seamless loop
+    const items = [...TICKER_COINS, ...TICKER_COINS].map(c => {
+      const data = prices[c.id];
+      if (!data) return '';
+      const chf = data.chf;
+      const chg = data.chf_24h_change;
+      const chgStr = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+      const chgClass = chg >= 0 ? 'pos' : 'neg';
+      return `<span class="ticker-item">
+        <span class="ticker-symbol">${c.sym}</span>
+        <span class="ticker-price">CHF ${fmtPrice(chf)}</span>
+        <span class="ticker-change ${chgClass}">${chgStr}</span>
+        <span class="ticker-dot"></span>
+      </span>`;
+    }).join('');
+    return items;
+  }
+
+  async function fetchLivePrices() {
+    try {
+      const ids = TICKER_COINS.map(c => c.id).join(',');
+      const res = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=chf&include_24hr_change=true`
+      );
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      const ticker = document.getElementById('live-ticker');
+      if (ticker) {
+        ticker.innerHTML = buildTickerHTML(data);
+      }
+    } catch (e) {
+      // Silently fail — keep whatever is showing
+      console.warn('Ticker fetch failed:', e.message);
+    }
+  }
+
+  // Fetch immediately then every 30 seconds
+  fetchLivePrices();
+  setInterval(fetchLivePrices, 30000);
+
 </script>
 </body>
 </html>
