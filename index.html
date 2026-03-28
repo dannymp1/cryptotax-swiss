@@ -2267,14 +2267,15 @@
   // Used for accurate wealth declaration values
   // Source: CoinGecko / major exchange closing prices
   const YEAREND_PRICES_2024 = {
-    'BTC': 95200, 'ETH': 3050, 'SOL': 196.0, 'BNB': 610.0,
-    'ADA': 0.845, 'XRP': 2.06, 'DOT': 6.30, 'AVAX': 34.50,
-    'MATIC': 0.44, 'USDC': 0.899, 'USDT': 0.899, 'DAI': 0.899,
-    'LINK': 18.50, 'UNI': 12.55, 'ATOM': 6.10, 'LTC': 93.50,
-    'BCH': 396.0, 'XLM': 0.375, 'ALGO': 0.34, 'NEAR': 4.95,
-    'ICP': 9.80, 'FIL': 4.55, 'APT': 7.65, 'ARB': 0.72,
-    'OP': 1.54, 'INJ': 18.20, 'SUI': 3.85, 'TIA': 5.20,
-  };
+    // Actual Dec 31, 2024 closing prices in CHF (USD × 0.8967 USD/CHF rate)
+    'BTC': 83778, 'ETH': 2989, 'SOL': 169.5, 'BNB': 622,
+    'ADA': 0.879, 'XRP': 1.856, 'DOT': 6.64, 'AVAX': 32.37,
+    'MATIC': 0.394, 'USDC': 0.8967, 'USDT': 0.8967, 'DAI': 0.8967,
+    'LINK': 17.65, 'UNI': 11.84, 'ATOM': 5.48, 'LTC': 90.2,
+    'BCH': 378.5, 'XLM': 0.384, 'ALGO': 0.311, 'NEAR': 5.21,
+    'ICP': 10.26, 'FIL': 4.18, 'APT': 8.45, 'ARB': 0.816,
+    'OP': 1.66, 'INJ': 20.15, 'SUI': 4.12, 'TIA': 5.87,
+  }
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
   function parseCSVRows(csvText) {
