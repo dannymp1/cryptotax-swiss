@@ -2543,7 +2543,10 @@
     let totalStaking=0, totalGain=0, totalPortfolio=0;
 
     for (const [sym,a] of Object.entries(assets)) {
-      const endHolding=Math.round((a.totalBought-a.totalSold)*1e8)/1e8;
+      // Clamp to zero — negative means sells exceeded buys due to incomplete history
+      // (assets transferred in from external wallets not in this export)
+      const rawHolding=Math.round((a.totalBought-a.totalSold)*1e8)/1e8;
+      const endHolding = Math.max(0, rawHolding);
       // Use real Dec 31 year-end price if available, else fall back to last seen price
       const yearEndPrice = dec31Prices[sym] || a.lastPriceCHF;
       const endValueCHF = Math.round(endHolding*yearEndPrice*100)/100;
