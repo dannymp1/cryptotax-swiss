@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<!-- CryptoDeclare v1.1 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CryptoDeclare — Swiss Crypto Tax Reporting</title>
+<title>CryptoSteuer — Swiss Crypto Tax Reporting</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -1491,34 +1490,6 @@
     .exchanges { padding: 0 24px 80px; }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
   }
-
-  /* PRIVACY MODAL */
-  .privacy-overlay { display:none; position:fixed; inset:0; background:rgba(13,17,23,0.85); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center; padding:24px; }
-  .privacy-overlay.open { display:flex; }
-  .privacy-modal { background:var(--paper); border-radius:6px; width:100%; max-width:720px; max-height:85vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 32px 80px rgba(0,0,0,0.5); animation:modalIn 0.25s ease both; }
-  .privacy-head { background:var(--ink); padding:24px 32px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
-  .privacy-head h2 { font-family:'DM Serif Display',serif; font-size:22px; color:var(--paper); margin-bottom:4px; }
-  .privacy-head p { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-light); }
-  .privacy-head-right { display:flex; align-items:center; gap:12px; }
-  .privacy-dl { display:inline-flex; align-items:center; gap:6px; background:var(--gold-light); color:var(--ink); font-family:'Instrument Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:7px 14px; border-radius:var(--radius); text-decoration:none; border:none; cursor:pointer; transition:background 0.2s; }
-  .privacy-dl:hover { background:#e5c84f; }
-  .privacy-x { background:none; border:none; color:rgba(245,242,235,0.4); cursor:pointer; font-size:20px; line-height:1; padding:4px; transition:color 0.2s; }
-  .privacy-x:hover { color:var(--paper); }
-  .privacy-body { overflow-y:auto; padding:32px; flex:1; }
-  .privacy-body h3 { font-family:'DM Serif Display',serif; font-size:18px; color:var(--ink); margin-bottom:8px; margin-top:28px; }
-  .privacy-body h3:first-child { margin-top:0; }
-  .privacy-body h4 { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; margin-top:18px; }
-  .privacy-body p { font-size:14px; line-height:1.75; color:var(--ink-muted); margin-bottom:12px; }
-  .privacy-body ul { margin:0 0 12px 0; padding-left:18px; }
-  .privacy-body ul li { font-size:14px; line-height:1.75; color:var(--ink-muted); margin-bottom:4px; }
-  .ptable { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:16px; }
-  .ptable th { background:var(--ink); color:var(--gold-light); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; padding:8px 10px; text-align:left; }
-  .ptable td { padding:8px 10px; border-bottom:1px solid var(--rule); color:var(--ink-muted); line-height:1.5; vertical-align:top; }
-  .ptable tr:nth-child(even) td { background:var(--paper-warm); }
-  .ptable td:first-child { font-weight:600; color:var(--ink); }
-  .pbadge { display:inline-flex; align-items:center; gap:6px; background:var(--paper-warm); border:1px solid var(--rule); border-radius:100px; padding:5px 12px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-muted); margin-right:6px; margin-bottom:6px; }
-  .pbadge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); opacity:0.7; }
-  .privacy-foot { padding:16px 32px; border-top:1px solid var(--rule); background:var(--paper-warm); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.08em; color:var(--ink-faint); flex-shrink:0; display:flex; justify-content:space-between; align-items:center; }
 </style>
 </head>
 <body>
@@ -1529,7 +1500,7 @@
     <div class="nav-logo-mark">
       <svg viewBox="0 0 16 16"><path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z"/></svg>
     </div>
-    <span class="nav-logo-text">Crypto<span>Declare</span></span>
+    <span class="nav-logo-text">Crypto<span>Steuer</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="#" onclick="navScrollTo('how');return false;">How it works</a></li>
@@ -1780,7 +1751,7 @@
     </div>
     <div class="pricing-card featured">
       <div class="pricing-name">Professional</div>
-      <div class="pricing-price" style="color:var(--paper)">CHF 99</div>
+      <div class="pricing-price" style="color:var(--paper)">CHF 49</div>
       <div class="pricing-period">Per tax year</div>
       <ul class="pricing-features">
         <li>Unlimited transactions</li>
@@ -1789,11 +1760,11 @@
         <li>Full PDF + CSV export</li>
         <li>FIFO / LIFO choice</li>
       </ul>
-      <a href="#" onclick="openModal('professional');return false;" class="btn-outline">Declare now — CHF 99</a>
+      <a href="#" onclick="openModal('professional');return false;" class="btn-outline">Declare now — CHF 49</a>
     </div>
     <div class="pricing-card">
       <div class="pricing-name">Business</div>
-      <div class="pricing-price">CHF 299</div>
+      <div class="pricing-price">CHF 199</div>
       <div class="pricing-period">Per entity / year</div>
       <ul class="pricing-features">
         <li>Everything in Pro</li>
@@ -1801,7 +1772,7 @@
         <li>Accountant sharing</li>
         <li>Priority support</li>
       </ul>
-      <a href="#" onclick="openModal('business');return false;" class="btn-outline">Get Business — CHF 299</a>
+      <a href="#" onclick="openModal('business');return false;" class="btn-outline">Get Business — CHF 199</a>
     </div>
   </div>
 </section>
@@ -1964,7 +1935,7 @@
     <div class="modal-header">
       <div>
         <div class="modal-plan-name" id="modal-plan-name">Professional</div>
-        <div class="modal-plan-price" id="modal-plan-price">CHF 99</div>
+        <div class="modal-plan-price" id="modal-plan-price">CHF 49</div>
       </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
@@ -1990,7 +1961,7 @@
 <footer id="site-footer">
   <div class="footer-top">
     <div>
-      <div class="footer-brand-name">Crypto<span>Declare</span></div>
+      <div class="footer-brand-name">Crypto<span>Steuer</span></div>
       <p class="footer-brand-text">Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.</p>
     </div>
     <div>
@@ -2005,7 +1976,7 @@
     <div>
       <div class="footer-col-title">Legal</div>
       <ul class="footer-links">
-        <li><a href="#" onclick="openPrivacyModal();return false;">Privacy policy</a></li>
+        <li><a href="#">Privacy policy</a></li>
         <li><a href="#">Terms of service</a></li>
         <li><a href="#">Cookie policy</a></li>
         <li><a href="#">Impressum</a></li>
@@ -2021,7 +1992,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-legal">© 2025 CryptoDeclare GmbH · Zürich · CHE-000.000.000</span>
+    <span class="footer-legal">© 2025 CryptoSteuer GmbH · Zürich · CHE-000.000.000</span>
     <div class="footer-ch">
       <div class="ch-flag"></div>
       Switzerland
@@ -2155,8 +2126,8 @@
   };
 
   const PLAN_DETAILS = {
-    professional: { name: 'Professional', price: 'CHF 99' },
-    business: { name: 'Business', price: 'CHF 299' }
+    professional: { name: 'Professional', price: 'CHF 49' },
+    business: { name: 'Business', price: 'CHF 199' }
   };
 
   let currentPlan = 'professional';
@@ -2197,7 +2168,7 @@
   const TRIAL_KEY = 'cryptotax_trial_used';
 
   function hasUsedTrial() {
-    return false; // Testing mode
+    return localStorage.getItem(TRIAL_KEY) === 'true';
   }
 
   function markTrialUsed() {
@@ -2683,109 +2654,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   ${data.notes ? `<div class="notes-box"><strong>Hinweise / Notes / Remarques:</strong> ${data.notes}</div>` : ''}
 
   <div class="doc-footer">
-    <span>CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
+    <span>CryptoTax Swiss · cryptotax-swiss.vercel.app · Switzerland / Schweiz / Suisse</span>
     <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
   </div>
 
 </div>
-
-<div class="privacy-overlay" id="privacy-overlay">
-  <div class="privacy-modal">
-    <div class="privacy-head">
-      <div>
-        <h2>Privacy Policy</h2>
-        <p>CryptoDeclare &middot; Swiss nDSG &amp; EU GDPR Compliant &middot; v1.0</p>
-      </div>
-      <div class="privacy-head-right">
-        <a href="CryptoDeclare_Privacy_Policy.pdf" download class="privacy-dl">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Download PDF
-        </a>
-        <button class="privacy-x" onclick="closePrivacyModal()">&times;</button>
-      </div>
-    </div>
-    <div class="privacy-body">
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:20px;">
-        <span class="pbadge">Swiss nDSG SR 235.1</span>
-        <span class="pbadge">EU GDPR 2016/679</span>
-        <span class="pbadge">ESTV Compliant</span>
-      </div>
-      <h3>1. Data Controller</h3>
-      <p>The data controller is <strong>CryptoDeclare</strong>, a Swiss-based online service for crypto tax reporting. Contact: <strong>hello@cryptodeclare.ch</strong></p>
-      <h3>2. What Data We Collect</h3>
-      <h4>Transaction Files</h4>
-      <p>When you use CryptoDeclare, you upload a CSV or Excel file. <strong>This data is processed in-session only and is never stored on our servers.</strong> It is deleted when your browser session ends.</p>
-      <h4>Email Address</h4>
-      <p>If you purchase a paid plan, we collect your email solely to deliver your order confirmation and invoice. We do not use it for marketing without your explicit consent.</p>
-      <h4>Technical Log Data</h4>
-      <p>Our hosting provider (Vercel) automatically logs IP address, browser type, and pages accessed. Retained for a maximum of 30 days for security purposes only.</p>
-      <h4>Cookies &amp; Local Storage</h4>
-      <p>We use browser localStorage only to remember your free trial status. We do not use tracking or advertising cookies.</p>
-      <h3>3. Legal Basis for Processing</h3>
-      <table class="ptable">
-        <thead><tr><th>Purpose</th><th>Legal Basis</th></tr></thead>
-        <tbody>
-          <tr><td>Generating your tax report</td><td>Contract performance (Art. 6(1)(b) GDPR / Art. 31 nDSG)</td></tr>
-          <tr><td>Server security &amp; logs</td><td>Legitimate interests (Art. 6(1)(f) GDPR)</td></tr>
-          <tr><td>Invoicing records</td><td>Legal obligation &mdash; Swiss OR Art. 962 (10 years)</td></tr>
-          <tr><td>Marketing emails</td><td>Consent (Art. 6(1)(a) GDPR) &mdash; opt-in only</td></tr>
-        </tbody>
-      </table>
-      <h3>4. How We Use Your Data</h3>
-      <p>We process your data <strong>only</strong> to generate your tax report, send your invoice, and maintain service security. <strong>We do not sell, rent, or share your personal data with any third parties for commercial purposes.</strong></p>
-      <h3>5. Data Retention</h3>
-      <table class="ptable">
-        <thead><tr><th>Data Type</th><th>Retention</th></tr></thead>
-        <tbody>
-          <tr><td>Transaction files &amp; report data</td><td>Deleted at end of browser session</td></tr>
-          <tr><td>Email address (paid orders)</td><td>10 years (Swiss commercial law)</td></tr>
-          <tr><td>Server / access logs</td><td>Maximum 30 days</td></tr>
-          <tr><td>localStorage trial flag</td><td>Stored in your browser only</td></tr>
-        </tbody>
-      </table>
-      <h3>6. Third-Party Service Providers</h3>
-      <table class="ptable">
-        <thead><tr><th>Provider</th><th>Purpose</th><th>Safeguard</th></tr></thead>
-        <tbody>
-          <tr><td>Vercel (USA)</td><td>Web hosting</td><td>EU-US Data Privacy Framework</td></tr>
-          <tr><td>Anthropic (USA)</td><td>AI report generation</td><td>EU-US Data Privacy Framework</td></tr>
-          <tr><td>Stripe (USA)</td><td>Payment processing</td><td>DPF + Standard Contractual Clauses</td></tr>
-        </tbody>
-      </table>
-      <p>Anthropic does not use API-submitted data to train its models. No wallet addresses or personal identifiers are sent to the AI.</p>
-      <h3>7. Your Rights</h3>
-      <p>Under Swiss nDSG and EU GDPR you have the right to <strong>access</strong>, <strong>rectify</strong>, <strong>erase</strong>, <strong>restrict</strong>, <strong>port</strong>, and <strong>object</strong> to processing of your data. Email <strong>hello@cryptodeclare.ch</strong> with subject "Data Subject Request" &mdash; we respond within 30 days.</p>
-      <p>You may also lodge a complaint with the Swiss FDPIC at <strong>www.edoeb.admin.ch</strong> or your local EU supervisory authority.</p>
-      <h3>8. Security</h3>
-      <ul>
-        <li>All data encrypted in transit via TLS 1.2+</li>
-        <li>Transaction data processed ephemerally &mdash; never written to a database</li>
-        <li>Enterprise-grade infrastructure via Vercel Edge</li>
-        <li>In case of a breach, FDPIC notified within 72 hours</li>
-      </ul>
-      <h3>9. Changes &amp; Contact</h3>
-      <p>We may update this policy to reflect changes in law or our practices. For any data protection questions: <strong>hello@cryptodeclare.ch</strong> &mdash; subject "Privacy Request".</p>
-      <p>Governed by Swiss law (nDSG SR 235.1). GDPR applies to EU residents where required.</p>
-    </div>
-    <div class="privacy-foot">
-      <span>CryptoDeclare &middot; Swiss nDSG &amp; EU GDPR &middot; v1.0</span>
-      <span>cryptodeclare.ch</span>
-    </div>
-  </div>
-</div>
-<script>
-  function openPrivacyModal() {
-    document.getElementById('privacy-overlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closePrivacyModal() {
-    document.getElementById('privacy-overlay').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  document.getElementById('privacy-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closePrivacyModal();
-  });
-</script>
 </body>
 </html>`;
 
