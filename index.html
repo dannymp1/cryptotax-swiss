@@ -2665,7 +2665,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     const blob = new Blob([pdfHTML], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `CryptoTax-Swiss-${data.taxYear}-Steuerbericht.html`;
+    a.download = `CryptoDeclare-${data.taxYear}-Steuerbericht.html`;
     a.click();
     URL.revokeObjectURL(a.href);
   }
