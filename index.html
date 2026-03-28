@@ -709,13 +709,19 @@
     position: relative;
     margin-top: 22px;
   }
-  .pricing-card.featured::before {
-    content: "\2605 Most Popular";
+  /* Pro card — no badge */
+
+  .pricing-card.business {
+    position: relative;
+    border: 2px solid var(--gold);
+  }
+  .pricing-card.business::before {
+    content: "\2605 Best Value";
     position: absolute;
     top: -14px;
     left: 50%;
     transform: translateX(-50%);
-    background: #D4AF37;
+    background: var(--gold);
     color: #0D1117;
     font-family: 'DM Mono', monospace;
     font-size: 9px;
@@ -1550,7 +1556,7 @@
       <div class="ch-flag"></div>
       Made in Switzerland
     </div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--ink-faint);text-transform:uppercase;">ESTV-compliant · 2024 tax year</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--ink-faint);text-transform:uppercase;">ESTV-compliant · Swiss tax authority</div>
   </div>
 </section>
 
@@ -1725,35 +1731,38 @@
     <div class="pricing-card">
       <div class="pricing-name">Starter</div>
       <div class="pricing-price">Free</div>
-      <div class="pricing-period">Up to 50 transactions</div>
+      <div class="pricing-period">Per tax year · up to 50 transactions</div>
       <ul class="pricing-features">
+        <li>Up to 50 transactions</li>
         <li>CSV import (1 exchange)</li>
-        <li>Manual entry</li>
         <li>CHF conversion</li>
         <li>Basic PDF report</li>
       </ul>
       <a href="#" onclick="navScrollTo('declare');return false;" class="btn-outline">Get started free</a>
     </div>
-    <div class="pricing-card featured">
+    <div class="pricing-card">
       <div class="pricing-name">Professional</div>
-      <div class="pricing-price" style="color:var(--paper)">CHF 99</div>
-      <div class="pricing-period">Per tax year</div>
+      <div class="pricing-price">CHF 99</div>
+      <div class="pricing-period">Per tax year · up to 1,000 transactions</div>
       <ul class="pricing-features">
-        <li>Unlimited transactions</li>
+        <li>Up to 1,000 transactions</li>
         <li>All exchanges & wallets</li>
         <li>Multi-year support</li>
         <li>Full PDF + CSV export</li>
-        <li>FIFO / LIFO choice</li>
+        <li>FIFO method (ESTV standard)</li>
       </ul>
       <a href="#" onclick="openModal('professional');return false;" class="btn-outline">Declare now — CHF 99</a>
     </div>
-    <div class="pricing-card">
+    <div class="pricing-card business">
       <div class="pricing-name">Business</div>
       <div class="pricing-price">CHF 299</div>
-      <div class="pricing-period">Per entity / year</div>
+      <div class="pricing-period">Per entity / year · truly unlimited</div>
       <ul class="pricing-features">
-        <li>Everything in Pro</li>
-        <li>Multiple portfolios</li>
+        <li>Unlimited transactions</li>
+        <li>Unlimited exchanges & portfolios</li>
+        <li>Multi-year history</li>
+        <li>Full PDF + CSV export</li>
+        <li>FIFO & LIFO methods</li>
         <li>Accountant sharing</li>
         <li>Priority support</li>
       </ul>
@@ -1860,7 +1869,7 @@
 </section>
 
 <!-- FAQ -->
-<section class="section" id="faq" style="padding-top:0">
+<section class="section" id="faq" style="padding-top:60px">
   <div class="section-header">
     <span class="section-number">06 — FAQ</span>
     <h2 class="section-title">Common<br><em>questions</em></h2>
@@ -2006,7 +2015,32 @@
       btn_download: '⬇ Download PDF',
       btn_upgrade: 'Upgrade to Pro',
       disclaimer_title: 'Document Disclaimer',
-      disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, NFTs, professional trading), please consult a qualified Swiss tax advisor (Treuhänder).'
+      disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, NFTs, professional trading), please consult a qualified Swiss tax advisor (Treuhänder).',
+      how_label: '01 — Process', how_title: 'Three steps to a<br><em>clean declaration</em>',
+      step1_title: 'Import transactions', step1_body: 'Upload a CSV from any major exchange — Kraken, Binance, Coinbase — or enter trades manually. We support all major Swiss-accessible platforms.',
+      step2_title: 'We calculate', step2_body: 'Our engine applies Swiss FIFO accounting, converts all values to CHF using official ESTV exchange rates, and identifies taxable events.',
+      step3_title: 'Download your report', step3_body: 'Receive a PDF report formatted for Swiss tax authorities. Attach it to your annual declaration — no accountant required.',
+      features_label: '02 — Features', features_title: 'Built for<br><em>Swiss residents</em>',
+      pricing_label: '04 — Pricing', pricing_title: 'Simple,<br><em>transparent</em> pricing',
+      faq_label: '06 — FAQ', faq_title: 'Common<br><em>questions</em>',
+      faq_q1: 'Is crypto taxable in Switzerland?', faq_a1: 'Yes. Capital gains on crypto are generally tax-free for private individuals in Switzerland — but the holdings must be declared as assets, and income from staking, mining, or professional trading is taxable. We calculate all of this for you.',
+      faq_q2: 'Which cantons does the report work for?', faq_a2: 'Our report is compliant with federal ESTV guidelines, which all cantons accept. We include cantonal notes for Zurich, Geneva, Zug, Vaud, and Bern where local variations apply.',
+      faq_q3: 'What exchange rate do you use?', faq_a3: 'We use the official daily exchange rates published by the Swiss Federal Tax Administration (ESTV). These are the rates your canton will use to verify your declaration.',
+      faq_q4: "My exchange isn't listed — can I still use this?", faq_a4: 'Yes. You can enter transactions manually or upload a standard CSV with date, asset, quantity, and price columns. We map it automatically.',
+      faq_q5: 'Is my data secure?', faq_a5: 'We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).',
+      integrations_label: '03 — Integrations', integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
+      declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
+      report_eyebrow: 'Your output', report_headline: 'A report your<br>Gemeinde will<br><em>actually accept</em>',
+      report_body: 'Clean, structured, and compliant. Your PDF report includes a full transaction log, capital gains summary, and end-of-year portfolio valuation — exactly what Swiss tax forms require.',
+      report_cta: 'Generate my report',
+      starter_period: 'Up to 50 transactions', starter_cta: 'Get started free',
+      pro_period: 'Per tax year · up to 1,000 transactions', pro_cta: 'Declare now — CHF 99',
+      biz_period: 'Per entity / year · truly unlimited', biz_cta: 'Get Business — CHF 299',
+      footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.',
+      footer_product: 'Product', footer_legal: 'Legal', footer_support: 'Support',
+      modal_body: "Enter your email to continue to secure checkout via Stripe. You'll receive your report download link immediately after payment.",
+      modal_cta: 'Continue to Stripe Checkout',
+      modal_terms: 'By continuing you agree to our Terms of Service and Privacy Policy.<br>Secure payment via Stripe · SSL encrypted',
     },
     fr: {
       nav_how: 'Comment ça marche', nav_features: 'Fonctionnalités', nav_pricing: 'Tarifs',
@@ -2025,7 +2059,32 @@
       btn_download: '⬇ Télécharger PDF',
       btn_upgrade: 'Passer à Pro',
       disclaimer_title: 'Avis de non-responsabilité',
-      disclaimer_text: 'Ce rapport a été préparé selon la méthode comptable FIFO suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, NFTs, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).'
+      disclaimer_text: 'Ce rapport a été préparé selon la méthode comptable FIFO suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, NFTs, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
+      how_label: '01 — Processus', how_title: 'Trois étapes pour une<br><em>déclaration impeccable</em>',
+      step1_title: 'Importez vos transactions', step1_body: "Importez un CSV depuis n'importe quelle grande bourse — Kraken, Binance, Coinbase — ou saisissez vos trades manuellement.",
+      step2_title: 'Nous calculons', step2_body: 'Notre moteur applique la méthode FIFO suisse, convertit toutes les valeurs en CHF avec les taux officiels ESTV et identifie les événements imposables.',
+      step3_title: 'Téléchargez votre rapport', step3_body: 'Recevez un rapport PDF formaté pour les autorités fiscales suisses. Joignez-le à votre déclaration annuelle — aucun comptable requis.',
+      features_label: '02 — Fonctionnalités', features_title: 'Conçu pour<br><em>les résidents suisses</em>',
+      pricing_label: '04 — Tarifs', pricing_title: 'Tarification<br><em>simple et transparente</em>',
+      faq_label: '06 — FAQ', faq_title: 'Questions<br><em>fréquentes</em>',
+      faq_q1: 'Les cryptos sont-elles imposables en Suisse ?', faq_a1: "Oui. Les gains en capital sont généralement exonérés pour les particuliers — mais les avoirs doivent être déclarés comme fortune, et les revenus du staking, minage ou trading professionnel sont imposables.",
+      faq_q2: 'Pour quels cantons le rapport est-il valable ?', faq_a2: 'Notre rapport est conforme aux directives ESTV fédérales, acceptées par tous les cantons. Nous incluons des notes cantonales pour Zurich, Genève, Zoug, Vaud et Berne.',
+      faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons les taux journaliers officiels de l'Administration fédérale des contributions (AFC/ESTV).",
+      faq_q4: "Ma bourse n'est pas listée — puis-je quand même l'utiliser ?", faq_a4: 'Oui. Vous pouvez saisir les transactions manuellement ou importer un CSV standard. Nous le mappons automatiquement.',
+      faq_q5: 'Mes données sont-elles sécurisées ?', faq_a5: 'Nous traitons les transactions en session et ne conservons pas vos données après génération du rapport. Nous sommes établis en Suisse et soumis à la nLPD.',
+      integrations_label: '03 — Intégrations', integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
+      declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
+      report_eyebrow: 'Votre résultat', report_headline: 'Un rapport que votre<br>commune va<br><em>vraiment accepter</em>',
+      report_body: "Propre, structuré et conforme. Votre rapport PDF inclut un journal complet des transactions, un résumé des gains en capital et une valorisation de fin d'année.",
+      report_cta: 'Générer mon rapport',
+      starter_period: "Jusqu'à 50 transactions", starter_cta: 'Commencer gratuitement',
+      pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Déclarer — CHF 99',
+      biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Obtenir Business — CHF 299',
+      footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Rapide, conforme et privé.',
+      footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
+      modal_body: "Entrez votre email pour continuer vers le paiement sécurisé via Stripe. Vous recevrez votre lien de téléchargement immédiatement après le paiement.",
+      modal_cta: 'Continuer vers Stripe',
+      modal_terms: "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.<br>Paiement sécurisé via Stripe · Chiffrement SSL",
     },
     de: {
       nav_how: 'So funktioniert\'s', nav_features: 'Funktionen', nav_pricing: 'Preise',
@@ -2044,7 +2103,32 @@
       btn_download: '⬇ PDF herunterladen',
       btn_upgrade: 'Auf Pro upgraden',
       disclaimer_title: 'Haftungsausschluss',
-      disclaimer_text: 'Dieser Bericht wurde nach der Schweizer FIFO-Buchführungsmethode erstellt und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, NFTs, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).'
+      disclaimer_text: 'Dieser Bericht wurde nach der Schweizer FIFO-Buchführungsmethode erstellt und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, NFTs, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
+      how_label: '01 — Prozess', how_title: 'Drei Schritte zu einer<br><em>sauberen Deklaration</em>',
+      step1_title: 'Transaktionen importieren', step1_body: 'Laden Sie eine CSV-Datei von Kraken, Binance, Coinbase hoch — oder erfassen Sie Trades manuell.',
+      step2_title: 'Wir berechnen', step2_body: 'Unser System wendet die Schweizer FIFO-Methode an, rechnet alle Werte mit offiziellen ESTV-Kursen in CHF um und identifiziert steuerpflichtige Ereignisse.',
+      step3_title: 'Bericht herunterladen', step3_body: 'Erhalten Sie einen PDF-Bericht für die Schweizer Steuerbehörden. Legen Sie ihn Ihrer Steuererklärung bei — kein Steuerberater nötig.',
+      features_label: '02 — Funktionen', features_title: 'Entwickelt für<br><em>Schweizer Einwohner</em>',
+      pricing_label: '04 — Preise', pricing_title: 'Einfache,<br><em>transparente</em> Preise',
+      faq_label: '06 — FAQ', faq_title: 'Häufige<br><em>Fragen</em>',
+      faq_q1: 'Sind Kryptowährungen in der Schweiz steuerpflichtig?', faq_a1: 'Ja. Kursgewinne sind für Privatpersonen grundsätzlich steuerfrei — aber die Bestände müssen als Vermögen deklariert werden, und Erträge aus Staking, Mining oder professionellem Handel sind steuerpflichtig.',
+      faq_q2: 'Für welche Kantone gilt der Bericht?', faq_a2: 'Unser Bericht entspricht den bundesweiten ESTV-Richtlinien, die alle Kantone akzeptieren. Wir fügen kantonale Hinweise für Zürich, Genf, Zug, Waadt und Bern hinzu.',
+      faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden die offiziellen Tageskurse der Eidgenössischen Steuerverwaltung (ESTV).',
+      faq_q4: 'Meine Börse ist nicht aufgelistet — kann ich es trotzdem verwenden?', faq_a4: 'Ja. Sie können Transaktionen manuell erfassen oder eine Standard-CSV hochladen. Wir ordnen sie automatisch zu.',
+      faq_q5: 'Sind meine Daten sicher?', faq_a5: 'Wir verarbeiten Transaktionen sitzungsbasiert und speichern keine Portfoliodaten nach der Berichtserstellung. Wir unterliegen dem Schweizer Datenschutzgesetz (revDSG).',
+      integrations_label: '03 — Integrationen', integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
+      declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
+      report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht, den Ihre<br>Gemeinde wirklich<br><em>akzeptieren wird</em>',
+      report_body: 'Sauber, strukturiert und konform. Ihr PDF-Bericht enthält ein vollständiges Transaktionsprotokoll, eine Kapitalgewinnzusammenfassung und eine Jahresend-Portfoliobewertung.',
+      report_cta: 'Bericht erstellen',
+      starter_period: 'Bis 50 Transaktionen', starter_cta: 'Kostenlos starten',
+      pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Jetzt deklarieren — CHF 99',
+      biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Business — CHF 299',
+      footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Schnell, konform und privat.',
+      footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
+      modal_body: 'Geben Sie Ihre E-Mail ein, um zur sicheren Zahlung über Stripe weiterzugehen. Sie erhalten Ihren Download-Link sofort nach der Zahlung.',
+      modal_cta: 'Weiter zu Stripe',
+      modal_terms: 'Mit dem Fortfahren stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu.<br>Sichere Zahlung via Stripe · SSL-verschlüsselt',
     }
   };
 
@@ -2072,6 +2156,62 @@
     const heroSub = document.querySelector('.hero-sub');
     if (heroSub) heroSub.textContent = t.hero_sub;
 
+    // Hero CTAs
+    const cta1 = document.querySelector('.hero-actions .btn-primary');
+    if (cta1 && t.hero_cta1) cta1.childNodes[0].textContent = t.hero_cta1;
+    const cta2 = document.querySelector('.hero-actions .btn-secondary');
+    if (cta2 && t.hero_cta2) cta2.childNodes[0].textContent = t.hero_cta2;
+
+    // How it works section
+    const howLabel = document.querySelector('#how .section-number');
+    if (howLabel && t.how_label) howLabel.textContent = t.how_label;
+    const howTitle = document.querySelector('#how .section-title');
+    if (howTitle && t.how_title) howTitle.innerHTML = t.how_title;
+    const steps = document.querySelectorAll('.step');
+    const stepKeys = [['step1_title','step1_body'],['step2_title','step2_body'],['step3_title','step3_body']];
+    steps.forEach((step, i) => {
+      const [tk, bk] = stepKeys[i] || [];
+      const title = step.querySelector('.step-title');
+      const body = step.querySelector('.step-body');
+      if (title && t[tk]) title.textContent = t[tk];
+      if (body && t[bk]) body.textContent = t[bk];
+    });
+
+    // Features section
+    const featLabel = document.querySelector('#features .section-number');
+    if (featLabel && t.features_label) featLabel.textContent = t.features_label;
+    const featTitle = document.querySelector('#features .section-title');
+    if (featTitle && t.features_title) featTitle.innerHTML = t.features_title;
+
+    // Pricing section
+    const pricingLabel = document.querySelector('#pricing .section-number');
+    if (pricingLabel && t.pricing_label) pricingLabel.textContent = t.pricing_label;
+    const pricingTitle = document.querySelector('#pricing .section-title');
+    if (pricingTitle && t.pricing_title) pricingTitle.innerHTML = t.pricing_title;
+
+    // FAQ section
+    const faqLabel = document.querySelector('#faq .section-number');
+    if (faqLabel && t.faq_label) faqLabel.textContent = t.faq_label;
+    const faqTitle = document.querySelector('#faq .section-title');
+    if (faqTitle && t.faq_title) faqTitle.innerHTML = t.faq_title;
+    const faqItems = document.querySelectorAll('.faq-item');
+    const faqKeys = [
+      ['faq_q1','faq_a1'],['faq_q2','faq_a2'],['faq_q3','faq_a3'],
+      ['faq_q4','faq_a4'],['faq_q5','faq_a5']
+    ];
+    faqItems.forEach((item, i) => {
+      const [qk, ak] = faqKeys[i] || [];
+      const qBtn = item.querySelector('.faq-q');
+      const aDiv = item.querySelector('.faq-a');
+      if (qBtn && t[qk]) {
+        // Replace text node only, preserve the icon span
+        const icon = qBtn.querySelector('.faq-q-icon');
+        qBtn.childNodes[0].textContent = t[qk] + ' ';
+        if (!icon) qBtn.insertAdjacentHTML('beforeend', '<span class="faq-q-icon">+</span>');
+      }
+      if (aDiv && t[ak]) aDiv.textContent = t[ak];
+    });
+
     // Upload area
     const uploadTitle = document.querySelector('.upload-title');
     if (uploadTitle) uploadTitle.textContent = t.upload_title;
@@ -2089,6 +2229,62 @@
     // Report output
     const reportTitle = document.querySelector('.report-output-title');
     if (reportTitle) reportTitle.innerHTML = t.report_ready;
+
+    // Download/upgrade buttons
+    const dlBtn = document.querySelector('.btn-download-report');
+    if (dlBtn && t.btn_download) dlBtn.textContent = t.btn_download;
+    const upBtn = document.querySelector('.btn-upgrade-pro');
+    if (upBtn && t.btn_upgrade) upBtn.textContent = t.btn_upgrade;
+
+    // Integrations section
+    const intLabel = document.querySelector('#exchanges .section-number');
+    if (intLabel && t.integrations_label) intLabel.textContent = t.integrations_label;
+    const intTitle = document.querySelector('#exchanges h2');
+    if (intTitle && t.integrations_title) intTitle.innerHTML = t.integrations_title;
+
+    // Declare / upload section
+    const declLabel = document.querySelector('#declare .section-number');
+    if (declLabel && t.declare_label) declLabel.textContent = t.declare_label;
+    const declTitle = document.querySelector('#declare .section-title');
+    if (declTitle && t.declare_title) declTitle.innerHTML = t.declare_title;
+
+    // Report preview card
+    const rpEyebrow = document.querySelector('.report-eyebrow');
+    if (rpEyebrow && t.report_eyebrow) rpEyebrow.textContent = t.report_eyebrow;
+    const rpHeadline = document.querySelector('.report-headline');
+    if (rpHeadline && t.report_headline) rpHeadline.innerHTML = t.report_headline;
+    const rpBody = document.querySelector('.report-body');
+    if (rpBody && t.report_body) rpBody.textContent = t.report_body;
+    const rpCta = document.querySelector('.btn-gold');
+    if (rpCta && t.report_cta) rpCta.childNodes[0].textContent = t.report_cta + ' ';
+
+    // Pricing cards
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    if (pricingCards.length >= 3) {
+      const setPeriod = (card, key) => { const el = card.querySelector('.pricing-period'); if (el && t[key]) el.textContent = t[key]; };
+      const setCta = (card, key) => { const el = card.querySelector('.btn-outline'); if (el && t[key]) el.textContent = t[key]; };
+      setPeriod(pricingCards[0], 'starter_period'); setCta(pricingCards[0], 'starter_cta');
+      setPeriod(pricingCards[1], 'pro_period');     setCta(pricingCards[1], 'pro_cta');
+      setPeriod(pricingCards[2], 'biz_period');     setCta(pricingCards[2], 'biz_cta');
+    }
+
+    // Footer
+    const footerTagline = document.querySelector('.footer-brand-text');
+    if (footerTagline && t.footer_tagline) footerTagline.textContent = t.footer_tagline;
+    const footerCols = document.querySelectorAll('.footer-col-title');
+    if (footerCols.length >= 3) {
+      if (t.footer_product) footerCols[0].textContent = t.footer_product;
+      if (t.footer_legal)   footerCols[1].textContent = t.footer_legal;
+      if (t.footer_support) footerCols[2].textContent = t.footer_support;
+    }
+
+    // Stripe modal
+    const modalBody = document.querySelector('.modal-body p');
+    if (modalBody && t.modal_body) modalBody.textContent = t.modal_body;
+    const modalCta = document.querySelector('#stripe-checkout-btn');
+    if (modalCta && t.modal_cta) modalCta.childNodes[modalCta.childNodes.length-1].textContent = ' ' + t.modal_cta;
+    const modalTerms = document.querySelector('.modal-terms');
+    if (modalTerms && t.modal_terms) modalTerms.innerHTML = t.modal_terms;
   }
 
   window.setLang = setLang;
@@ -2349,6 +2545,8 @@
     LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
   };
 
+  // Rate-limit historical fetches to avoid burning CoinGecko quota needed by the live ticker
+  let _lastCgHistFetch = 0;
   async function getHistoricalPriceCHF(asset, dateStr) {
     // dateStr: 'YYYY-MM-DD'
     const key = asset + '_' + dateStr;
@@ -2360,17 +2558,21 @@
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
-      // Unknown asset — fall back to year-end price or 0
       const fallback = YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
     try {
+      // Throttle: wait at least 1.2s between CoinGecko history calls (max ~50/min on free tier)
+      const now = Date.now();
+      const wait = 1200 - (now - _lastCgHistFetch);
+      if (wait > 0) await new Promise(r => setTimeout(r, wait));
+      _lastCgHistFetch = Date.now();
       // CoinGecko history endpoint: date must be dd-mm-yyyy
       const [y, m, d] = dateStr.split('-');
       const cgDate = `${d}-${m}-${y}`;
       const url = `https://api.coingecko.com/api/v3/coins/${cgId}/history?date=${cgDate}&localization=false`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
       if (!res.ok) throw new Error('cg_hist_' + res.status);
       const data = await res.json();
       const usdPrice = data?.market_data?.current_price?.usd || 0;
@@ -2859,7 +3061,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     <div class="doc-header-left">
       <div class="doc-logo-line">
         <div class="ch-flag"></div>
-        <div class="doc-brand">Crypto<span>Tax</span> Swiss</div>
+        <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
       <div class="doc-subtitle">Swiss Federal Tax Administration · ESTV Compliant Report</div>
     </div>
