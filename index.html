@@ -2267,51 +2267,57 @@
     // Truncate if very large
     const truncated = csvContent.length > 8000 ? csvContent.slice(0, 8000) + '\n[... truncated for processing ...]' : csvContent;
 
-    const prompt = `You are a Swiss crypto tax expert (Steuerberater). Analyse the following transaction data and return ONLY a valid JSON object — no prose, no markdown, no explanation outside the JSON.
+    const prompt = `You are a Swiss crypto tax accountant. Carefully analyse the transaction data below and return ONLY a valid JSON object — no prose, no markdown, no explanation.
 
-The JSON must follow this exact structure:
+CRITICAL CALCULATION RULES — follow exactly:
+1. FIFO (First In First Out): Match sells against the EARLIEST unsold buy lots in chronological order
+2. endHolding = EXACT sum of all buys minus EXACT sum of all sells for that asset. Count every row carefully.
+3. DECIMALS: Preserve exact decimal precision from the CSV. Never multiply or scale quantities. If CSV says "80" SOL that is 80.0 SOL not 80000.
+4. gainLossCHF per asset = for each sell, (sell price CHF × qty sold) minus (FIFO cost basis CHF × qty sold). Sum all sells.
+5. stakingIncomeCHF = sum of all staking/reward rows converted to CHF at the price on that date
+6. totalGainLossCHF = sum of all asset gainLossCHF values (can be negative for losses) + stakingIncomeCHF
+7. totalPortfolioValueCHF = sum of (endHolding × latest price in CHF) for all assets
+8. buyCount = number of buy/purchase rows for that asset
+9. sellCount = number of sell rows for that asset
+10. stakingCount = number of staking/reward rows for that asset
+11. If a price is in USD/USDT and not CHF, convert using approximate rate: 1 USD ≈ 0.90 CHF (note this in the notes field)
+12. Double-check: endHolding must equal totalBought minus totalSold. If it does not, recompute.
+
+Return this exact JSON structure:
 {
   "taxYear": "2024",
   "clientRef": "Auto-generated",
   "dateRange": "DD.MM.YYYY – DD.MM.YYYY",
-  "totalTransactions": 20,
+  "totalTransactions": 0,
   "assets": [
     {
       "symbol": "BTC",
       "name": "Bitcoin",
-      "buyCount": 3,
-      "sellCount": 2,
+      "buyCount": 0,
+      "sellCount": 0,
       "stakingCount": 0,
-      "totalBought": 0.425,
-      "totalSold": 0.250,
-      "avgBuyCHF": 52000,
-      "avgSellCHF": 57000,
-      "gainLossCHF": 1250.00,
-      "endHolding": 0.175,
-      "endValueCHF": 17237.50
+      "totalBought": 0.000,
+      "totalSold": 0.000,
+      "avgBuyCHF": 0,
+      "avgSellCHF": 0,
+      "gainLossCHF": 0.00,
+      "endHolding": 0.000,
+      "endValueCHF": 0.00
     }
   ],
-  "stakingIncomeCHF": 167.20,
-  "totalGainLossCHF": 3420.50,
-  "totalPortfolioValueCHF": 54321.00,
+  "stakingIncomeCHF": 0.00,
+  "totalGainLossCHF": 0.00,
+  "totalPortfolioValueCHF": 0.00,
   "complianceMethod": "FIFO",
-  "notes": "Any important notes about the data quality or assumptions made"
+  "notes": "List any assumptions, currency conversions, or data quality issues"
 }
-
-Rules:
-- Use Swiss FIFO accounting method
-- Convert all values to CHF (use approximate rates from transaction data if CHF not given, note in notes field)
-- If data is ambiguous, make reasonable assumptions and note them
-- gainLossCHF per asset = proceeds from sells minus cost basis of sold coins (FIFO)
-- totalGainLossCHF = sum of all asset gains/losses + stakingIncomeCHF
-- Return ONLY the JSON object, nothing else
 
 Filename: ${filename}
 
 TRANSACTION DATA:
 ${truncated}`;
 
-    const response = await fetch('/api/generate', {
+        const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2674,18 +2680,18 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   });
 
 
-  // ── LIVE CRYPTO TICKER (Coinbase API + CoinGecko fallback) ──
+  // ── LIVE CRYPTO TICKER ──
   const TICKER_COINS = [
-    { id: 'bitcoin',       sym: 'BTC',  name: 'Bitcoin',    cb: 'BTC-CHF' },
-    { id: 'ethereum',      sym: 'ETH',  name: 'Ethereum',   cb: 'ETH-CHF' },
-    { id: 'solana',        sym: 'SOL',  name: 'Solana',     cb: 'SOL-CHF' },
-    { id: 'binancecoin',   sym: 'BNB',  name: 'BNB',        cb: null },
-    { id: 'cardano',       sym: 'ADA',  name: 'Cardano',    cb: 'ADA-CHF' },
-    { id: 'ripple',        sym: 'XRP',  name: 'Ripple',     cb: 'XRP-CHF' },
-    { id: 'polkadot',      sym: 'DOT',  name: 'Polkadot',   cb: 'DOT-CHF' },
-    { id: 'avalanche-2',   sym: 'AVAX', name: 'Avalanche',  cb: null },
-    { id: 'matic-network', sym: 'MATIC',name: 'Polygon',    cb: null },
-    { id: 'usd-coin',      sym: 'USDC', name: 'USD Coin',   cb: 'USDC-CHF' },
+    { id: 'bitcoin',       sym: 'BTC',  name: 'Bitcoin',   cb: 'BTC-CHF' },
+    { id: 'ethereum',      sym: 'ETH',  name: 'Ethereum',  cb: 'ETH-CHF' },
+    { id: 'solana',        sym: 'SOL',  name: 'Solana',    cb: 'SOL-CHF' },
+    { id: 'binancecoin',   sym: 'BNB',  name: 'BNB',       cb: null },
+    { id: 'cardano',       sym: 'ADA',  name: 'Cardano',   cb: 'ADA-CHF' },
+    { id: 'ripple',        sym: 'XRP',  name: 'Ripple',    cb: 'XRP-CHF' },
+    { id: 'polkadot',      sym: 'DOT',  name: 'Polkadot',  cb: 'DOT-CHF' },
+    { id: 'avalanche-2',   sym: 'AVAX', name: 'Avalanche', cb: null },
+    { id: 'matic-network', sym: 'MATIC',name: 'Polygon',   cb: null },
+    { id: 'usd-coin',      sym: 'USDC', name: 'USD Coin',  cb: 'USDC-CHF' },
   ];
 
   function fmtPrice(p) {
@@ -2714,11 +2720,10 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
   async function fetchTickerPrices() {
     try {
-      // Primary: CoinGecko (free, no key, CHF + 24h change in one call)
       const ids = TICKER_COINS.map(c => c.id).join(',');
       const res = await fetch(
         'https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=chf&include_24hr_change=true',
-        { signal: AbortSignal.timeout(5000) }
+        { signal: AbortSignal.timeout(6000) }
       );
       if (!res.ok) throw new Error('CoinGecko ' + res.status);
       const data = await res.json();
@@ -2728,26 +2733,19 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
       });
       renderTicker(prices);
     } catch(e) {
-      // Fallback: Coinbase spot prices (no 24h change available)
       try {
         const cbCoins = TICKER_COINS.filter(c => c.cb);
-        const fetches = cbCoins.map(c =>
-          fetch('https://api.coinbase.com/v2/prices/' + c.cb + '/spot', { signal: AbortSignal.timeout(5000) })
-            .then(r => r.json())
-            .then(d => ({ id: c.id, chf: parseFloat(d.data.amount), chg: 0 }))
-            .catch(() => null)
-        );
-        const results = await Promise.all(fetches);
+        const results = await Promise.all(cbCoins.map(c =>
+          fetch('https://api.coinbase.com/v2/prices/' + c.cb + '/spot', { signal: AbortSignal.timeout(6000) })
+            .then(r => r.json()).then(d => ({ id: c.id, chf: parseFloat(d.data.amount), chg: 0 })).catch(() => null)
+        ));
         const prices = {};
-        results.forEach(r => { if (r) prices[r.id] = { chf: r.chf, chg: r.chg }; });
+        results.forEach(r => { if (r) prices[r.id] = r; });
         if (Object.keys(prices).length > 0) renderTicker(prices);
-      } catch(e2) {
-        console.warn('Ticker fallback also failed');
-      }
+      } catch(e2) { console.warn('Ticker failed:', e2.message); }
     }
   }
 
-  // Start immediately, then refresh every 30 seconds
   fetchTickerPrices();
   setInterval(fetchTickerPrices, 30000);
 
