@@ -2366,10 +2366,17 @@
           const t = (r['type']||'').toLowerCase();
           if (!['buy','sell','staking','reward'].some(x=>t.includes(x))) continue;
           type = t.includes('buy')?'buy':t.includes('sell')?'sell':'staking';
-          // Fix: properly strip Kraken ISO 4217 prefixes (X, XX, Z, ZZ)
-          // e.g. XXBT→XBT→BTC, XETH→ETH, XLTC→LTC, ZUSD→USD
-          let raw = (r['asset']||'').replace(/^X(?=X[A-Z])/,'').replace(/^[XZ]/,'');
-          asset = raw==='XBT'?'BTC':raw==='XDG'?'DOGE':raw==='ETH'?'ETH':raw;
+          // Fix: properly map Kraken ISO 4217 asset codes to standard symbols
+          // e.g. XXBT->BTC, XETH->ETH, XLTC->LTC, ZUSD->USD
+          const krakenRaw = (r['asset']||'').toUpperCase();
+          const KRAKEN_MAP = {
+            'XXBT':'BTC','XBT':'BTC',
+            'XETH':'ETH','XLTC':'LTC',
+            'XXLM':'XLM','XXRP':'XRP',
+            'XXDG':'DOGE','XDG':'DOGE',
+            'ZUSD':'USD','ZEUR':'EUR','ZCHF':'CHF','ZGBP':'GBP',
+          };
+          asset = KRAKEN_MAP[krakenRaw] || krakenRaw.replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
           qty = Math.abs(parseFloat(r['amount'])||0);
           // Kraken ledger has no price column — fetch historical CHF price
           const dateKey = date.slice(0,10); // YYYY-MM-DD
