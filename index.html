@@ -146,13 +146,15 @@
   }
 
   .nav-logo-mark {
-    width: 28px; height: 28px;
+    width: 36px; height: 36px;
     background: var(--ink);
     display: flex; align-items: center; justify-content: center;
-    border-radius: 2px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    overflow: hidden;
   }
 
-  .nav-logo-mark svg { width: 16px; height: 16px; fill: var(--gold-light); }
+  .nav-logo-mark svg { width: 36px; height: 36px; }
 
   .nav-logo-text {
     font-family: 'DM Serif Display', serif;
@@ -1582,7 +1584,14 @@
 <nav>
   <a href="#" class="nav-logo">
     <div class="nav-logo-mark">
-      <svg viewBox="0 0 16 16"><path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z"/></svg>
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="#0D1117"/>
+        <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
+        <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
+        <rect x="205" y="262" width="90" height="16" rx="4" fill="#B8960C"/>
+        <path d="M 205 130 L 223 130 Q 290 130 290 200 Q 290 270 223 270 L 205 270 Z" fill="#B8960C"/>
+        <path d="M 223 148 Q 269 148 269 200 Q 269 252 223 252 L 223 148 Z" fill="#0D1117"/>
+      </svg>
     </div>
     <span class="nav-logo-text">Crypto<span>Declare</span></span>
   </a>
