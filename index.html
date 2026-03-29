@@ -542,7 +542,7 @@
   .report-preview {
     position: relative;
     z-index: 1;
-    padding: 0 48px 120px;
+    padding: 120px 48px;
   }
 
   .report-card {
@@ -724,7 +724,7 @@
   .exchanges {
     position: relative;
     z-index: 1;
-    padding: 0 48px 120px;
+    padding: 120px 48px;
   }
 
   .exchange-list {
@@ -779,7 +779,25 @@
     padding: 48px 40px;
     display: flex;
     flex-direction: column;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .pricing-card:hover {
+    background: var(--paper-warm);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(13,17,23,0.12);
+    z-index: 2;
+    position: relative;
+  }
+
+  .pricing-card.featured:hover {
+    transform: scale(1.03) translateY(-4px);
+    box-shadow: 0 24px 60px rgba(13,17,23,0.35);
+  }
+
+  .pricing-card.business:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(184,150,12,0.2);
   }
 
   .pricing-card.featured {
@@ -797,11 +815,10 @@
     border: 2px solid var(--gold);
   }
   .pricing-card.business::before {
-    content: "\2605 Best Value";
+    content: "Best Value";
     position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 16px;
+    right: 16px;
     background: var(--gold);
     color: #0D1117;
     font-family: 'DM Mono', monospace;
@@ -809,10 +826,9 @@
     letter-spacing: 0.14em;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 4px 20px;
+    padding: 4px 12px;
     border-radius: 100px;
     white-space: nowrap;
-    z-index: 5;
   }
 
   .pricing-name {
@@ -1831,7 +1847,7 @@
 </section>
 
 <!-- FEATURES -->
-<section class="section" id="features" style="padding-top:0">
+<section class="section" id="features">
   <div class="section-header">
     <span class="section-number">02 — Features</span>
     <h2 class="section-title">Built for<br><em>Swiss residents</em></h2>
@@ -1941,7 +1957,7 @@
 </div>
 
 <!-- PRICING -->
-<section class="section" id="pricing" style="padding-top:0">
+<section class="section" id="pricing">
   <div class="section-header">
     <span class="section-number">04 — Pricing</span>
     <h2 class="section-title">Simple,<br><em>transparent</em> pricing</h2>
@@ -2088,7 +2104,7 @@
 </section>
 
 <!-- FAQ -->
-<section class="section" id="faq" style="padding-top:60px">
+<section class="section" id="faq">
   <div class="section-header">
     <span class="section-number">06 — FAQ</span>
     <h2 class="section-title">Common<br><em>questions</em></h2>
