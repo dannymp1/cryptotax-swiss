@@ -1,0 +1,13 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="6" fill="#0D1117"/>
+  <!-- C: centre cx=14, cy=16, outer r=9, inner r=5.5, cut at cy±5.5 -->
+  <!-- opening_x = 14 + sqrt(9²-5.5²) = 14 + sqrt(81-30.25) = 14 + sqrt(50.75) = 14+7.1 = 21.1 ≈ 21 -->
+  <path d="M 21 10.5 A 9 9 0 1 0 21 21.5 L 14 21.5 A 5.5 5.5 0 0 0 14 10.5 Z" fill="#F5F2EB"/>
+  <!-- Gold bars flush with C opening -->
+  <rect x="14" y="9.5" width="8" height="2" rx="0.5" fill="#B8960C"/>
+  <rect x="14" y="22.5" width="8" height="2" rx="0.5" fill="#B8960C"/>
+  <!-- D shape -->
+  <path d="M 14 10.5 L 15.5 10.5 Q 21 10.5 21 16 Q 21 21.5 15.5 21.5 L 14 21.5 Z" fill="#B8960C"/>
+  <!-- D inner cutout -->
+  <path d="M 15.5 12 Q 19.2 12 19.2 16 Q 19.2 20 15.5 20 L 15.5 12 Z" fill="#0D1117"/>
+</svg>

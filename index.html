@@ -11,6 +11,11 @@
 <meta name="author" content="CryptoDeclare"/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://www.cryptodeclare.ch/"/>
+
+<!-- ── Favicon ── -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-32.png"/>
 <meta name="google-site-verification" content="eJ1I9WsfRe0nTuPD0b-UhlDMkSi4bJmmxZ73UbhaTj8"/>
 
 <!-- ── Open Graph (Facebook, LinkedIn previews) ── -->
@@ -1576,6 +1581,137 @@
   .ticker-symbol{color:var(--gold-light);font-weight:500}
   .ticker-price{color:rgba(245,242,235,0.9);font-weight:500}
   .ticker-chg-pos{color:#4caf82}.ticker-chg-neg{color:#e05c5c}
+
+  /* ── CONTACT ── */
+  .contact-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    background: var(--ink);
+  }
+
+  .contact-section .section-number { color: var(--gold); }
+  .contact-section .section-title { color: var(--paper); }
+  .contact-section .section-title em { color: var(--gold); }
+  .contact-section .section-header { border-bottom-color: rgba(255,255,255,0.08); }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 60px;
+  }
+
+  .contact-left p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(245,242,235,0.6);
+    margin-bottom: 32px;
+  }
+
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: rgba(245,242,235,0.4);
+    margin-bottom: 12px;
+  }
+
+  .contact-detail-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,242,235,0.4);
+  }
+
+  .contact-input {
+    background: rgba(245,242,235,0.05);
+    border: 1px solid rgba(245,242,235,0.1);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    color: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .contact-input::placeholder { color: rgba(245,242,235,0.25); }
+  .contact-input:focus { border-color: var(--gold); }
+
+  textarea.contact-input {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+  }
+
+  .contact-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--gold-light);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+
+  .contact-submit:hover { background: #e5c84f; transform: translateY(-1px); }
+  .contact-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .contact-success {
+    display: none;
+    padding: 16px 20px;
+    background: rgba(26,122,74,0.15);
+    border: 1px solid rgba(26,122,74,0.3);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: #4caf82;
+    margin-top: 8px;
+  }
+
+  .contact-success.visible { display: block; }
+
+  @media (max-width: 768px) {
+    .contact-section { padding: 80px 24px; }
+    .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+  }
 </style>
 </head>
 <body>
@@ -2034,6 +2170,43 @@
   </div>
 </div>
 
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="section-header">
+    <span class="section-number">07 — Contact</span>
+    <h2 class="section-title">Get in<br><em>touch</em></h2>
+  </div>
+  <div class="contact-layout">
+    <div class="contact-left">
+      <p>Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.</p>
+
+    </div>
+    <div class="contact-right">
+      <form class="contact-form" id="contact-form">
+        <div class="contact-field">
+          <label class="contact-label" for="contact-name">Name</label>
+          <input class="contact-input" type="text" id="contact-name" name="name" placeholder="Your name" required/>
+        </div>
+        <div class="contact-field">
+          <label class="contact-label" for="contact-email">Email</label>
+          <input class="contact-input" type="email" id="contact-email" name="email" placeholder="your@email.com" required/>
+        </div>
+        <div class="contact-field">
+          <label class="contact-label" for="contact-message">Message</label>
+          <textarea class="contact-input" id="contact-message" name="message" placeholder="How can we help?" required></textarea>
+        </div>
+        <button type="submit" class="contact-submit" id="contact-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Send message
+        </button>
+        <div class="contact-success" id="contact-success">
+          ✓ Message sent — we'll be in touch within 24 hours.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer id="site-footer">
   <div class="footer-top">
@@ -2062,7 +2235,7 @@
       <div class="footer-col-title">Support</div>
       <ul class="footer-links">
         <li><a href="#faq">FAQ</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#contact">Contact</a></li>
       </ul>
     </div>
   </div>
@@ -3132,6 +3305,137 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   /* Print button */
   .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#D4AF37; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; }
   .no-print:hover { background:#B8960C; color:#0D1117; }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    background: var(--ink);
+  }
+
+  .contact-section .section-number { color: var(--gold); }
+  .contact-section .section-title { color: var(--paper); }
+  .contact-section .section-title em { color: var(--gold); }
+  .contact-section .section-header { border-bottom-color: rgba(255,255,255,0.08); }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 60px;
+  }
+
+  .contact-left p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(245,242,235,0.6);
+    margin-bottom: 32px;
+  }
+
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: rgba(245,242,235,0.4);
+    margin-bottom: 12px;
+  }
+
+  .contact-detail-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,242,235,0.4);
+  }
+
+  .contact-input {
+    background: rgba(245,242,235,0.05);
+    border: 1px solid rgba(245,242,235,0.1);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    color: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .contact-input::placeholder { color: rgba(245,242,235,0.25); }
+  .contact-input:focus { border-color: var(--gold); }
+
+  textarea.contact-input {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+  }
+
+  .contact-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--gold-light);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+
+  .contact-submit:hover { background: #e5c84f; transform: translateY(-1px); }
+  .contact-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .contact-success {
+    display: none;
+    padding: 16px 20px;
+    background: rgba(26,122,74,0.15);
+    border: 1px solid rgba(26,122,74,0.3);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: #4caf82;
+    margin-top: 8px;
+  }
+
+  .contact-success.visible { display: block; }
+
+  @media (max-width: 768px) {
+    .contact-section { padding: 80px 24px; }
+    .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+  }
 </style>
 </head>
 <body>
@@ -3306,6 +3610,37 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   }
   fetchTickerPrices();
   setInterval(fetchTickerPrices,30000);
+
+  // ── Contact form (Formspree) ──
+  document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('contact-btn');
+    const success = document.getElementById('contact-success');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    try {
+      const res = await fetch('https://formspree.io/f/xkopjbbl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('contact-name').value,
+          email: document.getElementById('contact-email').value,
+          message: document.getElementById('contact-message').value,
+        })
+      });
+      if (res.ok) {
+        success.classList.add('visible');
+        this.reset();
+        btn.textContent = 'Sent ✓';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Send message';
+      alert('Something went wrong — please try again or email us directly.');
+    }
+  });
 
 </script>
 </body>
