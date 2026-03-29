@@ -3234,10 +3234,10 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
       const valueStr = `CHF ${Number(a.endValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
       return `<tr>
         <td class="mono" style="font-weight:700;padding-left:10px">${a.symbol}</td>
-        <td style="color:#3D4451">${a.name}</td>
-        <td class="center mono" style="color:#3D4451">${a.buyCount||0}</td>
-        <td class="center mono" style="color:#3D4451">${a.sellCount||0}</td>
-        <td class="center mono" style="color:#3D4451">${a.stakingCount||0}</td>
+        <td style="color:#0D1117">${a.name}</td>
+        <td class="center mono" style="color:#0D1117">${a.buyCount||0}</td>
+        <td class="center mono" style="color:#0D1117">${a.sellCount||0}</td>
+        <td class="center mono" style="color:#0D1117">${a.stakingCount||0}</td>
         <td class="right mono">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
         <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">${glStr}</td>
@@ -3280,7 +3280,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   /* Info bar */
   .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #e0ddd5; border: 1px solid #e0ddd5; margin-bottom: 20px; }
   .info-cell { background: #F5F2EB; padding: 10px 12px; }
-  .info-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#8A909E; margin-bottom:3px; }
+  .info-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#3D4451; margin-bottom:3px; }
   .info-val { font-family:'DM Serif Display',serif; font-size:13pt; color:#0D1117; }
 
   /* Section title */
@@ -3316,11 +3316,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
   /* Summary boxes */
   .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#e0ddd5; border:1px solid #e0ddd5; margin-bottom:20px; }
-  .summary-box { background:#F5F2EB; padding:14px 14px; }
+  .summary-box { background:#F5F2EB; padding:16px 14px; display:flex; flex-direction:column; justify-content:flex-start; }
   .summary-box.highlight { background:#0D1117; }
-  .summary-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
+  .summary-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#3D4451; margin-bottom:8px; line-height:1; }
   .summary-box.highlight .summary-label { color:rgba(245,242,235,0.4); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:16pt; color:#0D1117; }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:16pt; color:#0D1117; line-height:1; display:block; }
   .summary-box.highlight .summary-val { color:#F5F2EB; }
 
   /* Compliance */
@@ -3542,11 +3542,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   <div class="summary-grid">
     <div class="summary-box">
       <div class="summary-label">Staking / Income</div>
-      <div class="summary-val" style="color:#1a7a4a">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</div>
+      <div class="summary-val" style="color:#1a7a4a">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box">
       <div class="summary-label">Portfolio Value 31.12.${data.taxYear}</div>
-      <div class="summary-val">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</div>
+      <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box highlight">
       <div class="summary-label">Net Gain / Loss</div>
