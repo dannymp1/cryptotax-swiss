@@ -2117,7 +2117,7 @@
     <div class="unlock-title">Enter your unlock code</div>
     <div class="unlock-sub" id="unlock-sub">Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.</div>
     <div class="unlock-row">
-      <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter code e.g. PRODECLARE99" maxlength="20" autocomplete="off"/>
+      <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off"/>
       <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
     </div>
     <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch</div>
@@ -2903,7 +2903,7 @@
     const ulBtn = document.querySelector('.unlock-btn');
     if (ulBtn && t.unlock_btn) ulBtn.textContent = t.unlock_btn;
     const ulInput = document.querySelector('.unlock-input');
-    if (ulInput && t.unlock_btn) ulInput.placeholder = lang === 'en' ? 'Enter code e.g. PRODECLARE99' : lang === 'fr' ? 'Entrez votre code' : 'Code eingeben';
+    if (ulInput && t.unlock_btn) ulInput.placeholder = lang === 'en' ? 'Enter your unlock code' : lang === 'fr' ? 'Entrez votre code d\'activation' : 'Freischaltcode eingeben';
     const ulErr = document.getElementById('unlock-error');
     if (ulErr && t.unlock_error) ulErr.textContent = t.unlock_error;
 
