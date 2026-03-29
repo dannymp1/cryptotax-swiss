@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Terms of Service — CryptoDeclare</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root { --ink:#0D1117; --ink-muted:#3D4451; --ink-faint:#8A909E; --paper:#F5F2EB; --gold:#B8960C; --gold-light:#D4AF37; --rule:rgba(13,17,23,0.12); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.7; color: var(--ink); background: var(--paper); }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 64px; background: rgba(245,242,235,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-mark { width: 36px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+  .nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); letter-spacing: -0.02em; }
+  .nav-logo-text span { color: var(--gold); }
+  .nav-back { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-faint); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-back:hover { color: var(--ink); }
+  .lang-btns { display: flex; gap: 8px; }
+  .lang-btn { background: none; border: 1px solid var(--rule); padding: 4px 10px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; border-radius: 2px; color: var(--ink-faint); transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .page { max-width: 720px; margin: 0 auto; padding: 120px 48px 80px; }
+  .doc-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .doc-title { font-family: 'DM Serif Display', serif; font-size: 48px; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; margin-bottom: 12px; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+  h2 { font-family: 'DM Serif Display', serif; font-size: 24px; letter-spacing: -0.02em; color: var(--ink); margin: 48px 0 16px; }
+  p { color: var(--ink-muted); margin-bottom: 16px; }
+  ul { color: var(--ink-muted); padding-left: 24px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .lang-section { display: none; }
+  .lang-section.active { display: block; }
+  footer { background: var(--ink); color: rgba(245,242,235,0.4); text-align: center; padding: 32px 48px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: 80px; }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="#0D1117"/>
+        <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
+        <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
+        <rect x="205" y="262" width="90" height="16" rx="4" fill="#B8960C"/>
+        <path d="M 205 130 L 223 130 Q 290 130 290 200 Q 290 270 223 270 L 205 270 Z" fill="#B8960C"/>
+        <path d="M 223 148 Q 269 148 269 200 Q 269 252 223 252 L 223 148 Z" fill="#0D1117"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Crypto<span>Declare</span></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:24px">
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+    </div>
+    <a href="index.html" class="nav-back">← Back to site</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ENGLISH -->
+  <div class="lang-section active" id="lang-en">
+    <div class="doc-eyebrow">Legal · Terms</div>
+    <h1 class="doc-title">Terms of Service</h1>
+    <p class="doc-meta">Last updated: 29 March 2026 · CryptoDeclare · Geneva, Switzerland</p>
+
+    <h2>1. Acceptance of terms</h2>
+    <p>By accessing or using CryptoDeclare ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.</p>
+
+    <h2>2. Description of service</h2>
+    <p>CryptoDeclare is a web-based tool that processes cryptocurrency transaction data uploaded by the user to generate a supporting document for Swiss cantonal tax declarations. The Service uses the FIFO accounting method and applies exchange rates based on available market data.</p>
+
+    <h2>3. Not financial or legal advice</h2>
+    <p>The reports generated by CryptoDeclare are supporting documents only and do not constitute official tax filings, legal advice, or financial advice. You are solely responsible for the accuracy of the data you upload and for verifying the output with a qualified Swiss tax advisor (Treuhänder) where necessary. CryptoDeclare accepts no liability for errors resulting from incorrect or incomplete input data.</p>
+
+    <h2>4. User responsibilities</h2>
+    <ul>
+      <li>You are responsible for ensuring that the transaction data you upload is accurate and complete.</li>
+      <li>You must not use the Service for any unlawful purpose.</li>
+      <li>You must not attempt to reverse-engineer, copy, or resell the Service.</li>
+    </ul>
+
+    <h2>5. Payments and refunds</h2>
+    <p>Paid plans are billed per tax year via Stripe. All prices are in Swiss Francs (CHF) and are inclusive of any applicable taxes. Due to the digital nature of the product, refunds are generally not available once a report has been generated. If you experience a technical issue preventing report generation, please contact us at <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a> within 14 days.</p>
+
+    <h2>6. Intellectual property</h2>
+    <p>All content, design, code, and branding of CryptoDeclare is the property of Daniel Michaud-Payet. You may not reproduce, distribute, or create derivative works without written permission.</p>
+
+    <h2>7. Limitation of liability</h2>
+    <p>To the maximum extent permitted by Swiss law, CryptoDeclare and Daniel Michaud-Payet shall not be liable for any indirect, incidental, or consequential damages arising from use of the Service, including but not limited to errors in tax reports, penalties from tax authorities, or data loss.</p>
+
+    <h2>8. Availability</h2>
+    <p>We strive to maintain continuous availability of the Service but do not guarantee uninterrupted access. We reserve the right to modify, suspend, or discontinue the Service at any time with reasonable notice.</p>
+
+    <h2>9. Governing law</h2>
+    <p>These Terms are governed by Swiss law. Any disputes shall be subject to the exclusive jurisdiction of the courts of the Canton of Geneva, Switzerland.</p>
+
+    <h2>10. Changes</h2>
+    <p>We reserve the right to update these Terms at any time. Continued use of the Service after changes constitutes acceptance of the updated Terms.</p>
+
+    <h2>11. Contact</h2>
+    <p><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></p>
+  </div>
+
+  <!-- FRENCH -->
+  <div class="lang-section" id="lang-fr">
+    <div class="doc-eyebrow">Légal · Conditions</div>
+    <h1 class="doc-title">Conditions d'utilisation</h1>
+    <p class="doc-meta">Dernière mise à jour : 29 mars 2026 · CryptoDeclare · Genève, Suisse</p>
+
+    <h2>1. Acceptation des conditions</h2>
+    <p>En accédant ou en utilisant CryptoDeclare (« le Service »), vous acceptez d'être lié par ces Conditions d'utilisation. Si vous n'acceptez pas, veuillez ne pas utiliser le Service.</p>
+
+    <h2>2. Description du service</h2>
+    <p>CryptoDeclare est un outil en ligne qui traite les données de transactions en cryptomonnaies pour générer un document annexe destiné aux déclarations fiscales cantonales suisses. Le Service utilise la méthode FIFO et des taux de change basés sur les données de marché disponibles.</p>
+
+    <h2>3. Pas de conseil fiscal ou juridique</h2>
+    <p>Les rapports générés par CryptoDeclare sont des documents justificatifs uniquement et ne constituent pas des déclarations fiscales officielles, des conseils juridiques ou financiers. Vous êtes seul responsable de l'exactitude des données importées et de la vérification des résultats avec un conseiller fiscal suisse qualifié si nécessaire.</p>
+
+    <h2>4. Responsabilités de l'utilisateur</h2>
+    <ul>
+      <li>Vous êtes responsable de l'exactitude et de l'exhaustivité des données importées.</li>
+      <li>Vous ne devez pas utiliser le Service à des fins illicites.</li>
+      <li>Vous ne devez pas tenter de décompiler, copier ou revendre le Service.</li>
+    </ul>
+
+    <h2>5. Paiements et remboursements</h2>
+    <p>Les plans payants sont facturés par année fiscale via Stripe en CHF. En raison de la nature numérique du produit, les remboursements ne sont généralement pas disponibles une fois le rapport généré. En cas de problème technique, contactez-nous à <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a> dans les 14 jours.</p>
+
+    <h2>6. Propriété intellectuelle</h2>
+    <p>Tout le contenu, design, code et branding de CryptoDeclare appartient à Daniel Michaud-Payet. Toute reproduction sans autorisation écrite est interdite.</p>
+
+    <h2>7. Limitation de responsabilité</h2>
+    <p>Dans la limite du droit suisse applicable, CryptoDeclare et Daniel Michaud-Payet ne sauraient être tenus responsables de dommages indirects résultant de l'utilisation du Service, y compris les erreurs dans les rapports fiscaux ou les pénalités des autorités fiscales.</p>
+
+    <h2>8. Droit applicable</h2>
+    <p>Ces Conditions sont régies par le droit suisse. Tout litige sera soumis à la juridiction exclusive des tribunaux du Canton de Genève.</p>
+
+    <h2>9. Contact</h2>
+    <p><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></p>
+  </div>
+
+  <!-- GERMAN -->
+  <div class="lang-section" id="lang-de">
+    <div class="doc-eyebrow">Rechtliches · Nutzungsbedingungen</div>
+    <h1 class="doc-title">Nutzungsbedingungen</h1>
+    <p class="doc-meta">Letzte Aktualisierung: 29. März 2026 · CryptoDeclare · Genf, Schweiz</p>
+
+    <h2>1. Annahme der Bedingungen</h2>
+    <p>Durch den Zugriff auf oder die Nutzung von CryptoDeclare (« der Dienst ») erklären Sie sich mit diesen Nutzungsbedingungen einverstanden.</p>
+
+    <h2>2. Beschreibung des Dienstes</h2>
+    <p>CryptoDeclare ist ein webbasiertes Tool, das Kryptowährungs-Transaktionsdaten verarbeitet, um ein Beilagedokument für kantonale Steuererklärungen zu erstellen. Der Dienst verwendet die FIFO-Methode und marktbasierte Wechselkurse.</p>
+
+    <h2>3. Keine Steuer- oder Rechtsberatung</h2>
+    <p>Die generierten Berichte sind ausschließlich Beilagedokumente und stellen keine offizielle Steuererklärung, Rechts- oder Finanzberatung dar. Sie sind allein verantwortlich für die Richtigkeit der hochgeladenen Daten. Bei Bedarf konsultieren Sie einen qualifizierten Schweizer Steuerberater (Treuhänder).</p>
+
+    <h2>4. Pflichten des Nutzers</h2>
+    <ul>
+      <li>Sie sind für die Richtigkeit und Vollständigkeit der hochgeladenen Daten verantwortlich.</li>
+      <li>Sie dürfen den Dienst nicht für rechtswidrige Zwecke nutzen.</li>
+      <li>Sie dürfen den Dienst nicht dekompilieren, kopieren oder weiterverkaufen.</li>
+    </ul>
+
+    <h2>5. Zahlung und Rückerstattung</h2>
+    <p>Bezahlte Pläne werden pro Steuerjahr über Stripe in CHF abgerechnet. Aufgrund der digitalen Natur des Produkts sind Rückerstattungen nach Berichterstellung grundsätzlich nicht möglich. Bei technischen Problemen wenden Sie sich innerhalb von 14 Tagen an <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>6. Geistiges Eigentum</h2>
+    <p>Alle Inhalte, das Design, der Code und das Branding von CryptoDeclare sind Eigentum von Daniel Michaud-Payet. Eine Vervielfältigung ohne schriftliche Genehmigung ist untersagt.</p>
+
+    <h2>7. Haftungsbeschränkung</h2>
+    <p>Im gesetzlich zulässigen Rahmen haften CryptoDeclare und Daniel Michaud-Payet nicht für indirekte oder Folgeschäden aus der Nutzung des Dienstes, einschließlich Fehler in Steuerberichten oder Bußgelder von Steuerbehörden.</p>
+
+    <h2>8. Anwendbares Recht</h2>
+    <p>Diese Bedingungen unterliegen Schweizer Recht. Streitigkeiten unterliegen der ausschließlichen Zuständigkeit der Gerichte des Kantons Genf.</p>
+
+    <h2>9. Kontakt</h2>
+    <p><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 CryptoDeclare · <a href="index.html">Home</a> · <a href="privacy.html">Privacy</a> · <a href="impressum.html">Impressum</a></p>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('lang-' + lang).classList.add('active');
+    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+  }
+</script>
+</body>
+</html>

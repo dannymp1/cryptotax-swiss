@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Privacy Policy — CryptoDeclare</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root { --ink:#0D1117; --ink-muted:#3D4451; --ink-faint:#8A909E; --paper:#F5F2EB; --gold:#B8960C; --gold-light:#D4AF37; --rule:rgba(13,17,23,0.12); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.7; color: var(--ink); background: var(--paper); }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 64px; background: rgba(245,242,235,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-mark { width: 36px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+  .nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); letter-spacing: -0.02em; }
+  .nav-logo-text span { color: var(--gold); }
+  .nav-back { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-faint); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-back:hover { color: var(--ink); }
+  .lang-btns { display: flex; gap: 8px; }
+  .lang-btn { background: none; border: 1px solid var(--rule); padding: 4px 10px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; border-radius: 2px; color: var(--ink-faint); transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .page { max-width: 720px; margin: 0 auto; padding: 120px 48px 80px; }
+  .doc-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .doc-title { font-family: 'DM Serif Display', serif; font-size: 48px; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; margin-bottom: 12px; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+  h2 { font-family: 'DM Serif Display', serif; font-size: 24px; letter-spacing: -0.02em; color: var(--ink); margin: 48px 0 16px; }
+  p { color: var(--ink-muted); margin-bottom: 16px; }
+  ul { color: var(--ink-muted); padding-left: 24px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .section-divider { border: none; border-top: 1px solid var(--rule); margin: 48px 0; }
+  .lang-section { display: none; }
+  .lang-section.active { display: block; }
+  footer { background: var(--ink); color: rgba(245,242,235,0.4); text-align: center; padding: 32px 48px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: 80px; }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="#0D1117"/>
+        <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
+        <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
+        <rect x="205" y="262" width="90" height="16" rx="4" fill="#B8960C"/>
+        <path d="M 205 130 L 223 130 Q 290 130 290 200 Q 290 270 223 270 L 205 270 Z" fill="#B8960C"/>
+        <path d="M 223 148 Q 269 148 269 200 Q 269 252 223 252 L 223 148 Z" fill="#0D1117"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Crypto<span>Declare</span></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:24px">
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+    </div>
+    <a href="index.html" class="nav-back">← Back to site</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ENGLISH -->
+  <div class="lang-section active" id="lang-en">
+    <div class="doc-eyebrow">Legal · Privacy</div>
+    <h1 class="doc-title">Privacy Policy</h1>
+    <p class="doc-meta">Last updated: 29 March 2026 · CryptoDeclare · Geneva, Switzerland</p>
+
+    <h2>1. Who we are</h2>
+    <p>CryptoDeclare is operated by Daniel Michaud-Payet, a sole trader based in Geneva, Switzerland. Contact: <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>2. What data we collect</h2>
+    <p>We collect only the minimum data necessary to provide our service:</p>
+    <ul>
+      <li><strong>Transaction files</strong> you upload (CSV/Excel) — processed in-session in your browser and never stored on our servers after your report is generated.</li>
+      <li><strong>Email address</strong> — when you contact us via the contact form or purchase a paid plan.</li>
+      <li><strong>Payment data</strong> — processed entirely by Stripe. We never see or store your card details.</li>
+    </ul>
+
+    <h2>3. How we use your data</h2>
+    <ul>
+      <li>To generate your Swiss crypto tax report.</li>
+      <li>To respond to your support enquiries.</li>
+      <li>To process payments via Stripe.</li>
+    </ul>
+    <p>We do not sell, share or rent your data to any third party. We do not use your data for marketing without explicit consent.</p>
+
+    <h2>4. Data processing location</h2>
+    <p>Your transaction data is processed entirely client-side in your browser using JavaScript. No transaction data is transmitted to or stored on our servers. Your email address, if provided, is stored securely within our contact and payment processors (Formspree and Stripe), both of which are GDPR-compliant.</p>
+
+    <h2>5. Cookies</h2>
+    <p>CryptoDeclare does not use tracking cookies or advertising cookies. We do not use Google Analytics or any third-party analytics on this site. The only external services loaded are Google Fonts (for typography) and Stripe (for payments).</p>
+
+    <h2>6. Your rights under nDSG / GDPR</h2>
+    <p>As a Swiss resident or EU/EEA resident, you have the right to:</p>
+    <ul>
+      <li>Access the personal data we hold about you.</li>
+      <li>Request correction or deletion of your data.</li>
+      <li>Object to processing of your data.</li>
+      <li>Lodge a complaint with the Swiss Federal Data Protection and Information Commissioner (FDPIC).</li>
+    </ul>
+    <p>To exercise any of these rights, contact us at <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>7. Data retention</h2>
+    <p>Contact form submissions are retained for up to 12 months. Payment records are retained as required by Swiss accounting law (10 years). Transaction files you upload are never stored beyond your browser session.</p>
+
+    <h2>8. Changes to this policy</h2>
+    <p>We may update this Privacy Policy from time to time. The date at the top of this page reflects the latest revision. Continued use of the service constitutes acceptance of the updated policy.</p>
+
+    <h2>9. Contact</h2>
+    <p>Questions about this policy? Email us at <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+  </div>
+
+  <!-- FRENCH -->
+  <div class="lang-section" id="lang-fr">
+    <div class="doc-eyebrow">Légal · Confidentialité</div>
+    <h1 class="doc-title">Politique de confidentialité</h1>
+    <p class="doc-meta">Dernière mise à jour : 29 mars 2026 · CryptoDeclare · Genève, Suisse</p>
+
+    <h2>1. Qui sommes-nous</h2>
+    <p>CryptoDeclare est exploité par Daniel Michaud-Payet, indépendant domicilié à Genève, Suisse. Contact : <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>2. Données collectées</h2>
+    <p>Nous collectons uniquement les données strictement nécessaires à la fourniture de notre service :</p>
+    <ul>
+      <li><strong>Fichiers de transactions</strong> (CSV/Excel) — traités dans votre navigateur et jamais stockés sur nos serveurs après la génération du rapport.</li>
+      <li><strong>Adresse e-mail</strong> — lors d'une prise de contact ou d'un achat.</li>
+      <li><strong>Données de paiement</strong> — traitées intégralement par Stripe. Nous ne voyons ni ne stockons vos données de carte bancaire.</li>
+    </ul>
+
+    <h2>3. Utilisation des données</h2>
+    <ul>
+      <li>Générer votre rapport fiscal crypto suisse.</li>
+      <li>Répondre à vos demandes d'assistance.</li>
+      <li>Traiter vos paiements via Stripe.</li>
+    </ul>
+    <p>Nous ne vendons, ne partageons ni ne louons vos données à des tiers. Nous n'utilisons pas vos données à des fins marketing sans consentement explicite.</p>
+
+    <h2>4. Localisation du traitement</h2>
+    <p>Vos données de transactions sont traitées entièrement côté client dans votre navigateur. Aucune donnée de transaction n'est transmise ni stockée sur nos serveurs. Votre adresse e-mail, si fournie, est stockée de manière sécurisée chez Formspree et Stripe, tous deux conformes au RGPD.</p>
+
+    <h2>5. Cookies</h2>
+    <p>CryptoDeclare n'utilise pas de cookies de suivi ni de publicité. Nous n'utilisons pas Google Analytics ou tout autre outil d'analyse tiers sur ce site.</p>
+
+    <h2>6. Vos droits (nLPD / RGPD)</h2>
+    <p>En tant que résident suisse ou européen, vous disposez des droits suivants :</p>
+    <ul>
+      <li>Accès aux données personnelles vous concernant.</li>
+      <li>Rectification ou suppression de vos données.</li>
+      <li>Opposition au traitement de vos données.</li>
+      <li>Dépôt d'une plainte auprès du Préposé fédéral à la protection des données (PFPDT).</li>
+    </ul>
+    <p>Pour exercer ces droits : <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>7. Conservation des données</h2>
+    <p>Les messages de contact sont conservés jusqu'à 12 mois. Les données de paiement sont conservées conformément au droit comptable suisse (10 ans). Les fichiers de transactions ne sont jamais stockés au-delà de votre session.</p>
+
+    <h2>8. Modifications</h2>
+    <p>Nous pouvons mettre à jour cette politique. La date en haut de page indique la dernière révision.</p>
+
+    <h2>9. Contact</h2>
+    <p><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></p>
+  </div>
+
+  <!-- GERMAN -->
+  <div class="lang-section" id="lang-de">
+    <div class="doc-eyebrow">Rechtliches · Datenschutz</div>
+    <h1 class="doc-title">Datenschutzerklärung</h1>
+    <p class="doc-meta">Letzte Aktualisierung: 29. März 2026 · CryptoDeclare · Genf, Schweiz</p>
+
+    <h2>1. Verantwortliche Person</h2>
+    <p>CryptoDeclare wird betrieben von Daniel Michaud-Payet, Einzelunternehmer mit Sitz in Genf, Schweiz. Kontakt: <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>2. Erhobene Daten</h2>
+    <p>Wir erheben nur die für die Erbringung unserer Dienstleistung notwendigen Daten:</p>
+    <ul>
+      <li><strong>Transaktionsdateien</strong> (CSV/Excel) — werden im Browser verarbeitet und nach der Berichterstellung nie auf unseren Servern gespeichert.</li>
+      <li><strong>E-Mail-Adresse</strong> — bei Kontaktaufnahme oder Kauf.</li>
+      <li><strong>Zahlungsdaten</strong> — vollständig durch Stripe verarbeitet. Wir sehen oder speichern Ihre Kartendaten nicht.</li>
+    </ul>
+
+    <h2>3. Verwendung der Daten</h2>
+    <ul>
+      <li>Erstellung Ihres Schweizer Krypto-Steuerberichts.</li>
+      <li>Beantwortung Ihrer Supportanfragen.</li>
+      <li>Zahlungsabwicklung über Stripe.</li>
+    </ul>
+    <p>Wir verkaufen, teilen oder vermieten Ihre Daten nicht an Dritte. Wir nutzen Ihre Daten nicht für Marketingzwecke ohne ausdrückliche Einwilligung.</p>
+
+    <h2>4. Datenverarbeitung</h2>
+    <p>Ihre Transaktionsdaten werden vollständig clientseitig in Ihrem Browser verarbeitet. Es werden keine Transaktionsdaten an unsere Server übermittelt oder gespeichert. Ihre E-Mail-Adresse wird sicher bei Formspree und Stripe gespeichert, die beide DSGVO-konform sind.</p>
+
+    <h2>5. Cookies</h2>
+    <p>CryptoDeclare verwendet keine Tracking- oder Werbe-Cookies und kein Google Analytics oder sonstiges Analyse-Tool von Drittanbietern.</p>
+
+    <h2>6. Ihre Rechte (revDSG / DSGVO)</h2>
+    <ul>
+      <li>Auskunft über Ihre gespeicherten Daten.</li>
+      <li>Berichtigung oder Löschung Ihrer Daten.</li>
+      <li>Widerspruch gegen die Verarbeitung.</li>
+      <li>Beschwerde beim Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB).</li>
+    </ul>
+    <p>Zur Ausübung dieser Rechte: <a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a>.</p>
+
+    <h2>7. Datenspeicherung</h2>
+    <p>Kontaktanfragen werden bis zu 12 Monate gespeichert. Zahlungsdaten werden gemäß Schweizer Buchführungsrecht aufbewahrt (10 Jahre). Transaktionsdateien werden nie über Ihre Sitzung hinaus gespeichert.</p>
+
+    <h2>8. Änderungen</h2>
+    <p>Wir können diese Datenschutzerklärung aktualisieren. Das Datum oben auf dieser Seite zeigt die letzte Überarbeitung.</p>
+
+    <h2>9. Kontakt</h2>
+    <p><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 CryptoDeclare · <a href="index.html">Home</a> · <a href="terms.html">Terms</a> · <a href="impressum.html">Impressum</a></p>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('lang-' + lang).classList.add('active');
+    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+  }
+</script>
+</body>
+</html>

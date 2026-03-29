@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Impressum — CryptoDeclare</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root { --ink:#0D1117; --ink-muted:#3D4451; --ink-faint:#8A909E; --paper:#F5F2EB; --gold:#B8960C; --gold-light:#D4AF37; --rule:rgba(13,17,23,0.12); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.7; color: var(--ink); background: var(--paper); }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 64px; background: rgba(245,242,235,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-mark { width: 36px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+  .nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); letter-spacing: -0.02em; }
+  .nav-logo-text span { color: var(--gold); }
+  .nav-back { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-faint); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-back:hover { color: var(--ink); }
+  .lang-btns { display: flex; gap: 8px; }
+  .lang-btn { background: none; border: 1px solid var(--rule); padding: 4px 10px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; border-radius: 2px; color: var(--ink-faint); transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .page { max-width: 720px; margin: 0 auto; padding: 120px 48px 80px; }
+  .doc-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .doc-title { font-family: 'DM Serif Display', serif; font-size: 48px; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; margin-bottom: 12px; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+  h2 { font-family: 'DM Serif Display', serif; font-size: 24px; letter-spacing: -0.02em; color: var(--ink); margin: 40px 0 16px; }
+  p { color: var(--ink-muted); margin-bottom: 12px; }
+  .detail-block { background: rgba(13,17,23,0.04); border: 1px solid var(--rule); border-radius: 4px; padding: 24px 28px; margin-bottom: 24px; }
+  .detail-row { display: flex; gap: 16px; margin-bottom: 10px; font-size: 15px; }
+  .detail-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); min-width: 110px; padding-top: 2px; }
+  .detail-value { color: var(--ink-muted); }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .address-note { font-size: 13px; color: var(--ink-faint); font-style: italic; margin-top: 16px; }
+  .lang-section { display: none; }
+  .lang-section.active { display: block; }
+  footer { background: var(--ink); color: rgba(245,242,235,0.4); text-align: center; padding: 32px 48px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: 80px; }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="#0D1117"/>
+        <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
+        <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
+        <rect x="205" y="262" width="90" height="16" rx="4" fill="#B8960C"/>
+        <path d="M 205 130 L 223 130 Q 290 130 290 200 Q 290 270 223 270 L 205 270 Z" fill="#B8960C"/>
+        <path d="M 223 148 Q 269 148 269 200 Q 269 252 223 252 L 223 148 Z" fill="#0D1117"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Crypto<span>Declare</span></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:24px">
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+    </div>
+    <a href="index.html" class="nav-back">← Back to site</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ENGLISH -->
+  <div class="lang-section active" id="lang-en">
+    <div class="doc-eyebrow">Legal · Imprint</div>
+    <h1 class="doc-title">Impressum</h1>
+    <p class="doc-meta">Mandatory disclosure under Swiss law · cryptodeclare.ch</p>
+
+    <h2>Responsible person</h2>
+    <div class="detail-block">
+      <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">Daniel Michaud-Payet</span></div>
+      <div class="detail-row"><span class="detail-label">Activity</span><span class="detail-value">Sole trader — digital services</span></div>
+      <div class="detail-row"><span class="detail-label">Address</span><span class="detail-value">Geneva, Switzerland<br/><span style="font-size:13px;color:var(--ink-faint)">(Full address available on request)</span></span></div>
+      <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></span></div>
+      <div class="detail-row"><span class="detail-label">Website</span><span class="detail-value"><a href="https://www.cryptodeclare.ch">www.cryptodeclare.ch</a></span></div>
+      <div class="detail-row"><span class="detail-label">Canton</span><span class="detail-value">Geneva (GE)</span></div>
+      <div class="detail-row"><span class="detail-label">Country</span><span class="detail-value">Switzerland</span></div>
+    </div>
+
+    <h2>Disclaimer</h2>
+    <p>The reports generated by CryptoDeclare are supporting documents only and do not constitute official tax filings or legal advice. Users are responsible for verifying outputs with a qualified Swiss tax advisor where necessary.</p>
+
+    <h2>Third-party services</h2>
+    <p>This website uses the following third-party services: Google Fonts (typography), Stripe (payment processing), Formspree (contact form), CoinGecko API (live price data).</p>
+  </div>
+
+  <!-- FRENCH -->
+  <div class="lang-section" id="lang-fr">
+    <div class="doc-eyebrow">Légal · Mentions légales</div>
+    <h1 class="doc-title">Mentions légales</h1>
+    <p class="doc-meta">Mentions obligatoires selon le droit suisse · cryptodeclare.ch</p>
+
+    <h2>Personne responsable</h2>
+    <div class="detail-block">
+      <div class="detail-row"><span class="detail-label">Nom</span><span class="detail-value">Daniel Michaud-Payet</span></div>
+      <div class="detail-row"><span class="detail-label">Activité</span><span class="detail-value">Indépendant — services numériques</span></div>
+      <div class="detail-row"><span class="detail-label">Adresse</span><span class="detail-value">Genève, Suisse<br/><span style="font-size:13px;color:var(--ink-faint)">(Adresse complète disponible sur demande)</span></span></div>
+      <div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-value"><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></span></div>
+      <div class="detail-row"><span class="detail-label">Site web</span><span class="detail-value"><a href="https://www.cryptodeclare.ch">www.cryptodeclare.ch</a></span></div>
+      <div class="detail-row"><span class="detail-label">Canton</span><span class="detail-value">Genève (GE)</span></div>
+      <div class="detail-row"><span class="detail-label">Pays</span><span class="detail-value">Suisse</span></div>
+    </div>
+
+    <h2>Avertissement</h2>
+    <p>Les rapports générés par CryptoDeclare sont des documents justificatifs uniquement et ne constituent pas des déclarations fiscales officielles ou des conseils juridiques.</p>
+
+    <h2>Services tiers</h2>
+    <p>Ce site utilise les services tiers suivants : Google Fonts, Stripe (paiements), Formspree (formulaire de contact), API CoinGecko (cours en direct).</p>
+  </div>
+
+  <!-- GERMAN -->
+  <div class="lang-section" id="lang-de">
+    <div class="doc-eyebrow">Rechtliches · Impressum</div>
+    <h1 class="doc-title">Impressum</h1>
+    <p class="doc-meta">Pflichtangaben gemäß Schweizer Recht · cryptodeclare.ch</p>
+
+    <h2>Verantwortliche Person</h2>
+    <div class="detail-block">
+      <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">Daniel Michaud-Payet</span></div>
+      <div class="detail-row"><span class="detail-label">Tätigkeit</span><span class="detail-value">Einzelunternehmer — digitale Dienstleistungen</span></div>
+      <div class="detail-row"><span class="detail-label">Adresse</span><span class="detail-value">Genf, Schweiz<br/><span style="font-size:13px;color:var(--ink-faint)">(Vollständige Adresse auf Anfrage)</span></span></div>
+      <div class="detail-row"><span class="detail-label">E-Mail</span><span class="detail-value"><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a></span></div>
+      <div class="detail-row"><span class="detail-label">Website</span><span class="detail-value"><a href="https://www.cryptodeclare.ch">www.cryptodeclare.ch</a></span></div>
+      <div class="detail-row"><span class="detail-label">Kanton</span><span class="detail-value">Genf (GE)</span></div>
+      <div class="detail-row"><span class="detail-label">Land</span><span class="detail-value">Schweiz</span></div>
+    </div>
+
+    <h2>Haftungsausschluss</h2>
+    <p>Die von CryptoDeclare generierten Berichte sind ausschließlich Beilagedokumente und stellen keine offizielle Steuererklärung oder Rechtsberatung dar.</p>
+
+    <h2>Drittanbieter-Dienste</h2>
+    <p>Diese Website verwendet folgende Drittanbieter-Dienste: Google Fonts, Stripe (Zahlungen), Formspree (Kontaktformular), CoinGecko API (Live-Kursdaten).</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 CryptoDeclare · <a href="index.html">Home</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></p>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('lang-' + lang).classList.add('active');
+    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+  }
+</script>
+</body>
+</html>
