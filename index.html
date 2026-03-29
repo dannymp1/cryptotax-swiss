@@ -1067,6 +1067,94 @@
     text-transform: uppercase;
   }
 
+  /* ── UNLOCK CODE ── */
+  .unlock-banner {
+    display: none;
+    background: var(--ink);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(212,175,55,0.3);
+  }
+  .unlock-banner.visible { display: block; }
+  .unlock-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--paper);
+    margin-bottom: 6px;
+  }
+  .unlock-sub {
+    font-size: 13px;
+    color: rgba(245,242,235,0.5);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .unlock-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .unlock-input {
+    flex: 1;
+    background: rgba(245,242,235,0.08);
+    border: 1px solid rgba(245,242,235,0.15);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--paper);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .unlock-input::placeholder { color: rgba(245,242,235,0.25); text-transform: none; }
+  .unlock-input:focus { border-color: var(--gold); }
+  .unlock-input.error { border-color: var(--red); }
+  .unlock-btn {
+    background: var(--gold-light);
+    color: var(--ink);
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .unlock-btn:hover { background: #e5c84f; }
+  .unlock-error { font-size: 12px; color: #e05c5c; margin-top: 8px; display: none; }
+  .unlock-error.visible { display: block; }
+  .unlock-success { font-size: 12px; color: #4caf82; margin-top: 8px; display: none; }
+  .unlock-success.visible { display: block; }
+  .plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-left: 8px;
+  }
+  .plan-badge.free { background: rgba(13,17,23,0.08); color: var(--ink-muted); }
+  .plan-badge.pro { background: var(--gold-pale); color: var(--gold); border: 1px solid var(--gold); }
+  .plan-badge.business { background: var(--ink); color: var(--gold-light); border: 1px solid var(--gold-light); }
+  .tx-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 8px;
+  }
+  .tx-counter.warning { color: #E8A020; }
+  .tx-counter.blocked { color: var(--red); }
+
   /* ── TRIAL BANNER ── */
   .trial-banner {
     display: flex;
@@ -2018,12 +2106,25 @@
 <section class="app-section" id="declare">
   <div class="section-header">
     <span class="section-number">05 — Declare</span>
+    <span class="plan-badge free" id="plan-badge">Free · 50 tx</span>
     <h2 class="section-title">Upload your<br><em>transactions</em></h2>
   </div>
 
   <div class="app-layout">
     <div class="app-left">
-      <!-- FREE TRIAL BANNER -->
+      <!-- UNLOCK CODE BANNER -->
+  <div class="unlock-banner" id="unlock-banner">
+    <div class="unlock-title">Enter your unlock code</div>
+    <div class="unlock-sub" id="unlock-sub">Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.</div>
+    <div class="unlock-row">
+      <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter code e.g. PRODECLARE99" maxlength="20" autocomplete="off"/>
+      <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
+    </div>
+    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch</div>
+    <div class="unlock-success" id="unlock-success"></div>
+  </div>
+
+  <!-- FREE TRIAL BANNER -->
       <div class="trial-banner" id="trial-banner">
         <div class="trial-banner-left">
           <div class="trial-badge">FREE TRIAL</div>
@@ -2629,6 +2730,106 @@
     if (e.target === this) closeModal();
   });
 
+  // ── Unlock Code System ──
+  // Codes are SHA-256 hashed — not reversible from source
+  const PRO_HASHES = [
+    '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598', // PRODECLARE99
+    'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8', // PROSWISS2024
+    '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b', // PROCRYPTO99A
+  ];
+  const BIZ_HASHES = [
+    'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d', // BIZDECLARE299
+    '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90', // BIZSWISS2024
+    '2e27cda7b84c5c2681f6270224d8a3352958c550d6e7049a2e74a7c58c5b467b', // BIZCRYPTO299A
+  ];
+
+  // Plan limits
+  const LIMITS = { free: 50, pro: 1000, business: Infinity };
+  const WARN_AT = 900; // warn before hitting pro limit
+
+  let currentPlanTier = 'free'; // 'free' | 'pro' | 'business'
+  let pendingFile = null; // store file while waiting for unlock code
+
+  async function sha256hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  function getPlanFromStorage() {
+    try {
+      const stored = localStorage.getItem('cd_plan');
+      if (stored) {
+        const { tier, hash } = JSON.parse(stored);
+        if (tier === 'pro' && PRO_HASHES.includes(hash)) return 'pro';
+        if (tier === 'business' && BIZ_HASHES.includes(hash)) return 'business';
+      }
+    } catch(e) {}
+    return 'free';
+  }
+
+  function setPlanBadge(tier) {
+    const badge = document.getElementById('plan-badge');
+    if (!badge) return;
+    badge.className = 'plan-badge ' + tier;
+    badge.textContent = tier === 'free' ? 'Free · 50 tx' : tier === 'pro' ? 'Pro · 1,000 tx' : 'Business · Unlimited';
+  }
+
+  async function applyUnlockCode() {
+    const input = document.getElementById('unlock-input');
+    const errorEl = document.getElementById('unlock-error');
+    const successEl = document.getElementById('unlock-success');
+    const code = input.value.trim().toUpperCase();
+    if (!code) return;
+
+    input.classList.remove('error');
+    errorEl.classList.remove('visible');
+    successEl.classList.remove('visible');
+
+    const hash = await sha256hex(code);
+    let tier = null;
+    if (PRO_HASHES.includes(hash)) tier = 'pro';
+    else if (BIZ_HASHES.includes(hash)) tier = 'business';
+
+    if (!tier) {
+      input.classList.add('error');
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    // Save to localStorage
+    try { localStorage.setItem('cd_plan', JSON.stringify({ tier, hash })); } catch(e) {}
+    currentPlanTier = tier;
+    setPlanBadge(tier);
+
+    const label = tier === 'pro' ? 'Pro — up to 1,000 transactions' : 'Business — unlimited transactions';
+    successEl.textContent = '✓ ' + label + ' unlocked!';
+    successEl.classList.add('visible');
+
+    // If there's a pending file, process it now
+    setTimeout(() => {
+      document.getElementById('unlock-banner').classList.remove('visible');
+      if (pendingFile) {
+        const f = pendingFile;
+        pendingFile = null;
+        processFile(f);
+      }
+    }, 1200);
+  }
+
+  function getTxLimit() {
+    return LIMITS[currentPlanTier] || LIMITS.free;
+  }
+
+  function showUnlockBanner(txCount) {
+    const banner = document.getElementById('unlock-banner');
+    const sub = document.getElementById('unlock-sub');
+    banner.classList.add('visible');
+    if (txCount > LIMITS.free) {
+      sub.textContent = `Your file has ${txCount.toLocaleString()} transactions. Pro unlocks up to 1,000 · Business unlocks unlimited.`;
+    }
+    document.getElementById('unlock-banner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   // ── Free Trial Logic ──
   const TRIAL_KEY = 'cryptotax_trial_used';
 
@@ -2646,7 +2847,35 @@
   }
 
   // Run on load
+  currentPlanTier = getPlanFromStorage();
   updateTrialUI();
+  setPlanBadge(currentPlanTier);
+
+  // ── Auto-unlock from Stripe redirect URL ──
+  // Stripe sends customer back to: cryptodeclare.ch/?code=PRODECLARE99
+  (async () => {
+    const params = new URLSearchParams(window.location.search);
+    const urlCode = params.get('code');
+    if (urlCode) {
+      const code = urlCode.trim().toUpperCase();
+      const hash = await sha256hex(code);
+      let tier = null;
+      if (PRO_HASHES.includes(hash)) tier = 'pro';
+      else if (BIZ_HASHES.includes(hash)) tier = 'business';
+      if (tier) {
+        try { localStorage.setItem('cd_plan', JSON.stringify({ tier, hash })); } catch(e) {}
+        currentPlanTier = tier;
+        setPlanBadge(tier);
+        // Show a welcome toast
+        const label = tier === 'pro' ? 'Pro — up to 1,000 transactions' : 'Business — unlimited transactions';
+        showToast('🎉 ' + label + ' unlocked! You can now upload your CSV.');
+        // Clean URL so code doesn't stay visible
+        window.history.replaceState({}, '', window.location.pathname);
+        // Scroll to upload section
+        setTimeout(() => navScrollTo('declare'), 600);
+      }
+    }
+  })();
 
   // ── CSV / Excel Upload ──
   const uploadArea = document.getElementById('upload-area');
@@ -2695,6 +2924,24 @@
       setProcessingText('Could not read file: ' + err.message);
       setTimeout(() => indicator.classList.remove('visible'), 4000);
       return;
+    }
+
+    // Count transactions quickly before full parse
+    const quickRows = parseCSVRows(csvText);
+    const txCount = quickRows.length;
+    const limit = getTxLimit();
+
+    // Hard block if over limit
+    if (txCount > limit) {
+      indicator.classList.remove('visible');
+      pendingFile = file;
+      showUnlockBanner(txCount);
+      return;
+    }
+
+    // Warn if approaching Pro limit
+    if (currentPlanTier === 'pro' && txCount >= WARN_AT) {
+      setProcessingText(`Processing ${txCount} transactions — approaching Pro limit of 1,000...`);
     }
 
     setProcessingText('Analysing transactions with AI...');
@@ -3665,6 +3912,20 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   }
   fetchTickerPrices();
   setInterval(fetchTickerPrices,30000);
+
+  // ── Toast notification ──
+  function showToast(msg) {
+    let toast = document.getElementById('cd-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'cd-toast';
+      toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#0D1117;color:#F5F2EB;font-family:Instrument Sans,sans-serif;font-size:14px;padding:14px 24px;border-radius:4px;border:1px solid rgba(212,175,55,0.4);z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.3);opacity:0;transition:opacity 0.3s ease;white-space:nowrap;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 4000);
+  }
 
   // ── Contact form (Formspree) ──
   document.getElementById('contact-form').addEventListener('submit', async function(e) {
