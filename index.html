@@ -3324,7 +3324,9 @@
     const h = headers.join(',');
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
+    if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
+    if (h.includes('time') && h.includes('symbol') && h.includes('qty') && h.includes('side')) return 'bybit';
     if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
     if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
     return 'unknown';
@@ -3428,6 +3430,44 @@
           qty = Math.abs(parseFloat(r['net amount']) || parseFloat(r['gross amount']) || 0);
           totalCHF = Math.abs(parseFloat(r['net amount (chf)']) || 0);
           priceCHF = qty > 0 ? totalCHF / qty : 0;
+        }
+        else if (format === 'kraken_trades') {
+          // Kraken trades.csv: txid,ordertxid,pair,time,type,ordertype,price,cost,fee,vol
+          // price and cost are in quote currency (CHF, EUR, USD)
+          date = r['time']||'';
+          const t = (r['type']||'').toLowerCase();
+          if (!['buy','sell'].includes(t)) continue;
+          type = t;
+          // Parse pair: XXBTZCHF → BTC, XETHZCHF → ETH, LINKCHF → LINK
+          const pair = (r['pair']||'').toUpperCase();
+          const KRAKEN_PAIRS = {
+            'XXBTZCHF':'BTC','XXBTZEUR':'BTC','XXBTZUSD':'BTC','XBTZCHF':'BTC',
+            'XETHZCHF':'ETH','XETHZEUR':'ETH','XETHZUSD':'ETH','ETHZCHF':'ETH',
+            'XETHXXBT':'ETH','LINKCHF':'LINK','LINKEUR':'LINK','LINKUSD':'LINK',
+            'SOLECHF':'SOL','SOLEUR':'SOL','SOLUSD':'SOL','SOLCHF':'SOL',
+            'ADACHF':'ADA','ADAEUR':'ADA','DOTCHF':'DOT','DOTEUR':'DOT',
+            'XLTCZCHF':'LTC','XXRPZCHF':'XRP','UNIUSD':'UNI','UNICHF':'UNI',
+          };
+          asset = KRAKEN_PAIRS[pair] || pair.replace(/(CHF|EUR|USD|ZCHF|ZEUR|ZUSD)$/,'').replace(/^X{1,2}/,'');
+          if (asset === 'XBT') asset = 'BTC';
+          qty = Math.abs(parseFloat(r['vol'])||0);
+          // cost is total in quote currency — convert to CHF if needed
+          const quoteCurrency = pair.slice(-3);
+          const costRaw = Math.abs(parseFloat(r['cost'])||0);
+          totalCHF = quoteCurrency === 'CHF' ? costRaw : costRaw * USD_CHF;
+          priceCHF = qty > 0 ? totalCHF / qty : 0;
+        }
+        else if (format === 'bybit') {
+          // Bybit: Time,Symbol,Side,Price,Qty,Fee,Realized P&L,Order Type,Order ID
+          date = r['time']||r['date']||'';
+          const side = (r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const sym = (r['symbol']||'').toUpperCase();
+          asset = sym.replace(/(USDT|BUSD|USD|USDC|PERP)$/,'').slice(0,8) || sym.slice(0,4);
+          qty = Math.abs(parseFloat(r['qty'])||parseFloat(r['quantity'])||0);
+          priceCHF = (parseFloat(r['price'])||0) * USD_CHF;
+          totalCHF = qty * priceCHF;
         }
         else if (format === 'binance') {
           date = r['date(utc)']||r['date']||'';
@@ -3590,8 +3630,10 @@
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
-      kraken: `Exchange format detected: Kraken. Historical CHF prices fetched via CoinGecko API per transaction date. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`,
-      swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`,
+      kraken: `Exchange format detected: Kraken (ledger). Historical CHF prices fetched via CoinGecko API. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bybit: `Exchange format detected: Bybit. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
     let notes = notesMap[format] || `Exchange format detected: ${format}. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`;
     try {
