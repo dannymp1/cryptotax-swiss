@@ -3254,7 +3254,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<title>Krypto-Steuerbericht ${data.taxYear}</title>
+<title>Crypto Tax Report ${data.taxYear} — CryptoDeclare</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -3315,12 +3315,12 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .total-row td { color:#F5F2EB; font-weight:700; padding:9px 7px; font-family:'DM Mono',monospace; font-size:9.5pt; }
 
   /* Summary boxes */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#e0ddd5; border:1px solid #e0ddd5; margin-bottom:20px; }
-  .summary-box { background:#F5F2EB; padding:16px 14px; display:flex; flex-direction:column; justify-content:flex-start; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#e0ddd5; border:1px solid #e0ddd5; margin-bottom:20px; align-items:stretch; }
+  .summary-box { background:#F5F2EB; padding:14px 14px; display:flex; flex-direction:column; }
   .summary-box.highlight { background:#0D1117; }
-  .summary-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#3D4451; margin-bottom:8px; line-height:1; }
+  .summary-label { font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.12em; text-transform:uppercase; color:#3D4451; margin-bottom:6px; height:18pt; display:flex; align-items:flex-end; }
   .summary-box.highlight .summary-label { color:rgba(245,242,235,0.4); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:16pt; color:#0D1117; line-height:1; display:block; }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:16pt; color:#0D1117; line-height:1.1; margin-top:auto; }
   .summary-box.highlight .summary-val { color:#F5F2EB; }
 
   /* Compliance */
@@ -3524,7 +3524,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         <th>Symbol</th><th>Asset</th>
         <th class="center">Buys</th><th class="center">Sells</th><th class="center">Staking</th>
         <th class="right">Holdings 31.12</th>
-        <th class="right">Wert CHF</th>
+        <th class="right">Value CHF</th>
         <th class="right">Gain / Loss</th>
       </tr>
     </thead>
