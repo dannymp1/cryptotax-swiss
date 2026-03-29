@@ -2061,7 +2061,7 @@
   <div class="pricing-grid">
     <div class="pricing-card">
       <div class="pricing-name">Starter</div>
-      <div class="pricing-price">Free</div>
+      <div class="pricing-price" id="starter-price">Free</div>
       <div class="pricing-period">Per tax year · up to 50 transactions</div>
       <ul class="pricing-features">
         <li>Up to 50 transactions</li>
@@ -2407,6 +2407,63 @@
       faq_q3: 'What exchange rate do you use?', faq_a3: 'We use the official daily exchange rates published by the Swiss Federal Tax Administration (ESTV). These are the rates your canton will use to verify your declaration.',
       faq_q4: "My exchange isn't listed — can I still use this?", faq_a4: 'Yes. You can enter transactions manually or upload a standard CSV with date, asset, quantity, and price columns. We map it automatically.',
       faq_q5: 'Is my data secure?', faq_a5: 'We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).',
+      feat1_label: 'Compliance',
+      feat1_title: 'ESTV exchange rates',
+      feat1_body: 'All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.',
+      feat2_label: 'Accounting',
+      feat2_title: 'FIFO & LIFO methods',
+      feat2_body: 'Choose your cost basis method. FIFO is the Swiss standard, but we support LIFO for edge cases where your canton allows it.',
+      feat3_label: 'Multi-year',
+      feat3_title: 'Full tax history',
+      feat3_body: 'Declare multiple tax years at once. Import your full transaction history from 2017 to today and get a report for each year.',
+      feat4_label: 'Privacy',
+      feat4_title: 'Your data stays yours',
+      feat4_body: "We never sell your data. Transaction data is processed ephemerally — we don't store your positions longer than your session.",
+      feat5_label: 'Coverage',
+      feat5_title: '50+ supported assets and all major exchanges',
+      feat5_body: 'From Bitcoin to DeFi tokens, staking rewards, and NFT sales — our engine handles the full complexity of a modern crypto portfolio across Kraken, Binance, Coinbase, Swissquote, and more.',
+      starter_name: 'Starter', starter_price: 'Free',
+      pro_name: 'Professional',
+      biz_name: 'Business',
+      starter_f1: 'Up to 50 transactions',
+      starter_f2: 'CSV import (1 exchange)',
+      starter_f3: 'CHF conversion',
+      starter_f4: 'Basic PDF report',
+      pro_f1: 'Up to 1,000 transactions',
+      pro_f2: 'All exchanges & wallets',
+      pro_f3: 'Multi-year support',
+      pro_f4: 'Full PDF + CSV export',
+      pro_f5: 'FIFO method (ESTV standard)',
+      biz_f1: 'Unlimited transactions',
+      biz_f2: 'Unlimited exchanges & portfolios',
+      biz_f3: 'Multi-year history',
+      biz_f4: 'Full PDF + CSV export',
+      biz_f5: 'FIFO & LIFO methods',
+      biz_f6: 'Accountant sharing',
+      biz_f7: 'Priority support',
+      contact_label: '07 — Contact',
+      contact_title: 'Get in<br><em>touch</em>',
+      contact_body: "Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.",
+      contact_name: 'Name',
+      contact_email: 'Email',
+      contact_message: 'Message',
+      contact_name_ph: 'Your name',
+      contact_email_ph: 'your@email.com',
+      contact_message_ph: 'How can we help?',
+      contact_send: 'Send message',
+      unlock_title: 'Enter your unlock code',
+      unlock_sub: 'Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.',
+      unlock_btn: 'Unlock',
+      unlock_error: 'Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch',
+      footer_how: 'How it works',
+      footer_features: 'Features',
+      footer_pricing: 'Pricing',
+      footer_exchanges: 'Exchanges',
+      footer_privacy: 'Privacy policy',
+      footer_terms: 'Terms of service',
+      footer_impressum: 'Impressum',
+      footer_faq: 'FAQ',
+      footer_contact: 'Contact',
       integrations_label: '03 — Integrations', integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report your<br>Gemeinde will<br><em>actually accept</em>',
@@ -2451,6 +2508,63 @@
       faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons les taux journaliers officiels de l'Administration fédérale des contributions (AFC/ESTV).",
       faq_q4: "Ma bourse n'est pas listée — puis-je quand même l'utiliser ?", faq_a4: 'Oui. Vous pouvez saisir les transactions manuellement ou importer un CSV standard. Nous le mappons automatiquement.',
       faq_q5: 'Mes données sont-elles sécurisées ?', faq_a5: 'Nous traitons les transactions en session et ne conservons pas vos données après génération du rapport. Nous sommes établis en Suisse et soumis à la nLPD.',
+      feat1_label: 'Conformité',
+      feat1_title: 'Taux de change ESTV',
+      feat1_body: "Toutes les conversions utilisent les taux de change officiels de l'Administration fédérale des contributions. Votre rapport correspondra aux attentes des autorités.",
+      feat2_label: 'Comptabilité',
+      feat2_title: 'Méthodes FIFO & LIFO',
+      feat2_body: 'Choisissez votre méthode de calcul du coût de base. FIFO est la norme suisse, mais nous supportons LIFO pour les cas particuliers.',
+      feat3_label: 'Multi-années',
+      feat3_title: 'Historique fiscal complet',
+      feat3_body: 'Déclarez plusieurs années fiscales à la fois. Importez votre historique complet depuis 2017.',
+      feat4_label: 'Confidentialité',
+      feat4_title: 'Vos données restent vôtres',
+      feat4_body: 'Nous ne vendons jamais vos données. Les données de transaction sont traitées de manière éphémère.',
+      feat5_label: 'Couverture',
+      feat5_title: '50+ actifs et toutes les grandes bourses',
+      feat5_body: "De Bitcoin aux tokens DeFi, staking et NFTs — notre moteur gère toute la complexité d'un portefeuille crypto moderne.",
+      starter_name: 'Starter', starter_price: 'Gratuit',
+      pro_name: 'Professionnel',
+      biz_name: 'Business',
+      starter_f1: "Jusqu'à 50 transactions",
+      starter_f2: 'Import CSV (1 bourse)',
+      starter_f3: 'Conversion CHF',
+      starter_f4: 'Rapport PDF basique',
+      pro_f1: "Jusqu'à 1'000 transactions",
+      pro_f2: 'Toutes bourses & wallets',
+      pro_f3: 'Support multi-années',
+      pro_f4: 'Export PDF + CSV complet',
+      pro_f5: 'Méthode FIFO (norme ESTV)',
+      biz_f1: 'Transactions illimitées',
+      biz_f2: 'Bourses & portefeuilles illimités',
+      biz_f3: 'Historique multi-années',
+      biz_f4: 'Export PDF + CSV complet',
+      biz_f5: 'Méthodes FIFO & LIFO',
+      biz_f6: 'Partage avec comptable',
+      biz_f7: 'Support prioritaire',
+      contact_label: '07 — Contact',
+      contact_title: 'Nous<br><em>contacter</em>',
+      contact_body: "Une question sur votre rapport, besoin d'aide ou intéressé par le plan Business ? Nous sommes là pour vous aider.",
+      contact_name: 'Nom',
+      contact_email: 'E-mail',
+      contact_message: 'Message',
+      contact_name_ph: 'Votre nom',
+      contact_email_ph: 'votre@email.com',
+      contact_message_ph: 'Comment pouvons-nous vous aider ?',
+      contact_send: 'Envoyer',
+      unlock_title: "Entrez votre code d'activation",
+      unlock_sub: 'Votre fichier contient plus de 50 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
+      unlock_btn: 'Activer',
+      unlock_error: 'Code invalide. Vérifiez votre e-mail de CryptoDeclare ou contactez hello@cryptodeclare.ch',
+      footer_how: 'Comment ça marche',
+      footer_features: 'Fonctionnalités',
+      footer_pricing: 'Tarifs',
+      footer_exchanges: 'Plateformes',
+      footer_privacy: 'Politique de confidentialité',
+      footer_terms: "Conditions d'utilisation",
+      footer_impressum: 'Mentions légales',
+      footer_faq: 'FAQ',
+      footer_contact: 'Contact',
       integrations_label: '03 — Intégrations', integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport que votre<br>commune va<br><em>vraiment accepter</em>',
@@ -2495,6 +2609,63 @@
       faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden die offiziellen Tageskurse der Eidgenössischen Steuerverwaltung (ESTV).',
       faq_q4: 'Meine Börse ist nicht aufgelistet — kann ich es trotzdem verwenden?', faq_a4: 'Ja. Sie können Transaktionen manuell erfassen oder eine Standard-CSV hochladen. Wir ordnen sie automatisch zu.',
       faq_q5: 'Sind meine Daten sicher?', faq_a5: 'Wir verarbeiten Transaktionen sitzungsbasiert und speichern keine Portfoliodaten nach der Berichtserstellung. Wir unterliegen dem Schweizer Datenschutzgesetz (revDSG).',
+      feat1_label: 'Konformität',
+      feat1_title: 'ESTV-Wechselkurse',
+      feat1_body: 'Alle Umrechnungen verwenden die offiziellen ESTV-Wechselkurse. Ihr Bericht entspricht den Erwartungen der Behörden.',
+      feat2_label: 'Buchführung',
+      feat2_title: 'FIFO & LIFO-Methoden',
+      feat2_body: 'Wählen Sie Ihre Kostenbasis-Methode. FIFO ist der Schweizer Standard, aber wir unterstützen auch LIFO.',
+      feat3_label: 'Mehrjährig',
+      feat3_title: 'Vollständige Steuerhistorie',
+      feat3_body: 'Deklarieren Sie mehrere Steuerjahre auf einmal. Importieren Sie Ihre vollständige Transaktionshistorie seit 2017.',
+      feat4_label: 'Datenschutz',
+      feat4_title: 'Ihre Daten bleiben Ihre',
+      feat4_body: 'Wir verkaufen Ihre Daten nie. Transaktionsdaten werden ephemer verarbeitet.',
+      feat5_label: 'Abdeckung',
+      feat5_title: '50+ Assets und alle grossen Börsen',
+      feat5_body: 'Von Bitcoin bis DeFi-Token, Staking-Erträge und NFT-Verkäufe — unser System verarbeitet die volle Komplexität.',
+      starter_name: 'Starter', starter_price: 'Kostenlos',
+      pro_name: 'Professionell',
+      biz_name: 'Business',
+      starter_f1: 'Bis 50 Transaktionen',
+      starter_f2: 'CSV-Import (1 Börse)',
+      starter_f3: 'CHF-Umrechnung',
+      starter_f4: 'Einfacher PDF-Bericht',
+      pro_f1: "Bis 1'000 Transaktionen",
+      pro_f2: 'Alle Börsen & Wallets',
+      pro_f3: 'Mehrjahres-Support',
+      pro_f4: 'Vollständiger PDF + CSV-Export',
+      pro_f5: 'FIFO-Methode (ESTV-Standard)',
+      biz_f1: 'Unbegrenzte Transaktionen',
+      biz_f2: 'Unbegrenzte Börsen & Portfolios',
+      biz_f3: 'Mehrjahres-Historie',
+      biz_f4: 'Vollständiger PDF + CSV-Export',
+      biz_f5: 'FIFO & LIFO-Methoden',
+      biz_f6: 'Treuhänder-Freigabe',
+      biz_f7: 'Prioritäts-Support',
+      contact_label: '07 — Kontakt',
+      contact_title: 'Kontakt<br><em>aufnehmen</em>',
+      contact_body: 'Haben Sie Fragen zu Ihrem Bericht oder Interesse am Business-Plan? Wir helfen Ihnen gerne.',
+      contact_name: 'Name',
+      contact_email: 'E-Mail',
+      contact_message: 'Nachricht',
+      contact_name_ph: 'Ihr Name',
+      contact_email_ph: 'ihre@email.com',
+      contact_message_ph: 'Wie können wir helfen?',
+      contact_send: 'Nachricht senden',
+      unlock_title: 'Ihren Freischaltcode eingeben',
+      unlock_sub: 'Ihre Datei enthält mehr als 50 Transaktionen. Geben Sie einen Pro- oder Business-Code ein, um Ihren Bericht zu erstellen.',
+      unlock_btn: 'Freischalten',
+      unlock_error: 'Ungültiger Code. Prüfen Sie Ihre E-Mail von CryptoDeclare oder kontaktieren Sie hello@cryptodeclare.ch',
+      footer_how: "So funktioniert's",
+      footer_features: 'Funktionen',
+      footer_pricing: 'Preise',
+      footer_exchanges: 'Börsen',
+      footer_privacy: 'Datenschutzerklärung',
+      footer_terms: 'Nutzungsbedingungen',
+      footer_impressum: 'Impressum',
+      footer_faq: 'FAQ',
+      footer_contact: 'Kontakt',
       integrations_label: '03 — Integrationen', integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht, den Ihre<br>Gemeinde wirklich<br><em>akzeptieren wird</em>',
@@ -2640,6 +2811,8 @@
     // Pricing cards
     const pricingCards = document.querySelectorAll('.pricing-card');
     if (pricingCards.length >= 3) {
+      const starterPrice = document.getElementById('starter-price');
+      if (starterPrice && t.starter_price) starterPrice.textContent = t.starter_price;
       const setPeriod = (card, key) => { const el = card.querySelector('.pricing-period'); if (el && t[key]) el.textContent = t[key]; };
       const setCta = (card, key) => { const el = card.querySelector('.btn-outline'); if (el && t[key]) el.textContent = t[key]; };
       setPeriod(pricingCards[0], 'starter_period'); setCta(pricingCards[0], 'starter_cta');
@@ -2664,6 +2837,96 @@
     if (modalCta && t.modal_cta) modalCta.childNodes[modalCta.childNodes.length-1].textContent = ' ' + t.modal_cta;
     const modalTerms = document.querySelector('.modal-terms');
     if (modalTerms && t.modal_terms) modalTerms.innerHTML = t.modal_terms;
+
+    // Features section content
+    const features = document.querySelectorAll('.feature');
+    const featKeys = [
+      ['feat1_label','feat1_title','feat1_body'],
+      ['feat2_label','feat2_title','feat2_body'],
+      ['feat3_label','feat3_title','feat3_body'],
+      ['feat4_label','feat4_title','feat4_body'],
+      ['feat5_label','feat5_title','feat5_body'],
+    ];
+    features.forEach((f, i) => {
+      const [lk, tk, bk] = featKeys[i] || [];
+      const lbl = f.querySelector('.feature-label');
+      const ttl = f.querySelector('.feature-title');
+      const bdy = f.querySelector('.feature-body');
+      if (lbl && t[lk]) lbl.textContent = t[lk];
+      if (ttl && t[tk]) ttl.textContent = t[tk];
+      if (bdy && t[bk]) bdy.textContent = t[bk];
+    });
+
+    // Pricing plan names and feature lists
+    const pCards = document.querySelectorAll('.pricing-card');
+    const planKeys = [
+      { name:'starter_name', features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
+      { name:'pro_name',     features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] },
+      { name:'biz_name',     features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6','biz_f7'] },
+    ];
+    pCards.forEach((card, i) => {
+      const pk = planKeys[i];
+      if (!pk) return;
+      const nameEl = card.querySelector('.pricing-name');
+      if (nameEl && t[pk.name]) nameEl.textContent = t[pk.name];
+      const items = card.querySelectorAll('.pricing-features li');
+      items.forEach((li, j) => { if (t[pk.features[j]]) li.textContent = t[pk.features[j]]; });
+    });
+
+    // Contact section
+    const ctLabel = document.querySelector('#contact .section-number');
+    if (ctLabel && t.contact_label) ctLabel.textContent = t.contact_label;
+    const ctTitle = document.querySelector('#contact .section-title');
+    if (ctTitle && t.contact_title) ctTitle.innerHTML = t.contact_title;
+    const ctBody = document.querySelector('#contact .contact-left p');
+    if (ctBody && t.contact_body) ctBody.textContent = t.contact_body;
+    const ctLabelName = document.querySelector('label[for="contact-name"]');
+    if (ctLabelName && t.contact_name) ctLabelName.textContent = t.contact_name;
+    const ctLabelEmail = document.querySelector('label[for="contact-email"]');
+    if (ctLabelEmail && t.contact_email) ctLabelEmail.textContent = t.contact_email;
+    const ctLabelMsg = document.querySelector('label[for="contact-message"]');
+    if (ctLabelMsg && t.contact_message) ctLabelMsg.textContent = t.contact_message;
+    const ctInputName = document.getElementById('contact-name');
+    if (ctInputName && t.contact_name_ph) ctInputName.placeholder = t.contact_name_ph;
+    const ctInputEmail = document.getElementById('contact-email');
+    if (ctInputEmail && t.contact_email_ph) ctInputEmail.placeholder = t.contact_email_ph;
+    const ctInputMsg = document.getElementById('contact-message');
+    if (ctInputMsg && t.contact_message_ph) ctInputMsg.placeholder = t.contact_message_ph;
+    const ctSend = document.querySelector('#contact-form .contact-submit');
+    if (ctSend && t.contact_send) ctSend.childNodes[ctSend.childNodes.length-1].textContent = ' ' + t.contact_send;
+
+    // Unlock banner
+    const ulTitle = document.querySelector('.unlock-title');
+    if (ulTitle && t.unlock_title) ulTitle.textContent = t.unlock_title;
+    const ulSub = document.getElementById('unlock-sub');
+    if (ulSub && t.unlock_sub) ulSub.textContent = t.unlock_sub;
+    const ulBtn = document.querySelector('.unlock-btn');
+    if (ulBtn && t.unlock_btn) ulBtn.textContent = t.unlock_btn;
+    const ulInput = document.querySelector('.unlock-input');
+    if (ulInput && t.unlock_btn) ulInput.placeholder = lang === 'en' ? 'Enter code e.g. PRODECLARE99' : lang === 'fr' ? 'Entrez votre code' : 'Code eingeben';
+    const ulErr = document.getElementById('unlock-error');
+    if (ulErr && t.unlock_error) ulErr.textContent = t.unlock_error;
+
+    // Footer links
+    const fLinks = document.querySelectorAll('.footer-links');
+    if (fLinks[0]) {
+      const fl0 = fLinks[0].querySelectorAll('a');
+      if (fl0[0] && t.footer_how) fl0[0].textContent = t.footer_how;
+      if (fl0[1] && t.footer_features) fl0[1].textContent = t.footer_features;
+      if (fl0[2] && t.footer_pricing) fl0[2].textContent = t.footer_pricing;
+      if (fl0[3] && t.footer_exchanges) fl0[3].textContent = t.footer_exchanges;
+    }
+    if (fLinks[1]) {
+      const fl1 = fLinks[1].querySelectorAll('a');
+      if (fl1[0] && t.footer_privacy) fl1[0].textContent = t.footer_privacy;
+      if (fl1[1] && t.footer_terms) fl1[1].textContent = t.footer_terms;
+      if (fl1[2] && t.footer_impressum) fl1[2].textContent = t.footer_impressum;
+    }
+    if (fLinks[2]) {
+      const fl2 = fLinks[2].querySelectorAll('a');
+      if (fl2[0] && t.footer_faq) fl2[0].textContent = t.footer_faq;
+      if (fl2[1] && t.footer_contact) fl2[1].textContent = t.footer_contact;
+    }
   }
 
   window.setLang = setLang;
