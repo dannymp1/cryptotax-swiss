@@ -3844,16 +3844,16 @@
 
     // Ask AI only for coin names and notes — never for numbers
     const assetList = computed.assets.map(a=>a.symbol+':held='+a.endHolding).join(', ');
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD converted at 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
       kraken: `Exchange format detected: Kraken (ledger). Historical CHF prices fetched via CoinGecko API. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bybit: `Exchange format detected: Bybit. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
-    let notes = notesMap[format] || `Exchange format detected: ${format}. USD converted at CHF 0.90. Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`;
+    let notes = notesMap[format] || `Exchange format detected: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices (ESTV-approximate).`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]})});
       if (res.ok) {
@@ -4365,7 +4365,10 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 </style>
 </head>
 <body>
-<button class="no-print" onclick="window.print()">⬇ Print / Save PDF</button>
+<div class="no-print" style="position:fixed;top:20px;right:20px;z-index:100;text-align:right">
+  <button onclick="window.print()" style="background:#0D1117;color:#D4AF37;border:none;padding:12px 24px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;border-radius:3px;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px;">⬇ Save as PDF</button>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;color:#8A909E;letter-spacing:0.06em;text-transform:uppercase;">In print dialog: disable<br>headers &amp; footers</div>
+</div>
 <div class="page">
 
   <div class="doc-header">
@@ -4381,7 +4384,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         </svg>
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
-      <div class="doc-subtitle">Swiss Federal Tax Administration · ESTV Compliant Report</div>
+      <div class="doc-subtitle">Prepared for Swiss cantonal tax declaration · FIFO method · cryptodeclare.ch</div>
     </div>
     <div class="doc-header-right">
       <div class="doc-report-title">Crypto Tax Report ${data.taxYear}</div>
@@ -4436,28 +4439,24 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   <div class="sec-title">02 — Summary</div>
   <div class="summary-grid">
     <div class="summary-box">
-      <div class="summary-label">Staking / Income</div>
+      <div class="summary-label">Taxable Income</div>
       <div class="summary-val" style="color:#1a7a4a">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box">
-      <div class="summary-label">Portfolio Value 31.12.${data.taxYear}</div>
+      <div class="summary-label">Wealth Value 31.12.${data.taxYear}</div>
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box highlight">
-      <div class="summary-label">Net Gain / Loss</div>
+      <div class="summary-label">Realised Gain / Loss</div>
       <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
     </div>
   </div>
 
-  <div class="sec-title">03 — ESTV Compliance &amp; Disclaimer</div>
+  <div class="sec-title">03 — Legal Notice &amp; Disclaimer</div>
   <div class="compliance-box">
-    <strong>🇩🇪 DE — Hinweis zur Steuerpflicht:</strong> Kursgewinne aus Kryptowährungen sind für Privatpersonen in der Schweiz grundsätzlich <strong>steuerfrei</strong>. Die Bestände müssen jedoch als Vermögen deklariert werden. Erträge aus Staking, Mining oder professionellem Handel sind steuerpflichtig. Dieser Bericht wurde nach der <strong>FIFO-Methode</strong> erstellt und verwendet offizielle ESTV-Wechselkurse soweit verfügbar. <em>Dieser Bericht ist als Beilage zur kantonalen Steuererklärung vorgesehen und stellt kein offizielles Steuerdokument dar. Bei komplexen Sachverhalten wenden Sie sich an einen qualifizierten Steuerberater (Treuhänder).</em>
-  </div>
-  <div class="compliance-box" style="margin-top:10px">
-    <strong>🇬🇧 EN — Tax Compliance Notice:</strong> Capital gains from cryptocurrencies are generally <strong>tax-free</strong> for private individuals in Switzerland. However, holdings must be declared as assets in your tax return. Income from staking, mining or professional trading is taxable. This report has been prepared using the <strong>FIFO method</strong> and uses official ESTV exchange rates where available. <em>This document is intended as a supporting annex to your cantonal tax return and does not constitute an official tax document. For complex cases, please consult a qualified Swiss tax advisor (Treuhänder).</em>
-  </div>
-  <div class="compliance-box" style="margin-top:10px">
-    <strong>🇫🇷 FR — Avis de conformité fiscale:</strong> Les gains en capital sur les cryptomonnaies sont généralement <strong>exonérés d'impôt</strong> pour les particuliers en Suisse. Cependant, les avoirs doivent être déclarés comme fortune. Les revenus du staking, du minage ou du trading professionnel sont imposables. Ce rapport a été établi selon la <strong>méthode FIFO</strong> et utilise les taux de change officiels ESTV dans la mesure du possible. <em>Ce document est destiné à être joint en annexe à votre déclaration d'impôt cantonale et ne constitue pas un document fiscal officiel. Pour les cas complexes, veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).</em>
+    <strong>🇬🇧 EN</strong> — Capital gains from crypto are generally <strong>tax-free</strong> for Swiss private individuals; holdings must be declared as wealth. Staking and professional trading income is taxable. This document is a supporting annex only — it does not constitute an official tax filing. Consult a qualified Swiss tax advisor (Treuhänder) for complex cases.<br/>
+    <strong>🇩🇪 DE</strong> — Kursgewinne sind für Privatpersonen grundsätzlich steuerfrei; Bestände müssen als Vermögen deklariert werden. Staking-Erträge und professioneller Handel sind steuerpflichtig. Dieses Dokument ist eine Beilage und kein offizielles Steuerdokument.<br/>
+    <strong>🇫🇷 FR</strong> — Les gains en capital sont généralement exonérés pour les particuliers; les avoirs doivent être déclarés comme fortune. Les revenus du staking et du trading professionnel sont imposables. Ce document est une annexe et non une déclaration fiscale officielle.
   </div>
 
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${data.notes}</div>` : ''}
