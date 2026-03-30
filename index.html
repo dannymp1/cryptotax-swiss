@@ -1687,11 +1687,13 @@
     .report-card { grid-template-columns: 1fr; gap: 32px; padding: 32px; }
     .pricing-grid { grid-template-columns: 1fr; }
     .exchanges { padding: 0 24px 80px; }
-    .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    /* Section header — stack on mobile */
+    .section-header { flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+    .section-header .section-title { width: 100%; margin-top: 4px; }
     /* App / declare section */
     .app-section { padding: 60px 0 80px; }
     .app-layout { grid-template-columns: 1fr; gap: 32px; }
-    .app-section .section-header { padding: 0 24px 32px; }
+    .app-section .section-header { padding: 0 24px 24px; }
     .app-left { padding: 0 24px; }
     .app-right { padding: 0 24px; overflow: hidden; }
     .app-info-box { padding: 20px; }
