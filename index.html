@@ -4187,9 +4187,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     const items=[...TICKER_COINS,...TICKER_COINS].map(c=>{
       const d=prices[c.id];if(!d)return'';
       const chg=d.chg,chgStr=(chg>=0?'+':'')+chg.toFixed(2)+'%';
+      const chgHtml = (chg===0||chg===null||chg===undefined) ? '' :
+        '<span class="'+(chg>=0?'ticker-chg-pos':'ticker-chg-neg')+'">'+chgStr+'</span>';
       return'<span class="ticker-item"><span class="ticker-symbol">'+c.sym+'</span> '+
         '<span class="ticker-price">CHF '+fmtT(d.chf)+'</span> '+
-        '<span class="'+(chg>=0?'ticker-chg-pos':'ticker-chg-neg')+'">'+chgStr+'</span>'+
+        chgHtml+
         '<span class="ticker-dot"></span></span>';
     }).join('');
     const el=document.getElementById('live-ticker');
