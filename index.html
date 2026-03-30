@@ -3539,13 +3539,22 @@
   }
 
   function detectFormat(headers) {
-    const h = headers.join(',');
+    const h = headers.join(',').toLowerCase();
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('time') && h.includes('symbol') && h.includes('qty') && h.includes('side')) return 'bybit';
     if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
+    // Swissquote: date + order # + transaction + symbol + currency + price + quantity
+    if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
+    // Bitpanda: transaction id + timestamp + transaction type + amount asset + asset
+    if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
+    // OKX: order time + instrument id + trade id + side + filled qty + filled price
+    if ((h.includes('instrument id') || h.includes('inst id')) && h.includes('filled qty') && h.includes('filled price')) return 'okx';
+    if ((h.includes('order time') || h.includes('trade time')) && h.includes('instrument') && h.includes('side') && h.includes('filled')) return 'okx';
+    // Bitcoin Suisse: date + type + asset + amount + price chf
+    if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
     if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
     return 'unknown';
   }
@@ -3686,6 +3695,62 @@
           qty = Math.abs(parseFloat(r['qty'])||parseFloat(r['quantity'])||0);
           priceCHF = (parseFloat(r['price'])||0) * USD_CHF;
           totalCHF = qty * priceCHF;
+        }
+        else if (format === 'swissquote') {
+          // Swissquote: Date,Order #,Transaction,Symbol,Currency,Price,Quantity,Value,Gross Amount,Net Amount
+          date = r['date']||r['Date']||'';
+          const txType = (r['transaction']||r['Transaction']||'').toLowerCase();
+          if (txType.includes('buy')) type = 'buy';
+          else if (txType.includes('sell')) type = 'sell';
+          else continue;
+          const sym = (r['symbol']||r['Symbol']||'').toUpperCase();
+          // sym is like BTC or BTCUSD — strip USD/CHF/EUR suffix
+          asset = sym.replace(/(USD|CHF|EUR|USDT|BTC)$/,'') || sym.slice(0,6);
+          qty = Math.abs(parseFloat(r['quantity']||r['Quantity'])||0);
+          const currency = (r['currency']||r['Currency']||'').toUpperCase();
+          const price = parseFloat(r['price']||r['Price'])||0;
+          priceCHF = currency === 'CHF' ? price : price * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        else if (format === 'bitpanda') {
+          // Bitpanda: Transaction ID,Timestamp,Transaction Type,In/Out,Amount Fiat,Fiat,Amount Asset,Asset,Asset market price,Asset class,Product ID,Fee,Tax
+          date = r['timestamp']||r['Timestamp']||'';
+          const txType = (r['transaction type']||r['Transaction Type']||'').toLowerCase();
+          if (txType.includes('buy')) type = 'buy';
+          else if (txType.includes('sell')) type = 'sell';
+          else continue;
+          asset = (r['asset']||r['Asset']||'').toUpperCase();
+          if (!asset) continue;
+          qty = Math.abs(parseFloat(r['amount asset']||r['Amount Asset'])||0);
+          const mktPrice = parseFloat(r['asset market price']||r['Asset market price'])||0;
+          const fiatCcy = (r['fiat']||r['Fiat']||'EUR').toUpperCase();
+          priceCHF = fiatCcy === 'CHF' ? mktPrice : mktPrice * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        else if (format === 'okx') {
+          // OKX: Order Time,Instrument ID,Trade ID,Side,Filled Qty,Filled Price,Fee,P&L
+          date = r['order time']||r['Order Time']||r['trade time']||r['Trade Time']||'';
+          const side = (r['side']||r['Side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const instId = (r['instrument id']||r['Instrument ID']||r['inst id']||'').toUpperCase();
+          // instId like BTC-USDT
+          asset = instId.split('-')[0] || instId.slice(0,6);
+          qty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty'])||0);
+          priceCHF = (parseFloat(r['filled price']||r['Filled Price'])||0) * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        else if (format === 'bitcoin_suisse') {
+          // Bitcoin Suisse: Date,Type,Asset,Amount,Price CHF,Total CHF
+          date = r['date']||r['Date']||'';
+          const txType = (r['type']||r['Type']||'').toLowerCase();
+          if (txType.includes('buy')) type = 'buy';
+          else if (txType.includes('sell')) type = 'sell';
+          else continue;
+          asset = (r['asset']||r['Asset']||'').toUpperCase();
+          qty = Math.abs(parseFloat(r['amount']||r['Amount'])||0);
+          priceCHF = parseFloat(r['price chf']||r['Price CHF'])||0;
+          totalCHF = parseFloat(r['total chf']||r['Total CHF'])||qty * priceCHF;
         }
         else if (format === 'binance') {
           date = r['date(utc)']||r['date']||'';
