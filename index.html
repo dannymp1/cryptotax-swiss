@@ -1957,6 +1957,7 @@
     <li><a href="#" onclick="navScrollTo('pricing');return false;">Pricing</a></li>
     <li><a href="#" onclick="navScrollTo('declare');return false;">Declare</a></li>
     <li><a href="#" onclick="navScrollTo('faq');return false;">FAQ</a></li>
+    <li><a href="#" onclick="navScrollTo('team');return false;" data-i18n="nav_team">Team</a></li>
     <li><a href="#" onclick="navScrollTo('declare');return false;" class="nav-cta" data-i18n="nav_start">Get started</a></li>
   </ul>
   <div class="lang-switcher">
@@ -2458,20 +2459,13 @@
       <div class="team-name">Daniel Michaud-Payet</div>
       <div class="team-role">Founder · CryptoDeclare</div>
       <p class="team-bio">
-        I built CryptoDeclare after facing the same problem every crypto holder in Switzerland faces at tax time — hours spent manually reconciling transactions, converting prices, and hoping the numbers are right.<br><br>
-        With a background in Swiss private banking at Deutsche Bank and institutional crypto at Sygnum Bank — one of Switzerland's regulated crypto banks — I understand both the regulatory landscape and the real complexity of crypto portfolios. CryptoDeclare applies the same FIFO rigour Swiss fiduciaires expect, fully automated.
+        I built CryptoDeclare after facing the same problem every crypto holder in Switzerland faces at tax time: hours spent manually reconciling transactions, converting prices, and hoping the numbers are right.<br><br>
+        With a background in Swiss private banking at Deutsche Bank and institutional crypto at Sygnum Bank, one of Switzerland's regulated crypto banks, I understand both the regulatory landscape and the real complexity of crypto portfolios. CryptoDeclare applies the same FIFO rigour Swiss fiduciaires expect, fully automated.
       </p>
-      <div class="team-tags">
-        <span class="team-tag">Sygnum Bank</span>
-        <span class="team-tag">Deutsche Bank</span>
-        <span class="team-tag">JPMorgan</span>
-        <span class="team-tag">MSc Finance · Grenoble EM</span>
-        <span class="team-tag">Swiss Banking</span>
-        <span class="team-tag">DLT & Crypto</span>
-      </div>
-      <a href="https://www.linkedin.com/in/daniel-michaud-payet-528a5aa5" target="_blank" rel="noopener" class="team-linkedin">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        linkedin.com/in/daniel-michaud-payet-528a5aa5
+
+      <a href="https://www.linkedin.com/in/daniel-michaud-payet-528a5aa5" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:#0A66C2;color:white;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:3px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#004182'" onmouseout="this.style.background='#0A66C2'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        View full profile on LinkedIn
       </a>
     </div>
   </div>
@@ -2565,7 +2559,7 @@
   const TRANSLATIONS = {
     en: {
       nav_how: 'How it works', nav_features: 'Features', nav_pricing: 'Pricing',
-      nav_declare: 'Declare', nav_faq: 'FAQ', nav_start: 'Get started',
+      nav_declare: 'Declare', nav_faq: 'FAQ', nav_team: 'Team', nav_start: 'Get started',
       hero_eyebrow: 'Swiss crypto tax reporting',
       hero_headline: 'Your crypto.<br><em>Tax-ready</em> in<br>minutes.',
       hero_sub: 'Upload your exchange transactions, we calculate everything, and you receive a clean Swiss tax report — ready for your cantonal declaration.',
@@ -2669,7 +2663,7 @@
     },
     fr: {
       nav_how: 'Comment ça marche', nav_features: 'Fonctionnalités', nav_pricing: 'Tarifs',
-      nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_start: 'Commencer',
+      nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_team: 'Équipe', nav_start: 'Commencer',
       hero_eyebrow: 'Déclaration fiscale crypto suisse',
       hero_headline: 'Votre crypto.<br><em>Prête à<br>déclarer</em><br>en minutes.',
       hero_sub: 'Importez vos transactions, nous calculons tout, et vous recevez un rapport fiscal suisse propre — prêt pour votre déclaration cantonale.',
@@ -2773,7 +2767,7 @@
     },
     de: {
       nav_how: 'So funktioniert\'s', nav_features: 'Funktionen', nav_pricing: 'Preise',
-      nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_start: 'Jetzt starten',
+      nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_team: 'Team', nav_start: 'Jetzt starten',
       hero_eyebrow: 'Schweizer Krypto-Steuerreporting',
       hero_headline: 'Ihr Krypto.<br><em>Steuerbereit</em> in<br>Minuten.',
       hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen alles, und Sie erhalten einen sauberen Steuerbericht — bereit für Ihre kantonale Steuererklärung.',
@@ -2890,7 +2884,7 @@
 
     // Update nav links
     const navLinks = document.querySelectorAll('.nav-links a');
-    const keys = ['nav_how','nav_features','nav_pricing','nav_declare','nav_faq','nav_start'];
+    const keys = ['nav_how','nav_features','nav_pricing','nav_declare','nav_faq','nav_team','nav_start'];
     navLinks.forEach((a, i) => { if (keys[i] && t[keys[i]]) a.textContent = t[keys[i]]; });
 
     // Hero
