@@ -3508,7 +3508,7 @@
   // Used for accurate wealth declaration values
   // Source: CoinGecko / major exchange closing prices
   const YEAREND_PRICES_2024 = {
-    // Actual Dec 31, 2024 closing prices in CHF (USD × 0.8967 USD/CHF rate)
+    // Dec 31, 2024 closing prices in CHF (USD/CHF = 0.8967)
     'BTC': 83778, 'ETH': 2989, 'SOL': 169.5, 'BNB': 622,
     'ADA': 0.879, 'XRP': 1.856, 'DOT': 6.64, 'AVAX': 32.37,
     'MATIC': 0.394, 'USDC': 0.8967, 'USDT': 0.8967, 'DAI': 0.8967,
@@ -3516,6 +3516,24 @@
     'BCH': 378.5, 'XLM': 0.384, 'ALGO': 0.311, 'NEAR': 5.21,
     'ICP': 10.26, 'FIL': 4.18, 'APT': 8.45, 'ARB': 0.816,
     'OP': 1.66, 'INJ': 20.15, 'SUI': 4.12, 'TIA': 5.87,
+    'GALA': 0.0295, 'BORG': 3.12, 'RAY': 8.05, 'RENDER': 5.80,
+    'FARTCOIN': 0.85, 'PEPE': 0.0000175,
+  }
+
+  const YEAREND_PRICES_2025 = {
+    // Dec 31, 2025 closing prices in CHF (USD/CHF ≈ 0.90)
+    'BTC': 84015, 'ETH': 3015, 'SOL': 171, 'BNB': 621,
+    'ADA': 0.882, 'XRP': 1.863, 'DOT': 6.68, 'AVAX': 32.50,
+    'MATIC': 0.395, 'USDC': 0.90, 'USDT': 0.90, 'DAI': 0.90,
+    'LINK': 17.80, 'UNI': 11.90, 'ATOM': 5.52, 'LTC': 91.0,
+    'BCH': 380.0, 'XLM': 0.387, 'ALGO': 0.314, 'NEAR': 5.25,
+    'GALA': 0.0295, 'BORG': 3.12, 'RAY': 8.05, 'RENDER': 5.80,
+    'FARTCOIN': 0.85, 'PEPE': 0.0000175, 'SUI': 4.15,
+  }
+
+  function getYearEndPrices(year) {
+    if (year === 2025) return YEAREND_PRICES_2025;
+    return YEAREND_PRICES_2024;
   }
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
@@ -3581,7 +3599,7 @@
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
-      const fallback = YEAREND_PRICES_2024[asset] || 0;
+      const fallback = getYearEndPrices(taxYear)[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
@@ -3604,7 +3622,7 @@
       return chfPrice;
     } catch (e) {
       // Fallback: use year-end price if available
-      const fallback = YEAREND_PRICES_2024[asset] || 0;
+      const fallback = getYearEndPrices(taxYear)[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
@@ -3649,8 +3667,10 @@
           // Map SwissBorg types to internal types
           // Deposits = assets arriving (treat as buy for cost basis)
           // Withdrawals = assets leaving (treat as sell for proceeds)
-          if (t === 'buy' || t === 'deposit') type = 'buy';
-          else if (t === 'sell' || t === 'withdrawal') type = 'sell';
+          if (t === 'buy') type = 'buy';
+          else if (t === 'deposit') type = 'buy'; // deposit = cost basis transfer in, not a taxable gain
+          else if (t === 'sell') type = 'sell';
+          else if (t === 'withdrawal') { type = 'skip'; } // withdrawal = transfer out, not a taxable sale
           else if (t === 'payouts') type = 'staking';
           else continue;
           asset = currency;
@@ -3720,6 +3740,7 @@
           else if (txType.includes('sell')) type = 'sell';
           else continue;
           asset = (r['asset']||r['Asset']||'').toUpperCase();
+          if (type === 'skip') continue;
           if (!asset) continue;
           qty = Math.abs(parseFloat(r['amount asset']||r['Amount Asset'])||0);
           const mktPrice = parseFloat(r['asset market price']||r['Asset market price'])||0;
@@ -3858,7 +3879,7 @@
       }
     }
 
-    const result=[], dec31Prices=YEAREND_PRICES_2024;
+    const result=[], dec31Prices=getYearEndPrices(taxYear);
     let totalStaking=0, totalGain=0, totalPortfolio=0;
 
     for (const [sym,a] of Object.entries(assets)) {
