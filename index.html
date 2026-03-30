@@ -3673,7 +3673,7 @@
           if (t === 'buy') type = 'buy';
           else if (t === 'deposit') type = 'buy'; // deposit = cost basis transfer in, not a taxable gain
           else if (t === 'sell') type = 'sell';
-          else if (t === 'withdrawal') { type = 'skip'; } // withdrawal = transfer out, not a taxable sale
+          else if (t === 'withdrawal') type = 'withdrawal'; // transfer out — reduces lots but no gain
           else if (t === 'payouts') type = 'staking';
           else continue;
           asset = currency;
@@ -3743,7 +3743,6 @@
           else if (txType.includes('sell')) type = 'sell';
           else continue;
           asset = (r['asset']||r['Asset']||'').toUpperCase();
-          if (type === 'skip') continue;
           if (!asset) continue;
           qty = Math.abs(parseFloat(r['amount asset']||r['Amount Asset'])||0);
           const mktPrice = parseFloat(r['asset market price']||r['Asset market price'])||0;
@@ -3879,6 +3878,17 @@
         const income=tx.totalCHF>0?tx.totalCHF:tx.qty*(tx.priceCHF||0);
         a.stakingIncome+=income;
         a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
+      }
+      else if (tx.type==='withdrawal') {
+        // Transfer out — reduce lots FIFO but no taxable gain
+        a.totalSold=Math.round((a.totalSold+tx.qty)*1e8)/1e8;
+        let rem=tx.qty;
+        for (let i=0;i<a.lots.length&&rem>0;i++) {
+          const take=Math.min(a.lots[i].qty,rem);
+          a.lots[i].qty=Math.round((a.lots[i].qty-take)*1e8)/1e8;
+          rem=Math.round((rem-take)*1e8)/1e8;
+        }
+        a.lots=a.lots.filter(l=>l.qty>0.000001);
       }
     }
 
