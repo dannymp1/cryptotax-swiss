@@ -1455,6 +1455,8 @@
     line-height: 1.8;
     color: rgba(245,242,235,0.75);
     white-space: pre-wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .report-summary-grid {
@@ -1717,6 +1719,18 @@
     .exchange-pills { gap: 8px; }
     .exchange-pill { font-size: 10px; padding: 6px 12px; }
     .upload-area { margin: 0 16px; }
+    /* Report output on mobile */
+    .report-output-title { font-size: 24px; }
+    .report-output-header { flex-direction: column; align-items: flex-start; }
+    .report-actions { width: 100%; }
+    .report-actions a, .report-actions button { flex: 1; text-align: center; justify-content: center; }
+    .report-summary-grid { grid-template-columns: 1fr; gap: 2px; }
+    .report-stat { padding: 16px; }
+    .report-stat-val { font-size: 22px; }
+    .report-generated-body { padding: 20px 16px; font-size: 14px; overflow-x: auto; }
+    .report-generated-body table { min-width: 500px; }
+    .report-generated-header { padding: 16px; flex-wrap: wrap; gap: 8px; }
+    #report-output { margin-top: 40px; padding-top: 40px; }
   }
 
   .ticker-symbol{color:var(--gold-light);font-weight:500}
