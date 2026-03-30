@@ -1869,7 +1869,7 @@
       minutes.
     </h1>
     <p class="hero-sub">
-      Upload your exchange transactions, declare manually, and receive a compliant Swiss tax report — ready to submit to your cantonal authority.
+      Upload your exchange transactions, we calculate everything, and you receive a Swiss tax-ready report — ready to use for your Swiss tax declaration.
     </p>
     <div class="hero-actions">
       <a href="#" onclick="navScrollTo('declare');return false;" class="btn-primary">
@@ -1880,6 +1880,13 @@
         See how it works
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
+    </div>
+    <div style="margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--ink-faint);display:flex;align-items:center;gap:16px;" id="hero-microproof">
+      <span>✓ No signup required</span>
+      <span style="opacity:0.3">·</span>
+      <span>✓ Your data stays in your browser</span>
+      <span style="opacity:0.3">·</span>
+      <span>✓ Free to try</span>
     </div>
   </div>
   <div class="hero-badge">
@@ -2173,7 +2180,7 @@
       </div>
       <div class="app-info-box">
         <div class="app-info-label">What you get</div>
-        <div class="app-info-title">A compliant Swiss tax report</div>
+        <div class="app-info-title">A Swiss tax-ready report</div>
         <div class="app-info-body">Our AI engine calculates your gains and losses using Swiss FIFO accounting, converts everything to CHF using ESTV rates, and produces a structured report ready for your cantonal authority.</div>
       </div>
       <div class="app-info-box">
@@ -2382,7 +2389,7 @@
       nav_declare: 'Declare', nav_faq: 'FAQ', nav_start: 'Get started',
       hero_eyebrow: 'Swiss crypto tax reporting',
       hero_headline: 'Your crypto.<br><em>Tax-ready</em> in<br>minutes.',
-      hero_sub: 'Upload your exchange transactions, declare manually, and receive a compliant Swiss tax report — ready to submit to your cantonal authority.',
+      hero_sub: 'Upload your exchange transactions, we calculate everything, and you receive a Swiss tax-ready report — ready to use for your Swiss tax declaration.',
       hero_cta1: 'Declare now — it\'s free',
       hero_cta2: 'See how it works',
       upload_title: 'Drop your file here',
@@ -2482,8 +2489,8 @@
       nav_how: 'Comment ça marche', nav_features: 'Fonctionnalités', nav_pricing: 'Tarifs',
       nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_start: 'Commencer',
       hero_eyebrow: 'Déclaration fiscale crypto suisse',
-      hero_headline: 'Votre crypto.<br><em>Prête à déclarer</em> en<br>quelques minutes.',
-      hero_sub: 'Importez vos transactions, déclarez manuellement et recevez un rapport fiscal suisse conforme — prêt à soumettre à votre autorité cantonale.',
+      hero_headline: 'Votre crypto.<br><em>Prête à<br>déclarer</em><br>en minutes.',
+      hero_sub: 'Importez vos transactions, nous calculons tout, et vous recevez un rapport fiscal suisse prêt à utiliser pour votre déclaration d\'impôt.',
       hero_cta1: 'Déclarer maintenant — gratuit',
       hero_cta2: 'Voir comment ça marche',
       upload_title: 'Déposez votre fichier ici',
@@ -2584,7 +2591,7 @@
       nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_start: 'Jetzt starten',
       hero_eyebrow: 'Schweizer Krypto-Steuerreporting',
       hero_headline: 'Ihr Krypto.<br><em>Steuerbereit</em> in<br>Minuten.',
-      hero_sub: 'Laden Sie Ihre Börsentransaktionen hoch, deklarieren Sie manuell und erhalten Sie einen konformen Schweizer Steuerbericht — bereit zur Einreichung bei Ihrer Kantonsbehörde.',
+      hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen alles, und Sie erhalten einen steuerfertig aufbereiteten Bericht für Ihre Schweizer Steuererklärung.',
       hero_cta1: 'Jetzt deklarieren — kostenlos',
       hero_cta2: 'So funktioniert\'s',
       upload_title: 'Datei hier ablegen',
@@ -2703,12 +2710,23 @@
     if (heroEyebrow) heroEyebrow.childNodes[heroEyebrow.childNodes.length-1].textContent = ' ' + t.hero_eyebrow;
     const heroHeadline = document.querySelector('.hero-headline');
     if (heroHeadline) heroHeadline.innerHTML = t.hero_headline;
+    // Micro-proof
+    const mp = document.getElementById('hero-microproof');
+    if (mp) {
+      const proofs = {
+        en: ['✓ No signup required', '✓ Your data stays in your browser', '✓ Free to try'],
+        fr: ['✓ Sans inscription', '✓ Vos données restent dans votre navigateur', '✓ Gratuit pour commencer'],
+        de: ['✓ Keine Anmeldung erforderlich', '✓ Ihre Daten bleiben in Ihrem Browser', '✓ Kostenlos testen'],
+      };
+      const p = proofs[lang] || proofs.en;
+      mp.innerHTML = `<span>${p[0]}</span><span style="opacity:0.3">·</span><span>${p[1]}</span><span style="opacity:0.3">·</span><span>${p[2]}</span>`;
+    }
     const heroSub = document.querySelector('.hero-sub');
     if (heroSub) heroSub.textContent = t.hero_sub;
 
     // Hero CTAs
     const cta1 = document.querySelector('.hero-actions .btn-primary');
-    if (cta1 && t.hero_cta1) cta1.childNodes[0].textContent = t.hero_cta1;
+    if (cta1 && t.hero_cta1) cta1.childNodes[cta1.childNodes.length-1].textContent = ' ' + t.hero_cta1;
     const cta2 = document.querySelector('.hero-actions .btn-secondary');
     if (cta2 && t.hero_cta2) cta2.childNodes[0].textContent = t.hero_cta2;
 
