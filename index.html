@@ -1989,7 +1989,7 @@
   <div class="report-card">
     <div class="report-left">
       <div class="report-eyebrow">Your output</div>
-      <h2 class="report-headline">A report your<br>Gemeinde will<br><em>actually accept</em></h2>
+      <h2 class="report-headline">A report ready<br>for your<br><em>Swiss tax return</em></h2>
       <p class="report-body">Clean, structured, and compliant. Your PDF report includes a full transaction log, capital gains summary, and end-of-year portfolio valuation — exactly what Swiss tax forms require.</p>
       <a href="#" onclick="navScrollTo('pricing');return false;" class="btn-gold">
         Generate my report
@@ -2181,7 +2181,7 @@
       <div class="app-info-box">
         <div class="app-info-label">What you get</div>
         <div class="app-info-title">A Swiss tax-ready report</div>
-        <div class="app-info-body">Our AI engine calculates your gains and losses using Swiss FIFO accounting, converts everything to CHF using ESTV rates, and produces a structured report ready for your cantonal authority.</div>
+        <div class="app-info-body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.</div>
       </div>
       <div class="app-info-box">
         <div class="app-info-label">Privacy</div>
@@ -2269,6 +2269,33 @@
       </button>
       <div class="faq-a">
         We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I declare multiple tax years at once?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        Yes. Simply upload your full transaction history and our engine will automatically group trades by tax year and generate a separate report for each year. This is useful if you are catching up on past declarations.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How is staking and DeFi income handled?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        Staking rewards, mining income, and yield farming proceeds are treated as taxable income in Switzerland and are reported separately from capital gains in your report. We identify and categorise these automatically from your CSV export.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What if I have transactions on exchanges not listed?
+        <span class="faq-q-icon">+</span>
+      </button>
+      <div class="faq-a">
+        You can use our generic CSV format — any file with date, asset, quantity, type (buy/sell), and price columns will be parsed automatically. You can also enter trades manually directly in the tool.
       </div>
     </div>
   </div>
@@ -2414,6 +2441,9 @@
       faq_q3: 'What exchange rate do you use?', faq_a3: 'We use the official daily exchange rates published by the Swiss Federal Tax Administration (ESTV). These are the rates your canton will use to verify your declaration.',
       faq_q4: "My exchange isn't listed — can I still use this?", faq_a4: 'Yes. You can enter transactions manually or upload a standard CSV with date, asset, quantity, and price columns. We map it automatically.',
       faq_q5: 'Is my data secure?', faq_a5: 'We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).',
+      faq_q6: 'Can I declare multiple tax years at once?', faq_a6: 'Yes. Upload your full transaction history and our engine groups trades by tax year and generates a separate report for each year — useful if you are catching up on past declarations.',
+      faq_q7: 'How is staking and DeFi income handled?', faq_a7: 'Staking rewards, mining income, and yield farming proceeds are treated as taxable income in Switzerland and reported separately from capital gains. We identify and categorise these automatically from your CSV.',
+      faq_q8: 'What if my exchange is not listed?', faq_a8: 'Use our generic CSV format — any file with date, asset, quantity, type, and price columns is parsed automatically. You can also enter trades manually directly in the tool.',
       feat1_label: 'Compliance',
       feat1_title: 'ESTV exchange rates',
       feat1_body: 'All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.',
@@ -2473,7 +2503,7 @@
       footer_contact: 'Contact',
       integrations_label: '03 — Integrations', integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
-      report_eyebrow: 'Your output', report_headline: 'A report your<br>Gemeinde will<br><em>actually accept</em>',
+      report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
       report_body: 'Clean, structured, and compliant. Your PDF report includes a full transaction log, capital gains summary, and end-of-year portfolio valuation — exactly what Swiss tax forms require.',
       report_cta: 'Generate my report',
       starter_period: 'Up to 50 transactions', starter_cta: 'Get started free',
@@ -2515,6 +2545,9 @@
       faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons les taux journaliers officiels de l'Administration fédérale des contributions (AFC/ESTV).",
       faq_q4: "Ma bourse n'est pas listée — puis-je quand même l'utiliser ?", faq_a4: 'Oui. Vous pouvez saisir les transactions manuellement ou importer un CSV standard. Nous le mappons automatiquement.',
       faq_q5: 'Mes données sont-elles sécurisées ?', faq_a5: 'Nous traitons les transactions en session et ne conservons pas vos données après génération du rapport. Nous sommes établis en Suisse et soumis à la nLPD.',
+      faq_q6: 'Puis-je déclarer plusieurs années fiscales ?', faq_a6: 'Oui. Importez votre historique complet et notre moteur regroupe les transactions par année fiscale et génère un rapport séparé pour chaque année.',
+      faq_q7: 'Comment le staking et les revenus DeFi sont-ils traités ?', faq_a7: 'Les récompenses de staking, les revenus miniers et les rendements DeFi sont traités comme revenus imposables en Suisse et rapportés séparément des plus-values. Nous les identifions automatiquement.',
+      faq_q8: 'Ma bourse n\'est pas listée — que faire ?', faq_a8: 'Utilisez notre format CSV générique — tout fichier avec date, actif, quantité, type et prix est analysé automatiquement. Vous pouvez aussi saisir les transactions manuellement.',
       feat1_label: 'Conformité',
       feat1_title: 'Taux de change ESTV',
       feat1_body: "Toutes les conversions utilisent les taux de change officiels de l'Administration fédérale des contributions. Votre rapport correspondra aux attentes des autorités.",
@@ -2574,7 +2607,7 @@
       footer_contact: 'Contact',
       integrations_label: '03 — Intégrations', integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
-      report_eyebrow: 'Votre résultat', report_headline: 'Un rapport que votre<br>commune va<br><em>vraiment accepter</em>',
+      report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
       report_body: "Propre, structuré et conforme. Votre rapport PDF inclut un journal complet des transactions, un résumé des gains en capital et une valorisation de fin d'année.",
       report_cta: 'Générer mon rapport',
       starter_period: "Jusqu'à 50 transactions", starter_cta: 'Commencer gratuitement',
@@ -2616,6 +2649,9 @@
       faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden die offiziellen Tageskurse der Eidgenössischen Steuerverwaltung (ESTV).',
       faq_q4: 'Meine Börse ist nicht aufgelistet — kann ich es trotzdem verwenden?', faq_a4: 'Ja. Sie können Transaktionen manuell erfassen oder eine Standard-CSV hochladen. Wir ordnen sie automatisch zu.',
       faq_q5: 'Sind meine Daten sicher?', faq_a5: 'Wir verarbeiten Transaktionen sitzungsbasiert und speichern keine Portfoliodaten nach der Berichtserstellung. Wir unterliegen dem Schweizer Datenschutzgesetz (revDSG).',
+      faq_q6: 'Kann ich mehrere Steuerjahre gleichzeitig deklarieren?', faq_a6: 'Ja. Laden Sie Ihre vollständige Transaktionshistorie hoch — unser System gruppiert Trades nach Steuerjahr und erstellt für jedes Jahr einen separaten Bericht.',
+      faq_q7: 'Wie werden Staking- und DeFi-Erträge behandelt?', faq_a7: 'Staking-Erträge, Mining-Einnahmen und DeFi-Renditen gelten in der Schweiz als steuerpflichtiges Einkommen und werden separat von Kapitalgewinnen ausgewiesen. Wir erkennen diese automatisch.',
+      faq_q8: 'Was wenn meine Börse nicht aufgelistet ist?', faq_a8: 'Verwenden Sie unser generisches CSV-Format — jede Datei mit Datum, Asset, Menge, Typ und Preis wird automatisch verarbeitet. Sie können Trades auch manuell erfassen.',
       feat1_label: 'Konformität',
       feat1_title: 'ESTV-Wechselkurse',
       feat1_body: 'Alle Umrechnungen verwenden die offiziellen ESTV-Wechselkurse. Ihr Bericht entspricht den Erwartungen der Behörden.',
@@ -2675,7 +2711,7 @@
       footer_contact: 'Kontakt',
       integrations_label: '03 — Integrationen', integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
-      report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht, den Ihre<br>Gemeinde wirklich<br><em>akzeptieren wird</em>',
+      report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
       report_body: 'Sauber, strukturiert und konform. Ihr PDF-Bericht enthält ein vollständiges Transaktionsprotokoll, eine Kapitalgewinnzusammenfassung und eine Jahresend-Portfoliobewertung.',
       report_cta: 'Bericht erstellen',
       starter_period: 'Bis 50 Transaktionen', starter_cta: 'Kostenlos starten',
@@ -2765,7 +2801,8 @@
     const faqItems = document.querySelectorAll('.faq-item');
     const faqKeys = [
       ['faq_q1','faq_a1'],['faq_q2','faq_a2'],['faq_q3','faq_a3'],
-      ['faq_q4','faq_a4'],['faq_q5','faq_a5']
+      ['faq_q4','faq_a4'],['faq_q5','faq_a5'],['faq_q6','faq_a6'],
+      ['faq_q7','faq_a7'],['faq_q8','faq_a8']
     ];
     faqItems.forEach((item, i) => {
       const [qk, ak] = faqKeys[i] || [];
