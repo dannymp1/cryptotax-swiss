@@ -1688,6 +1688,33 @@
     .pricing-grid { grid-template-columns: 1fr; }
     .exchanges { padding: 0 24px 80px; }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    /* App / declare section */
+    .app-section { padding: 60px 0 80px; }
+    .app-layout { grid-template-columns: 1fr; gap: 32px; }
+    .app-section .section-header { padding: 0 24px 32px; }
+    .app-left { padding: 0 24px; }
+    .app-right { padding: 0 24px; overflow: hidden; }
+    .app-info-box { padding: 20px; }
+    /* Contact */
+    .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+    .contact-section { padding: 60px 24px; }
+    /* Team */
+    .team-section { padding: 60px 24px; }
+    .team-card { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px; }
+    .team-photo { width: 120px; height: 145px; }
+    /* Footer */
+    .footer-top { grid-template-columns: 1fr; gap: 24px; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-headline { font-size: clamp(40px, 10vw, 60px); }
+    .section-title { font-size: clamp(28px, 7vw, 40px); }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions .btn-primary, .hero-actions .btn-secondary { text-align: center; justify-content: center; }
+    .exchange-pills { gap: 8px; }
+    .exchange-pill { font-size: 10px; padding: 6px 12px; }
+    .upload-area { margin: 0 16px; }
   }
 
   .ticker-symbol{color:var(--gold-light);font-weight:500}
