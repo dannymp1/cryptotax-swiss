@@ -3862,6 +3862,7 @@
         const proceeds = tx.totalCHF>0 ? tx.totalCHF : tx.qty*(tx.priceCHF||0);
         a.saleProceeds += proceeds;
         let rem=tx.qty, cb=0;
+        const lotsBeforeSell = a.lots.reduce((s,l)=>s+l.qty,0);
         for (let i=0;i<a.lots.length&&rem>0;i++) {
           const take=Math.min(a.lots[i].qty,rem);
           cb+=take*a.lots[i].priceCHF;
@@ -3871,6 +3872,7 @@
         a.lots=a.lots.filter(l=>l.qty>0.000001);
         a.costBasisSold+=cb;
         a.gainLoss+=proceeds-cb;
+        if (lotsBeforeSell < 0.000001 && proceeds > 0) a.missingCostBasis = true;
       }
       else if (tx.type==='staking') {
         a.stakingCount++;
@@ -3908,6 +3910,7 @@
       totalPortfolio+=endValueCHF;
       result.push({
         symbol:sym, name:sym,
+        missingCostBasis: a.missingCostBasis || false,
         buyCount:a.buyCount, sellCount:a.sellCount, stakingCount:a.stakingCount,
         totalBought:a.totalBought, totalSold:a.totalSold,
         avgBuyCHF:a.totalBought>0?Math.round(a.costBasisSold/(a.totalSold||1)*100)/100:0,
@@ -3963,6 +3966,12 @@
         if(s!==-1&&e>s){const p=JSON.parse(clean.slice(s,e+1));assetNames={...assetNames,...(p.assetNames||{})};notes=p.notes||notes;}
       }
     } catch(e) {}
+
+    // Append missing cost basis warning if any asset had zero-cost sells
+    const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
+    if (missingCB.length > 0) {
+      notes += ` ⚠️ Missing purchase history detected for: ${missingCB.join(', ')}. These assets were sold with no corresponding buy in this file — zero cost basis assumed, which overstates your gains. To fix: upload the CSV from the exchange where you originally bought these assets.`;
+    }
 
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
@@ -4046,7 +4055,7 @@
         <td style="text-align:center">${a.stakingCount || 0}</td>
         <td style="text-align:right">${fmtNum(a.endHolding)}</td>
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
-        <td style="text-align:right;${glClass};font-weight:600">${glStr}</td>
+        <td style="text-align:right;${glClass};font-weight:600">${glStr}${a.missingCostBasis ? ' <span style="font-size:10px;color:#B8960C;font-weight:400">⚠</span>' : ''}</td>
       </tr>`;
     }).join('');
 
@@ -4123,7 +4132,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         <td class="center mono" style="color:#0D1117">${a.stakingCount||0}</td>
         <td class="right mono">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">${glStr}</td>
+        <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">${glStr}${a.missingCostBasis ? `<br/><span style="font-size:7pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;">⚠ no cost basis</span>` : ''}</td>
       </tr>`;
     }).join('');
 
