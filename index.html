@@ -4067,13 +4067,13 @@
         const proceeds = tx.totalCHF>0 ? tx.totalCHF : tx.qty*(tx.priceCHF||0);
         a.saleProceeds += proceeds;
         const lotsBeforeSell = a.lots.reduce((s,l)=>s+l.qty,0);
-        // No cost basis available — exclude from gain calculation entirely
-        // Show as unresolved proceeds only, never as a gain
+
         if (lotsBeforeSell < 0.000001 && proceeds > 0) {
+          // Fully missing cost basis — exclude entirely
           a.missingCostBasis = true;
           a.unresolvedProceeds = (a.unresolvedProceeds||0) + proceeds;
-          // Do NOT add to gainLoss — exclude this from the total
         } else {
+          // Partial or full cost basis available
           let rem=tx.qty, cb=0;
           for (let i=0;i<a.lots.length&&rem>0;i++) {
             const take=Math.min(a.lots[i].qty,rem);
@@ -4082,8 +4082,22 @@
             rem=Math.round((rem-take)*1e8)/1e8;
           }
           a.lots=a.lots.filter(l=>l.qty>0.000001);
-          a.costBasisSold+=cb;
-          a.gainLoss+=proceeds-cb;
+
+          // Partial missing cost basis — rem > 0 means some qty had no lots
+          if (rem > 0.000001) {
+            // Pro-rate: split proceeds between covered and uncovered qty
+            const coveredQty = tx.qty - rem;
+            const coveredProceeds = proceeds * (coveredQty / tx.qty);
+            const uncoveredProceeds = proceeds * (rem / tx.qty);
+            a.costBasisSold += cb;
+            a.gainLoss += coveredProceeds - cb;
+            // Exclude uncovered portion as unresolved proceeds
+            a.missingCostBasis = true;
+            a.unresolvedProceeds = (a.unresolvedProceeds||0) + uncoveredProceeds;
+          } else {
+            a.costBasisSold += cb;
+            a.gainLoss += proceeds - cb;
+          }
         }
       }
       else if (tx.type==='staking') {
