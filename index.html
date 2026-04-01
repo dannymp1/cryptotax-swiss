@@ -4590,9 +4590,24 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 </style>
 </head>
 <body>
-<div class="no-print" style="position:fixed;top:20px;right:20px;z-index:100;text-align:right">
-  <button onclick="window.print()" style="background:#0D1117;color:#D4AF37;border:none;padding:12px 24px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;border-radius:3px;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px;">⬇ Save as PDF</button>
-  <div style="font-family:'DM Mono',monospace;font-size:9px;color:#8A909E;letter-spacing:0.06em;text-transform:uppercase;">In print dialog: disable<br>headers &amp; footers</div>
+<div class="no-print" style="position:fixed;top:24px;right:24px;z-index:100;">
+  <button onclick="window.print()" style="
+    display:flex;align-items:center;gap:10px;
+    background:var(--gold);color:#0D1117;
+    border:none;padding:12px 22px;
+    font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:700;
+    border-radius:4px;cursor:pointer;letter-spacing:0.04em;
+    box-shadow:0 4px 16px rgba(184,150,12,0.35);
+    transition:all 0.2s;
+  "
+  onmouseover="this.style.background='#D4AF37';this.style.boxShadow='0 6px 20px rgba(184,150,12,0.5)'"
+  onmouseout="this.style.background='var(--gold)';this.style.boxShadow='0 4px 16px rgba(184,150,12,0.35)'"
+  aria-label="Save report as PDF">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Save as PDF
+  </button>
 </div>
 <div class="page">
 
