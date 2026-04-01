@@ -3897,9 +3897,10 @@
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
           const t = (r['transaction type']||'').toLowerCase();
-          if (t.includes('buy')) type='buy';
-          else if (t.includes('sell')) type='sell';
-          else if (t.includes('reward')||t.includes('staking')||t.includes('income')) type='staking';
+          if (t.includes('buy') || t==='receive' || t.includes('deposit')) type='buy';
+          else if (t.includes('sell') || t==='convert') type='sell';
+          else if (t==='send' || t.includes('withdrawal') || t.includes('transfer')) type='withdrawal';
+          else if (t.includes('reward')||t.includes('staking')||t.includes('income')||t.includes('interest')) type='staking';
           else continue;
           asset = (r['asset']||'').toUpperCase();
           qty = Math.abs(parseFloat(r['quantity transacted'])||0);
