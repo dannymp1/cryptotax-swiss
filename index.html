@@ -2323,7 +2323,7 @@
       </div>
 
       <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Upload your transaction file">
-        <input type="file" id="csv-input" accept=".csv,.xlsx,.xls,.xlsm" />
+        <input type="file" id="csv-input" accept=".csv,.xlsx,.xls,.xlsm" multiple />
         <div class="upload-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
@@ -2617,8 +2617,8 @@
       hero_sub: 'Upload your exchange transactions, we calculate everything, and you receive a clean Swiss tax report — ready for your cantonal declaration.',
       hero_cta1: 'Declare now — it\'s free',
       hero_cta2: 'See how it works',
-      upload_title: 'Drop your file here',
-      upload_sub: 'CSV or Excel (.xlsx) — your first report is <span style="color:var(--gold-light);font-weight:600;">free</span>',
+      upload_title: 'Drop your files here',
+      upload_sub: 'CSV or Excel (.xlsx) · upload multiple exchanges — your first report is <span style="color:var(--gold-light);font-weight:600;">free</span>',
       trial_strong: 'Try your first report at no cost.',
       trial_span: 'Upload any transaction file — we\'ll generate a full Swiss tax report instantly.',
       trial_used: 'Free trial used — upgrade to Pro to generate more reports',
@@ -2734,7 +2734,7 @@
       hero_sub: 'Importez vos transactions, nous calculons tout, et vous recevez un rapport fiscal suisse propre — prêt pour votre déclaration cantonale.',
       hero_cta1: 'Déclarer maintenant — gratuit',
       hero_cta2: 'Voir comment ça marche',
-      upload_title: 'Déposez votre fichier ici',
+      upload_title: 'Déposez vos fichiers ici',
       upload_sub: 'CSV ou Excel (.xlsx) — votre premier rapport est <span style="color:var(--gold-light);font-weight:600;">gratuit</span>',
       trial_strong: 'Essayez votre premier rapport gratuitement.',
       trial_span: 'Importez n\'importe quel fichier de transactions — nous générons un rapport fiscal complet instantanément.',
@@ -2851,7 +2851,7 @@
       hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen alles, und Sie erhalten einen sauberen Steuerbericht — bereit für Ihre kantonale Steuererklärung.',
       hero_cta1: 'Jetzt deklarieren — kostenlos',
       hero_cta2: 'So funktioniert\'s',
-      upload_title: 'Datei hier ablegen',
+      upload_title: 'Dateien hier ablegen',
       upload_sub: 'CSV oder Excel (.xlsx) — Ihr erster Bericht ist <span style="color:var(--gold-light);font-weight:600;">kostenlos</span>',
       trial_strong: 'Ersten Bericht kostenlos testen.',
       trial_span: 'Laden Sie eine beliebige Transaktionsdatei hoch — wir erstellen sofort einen vollständigen Steuerbericht.',
@@ -3479,18 +3479,96 @@
     e.preventDefault();
     uploadArea.classList.remove('drag-over');
     if (hasUsedTrial()) return;
-    const file = e.dataTransfer.files[0];
-    if (file) processFile(file);
+    const files = Array.from(e.dataTransfer.files).filter(f =>
+      /\.(csv|xlsx|xls|xlsm)$/i.test(f.name)
+    );
+    if (files.length > 0) processFiles(files);
   });
 
   csvInput.addEventListener('change', (e) => {
     if (hasUsedTrial()) return;
-    const file = e.target.files[0];
-    if (file) processFile(file);
+    const files = Array.from(e.target.files);
+    if (files.length > 0) processFiles(files);
+    csvInput.value = '';
   });
 
   function setProcessingText(text) {
     document.getElementById('processing-text').textContent = text;
+  }
+
+  async function processFiles(files) {
+    if (files.length === 1) return processFile(files[0]);
+
+    const indicator = document.getElementById('processing-indicator');
+    indicator.classList.add('visible');
+    setProcessingText(`Reading ${files.length} files...`);
+
+    let allCSV = '';
+    let fileNames = files.map(f => f.name).join(', ');
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setProcessingText(`Reading file ${i+1} of ${files.length}: ${file.name}`);
+        const ext = file.name.split('.').pop().toLowerCase();
+        let csvText;
+        if (ext === 'xlsx' || ext === 'xls' || ext === 'xlsm') {
+          csvText = await readExcelAsCSV(file);
+        } else {
+          csvText = await readFileAsText(file);
+        }
+        // Append CSV — skip header row for subsequent files
+        if (allCSV === '') {
+          allCSV = csvText;
+        } else {
+          const lines = csvText.trim().split('\n');
+          allCSV += '\n' + lines.slice(1).join('\n');
+        }
+      }
+    } catch (err) {
+      setProcessingText('Could not read files: ' + err.message);
+      setTimeout(() => indicator.classList.remove('visible'), 4000);
+      return;
+    }
+
+    // Check total transaction count
+    const quickRows = parseCSVRows(allCSV);
+    const txCount = quickRows.length;
+    const limit = getTxLimit();
+    if (txCount > limit) {
+      indicator.classList.remove('visible');
+      showUnlockBanner(txCount);
+      return;
+    }
+
+    setProcessingText(`Merging ${files.length} exchange files — calculating your report...`);
+    try {
+      const [result] = await Promise.all([
+        generateTaxReport(allCSV, fileNames),
+        new Promise(resolve => {
+          const msgs = [
+            'Merging exchange data...',
+            'Applying Swiss FIFO method...',
+            'Matching cross-exchange transactions...',
+            'Converting to CHF...',
+            'Calculating gains and losses...',
+            'Preparing your report...'
+          ];
+          let i = 0;
+          const interval = setInterval(() => {
+            i++;
+            if (i < msgs.length) setProcessingText(msgs[i]);
+          }, 900);
+          setTimeout(() => { clearInterval(interval); resolve(); }, 5500);
+        })
+      ]);
+      markTrialUsed();
+      updateTrialUI();
+      displayReport(result);
+    } catch (err) {
+      setProcessingText('Error: ' + err.message);
+      setTimeout(() => indicator.classList.remove('visible'), 4000);
+    }
   }
 
   async function processFile(file) {
@@ -3541,7 +3619,24 @@
       } else if (firstLines.includes('local time') && firstLines.includes('net amount (chf)')) {
         setProcessingText('Parsing SwissBorg account statement...');
       }
-      const result = await generateTaxReport(csvText, file.name);
+      const [result] = await Promise.all([
+        generateTaxReport(csvText, file.name),
+        new Promise(resolve => {
+          const msgs = [
+            'Reading your transactions...',
+            'Applying Swiss FIFO method...',
+            'Converting to CHF...',
+            'Calculating gains and losses...',
+            'Preparing your report...'
+          ];
+          let i = 0;
+          const interval = setInterval(() => {
+            i++;
+            if (i < msgs.length) setProcessingText(msgs[i]);
+          }, 900);
+          setTimeout(() => { clearInterval(interval); resolve(); }, 5000);
+        })
+      ]);
       markTrialUsed();
       updateTrialUI();
       displayReport(result);
