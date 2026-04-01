@@ -4109,7 +4109,7 @@
       }
       else if (tx.type==='withdrawal') {
         // Transfer out — reduce lots FIFO but no taxable gain
-        a.totalSold=Math.round((a.totalSold+tx.qty)*1e8)/1e8;
+        // Do NOT increment totalSold — end holding calculated from lots remaining
         let rem=tx.qty;
         for (let i=0;i<a.lots.length&&rem>0;i++) {
           const take=Math.min(a.lots[i].qty,rem);
@@ -4124,10 +4124,10 @@
     let totalStaking=0, totalGain=0, totalPortfolio=0;
 
     for (const [sym,a] of Object.entries(assets)) {
-      // Clamp to zero — negative means sells exceeded buys due to incomplete history
-      // (assets transferred in from external wallets not in this export)
-      const rawHolding=Math.round((a.totalBought-a.totalSold)*1e8)/1e8;
-      const endHolding = Math.max(0, rawHolding);
+      // End holding = sum of remaining lot quantities (most accurate)
+      const endHolding = Math.round(
+        a.lots.reduce((s,l) => s + (l.qty > 0.000001 ? l.qty : 0), 0) * 1e8
+      ) / 1e8;
       // Use real Dec 31 year-end price if available, else fall back to last seen price
       const yearEndPrice = dec31Prices[sym] || a.lastPriceCHF;
       const endValueCHF = Math.round(endHolding*yearEndPrice*100)/100;
