@@ -4606,6 +4606,23 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 </style>
 </head>
 <body>
+<button class="no-print" onclick="window.print()" title="Save as PDF" style="
+  position:fixed;bottom:24px;right:24px;z-index:100;
+  display:flex;align-items:center;gap:7px;
+  background:#0D1117;color:#D4AF37;
+  border:1px solid rgba(212,175,55,0.3);
+  padding:8px 14px;border-radius:3px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  font-weight:500;letter-spacing:0.06em;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+" onmouseover="this.style.borderColor='#D4AF37';this.style.color='#F5F2EB'"
+   onmouseout="this.style.borderColor='rgba(212,175,55,0.3)';this.style.color='#D4AF37'">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+  Save as PDF
+</button>
 
 <div class="page">
 
