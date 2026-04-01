@@ -3964,18 +3964,25 @@
         a.totalSold = Math.round((a.totalSold+tx.qty)*1e8)/1e8;
         const proceeds = tx.totalCHF>0 ? tx.totalCHF : tx.qty*(tx.priceCHF||0);
         a.saleProceeds += proceeds;
-        let rem=tx.qty, cb=0;
         const lotsBeforeSell = a.lots.reduce((s,l)=>s+l.qty,0);
-        for (let i=0;i<a.lots.length&&rem>0;i++) {
-          const take=Math.min(a.lots[i].qty,rem);
-          cb+=take*a.lots[i].priceCHF;
-          a.lots[i].qty=Math.round((a.lots[i].qty-take)*1e8)/1e8;
-          rem=Math.round((rem-take)*1e8)/1e8;
+        // No cost basis available — exclude from gain calculation entirely
+        // Show as unresolved proceeds only, never as a gain
+        if (lotsBeforeSell < 0.000001 && proceeds > 0) {
+          a.missingCostBasis = true;
+          a.unresolvedProceeds = (a.unresolvedProceeds||0) + proceeds;
+          // Do NOT add to gainLoss — exclude this from the total
+        } else {
+          let rem=tx.qty, cb=0;
+          for (let i=0;i<a.lots.length&&rem>0;i++) {
+            const take=Math.min(a.lots[i].qty,rem);
+            cb+=take*a.lots[i].priceCHF;
+            a.lots[i].qty=Math.round((a.lots[i].qty-take)*1e8)/1e8;
+            rem=Math.round((rem-take)*1e8)/1e8;
+          }
+          a.lots=a.lots.filter(l=>l.qty>0.000001);
+          a.costBasisSold+=cb;
+          a.gainLoss+=proceeds-cb;
         }
-        a.lots=a.lots.filter(l=>l.qty>0.000001);
-        a.costBasisSold+=cb;
-        a.gainLoss+=proceeds-cb;
-        if (lotsBeforeSell < 0.000001 && proceeds > 0) a.missingCostBasis = true;
       }
       else if (tx.type==='staking') {
         a.stakingCount++;
@@ -4014,6 +4021,7 @@
       result.push({
         symbol:sym, name:sym,
         missingCostBasis: a.missingCostBasis || false,
+        unresolvedProceeds: Math.round((a.unresolvedProceeds||0)*100)/100,
         buyCount:a.buyCount, sellCount:a.sellCount, stakingCount:a.stakingCount,
         totalBought:a.totalBought, totalSold:a.totalSold,
         avgBuyCHF:a.totalBought>0?Math.round(a.costBasisSold/(a.totalSold||1)*100)/100:0,
@@ -4073,7 +4081,7 @@
     // Append missing cost basis warning if any asset had zero-cost sells
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     if (missingCB.length > 0) {
-      notes += ` ⚠️ Missing purchase history detected for: ${missingCB.join(', ')}. These assets were sold with no corresponding buy in this file — zero cost basis assumed, which overstates your gains. To fix: upload the CSV from the exchange where you originally bought these assets.`;
+      notes += ` ⚠️ Incomplete data — cost basis missing for: ${missingCB.join(', ')}. Sales of these assets have been EXCLUDED from the realised gain total and shown separately as unresolved proceeds. Upload the purchase history from the original exchange to complete the calculation.`;
     }
 
     return {
@@ -4168,7 +4176,11 @@
         <td style="text-align:center">${a.stakingCount || 0}</td>
         <td style="text-align:right">${fmtNum(a.endHolding)}</td>
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
-        <td style="text-align:right;${glClass};font-weight:600">${glStr}${a.missingCostBasis ? ' <span style="font-size:10px;color:#B8960C;font-weight:400">⚠</span>' : ''}</td>
+        <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:#B8960C' : glClass}">
+          ${a.missingCostBasis
+            ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})} <span style="font-size:10px;font-weight:400;display:block;">proceeds · excluded</span>`
+            : glStr}
+        </td>
       </tr>`;
     }).join('');
 
@@ -4245,7 +4257,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         <td class="center mono" style="color:#0D1117">${a.stakingCount||0}</td>
         <td class="right mono">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">${glStr}${a.missingCostBasis ? `<br/><span style="font-size:7pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;">⚠ no cost basis</span>` : ''}</td>
+        <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">
+        ${a.missingCostBasis
+          ? `<span style="font-size:8pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:600;">CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</span><br/><span style="font-size:7pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;letter-spacing:0.04em;">proceeds only · excluded</span>`
+          : glStr}
+        </td>
       </tr>`;
     }).join('');
 
@@ -4655,6 +4671,19 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     </div>
   </div>
 
+  ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
+  <div style="background:#FFF8E1;border:2px solid #B8960C;border-radius:4px;padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;">
+    <span style="font-size:18px;flex-shrink:0;">⚠️</span>
+    <div>
+      <div style="font-family:'DM Mono',monospace;font-size:9pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#0D1117;margin-bottom:4px;">Incomplete Data — Cost Basis Missing</div>
+      <div style="font-size:9pt;color:#3D4451;line-height:1.6;">
+        The following assets were sold but no purchase history was found in this file:
+        <strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong>.<br/>
+        These sales have been <strong>excluded from the realised gain total</strong> and are shown separately as unresolved proceeds below.
+        To calculate the correct gain, upload the CSV from the exchange where these assets were originally purchased.
+      </div>
+    </div>
+  </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
   <table>
     <thead>
