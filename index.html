@@ -4081,7 +4081,7 @@
     // Append missing cost basis warning if any asset had zero-cost sells
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     if (missingCB.length > 0) {
-      notes += ` ⚠️ Incomplete data — cost basis missing for: ${missingCB.join(', ')}. Sales of these assets have been EXCLUDED from the realised gain total and shown separately as unresolved proceeds. Upload the purchase history from the original exchange to complete the calculation.`;
+      // Missing cost basis shown in report banner — not duplicated in notes
     }
 
     return {
@@ -4606,25 +4606,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 </style>
 </head>
 <body>
-<div class="no-print" style="position:fixed;top:24px;right:24px;z-index:100;">
-  <button onclick="window.print()" style="
-    display:flex;align-items:center;gap:10px;
-    background:var(--gold);color:#0D1117;
-    border:none;padding:12px 22px;
-    font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:700;
-    border-radius:4px;cursor:pointer;letter-spacing:0.04em;
-    box-shadow:0 4px 16px rgba(184,150,12,0.35);
-    transition:all 0.2s;
-  "
-  onmouseover="this.style.background='#D4AF37';this.style.boxShadow='0 6px 20px rgba(184,150,12,0.5)'"
-  onmouseout="this.style.background='var(--gold)';this.style.boxShadow='0 4px 16px rgba(184,150,12,0.35)'"
-  aria-label="Save report as PDF">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    Save as PDF
-  </button>
-</div>
+
 <div class="page">
 
   <div class="doc-header">
@@ -4640,7 +4622,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         </svg>
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
-      <div class="doc-subtitle">Prepared for Swiss cantonal tax declaration · FIFO method · cryptodeclare.ch</div>
+      <div class="doc-subtitle" style="font-family:'DM Mono',monospace;font-size:7pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;margin-top:4px;">Prepared for Swiss cantonal tax declaration · FIFO · cryptodeclare.ch</div>
     </div>
     <div class="doc-header-right">
       <div class="doc-report-title">Crypto Tax Report ${data.taxYear}</div>
