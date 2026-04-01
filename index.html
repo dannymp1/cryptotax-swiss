@@ -3501,12 +3501,14 @@
 
     const indicator = document.getElementById('processing-indicator');
     indicator.classList.add('visible');
-    setProcessingText(`Reading ${files.length} files...`);
-
-    let allCSV = '';
-    let fileNames = files.map(f => f.name).join(', ');
+    const fileNames = files.map(f => f.name).join(', ');
 
     try {
+      // ── Step 1: Read and normalise each file independently ──
+      let allTransactions = [];
+      let totalTxCount = 0;
+      const formats = [];
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         setProcessingText(`Reading file ${i+1} of ${files.length}: ${file.name}`);
@@ -3517,34 +3519,34 @@
         } else {
           csvText = await readFileAsText(file);
         }
-        // Append CSV — skip header row for subsequent files
-        if (allCSV === '') {
-          allCSV = csvText;
-        } else {
-          const lines = csvText.trim().split('\n');
-          allCSV += '\n' + lines.slice(1).join('\n');
-        }
+        const rows = parseCSVRows(csvText);
+        if (!rows.length) continue;
+        const headers = Object.keys(rows[0]);
+        const format = detectFormat(headers);
+        formats.push(format);
+        const txs = await normaliseRows(rows, format);
+        allTransactions = allTransactions.concat(txs);
+        totalTxCount += rows.length;
       }
-    } catch (err) {
-      setProcessingText('Could not read files: ' + err.message);
-      setTimeout(() => indicator.classList.remove('visible'), 4000);
-      return;
-    }
 
-    // Check total transaction count
-    const quickRows = parseCSVRows(allCSV);
-    const txCount = quickRows.length;
-    const limit = getTxLimit();
-    if (txCount > limit) {
-      indicator.classList.remove('visible');
-      showUnlockBanner(txCount);
-      return;
-    }
+      // ── Step 2: Check transaction limit ──
+      const limit = getTxLimit();
+      if (totalTxCount > limit) {
+        indicator.classList.remove('visible');
+        showUnlockBanner(totalTxCount);
+        return;
+      }
 
-    setProcessingText(`Merging ${files.length} exchange files — calculating your report...`);
-    try {
+      if (!allTransactions.length) throw new Error('No transactions found in uploaded files');
+
+      // ── Step 3: Sort all transactions by date ──
+      allTransactions.sort((a, b) => (a.date||'').localeCompare(b.date||''));
+
+      setProcessingText('Merging exchange data...');
+
+      // ── Step 4: Run FIFO on merged transactions ──
       const [result] = await Promise.all([
-        generateTaxReport(allCSV, fileNames),
+        generateTaxReportFromTransactions(allTransactions, fileNames, formats.join(', ')),
         new Promise(resolve => {
           const msgs = [
             'Merging exchange data...',
@@ -4136,6 +4138,29 @@
       stakingIncomeCHF:Math.round(totalStaking*100)/100,
       totalGainLossCHF:Math.round((totalGain+totalStaking)*100)/100,
       totalPortfolioValueCHF:Math.round(totalPortfolio*100)/100,
+    };
+  }
+
+  async function generateTaxReportFromTransactions(transactions, filename, format) {
+    if (!transactions.length) throw new Error('No transactions found');
+    const dates = transactions.map(t=>t.date).filter(Boolean).sort();
+    const taxYear = dates.length ? dates[dates.length-1].slice(0,4)||'2024' : '2024';
+    const dateRange = dates.length>=2
+      ? formatDate(dates[0])+' – '+formatDate(dates[dates.length-1])
+      : (dates[0]?formatDate(dates[0]):'2024');
+    const computed = computeFIFO(transactions, taxYear);
+    let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
+    let notes = `Multiple exchanges: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
+    return {
+      taxYear, clientRef:'Auto-generated', dateRange,
+      totalTransactions: transactions.length,
+      assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
+      stakingIncomeCHF: computed.stakingIncomeCHF,
+      totalGainLossCHF: computed.totalGainLossCHF,
+      totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
+      complianceMethod: 'FIFO',
+      notes,
     };
   }
 
