@@ -2373,7 +2373,7 @@
 
     <div class="report-generated">
       <div class="report-generated-header">
-        <span class="report-generated-title">Krypto-Steuerbericht — AI Generated Report</span>
+        <span class="report-generated-title">Krypto-Steuerbericht — Generated Report</span>
         <span class="report-generated-badge">ESTV Compliant</span>
       </div>
       <div class="report-generated-body" id="report-content">
@@ -2527,7 +2527,7 @@
     <div class="contact-left">
       <p>Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.</p>
       <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;color:rgba(245,242,235,0.45);">
-        Or email us directly:<br/>
+        <span data-i18n="contact_email_label">Or email us directly:</span><br/>
         <a href="mailto:hello@cryptodeclare.ch" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;">hello@cryptodeclare.ch</a>
       </p>
     </div>
@@ -2688,6 +2688,7 @@
       contact_email_ph: 'your@email.com',
       contact_message_ph: 'How can we help?',
       contact_send: 'Send message',
+      contact_email_label: 'Or email us directly:',
       unlock_title: 'Enter your unlock code',
       unlock_sub: 'Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.',
       unlock_btn: 'Unlock',
@@ -2916,6 +2917,7 @@
       contact_email_ph: 'ihre@email.com',
       contact_message_ph: 'Wie können wir helfen?',
       contact_send: 'Nachricht senden',
+      contact_email_label: 'Oder schreiben Sie uns direkt:',
       unlock_title: 'Ihren Freischaltcode eingeben',
       unlock_sub: 'Ihre Datei enthält mehr als 50 Transaktionen. Geben Sie einen Pro- oder Business-Code ein, um Ihren Bericht zu erstellen.',
       unlock_btn: 'Freischalten',
@@ -3160,12 +3162,14 @@
     // Team section
     const teamLabel = document.querySelector('#team .section-number');
     const teamTitle = document.querySelector('#team .section-title');
-    const teamRole = document.querySelector('.team-role');
-    const teamBio = document.querySelector('.team-bio span[data-i18n-html]');
+    const teamRole = document.querySelector('#team .team-role');
+    const teamBio = document.querySelector('#team .team-bio span');
     if (teamLabel && t.team_label) teamLabel.textContent = t.team_label;
     if (teamTitle && t.team_title) teamTitle.innerHTML = t.team_title;
     if (teamRole && t.team_role) teamRole.textContent = t.team_role;
     if (teamBio && t.team_bio) teamBio.innerHTML = t.team_bio;
+    const emailLabel = document.querySelector('[data-i18n="contact_email_label"]');
+    if (emailLabel && t.contact_email_label) emailLabel.textContent = t.contact_email_label;
     const exNote = document.querySelector('[data-i18n="exchange_note"]');
     if (exNote && t.exchange_note) exNote.textContent = t.exchange_note;
     const ctBody = document.querySelector('#contact .contact-left p');
@@ -3514,7 +3518,7 @@
       setProcessingText(`Processing ${txCount} transactions — approaching Pro limit of 1,000...`);
     }
 
-    setProcessingText('Analysing transactions with AI...');
+    setProcessingText('Calculating your tax report...');
 
     try {
       // Update status text based on format
