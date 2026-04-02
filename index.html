@@ -3765,6 +3765,7 @@
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
+    if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
     if ((h.includes('time') || h.includes('trade time')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty')) && h.includes('side')) return 'bybit';
     if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
     // Swissquote: date + order # + transaction + symbol + currency + price + quantity
@@ -3987,7 +3988,7 @@
           totalCHF = parseFloat(r['total chf']||r['Total CHF'])||qty * priceCHF;
         }
         else if (format === 'binance') {
-          date = r['date(utc)']||r['date']||r['Date(UTC)']||'';
+          date = r['Date(UTC)']||r['date(utc)']||r['date']||r['Date']||'';
           const side = (r['side']||r['type']||r['Type']||'').toLowerCase();
           if (!['buy','sell'].includes(side)) continue;
           type = side;
@@ -4760,25 +4761,22 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 </style>
 </head>
 <body>
-<div class="no-print" style="position:fixed;top:16px;right:16px;z-index:100;">
-  <button onclick="window.print()" style="
-    display:flex;align-items:center;gap:6px;
-    background:#F7F4EE;color:#0D1117;
-    border:1px solid #E0D9CC;
-    padding:6px 12px;border-radius:3px;
-    font-family:'DM Mono',monospace;font-size:10px;
-    font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
-    cursor:pointer;transition:all 0.15s;
-    box-shadow:0 1px 4px rgba(0,0,0,0.08);
-  "
-  onmouseover="this.style.background='#0D1117';this.style.color='#D4AF37';this.style.borderColor='#0D1117'"
-  onmouseout="this.style.background='#F7F4EE';this.style.color='#0D1117';this.style.borderColor='#E0D9CC'">
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    Save as PDF
-  </button>
-</div>
+<button class="no-print" onclick="window.print()" style="
+  position:fixed;top:20px;right:20px;z-index:100;
+  display:flex;align-items:center;gap:6px;
+  background:none;color:#8A909E;
+  border:none;padding:4px 0;
+  font-family:'DM Mono',monospace;font-size:10px;
+  font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
+  cursor:pointer;transition:color 0.15s;
+"
+onmouseover="this.style.color='#0D1117'"
+onmouseout="this.style.color='#8A909E'">
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+  Save as PDF
+</button>
 
 <div class="page">
 
