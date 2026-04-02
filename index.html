@@ -5158,4 +5158,17 @@ onmouseout="this.style.color='#8A909E'">
       if (res.ok) {
         success.classList.add('visible');
         this.reset();
-        btn.textContent 
+        btn.textContent = 'Message sent ✓';
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Send message';
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Send message';
+    }
+  });
+
+</script>
+</body>
+</html>
