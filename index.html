@@ -4104,7 +4104,10 @@
         a.stakingCount++;
         a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
         const income=tx.totalCHF>0?tx.totalCHF:tx.qty*(tx.priceCHF||0);
-        a.stakingIncome+=income;
+        // Only count staking income for the tax year being reported
+        if (tx.date && tx.date.slice(0,4) === String(taxYear)) {
+          a.stakingIncome+=income;
+        }
         a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
       }
       else if (tx.type==='withdrawal') {
