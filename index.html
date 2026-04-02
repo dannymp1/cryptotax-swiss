@@ -3887,8 +3887,10 @@
           // price and cost are in quote currency (CHF, EUR, USD)
           date = r['time']||'';
           const t = (r['type']||'').toLowerCase();
+          const misc = (r['misc']||'').toLowerCase();
           if (!['buy','sell'].includes(t)) continue;
-          type = t;
+          // Kraken marks staking rewards with misc='staking' even though type='buy'
+          type = misc.includes('staking') ? 'staking' : t;
           // Parse pair: XXBTZCHF → BTC, XETHZCHF → ETH, LINKCHF → LINK
           const pair = (r['pair']||'').toUpperCase();
           const KRAKEN_PAIRS = {
@@ -4880,21 +4882,9 @@ onmouseout="this.style.color='#8A909E'">
   })()}
 
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
-  <div style="background:#FFFCF5;border:1px solid #D4AF37;border-left:3px solid #B8960C;border-radius:3px;padding:12px 18px;margin-bottom:24px;line-height:1.7;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
-    <div style="flex:1;">
-    <div style="font-family:'DM Mono',monospace;font-size:7.5pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:4px;">⚠ Action Required — Incomplete Acquisition History</div>
-      <div style="font-size:9pt;color:#3D4451;line-height:1.6;">
-        <strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — <strong>insufficient purchase history to match all disposals under FIFO</strong>. Unmatched disposal quantities have been excluded from the realised gain total and shown separately in the reconciliation table below.
-        To calculate the correct gain, upload the CSV from the exchange where these assets were originally purchased.
-      </div>
-    </div>
-    <div style="flex-shrink:0;background:#FFF3CD;border:1px solid #E8C84A;border-radius:3px;padding:10px 14px;font-size:8pt;font-family:'DM Mono',monospace;line-height:1.8;min-width:180px;">
-      <div style="font-weight:700;color:#8A6B00;margin-bottom:4px;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;">To complete this report</div>
-      <div style="color:#5A4A00;">→ Upload CSV from all exchanges where these assets were originally purchased</div>
-      <div style="color:#8A6B00;margin-top:6px;font-size:7pt;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} currently excluded</div>
-    </div>
-    </div>
+  <div style="border-left:3px solid #B8960C;padding:10px 14px;margin-bottom:20px;background:#FFFCF5;">
+    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
+    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'DM Mono',monospace;font-size:8pt;font-weight:600;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
   </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
   <table>
