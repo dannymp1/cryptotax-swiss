@@ -3765,7 +3765,7 @@
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
-    if (h.includes('time') && h.includes('symbol') && h.includes('qty') && h.includes('side')) return 'bybit';
+    if ((h.includes('time') || h.includes('trade time')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty')) && h.includes('side')) return 'bybit';
     if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
     // Swissquote: date + order # + transaction + symbol + currency + price + quantity
     if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
@@ -3898,26 +3898,37 @@
             'ADACHF':'ADA','ADAEUR':'ADA','DOTCHF':'DOT','DOTEUR':'DOT',
             'XLTCZCHF':'LTC','XXRPZCHF':'XRP','UNIUSD':'UNI','UNICHF':'UNI',
           };
-          asset = KRAKEN_PAIRS[pair] || pair.replace(/(CHF|EUR|USD|ZCHF|ZEUR|ZUSD)$/,'').replace(/^X{1,2}/,'');
-          if (asset === 'XBT') asset = 'BTC';
+          // Handle both slash format (XBT/USDT) and legacy format (XXBTZUSD)
+          let krPair = pair;
+          let krQuote = 'USD';
+          if (pair.includes('/')) {
+            const parts = pair.split('/');
+            krPair = parts[0];
+            krQuote = parts[1] || 'USD';
+          }
+          asset = KRAKEN_PAIRS[pair] || KRAKEN_PAIRS[krPair] ||
+                  krPair.replace(/^X{1,2}/,'').replace(/(CHF|EUR|USD|USDT)$/,'') ||
+                  pair.replace(/(CHF|EUR|USD|ZCHF|ZEUR|ZUSD|USDT)$/,'').replace(/^X{1,2}/,'');
+          if (asset === 'XBT' || asset === 'XXBT') asset = 'BTC';
           qty = Math.abs(parseFloat(r['vol'])||0);
-          // cost is total in quote currency — convert to CHF if needed
-          const quoteCurrency = pair.slice(-3);
           const costRaw = Math.abs(parseFloat(r['cost'])||0);
-          totalCHF = quoteCurrency === 'CHF' ? costRaw : costRaw * USD_CHF;
+          const isChf = krQuote === 'CHF' || pair.includes('CHF');
+          totalCHF = isChf ? costRaw : costRaw * USD_CHF;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
         else if (format === 'bybit') {
-          // Bybit: Time,Symbol,Side,Price,Qty,Fee,Realized P&L,Order Type,Order ID
-          date = r['time']||r['date']||'';
-          const side = (r['side']||'').toLowerCase();
+          date = r['trade time']||r['time']||r['date']||'';
+          const side = (r['side']||r['Side']||'').toLowerCase();
           if (!['buy','sell'].includes(side)) continue;
           type = side;
-          const sym = (r['symbol']||'').toUpperCase();
+          const sym = (r['symbol']||r['Symbol']||'').toUpperCase();
           asset = sym.replace(/(USDT|BUSD|USD|USDC|PERP)$/,'').slice(0,8) || sym.slice(0,4);
-          qty = Math.abs(parseFloat(r['qty'])||parseFloat(r['quantity'])||0);
-          priceCHF = (parseFloat(r['price'])||0) * USD_CHF;
-          totalCHF = qty * priceCHF;
+          // Support old format (qty/price) and new format (Executed Qty/Executed Price/Executed Value)
+          qty = Math.abs(parseFloat(r['Executed Qty']||r['executed qty']||r['qty']||r['quantity'])||0);
+          const execPrice = parseFloat(r['Executed Price']||r['executed price']||r['price']||r['Order Price'])||0;
+          const execVal = Math.abs(parseFloat(r['Executed Value']||r['executed value'])||0);
+          priceCHF = execPrice * USD_CHF;
+          totalCHF = execVal > 0 ? execVal * USD_CHF : qty * priceCHF;
         }
         else if (format === 'swissquote') {
           // Swissquote: Date,Order #,Transaction,Symbol,Currency,Price,Quantity,Value,Gross Amount,Net Amount
@@ -3976,26 +3987,27 @@
           totalCHF = parseFloat(r['total chf']||r['Total CHF'])||qty * priceCHF;
         }
         else if (format === 'binance') {
-          date = r['date(utc)']||r['date']||'';
-          const side = (r['side']||'').toLowerCase();
+          date = r['date(utc)']||r['date']||r['Date(UTC)']||'';
+          const side = (r['side']||r['type']||r['Type']||'').toLowerCase();
           if (!['buy','sell'].includes(side)) continue;
           type = side;
-          const pair = r['pair']||'';
+          const pair = r['pair']||r['market']||r['Market']||'';
           // Strip quote currency suffix — add CHF for Swissquote-style pairs
           const quotedInCHF = pair.endsWith('CHF');
           asset = pair.replace(/(CHF|USDT|BUSD|USDC|USD|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
-          const execStr = r['executed']||'';
+          // Support both old (executed) and new (Amount/Total) column names
+          const execStr = r['executed']||r['amount']||r['Amount']||'';
           qty = parseFloat(execStr)||0;
-          const rawPrice = parseFloat(r['price'])||0;
-          // If pair ends in CHF, price is already in CHF — don't multiply
+          const rawPrice = parseFloat(r['price']||r['Price'])||0;
+          const rawTotal = Math.abs(parseFloat(r['total']||r['Total'])||0);
           priceCHF = quotedInCHF ? rawPrice : rawPrice * USD_CHF;
-          totalCHF = qty * priceCHF;
+          totalCHF = rawTotal > 0 ? (quotedInCHF ? rawTotal : rawTotal * USD_CHF) : qty * priceCHF;
         }
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
           const t = (r['transaction type']||'').toLowerCase();
-          if (t.includes('buy') || t==='receive' || t.includes('deposit')) type='buy';
-          else if (t.includes('sell') || t==='convert') type='sell';
+          if (t.includes('buy') || t==='receive' || t.includes('deposit') || t.includes('advanced trade buy')) type='buy';
+          else if (t.includes('sell') || t==='convert' || t.includes('advanced trade sell')) type='sell';
           else if (t==='send' || t.includes('withdrawal') || t.includes('transfer')) type='withdrawal';
           else if (t.includes('reward')||t.includes('staking')||t.includes('income')||t.includes('interest')) type='staking';
           else continue;
