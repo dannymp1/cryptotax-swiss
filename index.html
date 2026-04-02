@@ -2303,7 +2303,7 @@
       <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
       <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
     </div>
-    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="147c7178787b5477666d64607b707177787566713a777c">[email&#160;protected]</a></div>
+    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch</div>
     <div class="unlock-success" id="unlock-success"></div>
   </div>
 
@@ -2533,11 +2533,11 @@
       <p>Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.</p>
       <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;color:rgba(245,242,235,0.45);">
         <span data-i18n="contact_email_label">Or email us directly:</span><br/>
-        <a href="/cdn-cgi/l/email-protection#f39b969f9f9cb390818a83879c9796909f928196dd909b" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;"><span class="__cf_email__" data-cfemail="fc9499909093bc9f8e858c889398999f909d8e99d29f94">[email&#160;protected]</span></a>
+        <a href="mailto:hello@cryptodeclare.ch" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;">hello@cryptodeclare.ch</a>
       </p>
     </div>
     <div class="contact-right">
-      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="741c1118181b3417060d04001b101117181506115a171c">[email&#160;protected]</a></div>
+      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at hello@cryptodeclare.ch</div>
       <form class="contact-form" id="contact-form">
         <div class="contact-field">
           <label class="contact-label" for="contact-name">Name</label>
@@ -2605,7 +2605,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -4454,54 +4454,28 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Instrument Sans', sans-serif; font-size: 11pt; color: #0D1117; background: white; padding: 0; font-variant-numeric: tabular-nums; }
-  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-  /* A4 with proper margins — @page handles all spacing so .page padding is screen-only */
-  @page {
-    size: A4;
-    margin: 18mm 16mm 22mm 16mm;
-    @bottom-left {
-      content: "CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse";
-      font-family: 'DM Mono', 'Courier New', monospace;
-      font-size: 6.5pt;
-      color: #8A909E;
-      letter-spacing: 0.06em;
-    }
-    @bottom-center {
-      content: "Supporting document only — not an official tax filing";
-      font-family: 'DM Mono', 'Courier New', monospace;
-      font-size: 6.5pt;
-      color: #8A909E;
-    }
-    @bottom-right {
-      content: "Page " counter(page) " / " counter(pages);
-      font-family: 'DM Mono', 'Courier New', monospace;
-      font-size: 6.5pt;
-      color: #8A909E;
+  @page { size: A4; margin: 0; }
+  @media print {
+    @page { margin: 0; }
+    body { margin: 18mm 16mm 20mm 16mm; }
+    .no-print { display: none !important; }
+    *[class*="no-print"] { display: none !important; }
+    .sec-title { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+    .summary-grid { page-break-inside: avoid; }
+    .compliance-box { page-break-inside: avoid; }
+    h2, h3 { page-break-after: avoid; }
+    .doc-footer::after {
+      content: " · Page " counter(page);
+      font-family: 'DM Mono', monospace;
     }
   }
-
+  @media (max-width: 600px) { .no-print { display: none !important; } }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   @media print {
-    /* In print, @page margin handles spacing — zero out .page padding to avoid double-margin */
-    .page { padding: 0 !important; max-width: 100% !important; }
     body { font-family: 'Instrument Sans', Arial, Helvetica, sans-serif; }
-    .no-print { display: none !important; visibility: hidden !important; }
-    *[class*="no-print"] { display: none !important; }
-    /* HTML footer replaced by @page margin boxes */
-    .doc-footer { display: none !important; }
-    /* Section titles: never orphaned from their content */
-    .sec-title { break-after: avoid; page-break-after: avoid; }
-    /* Allow tables to flow across pages — avoid orphaned rows, not whole table */
-    thead { display: table-header-group; }
-    tbody tr { break-inside: avoid; page-break-inside: avoid; }
-    .summary-grid { break-inside: avoid; page-break-inside: avoid; }
-    .compliance-box { break-inside: avoid; page-break-inside: avoid; }
-    .notes-box { break-inside: avoid; page-break-inside: avoid; }
-    h2, h3 { break-after: avoid; page-break-after: avoid; }
     .mono, th, .doc-meta, .info-label, .summary-label, .sec-title { font-family: 'DM Mono', 'Courier New', monospace; }
   }
-
-  @media (max-width: 600px) { .no-print { display: none !important; } }
 
   .page { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; }
 
@@ -4516,7 +4490,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #8A909E; }
   .doc-header-right { text-align: right; }
   .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 15pt; color: #0D1117; margin-bottom: 4px; }
-  .doc-meta { font-family: 'DM Mono', monospace; font-size: 8pt; color: #8A909E; line-height: 2.0; letter-spacing: 0.04em; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 8pt; color: #8A909E; line-height: 2.0; letter-spacing: 0.04em; white-space: nowrap; }
 
   /* Info bar */
   .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #E8E4DC; border: 1px solid #E8E4DC; border-radius:4px; overflow:hidden; margin-bottom: 24px; }
@@ -4914,16 +4888,6 @@ onmouseout="this.style.color='#8A909E'">
   </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
   <table>
-    <colgroup>
-      <col style="width:8%"/>
-      <col style="width:14%"/>
-      <col style="width:6%"/>
-      <col style="width:6%"/>
-      <col style="width:7%"/>
-      <col style="width:16%"/>
-      <col style="width:18%"/>
-      <col style="width:25%"/>
-    </colgroup>
     <thead>
       <tr>
         <th>Symbol</th><th>Asset</th>
@@ -4964,7 +4928,7 @@ onmouseout="this.style.color='#8A909E'">
         +'<td class="right mono" style="color:#B8960C">CHF '+fc(a.unresolvedProceeds||0)+'</td>'
         +'</tr>';
     }).join('');
-    return '<div class="sec-title" style="margin-top:24px;break-before:avoid;">02 — FIFO Reconciliation</div>'
+    return '<div class="sec-title" style="margin-top:24px;">02 — FIFO Reconciliation</div>'
       +'<p style="font-size:8.5pt;color:#5A6070;line-height:1.6;margin-bottom:12px;">This table shows how your holdings were matched under FIFO. Unmatched quantities indicate disposals with no corresponding purchase history in this file — likely acquired on another exchange or in a prior period.</p>'
       +'<table style="font-size:7.5pt;"><thead><tr>'
       +'<th style="text-align:left;padding:10px 10px;">Asset</th>'
@@ -4975,7 +4939,7 @@ onmouseout="this.style.color='#8A909E'">
       +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 8px 10px 14px;">Unmatched Qty</th>'
       +'<th class="right" style="padding:10px 8px;">Unmatched Proceeds</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table>'
-      +'<p style="font-size:8pt;color:#8A909E;font-family:\'Instrument Sans\',Arial,sans-serif;margin-top:8px;line-height:1.6;font-style:italic;">'
+      +'<p style="font-size:8pt;color:#8A909E;font-family:monospace;margin-top:8px;line-height:1.6;">'
       +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>';
   })()}
 
@@ -5011,19 +4975,18 @@ onmouseout="this.style.color='#8A909E'">
 
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
 
-  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#5A6070;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
-    <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rate:</strong> USD/CHF 0.9000 (ESTV reference rate, 31.12.${data.taxYear}). CHF-denominated values used directly. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Fees:</strong> Excluded from proceeds and cost basis (conservative approach). ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalization:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market closing prices at ESTV annual reference rate). ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
+  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:7.5pt;color:#8A909E;line-height:1.7;font-family:'DM Mono',monospace;letter-spacing:0.03em;">
+    <strong style="color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:7pt;">Methodology</strong><br/>
+    <strong>Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
+    <strong>Exchange rate:</strong> USD/CHF 0.9000 (ESTV reference rate, 31.12.${data.taxYear}). CHF-denominated values used directly. ·
+    <strong>Fees:</strong> Excluded from proceeds and cost basis (conservative approach). ·
+    <strong>Ticker normalization:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
+    <strong>Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market closing prices at ESTV annual reference rate). ·
+    <strong>Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
   <div class="doc-footer">
     <span>CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
     <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
-    <span>Page 1</span>
   </div>
 
 </div>
@@ -5139,4 +5102,20 @@ onmouseout="this.style.color='#8A909E'">
       if (res.ok) {
         success.classList.add('visible');
         this.reset();
-        btn.textContent 
+        btn.textContent = 'Sent ✓';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Send message';
+      btn.textContent = 'Failed — try again';
+    setTimeout(() => { btn.disabled = false; btn.textContent = 'Send message'; }, 3000);
+    const errMsg = document.getElementById('contact-error');
+    if (errMsg) { errMsg.style.display = 'block'; setTimeout(() => errMsg.style.display='none', 5000); }
+    }
+  });
+
+</script>
+</body>
+</html>
