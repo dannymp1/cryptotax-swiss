@@ -4452,14 +4452,24 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Instrument Sans', sans-serif; font-size: 11pt; color: #0D1117; background: white; padding: 0; font-variant-numeric: tabular-nums; }
-  @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
-  @media print { body { padding: 0; } .no-print { display: none; } }
-  @media (max-width: 600px) {
+  @page { size: A4; margin: 0; }
+  @media print {
+    @page { margin: 0; }
+    body { margin: 18mm 16mm 20mm 16mm; }
     .no-print { display: none !important; }
+    *[class*="no-print"] { display: none !important; }
+    .sec-title { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+    .summary-grid { page-break-inside: avoid; }
+    .compliance-box { page-break-inside: avoid; }
+    h2, h3 { page-break-after: avoid; }
   }
-  @page { margin: 18mm 16mm 20mm 16mm; size: A4; }
-  @page { margin-top: 18mm; } /* suppress browser header/footer */
+  @media (max-width: 600px) { .no-print { display: none !important; } }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media print {
+    body { font-family: 'Instrument Sans', Arial, Helvetica, sans-serif; }
+    .mono, th, .doc-meta, .info-label, .summary-label, .sec-title { font-family: 'DM Mono', 'Courier New', monospace; }
+  }
 
   .page { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; }
 
@@ -4532,7 +4542,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .doc-footer { margin-top:28px; padding-top:12px; border-top:1px solid #e0ddd5; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#8A909E; letter-spacing:0.08em; }
 
   /* Print button */
-  .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#D4AF37; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; }
+  .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#D4AF37; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; } @media print { .no-print { display:none !important; visibility:hidden !important; } }
   .no-print:hover { background:#B8960C; color:#0D1117; }
 
   /* ── TEAM ── */
@@ -4866,7 +4876,7 @@ onmouseout="this.style.color='#8A909E'">
   })()}
 
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
-  <div style="background:#FFFCF5;border:1px solid #D4AF37;border-left:3px solid #B8960C;border-radius:3px;padding:10px 16px;margin-bottom:20px;">
+  <div style="background:#FFFCF5;border:1px solid #D4AF37;border-left:3px solid #B8960C;border-radius:3px;padding:12px 18px;margin-bottom:24px;line-height:1.7;">
     <div style="font-family:'DM Mono',monospace;font-size:7.5pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:4px;">Incomplete Acquisition History</div>
       <div style="font-size:9pt;color:#3D4451;line-height:1.6;">
         <strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — <strong>insufficient purchase history to match all disposals under FIFO</strong>. Unmatched disposal quantities have been excluded from the realised gain total and shown separately in the reconciliation table below.
@@ -4929,7 +4939,7 @@ onmouseout="this.style.color='#8A909E'">
       +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>';
   })()}
 
-  <div class="sec-title">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Summary</div>
+  <div class="sec-title">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
   <div class="summary-grid">
     <div class="summary-box">
       <div class="summary-label">Staking / Reward Income</div>
