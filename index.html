@@ -4881,12 +4881,10 @@ onmouseout="this.style.color='#8A909E'">
     <thead>
       <tr>
         <th style="text-align:left">Asset</th>
-        <th class="right">Imported Buys</th>
         <th class="right">Total Sold</th>
-        <th class="right">Matched (FIFO)</th>
+        <th class="right">Matched by FIFO</th>
         <th class="right">Unmatched Qty</th>
         <th class="right">Unmatched Proceeds</th>
-        <th class="right">Closing Balance</th>
       </tr>
     </thead>
     <tbody>
@@ -4895,12 +4893,10 @@ onmouseout="this.style.color='#8A909E'">
         const matchedQty = Number(a.totalSold||0) - unmatchedQty;
         return \`<tr>
           <td style="font-weight:700">\${escHtml(a.symbol)}</td>
-          <td class="right mono">\${Number(a.totalBought||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6})}</td>
           <td class="right mono">\${Number(a.totalSold||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6})}</td>
           <td class="right mono">\${matchedQty.toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6})}</td>
           <td class="right mono" style="color:#B8960C">\${unmatchedQty.toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6})}</td>
           <td class="right mono" style="color:#B8960C">CHF \${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-          <td class="right mono">\${Number(a.endHolding||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6})}</td>
         </tr>\`;
       }).join('')}
     </tbody>
@@ -4920,7 +4916,7 @@ onmouseout="this.style.color='#8A909E'">
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box highlight">
-      <div class="summary-label">Realised Gain / Loss<br/><span style="font-size:7pt;font-weight:400;opacity:0.6;font-family:'DM Mono',monospace;">capital gains tax-free (private)</span></div>
+      <div class="summary-label">Realised Gain / Loss</div>
       <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
     </div>
   </div>
