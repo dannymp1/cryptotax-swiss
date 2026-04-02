@@ -2303,7 +2303,7 @@
       <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
       <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
     </div>
-    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="147c7178787b5477666d64607b707177787566713a777c">[email&#160;protected]</a></div>
+    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch</div>
     <div class="unlock-success" id="unlock-success"></div>
   </div>
 
@@ -2533,11 +2533,11 @@
       <p>Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.</p>
       <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;color:rgba(245,242,235,0.45);">
         <span data-i18n="contact_email_label">Or email us directly:</span><br/>
-        <a href="/cdn-cgi/l/email-protection#f39b969f9f9cb390818a83879c9796909f928196dd909b" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;"><span class="__cf_email__" data-cfemail="fc9499909093bc9f8e858c889398999f909d8e99d29f94">[email&#160;protected]</span></a>
+        <a href="mailto:hello@cryptodeclare.ch" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;">hello@cryptodeclare.ch</a>
       </p>
     </div>
     <div class="contact-right">
-      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="741c1118181b3417060d04001b101117181506115a171c">[email&#160;protected]</a></div>
+      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at hello@cryptodeclare.ch</div>
       <form class="contact-form" id="contact-form">
         <div class="contact-field">
           <label class="contact-label" for="contact-name">Name</label>
@@ -2605,7 +2605,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -3772,9 +3772,7 @@
     if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
     // Bitpanda: transaction id + timestamp + transaction type + amount asset + asset
     if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
-    // OKX Derivatives: perpetual swaps & futures — distinct by 'realized p&l' and 'pos side'
-    if (h.includes('realized p&l') || (h.includes('pos side') && h.includes('trade qty'))) return 'okx_derivatives';
-    // OKX Spot: order time + instrument id + trade id + side + filled qty + filled price
+    // OKX: order time + instrument id + trade id + side + filled qty + filled price
     if ((h.includes('instrument id') || h.includes('inst id')) && h.includes('filled qty') && h.includes('filled price')) return 'okx';
     if ((h.includes('order time') || h.includes('trade time')) && h.includes('instrument') && h.includes('side') && h.includes('filled')) return 'okx';
     // Bitcoin Suisse: date + type + asset + amount + price chf
@@ -3977,59 +3975,6 @@
           const fiatCcy = (r['fiat']||r['Fiat']||'EUR').toUpperCase();
           priceCHF = fiatCcy === 'CHF' ? mktPrice : mktPrice * USD_CHF;
           totalCHF = qty * priceCHF;
-        }
-        else if (format === 'okx_derivatives') {
-          // OKX Derivatives export: Trade Time, Instrument ID, Instrument Type,
-          // Side, Pos Side, Trade Qty (Cont), Trade Price (USDT), Fee (USDT),
-          // Realized P&L (USDT), Trade Time
-          // Strategy: derivatives P&L is realised on close, not tracked via FIFO of coins.
-          // We emit synthetic buy+sell pairs so the FIFO engine sees correct gain/loss.
-          const orderId = (r['Order ID'] || r['order id'] || '').trim();
-          date = (r['Trade Time'] || r['trade time'] || '').slice(0, 10);
-          const instId = (r['Instrument ID'] || r['instrument id'] || '').toUpperCase();
-          const pnlRaw  = parseFloat(r['Realized P&L (USDT)'] || r['Realized P&L'] || r['realized p&l (usdt)'] || r['realized p&l'] || 0) || 0;
-          const feeRaw  = parseFloat(r['Fee (USDT)']  || r['fee (usdt)']  || r['Fee']  || 0) || 0;
-          const tradeQty = parseFloat(r['Trade Qty (Cont)'] || r['trade qty (cont)'] || r['Trade Qty'] || 0) || 0;
-
-          // Extract base asset: BTC-USDT-SWAP → BTC, SOL-USDT-241227 → SOL
-          asset = (instId.split('-')[0] || 'DERIV').replace(/[^A-Z0-9]/g, '');
-
-          // ── Funding fee rows (Order ID = "Funding…") ──────────────────────
-          if (orderId.toLowerCase().startsWith('fund')) {
-            if (feeRaw > 0) {
-              // Funding received from shorts → staking-style income
-              type = 'staking';
-              qty = 1;
-              priceCHF = 0;
-              totalCHF = feeRaw * USD_CHF;
-            } else {
-              continue; // Funding paid — minor periodic cost, skip
-            }
-          } else {
-            // ── Trade rows ──────────────────────────────────────────────────
-            // Opening trades have pnlRaw === 0 and tradeQty > 0 — no tax event yet
-            if (pnlRaw === 0 && tradeQty > 0) continue;
-
-            // Closing trades (pnlRaw !== 0) and liquidations (tradeQty === 0, pnlRaw !== 0)
-            // Net P&L after closing-leg fee, in CHF
-            const netPnlCHF = (pnlRaw + feeRaw) * USD_CHF;
-
-            qty = 1; // synthetic unit — one unit per closed position
-
-            if (netPnlCHF >= 0) {
-              // Profitable close: zero-cost buy, then sell at full net P&L
-              out.push({ date, type: 'buy', asset, qty: 1, priceCHF: 0, totalCHF: 0 });
-              type = 'sell';
-              priceCHF = netPnlCHF;
-              totalCHF = netPnlCHF;
-            } else {
-              // Loss: buy at full loss amount, sell at zero — FIFO produces negative gain
-              out.push({ date, type: 'buy', asset, qty: 1, priceCHF: Math.abs(netPnlCHF), totalCHF: Math.abs(netPnlCHF) });
-              type = 'sell';
-              priceCHF = 0;
-              totalCHF = 0;
-            }
-          }
         }
         else if (format === 'okx') {
           // OKX: Order Time,Instrument ID,Trade ID,Side,Filled Qty,Filled Price,Fee,P&L
@@ -4294,7 +4239,6 @@
       kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
     };
     let notes = notesMap[format] || `Exchange format detected: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices (market closing prices at ESTV annual reference rate).`;
     try {
@@ -5158,14 +5102,17 @@ onmouseout="this.style.color='#8A909E'">
       if (res.ok) {
         success.classList.add('visible');
         this.reset();
-        btn.textContent = 'Message sent ✓';
+        btn.textContent = 'Sent ✓';
       } else {
-        btn.disabled = false;
-        btn.textContent = 'Send message';
+        throw new Error('Failed');
       }
     } catch(e) {
       btn.disabled = false;
       btn.textContent = 'Send message';
+      btn.textContent = 'Failed — try again';
+    setTimeout(() => { btn.disabled = false; btn.textContent = 'Send message'; }, 3000);
+    const errMsg = document.getElementById('contact-error');
+    if (errMsg) { errMsg.style.display = 'block'; setTimeout(() => errMsg.style.display='none', 5000); }
     }
   });
 
