@@ -4240,14 +4240,27 @@
           const kind = (r['transaction kind']||'').toLowerCase();
           const amt = parseFloat(r['amount']||0);
           if (kind.includes('purchase') || kind.includes('buy') || kind === 'viban_purchase') type = 'buy';
-          else if (kind.includes('sell') || kind === 'crypto_exchange' && amt < 0) type = 'sell';
-          else if (kind === 'crypto_withdrawal') type = 'withdrawal';
+          else if (kind.includes('sell')) type = 'sell';
+          else if (kind === 'crypto_withdrawal') {
+            // crypto_withdrawal = selling crypto to fiat when To Currency is fiat, else skip
+            const toCur = (r['to currency']||'').toUpperCase();
+            if (['USD','EUR','GBP','CHF','USDT','USDC'].includes(toCur)) type = 'sell';
+            else type = 'withdrawal';
+          }
+          else if (kind === 'crypto_exchange') type = amt < 0 ? 'sell' : 'buy';
           else if (kind.includes('earn') || kind.includes('interest') || kind.includes('reward') || kind.includes('cashback') || kind === 'referral_card_cashback' || kind === 'reimbursement') type = 'staking';
-          else if (kind === 'crypto_exchange') type = 'buy'; // positive amount = receiving asset
           else continue;
-          asset = (r['currency']||'').toUpperCase();
+          // For buys, prefer to_currency for asset (crypto received); for sells currency is the crypto sold
+          const toCur2 = (r['to currency']||'').toUpperCase();
+          const fromCur = (r['currency']||'').toUpperCase();
+          if (type === 'buy') {
+            asset = (!['USD','EUR','GBP','CHF','USDT','USDC'].includes(toCur2) && toCur2) ? toCur2 : fromCur;
+            qty = Math.abs(parseFloat(r['to amount']||r['amount']||0));
+          } else {
+            asset = fromCur;
+            qty = Math.abs(amt);
+          }
           if (!asset || ['USD','EUR','GBP','CHF','USDT','USDC'].includes(asset)) continue;
-          qty = Math.abs(amt);
           const nativeUSD = Math.abs(parseFloat(r['native amount (in usd)']||r['native amount']||0));
           priceCHF = qty > 0 ? (nativeUSD * USD_CHF) / qty : 0;
           totalCHF = nativeUSD * USD_CHF;
@@ -4316,12 +4329,12 @@
         else if (format === 'revolut') {
           date = (r['completed date']||r['started date']||'').slice(0,10);
           const txType = (r['type']||'').toLowerCase();
+          const revAmt = parseFloat(r['amount']||0);
           if (txType === 'bought' || txType === 'buy') type = 'buy';
           else if (txType === 'sold' || txType === 'sell') type = 'sell';
-          else if (txType === 'exchange') {
-            // Amount positive = received, negative = sent
-            const amt = parseFloat(r['amount']||0);
-            type = amt >= 0 ? 'buy' : 'sell';
+          else if (txType === 'exchange' || !txType) {
+            // Amount positive = received (buy), negative = sent (sell)
+            type = revAmt >= 0 ? 'buy' : 'sell';
           }
           else if (txType.includes('reward') || txType.includes('cashback') || txType.includes('interest') || txType.includes('staking')) type = 'staking';
           else continue;
@@ -4338,16 +4351,16 @@
         else if (format === 'ledger') {
           date = (r['operation date']||'').slice(0,10);
           const opType = (r['operation type']||'').toUpperCase();
-          // IN = received (buy/transfer in), OUT = sent (withdrawal/sale)
+          const cvAmt = Math.abs(parseFloat(r['countervalue at operation date']||0));
+          // IN = received (buy). OUT = sell if countervalue present, else transfer
           if (opType === 'IN') type = 'buy';
-          else if (opType === 'OUT') type = 'withdrawal'; // conservative: treat as withdrawal not sale
+          else if (opType === 'OUT') type = cvAmt > 0 ? 'sell' : 'withdrawal';
           else continue;
           asset = (r['currency ticker']||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
           if (!asset) continue;
           qty = Math.abs(parseFloat(r['operation amount']||0));
           const cvTicker = (r['countervalue ticker']||'').toUpperCase();
-          const cvAmt = Math.abs(parseFloat(r['countervalue at operation date']||0));
-          const cvRate = cvTicker === 'CHF' ? 1 : cvTicker === 'EUR' ? USD_CHF : USD_CHF;
+          const cvRate = cvTicker === 'CHF' ? 1 : USD_CHF;
           totalCHF = cvAmt * cvRate;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
