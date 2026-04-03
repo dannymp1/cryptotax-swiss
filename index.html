@@ -4143,7 +4143,7 @@
             type = 'buy'; // on-chain deposit: asset arrives, need cost basis
           } else if (txType === 'withdrawal') {
             type = 'withdrawal';
-          } else if (txType === 'airdrop' || txType.includes('earn interest') || txType.includes('reward') || txType.includes('cashback') || txType.includes('staking')) {
+          } else if (txType === 'airdrop' || txType.includes('interest') || txType.includes('reward') || txType.includes('cashback') || txType.includes('staking') || txType.includes('distribution')) {
             type = 'staking'; // taxable income in Switzerland
           } else if (!txType) {
             // Old trade history format — no Type column, rely on Side
