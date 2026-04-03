@@ -5406,10 +5406,6 @@ onmouseout="this.style.color='#8A909E'">
       +'</tr></thead><tbody>'+rows+'</tbody></table>'
       +'<p style="font-size:8pt;color:#8A909E;font-family:\'Instrument Sans\',Arial,sans-serif;margin-top:8px;line-height:1.6;font-style:italic;">'
       +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>'
-      +'<div style="margin-top:12px;padding:10px 14px;border-left:3px solid #C0392B;background:#FFF8F7;font-size:8pt;color:#3D4451;line-height:1.65;">'
-      +'<strong style="color:#C0392B;">⚠ Partial gain figure:</strong> The realised gain shown reflects only matched FIFO positions. '
-      +'CHF '+fc(ma.reduce((s,a)=>s+(a.unresolvedProceeds||0),0))+' in additional proceeds could not be matched and are excluded. '
-      +'This report is incomplete and the net gain figure should not be treated as a final total.'
       +'</div>';
   })()}
 
