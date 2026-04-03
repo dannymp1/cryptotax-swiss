@@ -2376,6 +2376,10 @@
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Download PDF
         </button>
+        <button class="btn-outline" onclick="downloadLedgerCSV()" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Ledger CSV
+        </button>
         <button class="btn-outline" onclick="openModal('professional')" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
           Upgrade to Pro
         </button>
@@ -4505,6 +4509,35 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
       : `-CHF ${Math.abs(totalGain).toLocaleString('de-CH',{minimumFractionDigits:2})}`;
     const totalColor = totalGain >= 0 ? '#2D7A56' : '#C0392B';
 
+    // Dynamic holdings column header — derived from period end date
+    const _dr = data.dateRange || '';
+    const _endPart = _dr.includes('–') ? _dr.split('–').pop().trim() : _dr;
+    const holdingsLabel = _endPart ? 'Holdings ' + _endPart : 'Closing Balance';
+
+    // Capitalised exchange name
+    const _EXCHANGE_NAMES = {
+      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV', unknown:'Unknown',
+    };
+    const _rawExch = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
+    const exchangeDisplay = _EXCHANGE_NAMES[_rawExch.trim()] || _rawExch;
+
+    // Report status (used in completeness box)
+    const _hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
+    const _totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
+    const _totalMatched = Math.abs(totalGain);
+    const _coverage = _totalExcluded > 0
+      ? Math.round(_totalMatched / (_totalMatched + _totalExcluded) * 100) : 100;
+    const statusColor = !_hasUnmatched ? '#2D7A56' : _coverage >= 80 ? '#B8960C' : '#C0392B';
+    const statusIcon  = !_hasUnmatched ? '✓' : _coverage >= 80 ? '⚠' : '🔴';
+    const statusLabel = !_hasUnmatched
+      ? 'Complete — all positions matched'
+      : _coverage >= 80
+        ? 'Partial — minor gaps in acquisition history'
+        : 'Incomplete — additional data required for accurate tax reporting';
+
     const pdfHTML = `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -4917,10 +4950,39 @@ onmouseout="this.style.color='#8A909E'">
   </div>
 
   ${(function(){
+    // Derive end date label from dateRange for the Holdings column header
+    const dr = data.dateRange || '';
+    const endPart = dr.includes('–') ? dr.split('–').pop().trim() : dr;
+    const holdingsLabel = endPart ? 'Holdings ' + endPart : 'Closing Balance';
+
+    // Capitalise exchange name from notes
+    const EXCHANGE_NAMES = {
+      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV', unknown:'Unknown',
+    };
+    const rawExchange = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
+    const exchangeDisplay = EXCHANGE_NAMES[rawExchange.trim()] || rawExchange;
+
     const dateRange = data.dateRange || data.taxYear;
     const txCount = data.totalTransactions || 0;
     const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
-    const exchanges = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
+    const totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
+    const totalMatched = Number(data.totalGainLossCHF||0);
+    const coverage = totalExcluded > 0
+      ? Math.round(Math.abs(totalMatched) / (Math.abs(totalMatched) + totalExcluded) * 100)
+      : 100;
+
+    // Report status
+    const statusColor = !hasUnmatched ? '#2D7A56' : coverage >= 80 ? '#B8960C' : '#C0392B';
+    const statusIcon  = !hasUnmatched ? '✓' : coverage >= 80 ? '⚠' : '🔴';
+    const statusLabel = !hasUnmatched
+      ? 'Complete — all positions matched'
+      : coverage >= 80
+        ? 'Partial — minor gaps in acquisition history'
+        : 'Incomplete — additional data required for accurate tax reporting';
+
     return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #E0D9CC;border-radius:6px;overflow:hidden;margin-bottom:20px;font-size:8pt;">'
       +'<div style="padding:10px 14px;border-right:1px solid #E0D9CC;border-bottom:1px solid #E0D9CC;">'
         +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Imported Transactions</div>'
@@ -4932,11 +4994,11 @@ onmouseout="this.style.color='#8A909E'">
       +'</div>'
       +'<div style="padding:10px 14px;border-right:1px solid #E0D9CC;">'
         +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Exchange(s)</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+exchanges+'</div>'
+        +'<div style="font-weight:600;color:#0D1117;">'+exchangeDisplay+'</div>'
       +'</div>'
       +'<div style="padding:10px 14px;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Data Completeness</div>'
-        +'<div style="font-weight:700;color:'+(hasUnmatched?'#B8960C':'#2D7A56')+';">'+(hasUnmatched?'⚠ Partial — unmatched FIFO quantities detected':'✓ Complete — all disposals matched')+'</div>'
+        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Report Status</div>'
+        +'<div style="font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</div>'
       +'</div>'
       +'</div>';
   })()}
@@ -4952,7 +5014,7 @@ onmouseout="this.style.color='#8A909E'">
       <tr>
         <th>Symbol</th><th>Asset</th>
         <th class="center" style="opacity:0.5;">Buys</th><th class="center" style="opacity:0.5;">Sells</th><th class="center" style="opacity:0.5;">Staking</th>
-        <th class="right">Holdings 31.12</th>
+        <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
         <th class="right">Gain / Loss</th>
       </tr>
@@ -4962,7 +5024,15 @@ onmouseout="this.style.color='#8A909E'">
       <tr class="total-row">
         <td colspan="6">Net Total</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-        <td class="right" style="color:${totalColor}">${totalGainStr}</td>
+        <td class="right">
+          ${(function(){
+            if (!_hasUnmatched) return '<span style="color:'+totalColor+'">'+totalGainStr+'</span>';
+            return '<span style="color:'+totalColor+'">'+totalGainStr+'</span>'
+              +'<span style="display:block;font-size:7pt;font-weight:400;color:#D4AF37;margin-top:2px;letter-spacing:0.03em;">'
+              +'matched only · CHF '+_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})+' excluded'
+              +'</span>';
+          })()}
+        </td>
       </tr>
     </tbody>
   </table>
@@ -4988,19 +5058,24 @@ onmouseout="this.style.color='#8A909E'">
         +'<td class="right mono" style="color:#B8960C">CHF '+fc(a.unresolvedProceeds||0)+'</td>'
         +'</tr>';
     }).join('');
-    return '<div class="sec-title" style="margin-top:24px;">02 — FIFO Reconciliation</div>'
+    return '<div class="sec-title" style="margin-top:24px;break-before:avoid;">02 — FIFO Reconciliation</div>'
       +'<p style="font-size:8.5pt;color:#5A6070;line-height:1.6;margin-bottom:12px;">This table shows how your holdings were matched under FIFO. Unmatched quantities indicate disposals with no corresponding purchase history in this file — likely acquired on another exchange or in a prior period.</p>'
       +'<table style="font-size:7.5pt;"><thead><tr>'
       +'<th style="text-align:left;padding:10px 10px;">Asset</th>'
-      +'<th class="right" style="padding:10px 8px;" title="Inferred: closing + sold − bought">Opening<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(inferred)</span></th>'
+      +'<th class="right" style="padding:10px 8px;" title="Derived from closing balance + sells − buys">Opening Balance<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(derived from activity)</span></th>'
       +'<th class="right" style="padding:10px 8px;">+ Buys</th>'
       +'<th class="right" style="padding:10px 8px;">− Sells</th>'
       +'<th class="right" style="padding:10px 8px;">= Closing</th>'
       +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 8px 10px 14px;">Unmatched Qty</th>'
       +'<th class="right" style="padding:10px 8px;">Unmatched Proceeds</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table>'
-      +'<p style="font-size:8pt;color:#8A909E;font-family:monospace;margin-top:8px;line-height:1.6;">'
-      +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>';
+      +'<p style="font-size:8pt;color:#8A909E;font-family:\'Instrument Sans\',Arial,sans-serif;margin-top:8px;line-height:1.6;font-style:italic;">'
+      +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>'
+      +'<div style="margin-top:12px;padding:10px 14px;border-left:3px solid #C0392B;background:#FFF8F7;font-size:8pt;color:#3D4451;line-height:1.65;">'
+      +'<strong style="color:#C0392B;">⚠ Partial gain figure:</strong> The realised gain shown reflects only matched FIFO positions. '
+      +'CHF '+fc(ma.reduce((s,a)=>s+(a.unresolvedProceeds||0),0))+' in additional proceeds could not be matched and are excluded. '
+      +'This report is incomplete and the net gain figure should not be treated as a final total.'
+      +'</div>';
   })()}
 
   <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
@@ -5049,43 +5124,6 @@ onmouseout="this.style.color='#8A909E'">
     <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
   </div>
 
-  ${(function(){
-    const txs = (data.transactions||[]).filter(t => t.type !== 'buy' || t.totalCHF > 0 || t.priceCHF > 0);
-    if (!txs.length) return '';
-    const isDerivative = (data.notes||'').toLowerCase().includes('derivative');
-    const typeLabel = t => ({buy:'Buy',sell:'Sell',staking:'Income',withdrawal:'Transfer'}[t]||t);
-    const typeColor = t => ({buy:'#2D7A56',sell:'#0D1117',staking:'#B8960C',withdrawal:'#8A909E'}[t]||'#0D1117');
-    const fmtQ = n => { const v = Number(n||0); if(v===0) return '—'; return v.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:8}); };
-    const fmtC = n => { const v = Number(n||0); if(v===0) return '—'; return 'CHF '+v.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2}); };
-    const rows = txs.map((t,i) => '<tr>'
-      +'<td class="mono" style="color:#8A909E;font-size:7.5pt;">'+(t.date||'').slice(0,10)+'</td>'
-      +'<td style="font-weight:600;color:'+typeColor(t.type)+';">'+typeLabel(t.type)+'</td>'
-      +'<td style="font-weight:700;">'+escHtml(t.asset||'')+'</td>'
-      +'<td class="right mono" style="font-size:7.5pt;">'+fmtQ(t.qty)+'</td>'
-      +'<td class="right mono" style="font-size:7.5pt;">'+fmtC(t.priceCHF)+'</td>'
-      +'<td class="right mono" style="font-size:7.5pt;font-weight:600;">'+fmtC(t.totalCHF)+'</td>'
-      +'</tr>'
-    ).join('');
-    return '<div style="page-break-before:always;">'
-      +'<div class="sec-title" style="margin-top:0;">Appendix — Full Transaction Ledger</div>'
-      +'<p style="font-size:8pt;color:#5A6070;margin-bottom:12px;line-height:1.6;">'
-      +txs.length+' transactions · '+escHtml(data.dateRange||data.taxYear)
-      +(isDerivative ? ' · Note: buy/sell entries represent closed derivative positions expressed as synthetic FIFO pairs derived from Realized P&amp;L.' : '')
-      +'</p>'
-      +'<table style="font-size:8pt;">'
-      +'<thead><tr>'
-      +'<th style="text-align:left;padding:8px 8px;width:14%;">Date</th>'
-      +'<th style="text-align:left;padding:8px 8px;width:10%;">Type</th>'
-      +'<th style="text-align:left;padding:8px 8px;width:10%;">Asset</th>'
-      +'<th class="right" style="padding:8px 8px;width:18%;">Quantity</th>'
-      +'<th class="right" style="padding:8px 8px;width:18%;">Price CHF</th>'
-      +'<th class="right" style="padding:8px 8px;width:18%;">Total CHF</th>'
-      +'</tr></thead>'
-      +'<tbody>'+rows+'</tbody>'
-      +'</table>'
-      +'</div>';
-  })()}
-
 </div>
 </body>
 </html>`;
@@ -5094,6 +5132,50 @@ onmouseout="this.style.color='#8A909E'">
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `CryptoDeclare-${data.taxYear}-TaxReport.html`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function downloadLedgerCSV() {
+    const data = window._reportData;
+    if (!data || !data.transactions || !data.transactions.length) {
+      showToast('No transaction data available — please re-upload your file.');
+      return;
+    }
+    const EXCHANGE_NAMES = {
+      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV',
+    };
+    const rawExchange = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '' : '';
+    const exchangeName = EXCHANGE_NAMES[rawExchange.trim()] || rawExchange || 'Unknown';
+
+    const headers = ['Date','Type','Asset','Quantity','Price CHF','Total CHF'];
+    const rows = data.transactions.map(t => [
+      (t.date||'').slice(0,10),
+      t.type ? t.type.charAt(0).toUpperCase()+t.type.slice(1) : '',
+      t.asset||'',
+      t.qty != null ? Number(t.qty).toFixed(8) : '',
+      t.priceCHF != null ? Number(t.priceCHF).toFixed(4) : '',
+      t.totalCHF != null ? Number(t.totalCHF).toFixed(2) : '',
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+
+    const meta = [
+      `"CryptoDeclare — Transaction Ledger"`,
+      `"Tax Year: ${data.taxYear}"`,
+      `"Period: ${data.dateRange||data.taxYear}"`,
+      `"Exchange: ${exchangeName}"`,
+      `"Generated: ${new Date().toLocaleDateString('de-CH')}"`,
+      `"Transactions: ${data.transactions.length}"`,
+      '',
+    ].join('\n');
+
+    const csv = meta + headers.join(',') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `CryptoDeclare-${data.taxYear}-Ledger.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
   }
