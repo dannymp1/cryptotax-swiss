@@ -4059,19 +4059,53 @@
           totalCHF = parseFloat(r['total chf']||r['Total CHF'])||qty * priceCHF;
         }
         else if (format === 'binance') {
-          date = r['Date(UTC)']||r['date(utc)']||r['date']||r['Date']||'';
-          const side = (r['side']||r['type']||r['Type']||'').toLowerCase();
-          if (!['buy','sell'].includes(side)) continue;
-          type = side;
-          const pair = r['pair']||r['market']||r['Market']||'';
-          // Strip quote currency suffix — add CHF for Swissquote-style pairs
+          // Supports two Binance export formats:
+          // A) Trade History:  Date(UTC), Pair, Side, Price, Executed, Amount, Fee
+          // B) Transaction History: UTC_Time, Account, Type, Base_Asset, Pair, Side, Executed_Qty, Quote_Qty
+          date = r['date(utc)']||r['utc_time']||r['date']||'';
+          const txType = (r['type']||'').toLowerCase().trim();
+          const side   = (r['side']||'').toLowerCase().trim();
+
+          // ── Transaction type mapping ────────────────────────────────────
+          if (txType === 'trade') {
+            if (side === 'buy') type = 'buy';
+            else if (side === 'sell') type = 'sell';
+            else continue;
+          } else if (txType === 'convert') {
+            type = 'sell'; // always selling the base asset
+          } else if (txType === 'deposit') {
+            type = 'buy'; // on-chain deposit: asset arrives, need cost basis
+          } else if (txType === 'withdrawal') {
+            type = 'withdrawal';
+          } else if (txType === 'airdrop' || txType.includes('earn interest') || txType.includes('reward') || txType.includes('cashback') || txType.includes('staking')) {
+            type = 'staking'; // taxable income in Switzerland
+          } else if (!txType) {
+            // Old trade history format — no Type column, rely on Side
+            if (side === 'buy') type = 'buy';
+            else if (side === 'sell') type = 'sell';
+            else continue;
+          } else {
+            continue; // Skip: internal transfers, loans, repayments, margin interest, futures PnL, funding fees, earn subscriptions
+          }
+
+          // ── Asset resolution ────────────────────────────────────────────
+          const pair = r['pair']||r['market']||'';
           const quotedInCHF = pair.endsWith('CHF');
-          asset = pair.replace(/(CHF|USDT|BUSD|USDC|USD|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
-          // Support both old (executed) and new (Amount/Total) column names
-          const execStr = r['executed']||r['amount']||r['Amount']||'';
-          qty = parseFloat(execStr)||0;
-          const rawPrice = parseFloat(r['price']||r['Price'])||0;
-          const rawTotal = Math.abs(parseFloat(r['total']||r['Total'])||0);
+          // Prefer Base_Asset column (new format); fall back to pair string parsing
+          const baseAsset = (r['base_asset']||'').toUpperCase().trim();
+          if (baseAsset && !['USDT','BUSD','USDC','FDUSD'].includes(baseAsset)) {
+            asset = baseAsset;
+          } else if (baseAsset) {
+            // Stablecoin earn/airdrop — asset IS the stablecoin
+            asset = baseAsset;
+          } else {
+            asset = pair.replace(/(CHF|USDT|BUSD|USDC|FDUSD|USD|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
+          }
+
+          // ── Quantity & value ─────────────────────────────────────────────
+          qty = Math.abs(parseFloat(r['executed_qty']||r['executed']||r['amount'])||0);
+          const rawPrice = parseFloat(r['price'])||0;
+          const rawTotal = Math.abs(parseFloat(r['quote_qty']||r['total'])||0);
           priceCHF = quotedInCHF ? rawPrice : rawPrice * USD_CHF;
           totalCHF = rawTotal > 0 ? (quotedInCHF ? rawTotal : rawTotal * USD_CHF) : qty * priceCHF;
         }
