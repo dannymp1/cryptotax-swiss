@@ -4816,6 +4816,8 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
     // Build a clean printable HTML page styled as a Swiss official document
     const assets = data.assets || [];
+    const _hasUnmatched = assets.some(a=>a.missingCostBasis);
+    const _totalExcluded = assets.reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
     const assetRows = assets.map(a => {
       const gl = Number(a.gainLossCHF);
       const glStr = gl >= 0
@@ -4838,9 +4840,9 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         <td class="right mono" style="font-weight:700;color:${a.missingCostBasis ? '#9AA0AC' : glColor};">
           ${a.missingCostBasis ? '—' : glStr}
         </td>
-        <td class="right mono" style="font-weight:600;color:#B8960C;padding-right:10px;">
+        ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:10px;">
           ${unmatchedStr === '—' ? '<span style="color:#9AA0AC;font-weight:400;">—</span>' : unmatchedStr}
-        </td>
+        </td>` : ''}
       </tr>`;
     }).join('');
 
@@ -4866,8 +4868,6 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     const exchangeDisplay = _EXCHANGE_NAMES[_rawExch.trim()] || _rawExch;
 
     // Report status (used in completeness box)
-    const _hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
-    const _totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
     const _totalMatched = Math.abs(totalGain);
     const _coverage = _totalExcluded > 0
       ? Math.round(_totalMatched / (_totalMatched + _totalExcluded) * 100) : 100;
@@ -5367,9 +5367,7 @@ onmouseout="this.style.color='#8A909E'">
         <td colspan="6">Net Total</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
         <td class="right" style="color:${totalColor};">${totalGainStr}</td>
-        <td class="right" style="color:#D4AF37;font-weight:600;padding-right:10px;">
-          ${_hasUnmatched ? 'CHF '+_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2}) : ''}
-        </td>
+        ${_hasUnmatched ? `<td class="right" style="color:#D4AF37;font-weight:600;padding-right:10px;">CHF ${_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})}</td>` : ''}
       </tr>
     </tbody>
   </table>
