@@ -3765,24 +3765,50 @@
 
   function detectFormat(headers) {
     const h = headers.join(',').toLowerCase();
+    // ── Swiss-specific ───────────────────────────────────────────────────────
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
+    if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
+    // ── Kraken ───────────────────────────────────────────────────────────────
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
+    // ── Binance ──────────────────────────────────────────────────────────────
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
-    if ((h.includes('time') || h.includes('trade time')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty')) && h.includes('side')) return 'bybit';
+    if (h.includes('utc_time') && h.includes('base_asset') && h.includes('quote_asset')) return 'binance'; // transaction history
+    // ── Bybit ────────────────────────────────────────────────────────────────
+    if ((h.includes('time') || h.includes('trade time')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty') || h.includes('filled qty')) && h.includes('side')) return 'bybit';
+    // ── Coinbase ─────────────────────────────────────────────────────────────
     if (h.includes('transaction type') && (h.includes('quantity transacted') || h.includes('quantity'))) return 'coinbase';
-    // Swissquote: date + order # + transaction + symbol + currency + price + quantity
+    // ── Swissquote ───────────────────────────────────────────────────────────
     if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
-    // Bitpanda: transaction id + timestamp + transaction type + amount asset + asset
+    // ── Bitpanda ─────────────────────────────────────────────────────────────
     if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
-    // OKX Derivatives: perpetual swaps & futures — distinct by 'realized p&l' and 'pos side'
+    // ── OKX ──────────────────────────────────────────────────────────────────
     if (h.includes('realized p&l') || (h.includes('pos side') && h.includes('trade qty'))) return 'okx_derivatives';
-    // OKX Spot: order time + instrument id + trade id + side + filled qty + filled price
     if ((h.includes('instrument id') || h.includes('inst id')) && h.includes('filled qty') && h.includes('filled price')) return 'okx';
     if ((h.includes('order time') || h.includes('trade time')) && h.includes('instrument') && h.includes('side') && h.includes('filled')) return 'okx';
-    // Bitcoin Suisse: date + type + asset + amount + price chf
-    if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
+    // ── Crypto.com App ───────────────────────────────────────────────────────
+    if (h.includes('transaction description') && h.includes('transaction kind')) return 'crypto_com';
+    // ── Crypto.com Exchange ──────────────────────────────────────────────────
+    if (h.includes('instrument_name') && h.includes('create_time') && h.includes('side')) return 'crypto_com_ex';
+    // ── Nexo ─────────────────────────────────────────────────────────────────
+    if (h.includes('input currency') && h.includes('output currency') && h.includes('usd equivalent')) return 'nexo';
+    // ── Revolut ──────────────────────────────────────────────────────────────
+    if (h.includes('started date') && h.includes('fiat amount') && h.includes('product')) return 'revolut';
+    // ── Ledger Live ──────────────────────────────────────────────────────────
+    if (h.includes('operation date') && h.includes('currency ticker') && h.includes('operation type') && h.includes('operation amount')) return 'ledger';
+    // ── KuCoin ───────────────────────────────────────────────────────────────
+    if (h.includes('tradecreatedat') && h.includes('funds') && h.includes('feecurrency')) return 'kucoin';
+    if (h.includes('order time') && h.includes('filled amount') && h.includes('filled volume') && h.includes('filled price')) return 'kucoin';
+    // ── Gemini ───────────────────────────────────────────────────────────────
+    if (h.includes('specification') && h.includes('liquidity indicator')) return 'gemini';
+    // ── Bitfinex ─────────────────────────────────────────────────────────────
+    if (h.includes('fee perc') && h.includes('fee currency') && h.includes('mts create')) return 'bitfinex';
+    // ── Gate.io ──────────────────────────────────────────────────────────────
+    if (h.includes('pair') && h.includes('role') && h.includes('total') && h.includes('side') && h.includes('date')) return 'gate';
+    // ── MEXC ─────────────────────────────────────────────────────────────────
+    if (h.includes('filled_price') && h.includes('filled_amount') && h.includes('fee_coin')) return 'mexc';
+    // ── Generic with CHF ─────────────────────────────────────────────────────
     if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
     return 'unknown';
   }
@@ -4153,24 +4179,221 @@
           priceCHF = parseFloat(r['price_chf'])||0;
           totalCHF = Math.abs(parseFloat(r['total_chf'])||qty*priceCHF);
         }
+        // ── Crypto.com App ────────────────────────────────────────────────────
+        else if (format === 'crypto_com') {
+          date = (r['timestamp (utc)']||r['timestamp']||'').slice(0,10);
+          const kind = (r['transaction kind']||'').toLowerCase();
+          const amt = parseFloat(r['amount']||0);
+          if (kind.includes('purchase') || kind.includes('buy') || kind === 'viban_purchase') type = 'buy';
+          else if (kind.includes('sell') || kind === 'crypto_exchange' && amt < 0) type = 'sell';
+          else if (kind === 'crypto_withdrawal') type = 'withdrawal';
+          else if (kind.includes('earn') || kind.includes('interest') || kind.includes('reward') || kind.includes('cashback') || kind === 'referral_card_cashback' || kind === 'reimbursement') type = 'staking';
+          else if (kind === 'crypto_exchange') type = 'buy'; // positive amount = receiving asset
+          else continue;
+          asset = (r['currency']||'').toUpperCase();
+          if (!asset || ['USD','EUR','GBP','CHF','USDT','USDC'].includes(asset)) continue;
+          qty = Math.abs(amt);
+          const nativeUSD = Math.abs(parseFloat(r['native amount (in usd)']||r['native amount']||0));
+          priceCHF = qty > 0 ? (nativeUSD * USD_CHF) / qty : 0;
+          totalCHF = nativeUSD * USD_CHF;
+        }
+        // ── Crypto.com Exchange ───────────────────────────────────────────────
+        else if (format === 'crypto_com_ex') {
+          date = (r['create_time']||'').slice(0,10);
+          const side = (r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const inst = (r['instrument_name']||'').toUpperCase();
+          asset = inst.replace(/_?(USD|USDT|USDC|EUR|BTC|ETH)$/,'') || inst.slice(0,6);
+          qty = Math.abs(parseFloat(r['quantity']||0));
+          const rawPrice = parseFloat(r['price']||0);
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        // ── Nexo ─────────────────────────────────────────────────────────────
+        else if (format === 'nexo') {
+          date = (r['date / time']||r['date_time']||'').slice(0,10);
+          const txType = (r['type']||'').toLowerCase();
+          const inCur = (r['input currency']||'').toUpperCase();
+          const outCur = (r['output currency']||'').toUpperCase();
+          const usdVal = Math.abs(parseFloat(r['usd equivalent']||0));
+          if (txType.includes('interest') || txType.includes('dividend') || txType.includes('cashback') || txType.includes('bonus') || txType.includes('earn')) {
+            type = 'staking';
+            asset = inCur;
+            qty = Math.abs(parseFloat(r['input amount']||0));
+          } else if (txType === 'buy' || txType.includes('purchase')) {
+            type = 'buy';
+            asset = outCur; qty = Math.abs(parseFloat(r['output amount']||0));
+          } else if (txType === 'sell') {
+            type = 'sell';
+            asset = inCur; qty = Math.abs(parseFloat(r['input amount']||0));
+          } else if (txType === 'exchange') {
+            // Two tax events: sell inCur, buy outCur — emit sell here, buy pushed separately
+            if (!['USD','USDT','USDC','EUR','GBP','CHF'].includes(inCur)) {
+              out.push({ date, type:'sell', asset:inCur,
+                qty: Math.abs(parseFloat(r['input amount']||0)),
+                priceCHF: 0, totalCHF: usdVal * USD_CHF });
+            }
+            type = 'buy'; asset = outCur; qty = Math.abs(parseFloat(r['output amount']||0));
+          } else if (txType.includes('deposit')) {
+            type = 'buy'; asset = inCur; qty = Math.abs(parseFloat(r['input amount']||0));
+          } else if (txType.includes('withdrawal')) {
+            type = 'withdrawal'; asset = inCur; qty = Math.abs(parseFloat(r['input amount']||0));
+          } else continue;
+          if (['USD','USDT','USDC','EUR','GBP','CHF'].includes(asset)) continue;
+          priceCHF = qty > 0 ? (usdVal * USD_CHF) / qty : 0;
+          totalCHF = usdVal * USD_CHF;
+        }
+        // ── Revolut ───────────────────────────────────────────────────────────
+        else if (format === 'revolut') {
+          date = (r['completed date']||r['started date']||'').slice(0,10);
+          const txType = (r['type']||'').toLowerCase();
+          if (txType === 'bought' || txType === 'buy') type = 'buy';
+          else if (txType === 'sold' || txType === 'sell') type = 'sell';
+          else if (txType === 'exchange') {
+            // Amount positive = received, negative = sent
+            const amt = parseFloat(r['amount']||0);
+            type = amt >= 0 ? 'buy' : 'sell';
+          }
+          else if (txType.includes('reward') || txType.includes('cashback') || txType.includes('interest') || txType.includes('staking')) type = 'staking';
+          else continue;
+          asset = (r['currency']||'').toUpperCase();
+          if (['USD','EUR','GBP','CHF','USDT','USDC'].includes(asset)) continue;
+          qty = Math.abs(parseFloat(r['amount']||0));
+          const baseCur = (r['base currency']||'USD').toUpperCase();
+          const fiatAmt = Math.abs(parseFloat(r['fiat amount (inc. fees)']||r['fiat amount']||0));
+          const fiatRate = baseCur === 'CHF' ? 1 : USD_CHF; // treat EUR/GBP approx as USD for simplicity
+          totalCHF = fiatAmt * fiatRate;
+          priceCHF = qty > 0 ? totalCHF / qty : 0;
+        }
+        // ── Ledger Live ───────────────────────────────────────────────────────
+        else if (format === 'ledger') {
+          date = (r['operation date']||'').slice(0,10);
+          const opType = (r['operation type']||'').toUpperCase();
+          // IN = received (buy/transfer in), OUT = sent (withdrawal/sale)
+          if (opType === 'IN') type = 'buy';
+          else if (opType === 'OUT') type = 'withdrawal'; // conservative: treat as withdrawal not sale
+          else continue;
+          asset = (r['currency ticker']||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+          if (!asset) continue;
+          qty = Math.abs(parseFloat(r['operation amount']||0));
+          const cvTicker = (r['countervalue ticker']||'').toUpperCase();
+          const cvAmt = Math.abs(parseFloat(r['countervalue at operation date']||0));
+          const cvRate = cvTicker === 'CHF' ? 1 : cvTicker === 'EUR' ? USD_CHF : USD_CHF;
+          totalCHF = cvAmt * cvRate;
+          priceCHF = qty > 0 ? totalCHF / qty : 0;
+        }
+        // ── KuCoin ────────────────────────────────────────────────────────────
+        else if (format === 'kucoin') {
+          date = (r['tradecreatedat']||r['order time']||'').slice(0,10);
+          const side = (r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const sym = (r['symbol']||r['pair']||'').toUpperCase();
+          asset = sym.replace(/-(USDT|USDC|BUSD|BTC|ETH|USD)$/,'') || sym.split('-')[0];
+          qty = Math.abs(parseFloat(r['size']||r['filled amount']||r['amount']||0));
+          const rawPrice = parseFloat(r['price']||r['filled price']||0);
+          const rawTotal = Math.abs(parseFloat(r['funds']||r['filled volume']||0));
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = rawTotal > 0 ? rawTotal * USD_CHF : qty * priceCHF;
+        }
+        // ── Gemini ────────────────────────────────────────────────────────────
+        else if (format === 'gemini') {
+          date = (r['date']||'').slice(0,10);
+          const txType = (r['type']||'').toLowerCase();
+          if (txType === 'buy') type = 'buy';
+          else if (txType === 'sell') type = 'sell';
+          else if (txType === 'credit' || txType.includes('earn') || txType.includes('reward') || txType.includes('interest')) type = 'staking';
+          else continue;
+          // Symbol like BTC or ETHUSD — strip quote
+          asset = (r['symbol']||'').toUpperCase().replace(/(USD|USDT|EUR|GBP)$/,'') || (r['symbol']||'').slice(0,6);
+          const usdAmt = Math.abs(parseFloat((r['usd amount']||'0').replace(/[,$]/g,'')));
+          // Find qty from the asset-specific column (e.g., 'BTC Amount')
+          const qtyKey = Object.keys(r).find(k => k.toLowerCase().includes(asset.toLowerCase()+' amount') || (k.toLowerCase().endsWith(' amount') && !k.toLowerCase().includes('usd') && !k.toLowerCase().includes('fee')));
+          qty = qtyKey ? Math.abs(parseFloat((r[qtyKey]||'0').replace(/[,$]/g,''))) : 0;
+          if (qty <= 0) continue;
+          priceCHF = qty > 0 ? (usdAmt * USD_CHF) / qty : 0;
+          totalCHF = usdAmt * USD_CHF;
+        }
+        // ── Bitfinex ──────────────────────────────────────────────────────────
+        else if (format === 'bitfinex') {
+          // MTS CREATE is Unix ms timestamp
+          const mts = parseFloat(r['mts create']||r['#']||0);
+          date = mts > 1e9 ? new Date(mts).toISOString().slice(0,10) : '';
+          const amt = parseFloat(r['amount']||0);
+          type = amt >= 0 ? 'buy' : 'sell';
+          const pair = (r['pair']||'').toUpperCase();
+          asset = pair.replace(/(USD|USDT|EUR|GBP|BTC|ETH)$/,'').slice(0,8) || pair.slice(0,4);
+          qty = Math.abs(amt);
+          const rawPrice = parseFloat(r['price']||0);
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        // ── Gate.io ───────────────────────────────────────────────────────────
+        else if (format === 'gate') {
+          date = (r['date']||'').slice(0,10);
+          const side = (r['side']||r['type']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const pair = (r['pair']||'').toUpperCase();
+          asset = pair.replace(/_(USDT|USDC|USD|BTC|ETH|BUSD)$/,'').split('_')[0];
+          qty = Math.abs(parseFloat(r['amount']||0));
+          const rawPrice = parseFloat(r['price']||0);
+          const rawTotal = Math.abs(parseFloat(r['total']||0));
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = rawTotal > 0 ? rawTotal * USD_CHF : qty * priceCHF;
+        }
+        // ── MEXC ──────────────────────────────────────────────────────────────
+        else if (format === 'mexc') {
+          date = (r['time']||'').slice(0,10);
+          const side = (r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const sym = (r['symbol']||'').toUpperCase();
+          asset = sym.replace(/(USDT|USDC|USD|BUSD)$/,'');
+          qty = Math.abs(parseFloat(r['filled_amount']||0));
+          const rawPrice = parseFloat(r['filled_price']||0);
+          const rawVol = Math.abs(parseFloat(r['filled_volume']||0));
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = rawVol > 0 ? rawVol * USD_CHF : qty * priceCHF;
+        }
+        // ── Smart unknown fallback ────────────────────────────────────────────
         else {
           const keys = Object.keys(r);
-          const dK = keys.find(k=>k.includes('date')||k.includes('time'));
-          const tK = keys.find(k=>k.includes('type')||k.includes('side'));
-          const aK = keys.find(k=>k.includes('asset')||k.includes('coin')||k.includes('symbol')||k.includes('currency'));
-          const qK = keys.find(k=>k.includes('amount')||k.includes('qty')||k.includes('quantity'));
-          const pK = keys.find(k=>k.includes('price'));
+          // Date: prefer explicit date/time columns
+          const dK = keys.find(k=>['date','time','timestamp','created','datetime','createdat'].some(x=>k===x||k.startsWith(x+'_')||k.endsWith('_'+x))) || keys.find(k=>k.includes('date')||k.includes('time'));
+          // Type: transaction type or side column
+          const tK = keys.find(k=>k==='type'||k==='side'||k==='transaction type'||k==='order type'||k==='txtype') || keys.find(k=>k.includes('type')||k.includes('side'));
+          // Asset: prefer specific asset/coin/currency columns
+          const aK = keys.find(k=>['asset','coin','currency','token','base_asset','base'].includes(k)) || keys.find(k=>k.includes('asset')||k.includes('coin')||k.includes('symbol')||k.includes('currency'));
+          // Quantity: prefer specific qty columns
+          const qK = keys.find(k=>['qty','quantity','amount','size','volume','filled_qty','executed'].includes(k)) || keys.find(k=>k.includes('qty')||k.includes('amount')||k.includes('quantity')||k.includes('size'));
+          // Price and total
+          const pK = keys.find(k=>['price','filled_price','rate'].includes(k)) || keys.find(k=>k.includes('price')&&!k.includes('fee'));
+          const totK = keys.find(k=>['total','value','subtotal','proceeds','funds','volume'].includes(k)) || keys.find(k=>k.includes('total')||k.includes('value'));
+          // Currency column to detect USD/CHF
+          const curK = keys.find(k=>['currency','quote','quote_currency','fiat_currency'].includes(k));
           if (!tK||!aK||!qK) continue;
-          date = r[dK]||'';
-          const t=(r[tK]||'').toLowerCase();
-          if (t.includes('buy')) type='buy';
-          else if (t.includes('sell')) type='sell';
-          else if (t.includes('reward')||t.includes('staking')) type='staking';
+          date = dK ? (r[dK]||'') : '';
+          const t = (r[tK]||'').toLowerCase();
+          // Expanded type mapping
+          if (t.includes('buy') || t==='purchase' || t==='in' || t==='received') type='buy';
+          else if (t.includes('sell') || t==='out' || t==='sent') type='sell';
+          else if (t.includes('withdrawal') || t.includes('withdraw') || t==='send') type='withdrawal';
+          else if (t.includes('reward')||t.includes('staking')||t.includes('interest')||t.includes('earn')||t.includes('cashback')||t.includes('dividend')||t.includes('income')) type='staking';
           else continue;
-          asset=(r[aK]||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-          qty=Math.abs(parseFloat(r[qK])||0);
-          priceCHF=parseFloat(r[pK]||0)||0;
-          totalCHF=qty*priceCHF;
+          const rawAsset = (r[aK]||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+          if (!rawAsset || ['USD','EUR','GBP','CHF','USDT','USDC','BUSD','FDUSD'].includes(rawAsset)) continue;
+          asset = rawAsset;
+          qty = Math.abs(parseFloat(r[qK])||0);
+          const rawPrice = parseFloat(r[pK]||0)||0;
+          const rawTotal = totK ? Math.abs(parseFloat(r[totK])||0) : 0;
+          // Detect if values are in USD — convert to CHF
+          const cur = curK ? (r[curK]||'').toUpperCase() : '';
+          const isUSD = cur==='USD' || cur==='USDT' || cur==='' || (!cur && rawPrice > 100 && rawTotal > 1);
+          const rate = cur==='CHF' ? 1 : USD_CHF;
+          priceCHF = rawPrice * rate;
+          totalCHF = rawTotal > 0 ? rawTotal * rate : qty * priceCHF;
         }
         if (qty<=0||!asset) continue;
         out.push({date, type, asset, qty, priceCHF, totalCHF});
@@ -4331,7 +4554,19 @@
     const headers = Object.keys(rows[0]);
     const format = detectFormat(headers);
     const transactions = await normaliseRows(rows, format);
-    if (!transactions.length) throw new Error('Could not parse transactions — check file format');
+
+    // Parse quality check — warn if very few rows were successfully parsed
+    const parseRate = transactions.length / Math.max(rows.length, 1);
+    if (!transactions.length) {
+      const detectedMsg = format === 'unknown'
+        ? `Exchange format not recognised. Headers found: ${headers.slice(0,6).join(', ')}. Try exporting as a standard trade history CSV from your exchange settings.`
+        : `Format detected as ${format} but no valid transactions could be extracted. Check that the file contains actual trade rows and not just headers or summary data.`;
+      throw new Error(detectedMsg);
+    }
+    // If less than 10% of rows parsed and there are many rows, add a warning note
+    const lowParseWarning = (parseRate < 0.10 && rows.length > 20)
+      ? ` Note: only ${transactions.length} of ${rows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
+      : '';
 
     const dates = transactions.map(t=>t.date).filter(Boolean).sort();
     const taxYear = dates.length ? dates[dates.length-1].slice(0,4)||'2024' : '2024';
@@ -4355,8 +4590,21 @@
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx: `Exchange format detected: OKX. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
+      crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Interest and dividend income treated as taxable staking income.`,
+      revolut: `Exchange format detected: Revolut. Fiat amounts converted to CHF at 0.9000. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as acquisitions (cost basis established at countervalue). Outgoing treated as withdrawals. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gemini: `Exchange format detected: Gemini. USD amounts converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitfinex: `Exchange format detected: Bitfinex. USD amounts converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gate: `Exchange format detected: Gate.io. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      mexc: `Exchange format detected: MEXC. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      swissquote: `Exchange format detected: Swissquote. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitpanda: `Exchange format detected: Bitpanda. Fiat amounts converted to CHF at 0.9000. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
-    let notes = notesMap[format] || `Exchange format detected: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    let notes = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
       if (res.ok) {
@@ -4382,7 +4630,7 @@
       totalGainLossCHF:computed.totalGainLossCHF,
       totalPortfolioValueCHF:computed.totalPortfolioValueCHF,
       complianceMethod:'FIFO',
-      notes,
+      notes: notes + lowParseWarning,
       transactions,
     };
   }
