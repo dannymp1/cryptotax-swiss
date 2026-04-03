@@ -4267,6 +4267,7 @@
       totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
       complianceMethod: 'FIFO',
       notes,
+      transactions,
     };
   }
 
@@ -4325,6 +4326,7 @@
       totalPortfolioValueCHF:computed.totalPortfolioValueCHF,
       complianceMethod:'FIFO',
       notes,
+      transactions,
     };
   }
 
@@ -5033,19 +5035,56 @@ onmouseout="this.style.color='#8A909E'">
 
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
 
-  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:7.5pt;color:#8A909E;line-height:1.7;font-family:'DM Mono',monospace;letter-spacing:0.03em;">
-    <strong style="color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:7pt;">Methodology</strong><br/>
-    <strong>Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
-    <strong>Exchange rate:</strong> USD/CHF 0.9000 (ESTV reference rate, 31.12.${data.taxYear}). CHF-denominated values used directly. ·
-    <strong>Fees:</strong> Excluded from proceeds and cost basis (conservative approach). ·
-    <strong>Ticker normalization:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
-    <strong>Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market closing prices at ESTV annual reference rate). ·
-    <strong>Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
+  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#5A6070;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
+    <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds. This produces marginally overstated gains (conservative approach); impact is typically below 0.5% of total proceeds. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.9000 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
   <div class="doc-footer">
     <span>CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
     <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
   </div>
+
+  ${(function(){
+    const txs = (data.transactions||[]).filter(t => t.type !== 'buy' || t.totalCHF > 0 || t.priceCHF > 0);
+    if (!txs.length) return '';
+    const isDerivative = (data.notes||'').toLowerCase().includes('derivative');
+    const typeLabel = t => ({buy:'Buy',sell:'Sell',staking:'Income',withdrawal:'Transfer'}[t]||t);
+    const typeColor = t => ({buy:'#2D7A56',sell:'#0D1117',staking:'#B8960C',withdrawal:'#8A909E'}[t]||'#0D1117');
+    const fmtQ = n => { const v = Number(n||0); if(v===0) return '—'; return v.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:8}); };
+    const fmtC = n => { const v = Number(n||0); if(v===0) return '—'; return 'CHF '+v.toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+    const rows = txs.map((t,i) => '<tr>'
+      +'<td class="mono" style="color:#8A909E;font-size:7.5pt;">'+(t.date||'').slice(0,10)+'</td>'
+      +'<td style="font-weight:600;color:'+typeColor(t.type)+';">'+typeLabel(t.type)+'</td>'
+      +'<td style="font-weight:700;">'+escHtml(t.asset||'')+'</td>'
+      +'<td class="right mono" style="font-size:7.5pt;">'+fmtQ(t.qty)+'</td>'
+      +'<td class="right mono" style="font-size:7.5pt;">'+fmtC(t.priceCHF)+'</td>'
+      +'<td class="right mono" style="font-size:7.5pt;font-weight:600;">'+fmtC(t.totalCHF)+'</td>'
+      +'</tr>'
+    ).join('');
+    return '<div style="page-break-before:always;">'
+      +'<div class="sec-title" style="margin-top:0;">Appendix — Full Transaction Ledger</div>'
+      +'<p style="font-size:8pt;color:#5A6070;margin-bottom:12px;line-height:1.6;">'
+      +txs.length+' transactions · '+escHtml(data.dateRange||data.taxYear)
+      +(isDerivative ? ' · Note: buy/sell entries represent closed derivative positions expressed as synthetic FIFO pairs derived from Realized P&amp;L.' : '')
+      +'</p>'
+      +'<table style="font-size:8pt;">'
+      +'<thead><tr>'
+      +'<th style="text-align:left;padding:8px 8px;width:14%;">Date</th>'
+      +'<th style="text-align:left;padding:8px 8px;width:10%;">Type</th>'
+      +'<th style="text-align:left;padding:8px 8px;width:10%;">Asset</th>'
+      +'<th class="right" style="padding:8px 8px;width:18%;">Quantity</th>'
+      +'<th class="right" style="padding:8px 8px;width:18%;">Price CHF</th>'
+      +'<th class="right" style="padding:8px 8px;width:18%;">Total CHF</th>'
+      +'</tr></thead>'
+      +'<tbody>'+rows+'</tbody>'
+      +'</table>'
+      +'</div>';
+  })()}
 
 </div>
 </body>
