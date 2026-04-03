@@ -4084,7 +4084,7 @@
           const tradeQty = parseFloat(r['Trade Qty (Cont)'] || r['trade qty (cont)'] || r['Trade Qty'] || 0) || 0;
 
           // Extract base asset: BTC-USDT-SWAP → BTC, SOL-USDT-241227 → SOL
-          asset = (instId.split('-')[0] || 'DERIV').replace(/[^A-Z0-9]/g, '');
+          asset = ((instId.split('-')[0] || 'DERIV').replace(/[^A-Z0-9]/g, '') || 'DERIV') + ':FUT'; // isolated pool
 
           // ── Funding fee rows (Order ID = "Funding…") ──────────────────────
           if (orderId.toLowerCase().startsWith('fund')) {
@@ -4169,13 +4169,16 @@
             type = 'staking'; // taxable income in Switzerland
           } else if (txType.includes('realized') || txType.includes('futures') || txType.includes('pnl') || txType.includes('profit') || txType.includes('funding fee')) {
             // Binance Futures/Derivatives: Realized P&L row (Quote_Qty = net P&L in USDT)
-            // Use the same synthetic buy+sell pattern as the OKX derivatives parser
+            // Use synthetic buy+sell pairs — same pattern as OKX derivatives parser.
+            // IMPORTANT: use a ':FUT' suffixed asset name so the synthetic pairs get their
+            // own isolated FIFO pool and never mix with real spot holdings of the same coin.
             const rawPnl = parseFloat(r['quote_qty']||r['quote qty']||r['realized profit']||r['amount']||0);
             if (rawPnl === 0) continue;
             date = (r['utc_time']||r['date(utc)']||r['date']||'').slice(0,10);
             if (!date) continue;
             const pnlCHF = rawPnl * USD_CHF;
-            const derivAsset = (r['base_asset']||r['coin']||'BTC').toUpperCase()||'BTC';
+            const baseAssetName = (r['base_asset']||r['coin']||'BTC').toUpperCase()||'BTC';
+            const derivAsset = baseAssetName + ':FUT'; // isolated pool — won't mix with spot
             if (pnlCHF >= 0) {
               out.push({ date, type:'buy',  asset:derivAsset, qty:1, priceCHF:0,              totalCHF:0        });
               out.push({ date, type:'sell', asset:derivAsset, qty:1, priceCHF:pnlCHF,         totalCHF:pnlCHF   });
