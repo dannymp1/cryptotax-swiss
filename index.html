@@ -4343,17 +4343,20 @@
 
     // Ask AI only for coin names and notes — never for numbers
     const assetList = computed.assets.map(a=>a.symbol+':held='+a.endHolding).join(', ');
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
       kraken: `Exchange format detected: Kraken (ledger). Historical CHF prices fetched via CoinGecko API. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance: `Exchange format detected: Binance. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx: `Exchange format detected: OKX. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
     };
-    let notes = notesMap[format] || `Exchange format detected: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices (market closing prices at ESTV annual reference rate).`;
+    let notes = notesMap[format] || `Exchange format detected: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
       if (res.ok) {
