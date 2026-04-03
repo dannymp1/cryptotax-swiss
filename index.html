@@ -3997,14 +3997,12 @@
           // ── Funding fee rows (Order ID = "Funding…") ──────────────────────
           if (orderId.toLowerCase().startsWith('fund')) {
             if (feeRaw > 0) {
-              // Funding received from shorts → staking-style income
-              type = 'staking';
-              qty = 1;
-              priceCHF = 0;
-              totalCHF = feeRaw * USD_CHF;
-            } else {
-              continue; // Funding paid — minor periodic cost, skip
+              // Funding received → taxable income, but NOT a real asset acquisition.
+              // Push directly with _noLot:true so computeFIFO counts the income
+              // without adding a synthetic lot that would inflate endHolding.
+              out.push({ date, type: 'staking', asset, qty: 0, priceCHF: 0, totalCHF: feeRaw * USD_CHF, _noLot: true });
             }
+            continue; // Funding paid (or processed above) — skip generic push
           } else {
             // ── Trade rows ──────────────────────────────────────────────────
             // Opening trades have pnlRaw === 0 and tradeQty > 0 — no tax event yet
@@ -4186,13 +4184,17 @@
       }
       else if (tx.type==='staking') {
         a.stakingCount++;
-        a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
         const income=tx.totalCHF>0?tx.totalCHF:tx.qty*(tx.priceCHF||0);
         // Only count staking income for the tax year being reported
         if (tx.date && tx.date.slice(0,4) === String(taxYear)) {
           a.stakingIncome+=income;
         }
-        a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
+        // _noLot: true means this is derivative funding income — no real asset acquired,
+        // so don't add to lots (prevents phantom holdings/wealth value)
+        if (!tx._noLot) {
+          a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
+          a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
+        }
       }
       else if (tx.type==='withdrawal') {
         // Transfer out — reduce lots FIFO but no taxable gain
