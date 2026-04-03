@@ -4450,7 +4450,7 @@
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
         <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:#B8960C' : glClass}">
           ${a.missingCostBasis
-            ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})} <span style="font-size:10px;font-weight:400;display:block;">proceeds · excluded</span>`
+            ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})} <span style="font-size:10px;font-weight:400;display:block;">unmatched proceeds · excluded</span>`
             : glStr}
         </td>
       </tr>`;
@@ -4471,7 +4471,7 @@
       <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
       <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Gain / Loss</th>
+      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain / Unmatched Proceeds' : 'Gain / Loss'}</th>
     </tr>
   </thead>
   <tbody style="color:rgba(245,242,235,0.75)">
@@ -4531,7 +4531,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         <td class="right mono">${valueStr}</td>
         <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">
         ${a.missingCostBasis
-          ? `<span style="white-space:nowrap;font-size:8pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:600;">CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</span><br/><span style="white-space:nowrap;font-size:7pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;letter-spacing:0.04em;">unmatched · excluded</span>`
+          ? `<span style="white-space:nowrap;font-size:8pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:600;">CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</span><br/><span style="white-space:nowrap;font-size:7.5pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;letter-spacing:0.04em;">unmatched proceeds · excluded</span>`
           : glStr}
         </td>
       </tr>`;
@@ -5050,7 +5050,7 @@ onmouseout="this.style.color='#8A909E'">
         <th class="center" style="opacity:0.5;">Buys</th><th class="center" style="opacity:0.5;">Sells</th><th class="center" style="opacity:0.5;">Staking</th>
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
-        <th class="right">Gain / Loss</th>
+        <th class="right">${_hasUnmatched ? 'Matched Gain / Unmatched Proceeds' : 'Gain / Loss'}</th>
       </tr>
     </thead>
     <tbody>
