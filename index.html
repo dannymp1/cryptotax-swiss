@@ -4440,6 +4440,7 @@
       const gl = Number(a.gainLossCHF);
       const glClass = gl >= 0 ? 'color:#2D7A56' : 'color:#C0392B';
       const glStr = gl >= 0 ? '+' + fmtCHF(gl) : '−' + fmtCHF(Math.abs(gl));
+      const hasUnmatched = (data.assets||[]).some(x=>x.missingCostBasis);
       return `<tr>
         <td style="font-weight:600">${escHtml(a.symbol)}</td>
         <td>${escHtml(a.name)}</td>
@@ -4448,11 +4449,12 @@
         <td style="text-align:center">${a.stakingCount || 0}</td>
         <td style="text-align:right">${fmtNum(a.endHolding)}</td>
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
-        <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:#B8960C' : glClass}">
-          ${a.missingCostBasis
-            ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})} <span style="font-size:10px;font-weight:400;display:block;">unmatched proceeds · excluded</span>`
-            : glStr}
+        <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:rgba(245,242,235,0.3)' : glClass}">
+          ${a.missingCostBasis ? '—' : glStr}
         </td>
+        ${hasUnmatched ? `<td style="text-align:right;font-weight:600;color:#D4AF37;">
+          ${a.missingCostBasis ? 'CHF '+Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2}) : '<span style="color:rgba(245,242,235,0.2);">—</span>'}
+        </td>` : ''}
       </tr>`;
     }).join('');
 
@@ -4471,7 +4473,8 @@
       <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
       <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain / Unmatched Proceeds' : 'Gain / Loss'}</th>
+      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
+      ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Unmatched (Excluded)</th>` : ''}
     </tr>
   </thead>
   <tbody style="color:rgba(245,242,235,0.75)">
@@ -4516,11 +4519,14 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     const assetRows = assets.map(a => {
       const gl = Number(a.gainLossCHF);
       const glStr = gl >= 0
-        ? `+CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
-        : `−CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+        ? `+CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+        : `−CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
       const glColor = gl >= 0 ? '#2D7A56' : '#C0392B';
       const holdingStr = Number(a.endHolding||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:8});
-      const valueStr = `CHF ${Number(a.endValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+      const valueStr = `CHF ${Number(a.endValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+      const unmatchedStr = a.missingCostBasis
+        ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+        : '—';
       return `<tr>
         <td class="mono" style="font-weight:700;padding-left:10px">${escHtml(a.symbol)}</td>
         <td style="color:#0D1117">${escHtml(a.name)}</td>
@@ -4529,10 +4535,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
         <td class="center mono" style="color:#9AA0AC;font-size:8pt;">${a.stakingCount||0}</td>
         <td class="right mono" style="font-weight:600;">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">
-        ${a.missingCostBasis
-          ? `<span style="white-space:nowrap;font-size:8pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:600;">CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</span><br/><span style="white-space:nowrap;font-size:7.5pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;letter-spacing:0.04em;">unmatched proceeds · excluded</span>`
-          : glStr}
+        <td class="right mono" style="font-weight:700;color:${a.missingCostBasis ? '#9AA0AC' : glColor};">
+          ${a.missingCostBasis ? '—' : glStr}
+        </td>
+        <td class="right mono" style="font-weight:600;color:#B8960C;padding-right:10px;">
+          ${unmatchedStr === '—' ? '<span style="color:#9AA0AC;font-weight:400;">—</span>' : unmatchedStr}
         </td>
       </tr>`;
     }).join('');
@@ -5050,7 +5057,8 @@ onmouseout="this.style.color='#8A909E'">
         <th class="center" style="opacity:0.5;">Buys</th><th class="center" style="opacity:0.5;">Sells</th><th class="center" style="opacity:0.5;">Staking</th>
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
-        <th class="right">${_hasUnmatched ? 'Matched Gain / Unmatched Proceeds' : 'Gain / Loss'}</th>
+        <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
+        ${_hasUnmatched ? '<th class="right">Unmatched (Excluded)</th>' : ''}
       </tr>
     </thead>
     <tbody>
@@ -5058,14 +5066,9 @@ onmouseout="this.style.color='#8A909E'">
       <tr class="total-row">
         <td colspan="6">Net Total</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-        <td class="right">
-          ${(function(){
-            if (!_hasUnmatched) return '<span style="color:'+totalColor+'">'+totalGainStr+'</span>';
-            return '<span style="color:'+totalColor+'">'+totalGainStr+'</span>'
-              +'<span style="display:block;font-size:7pt;font-weight:400;color:#D4AF37;margin-top:2px;letter-spacing:0.03em;">'
-              +'matched only · CHF '+_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})+' excluded'
-              +'</span>';
-          })()}
+        <td class="right" style="color:${totalColor};">${totalGainStr}</td>
+        <td class="right" style="color:#D4AF37;font-weight:600;padding-right:10px;">
+          ${_hasUnmatched ? 'CHF '+_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2}) : ''}
         </td>
       </tr>
     </tbody>
