@@ -3809,7 +3809,7 @@
     if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
     if (h.includes('utc_time') && h.includes('base_asset') && h.includes('quote_asset')) return 'binance'; // transaction history
     // ── Bybit ────────────────────────────────────────────────────────────────
-    if ((h.includes('time') || h.includes('trade time') || h.some(x=>x.includes('date'))) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty') || h.includes('filled qty')) && h.includes('side') && !h.includes('transaction type')) return 'bybit';
+    if ((h.includes('time') || h.includes('trade time') || h.includes('date(utc)') || h.includes('date')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty') || h.includes('filled qty')) && h.includes('side') && !h.includes('transaction type')) return 'bybit';
     // ── Coinbase ─────────────────────────────────────────────────────────────
     if (h.includes('transaction type') && (h.includes('quantity transacted') || h.includes('quantity'))) return 'coinbase';
     // ── Swissquote ───────────────────────────────────────────────────────────
