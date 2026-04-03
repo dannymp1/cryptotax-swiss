@@ -4167,6 +4167,23 @@
             type = 'withdrawal';
           } else if (txType === 'airdrop' || txType.includes('interest') || txType.includes('reward') || txType.includes('cashback') || txType.includes('staking') || txType.includes('distribution')) {
             type = 'staking'; // taxable income in Switzerland
+          } else if (txType.includes('realized') || txType.includes('futures') || txType.includes('pnl') || txType.includes('profit') || txType.includes('funding fee')) {
+            // Binance Futures/Derivatives: Realized P&L row (Quote_Qty = net P&L in USDT)
+            // Use the same synthetic buy+sell pattern as the OKX derivatives parser
+            const rawPnl = parseFloat(r['quote_qty']||r['quote qty']||r['realized profit']||r['amount']||0);
+            if (rawPnl === 0) continue;
+            date = (r['utc_time']||r['date(utc)']||r['date']||'').slice(0,10);
+            if (!date) continue;
+            const pnlCHF = rawPnl * USD_CHF;
+            const derivAsset = (r['base_asset']||r['coin']||'BTC').toUpperCase()||'BTC';
+            if (pnlCHF >= 0) {
+              out.push({ date, type:'buy',  asset:derivAsset, qty:1, priceCHF:0,              totalCHF:0        });
+              out.push({ date, type:'sell', asset:derivAsset, qty:1, priceCHF:pnlCHF,         totalCHF:pnlCHF   });
+            } else {
+              out.push({ date, type:'buy',  asset:derivAsset, qty:1, priceCHF:Math.abs(pnlCHF), totalCHF:Math.abs(pnlCHF) });
+              out.push({ date, type:'sell', asset:derivAsset, qty:1, priceCHF:0,              totalCHF:0        });
+            }
+            continue;
           } else if (!txType) {
             // Old trade history format — no Type column, rely on Side
             if (side === 'buy') type = 'buy';
