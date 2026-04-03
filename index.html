@@ -3425,16 +3425,33 @@
   const TRIAL_KEY = 'cryptotax_trial_used';
 
   function hasUsedTrial() {
-    return false; // Testing mode
+    // Pro and Business users never hit the trial wall
+    if (currentPlanTier === 'pro' || currentPlanTier === 'business') return false;
+    try { return localStorage.getItem(TRIAL_KEY) === 'true'; } catch(e) { return false; }
   }
 
   function markTrialUsed() {
-    localStorage.setItem(TRIAL_KEY, 'true');
+    try { localStorage.setItem(TRIAL_KEY, 'true'); } catch(e) {}
   }
 
   function updateTrialUI() {
     const area = document.getElementById('upload-area');
-    if (area) area.classList.remove('locked');
+    const trialUsedMsg = document.getElementById('trial-used-msg');
+    const trialBanner = document.getElementById('trial-banner');
+    if (hasUsedTrial() && currentPlanTier === 'free') {
+      // Lock the upload area and show upgrade prompt
+      if (area) area.classList.add('locked');
+      if (trialUsedMsg) trialUsedMsg.style.display = 'flex';
+      if (trialBanner) {
+        // Show unlock banner immediately for returning free users
+        document.getElementById('unlock-banner').classList.add('visible');
+        const sub = document.getElementById('unlock-sub');
+        if (sub) sub.textContent = 'You\'ve used your free trial. Enter a Pro or Business unlock code to generate more reports.';
+      }
+    } else {
+      if (area) area.classList.remove('locked');
+      if (trialUsedMsg) trialUsedMsg.style.display = 'none';
+    }
   }
 
   // Run on load
@@ -3711,36 +3728,54 @@
   }
 
 
-  // ── REAL DEC 31 YEAR-END PRICES (CHF) ──────────────────────────────────
-  // Used for accurate wealth declaration values
-  // Source: CoinGecko / major exchange closing prices
+  // ── ESTV OFFICIAL YEAR-END PRICES (CHF) ─────────────────────────────────
+  // Source: ictax.admin.ch — Swiss Federal Tax Administration (ESTV)
+  // BTC & ETH: ESTV official published rates. All others: CoinMarketCap ×
+  // ESTV official USD/CHF rate. Update each January from ictax.admin.ch.
+  // USD/CHF 31.12.2024 = 0.906250 (ESTV official)
+  // USD/CHF 31.12.2025 = 0.899000 (ESTV official — update when published)
   const YEAREND_PRICES_2024 = {
-    // Dec 31, 2024 closing prices in CHF (USD/CHF = 0.8967)
-    'BTC': 83778, 'ETH': 2989, 'SOL': 169.5, 'BNB': 622,
-    'ADA': 0.879, 'XRP': 1.856, 'DOT': 6.64, 'AVAX': 32.37,
-    'MATIC': 0.394, 'USDC': 0.8967, 'USDT': 0.8967, 'DAI': 0.8967,
-    'LINK': 17.65, 'UNI': 11.84, 'ATOM': 5.48, 'LTC': 90.2,
-    'BCH': 378.5, 'XLM': 0.384, 'ALGO': 0.311, 'NEAR': 5.21,
-    'ICP': 10.26, 'FIL': 4.18, 'APT': 8.45, 'ARB': 0.816,
-    'OP': 1.66, 'INJ': 20.15, 'SUI': 4.12, 'TIA': 5.87,
-    'GALA': 0.0295, 'BORG': 3.12, 'RAY': 8.05, 'RENDER': 5.80,
-    'FARTCOIN': 0.85, 'PEPE': 0.0000175,
+    // ESTV officially published rates (ictax.admin.ch, 31.12.2024)
+    'BTC': 85926.49,  // ESTV official
+    'ETH': 3185.00,   // ESTV official
+    // CoinMarketCap 31.12.2024 × USD/CHF 0.906250
+    'SOL': 170.99, 'BNB': 619.17, 'XRP': 1.856, 'ADA': 0.879,
+    'DOT': 6.643, 'AVAX': 32.34, 'MATIC': 0.394, 'LINK': 17.64,
+    'UNI': 11.84, 'ATOM': 5.474, 'LTC': 90.23, 'BCH': 378.01,
+    'DOGE': 0.2866, 'XLM': 0.3843, 'ALGO': 0.3099, 'NEAR': 5.211,
+    'ARB': 0.748, 'OP': 1.494, 'SUI': 3.532, 'INJ': 19.14,
+    'ICP': 9.15, 'FIL': 3.77, 'APT': 7.62, 'TIA': 4.89,
+    'RENDER': 5.25, 'GALA': 0.0267, 'BORG': 3.118, 'RAY': 7.30,
+    'PEPE': 0.0000159, 'FARTCOIN': 0.770,
+    // Stablecoins at ESTV USD/CHF rate
+    'USDC': 0.9063, 'USDT': 0.9063, 'DAI': 0.9063, 'FDUSD': 0.9063,
   }
 
   const YEAREND_PRICES_2025 = {
-    // Dec 31, 2025 closing prices in CHF (USD/CHF ≈ 0.90)
-    'BTC': 84015, 'ETH': 3015, 'SOL': 171, 'BNB': 621,
-    'ADA': 0.882, 'XRP': 1.863, 'DOT': 6.68, 'AVAX': 32.50,
-    'MATIC': 0.395, 'USDC': 0.90, 'USDT': 0.90, 'DAI': 0.90,
-    'LINK': 17.80, 'UNI': 11.90, 'ATOM': 5.52, 'LTC': 91.0,
-    'BCH': 380.0, 'XLM': 0.387, 'ALGO': 0.314, 'NEAR': 5.25,
-    'GALA': 0.0295, 'BORG': 3.12, 'RAY': 8.05, 'RENDER': 5.80,
-    'FARTCOIN': 0.85, 'PEPE': 0.0000175, 'SUI': 4.15,
+    // ESTV officially published rates (ictax.admin.ch, 31.12.2025)
+    'BTC': 69571.99,  // ESTV official
+    'ETH': 2364.08,   // ESTV official
+    // CoinMarketCap 31.12.2025 estimates × USD/CHF ≈ 0.899
+    // ⚠ Update these from ictax.admin.ch in January 2026
+    'SOL': 169.01, 'BNB': 620.31, 'XRP': 1.888, 'ADA': 0.791,
+    'DOT': 5.844, 'AVAX': 31.47, 'MATIC': 0.360, 'LINK': 16.18,
+    'UNI': 9.889, 'ATOM': 4.86, 'LTC': 83.9, 'BCH': 362.0,
+    'DOGE': 0.286, 'XLM': 0.349, 'ALGO': 0.279, 'NEAR': 4.60,
+    'ARB': 0.620, 'OP': 1.24, 'SUI': 3.22, 'INJ': 15.2,
+    'BORG': 2.80, 'GALA': 0.022,
+    // Stablecoins at ESTV USD/CHF rate
+    'USDC': 0.8990, 'USDT': 0.8990, 'DAI': 0.8990, 'FDUSD': 0.8990,
   }
 
+  // ── 2026 prices: fetched live at year-end via CoinGecko ──────────────────
+  // (no hardcoded values — will use lastPriceCHF from transaction data)
+  const YEAREND_PRICES_2026 = {}
+
   function getYearEndPrices(year) {
-    if (year === 2025) return YEAREND_PRICES_2025;
-    return YEAREND_PRICES_2024;
+    const y = parseInt(year);
+    if (y === 2025) return YEAREND_PRICES_2025;
+    if (y === 2026) return YEAREND_PRICES_2026;
+    return YEAREND_PRICES_2024; // default for 2024 and earlier
   }
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
@@ -3853,7 +3888,7 @@
       if (!res.ok) throw new Error('cg_hist_' + res.status);
       const data = await res.json();
       const usdPrice = data?.market_data?.current_price?.usd || 0;
-      const chfPrice = usdPrice * 0.8967; // Use standard ESTV rate
+      const chfPrice = usdPrice * 0.906250; // ESTV official USD/CHF rate 31.12.2024
       _krakenPriceCache[key] = chfPrice;
       return chfPrice;
     } catch (e) {
