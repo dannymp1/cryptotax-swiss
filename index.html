@@ -3837,7 +3837,7 @@
     // ── Gemini ───────────────────────────────────────────────────────────────
     if (h.includes('specification') && h.includes('liquidity indicator')) return 'gemini';
     // ── Bitfinex ─────────────────────────────────────────────────────────────
-    if (h.includes('fee perc') && h.includes('fee currency') && h.includes('mts create')) return 'bitfinex';
+    if ((h.includes('mts create') || h.includes('mts_create')) && h.includes('pair') && h.includes('amount') && h.includes('price')) return 'bitfinex';
     // ── Gate.io ──────────────────────────────────────────────────────────────
     if (h.includes('pair') && h.includes('role') && h.includes('total') && h.includes('side') && h.includes('date')) return 'gate';
     // ── MEXC ─────────────────────────────────────────────────────────────────
@@ -4273,7 +4273,7 @@
           type = side;
           const inst = (r['instrument_name']||'').toUpperCase();
           asset = inst.replace(/_?(USD|USDT|USDC|EUR|BTC|ETH)$/,'') || inst.slice(0,6);
-          qty = Math.abs(parseFloat(r['quantity']||0));
+          qty = Math.abs(parseFloat(r['quantity']||r['qty']||r['filled qty']||r['size']||0));
           const rawPrice = parseFloat(r['price']||0);
           priceCHF = rawPrice * USD_CHF;
           totalCHF = qty * priceCHF;
@@ -4388,7 +4388,7 @@
           else continue;
           // Symbol like BTC or ETHUSD — strip quote
           asset = (r['symbol']||'').toUpperCase().replace(/(USD|USDT|EUR|GBP)$/,'') || (r['symbol']||'').slice(0,6);
-          const usdAmt = Math.abs(parseFloat((r['usd amount']||'0').replace(/[,$]/g,'')));
+          const usdAmt = Math.abs(parseFloat((r['usd amount']||r['usd amount usd']||r['notional']||'0').replace(/[,$]/g,'')));
           // Find qty from the asset-specific column (e.g., 'BTC Amount')
           const qtyKey = Object.keys(r).find(k => k.toLowerCase().includes(asset.toLowerCase()+' amount') || (k.toLowerCase().endsWith(' amount') && !k.toLowerCase().includes('usd') && !k.toLowerCase().includes('fee')));
           qty = qtyKey ? Math.abs(parseFloat((r[qtyKey]||'0').replace(/[,$]/g,''))) : 0;
@@ -4426,15 +4426,15 @@
         }
         // ── MEXC ──────────────────────────────────────────────────────────────
         else if (format === 'mexc') {
-          date = (r['time']||'').slice(0,10);
-          const side = (r['side']||'').toLowerCase();
+          date = (r['trade_time']||r['time']||'').slice(0,10);
+          const side = (r['trade_type']||r['side']||'').toLowerCase();
           if (!['buy','sell'].includes(side)) continue;
           type = side;
           const sym = (r['symbol']||'').toUpperCase();
           asset = sym.replace(/(USDT|USDC|USD|BUSD)$/,'');
-          qty = Math.abs(parseFloat(r['filled_amount']||0));
-          const rawPrice = parseFloat(r['filled_price']||0);
-          const rawVol = Math.abs(parseFloat(r['filled_volume']||0));
+          qty = Math.abs(parseFloat(r['filled_amount']||r['amount']||0));
+          const rawPrice = parseFloat(r['filled_price']||r['price']||0);
+          const rawVol = Math.abs(parseFloat(r['filled_volume']||r['volume']||0));
           priceCHF = rawPrice * USD_CHF;
           totalCHF = rawVol > 0 ? rawVol * USD_CHF : qty * priceCHF;
         }
