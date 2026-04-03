@@ -3868,7 +3868,9 @@
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
-      const fallback = getYearEndPrices(taxYear)[asset] || 0;
+      // taxYear not in scope here — derive from date string or fall back to 2024 prices
+      const yr = parseInt(dateStr.slice(0,4)) || 2024;
+      const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
@@ -3890,8 +3892,9 @@
       _krakenPriceCache[key] = chfPrice;
       return chfPrice;
     } catch (e) {
-      // Fallback: use year-end price if available
-      const fallback = getYearEndPrices(taxYear)[asset] || 0;
+      // Fallback to year-end prices — derive year from dateStr to avoid scope issues
+      const yr = parseInt(dateStr.slice(0,4)) || 2024;
+      const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
