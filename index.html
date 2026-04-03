@@ -3962,7 +3962,7 @@
           else if (t === 'deposit') type = 'buy'; // deposit = cost basis transfer in, not a taxable gain
           else if (t === 'sell') type = 'sell';
           else if (t === 'withdrawal') type = 'withdrawal'; // transfer out — reduces lots but no gain
-          else if (t === 'payouts') type = 'staking';
+          else if (t === 'payouts' || t === 'yield' || t.includes('earn') || t.includes('reward') || t.includes('interest') || t.includes('cashback') || t.includes('savings') || t.includes('staking')) type = 'staking';
           else continue;
           asset = currency;
           qty = Math.abs(parseFloat(r['net amount']) || parseFloat(r['gross amount']) || 0);
