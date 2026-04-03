@@ -2250,7 +2250,8 @@
       <div class="pricing-period">Per tax year · up to 1,000 transactions</div>
       <ul class="pricing-features">
         <li>Up to 1,000 transactions</li>
-        <li>All exchanges & wallets</li>
+        <li>1 portfolio / entity</li>
+        <li>All 20+ supported exchanges</li>
         <li>Multi-year support</li>
         <li>Full PDF + CSV export</li>
         <li>FIFO method (ESTV standard)</li>
@@ -2303,6 +2304,7 @@
     </div>
     <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="147c7178787b5477666d64607b707177787566713a777c">[email&#160;protected]</a></div>
     <div class="unlock-success" id="unlock-success"></div>
+    <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable. Each purchase is for one tax entity.</div>
   </div>
 
   <!-- FREE TRIAL BANNER -->
@@ -2348,19 +2350,19 @@
 
     <div class="app-right">
       <div class="app-info-box">
-        <div class="app-info-label">What we need</div>
-        <div class="app-info-title">A standard transaction export</div>
-        <div class="app-info-body">Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.</div>
+        <div class="app-info-label" data-i18n="info_need_label">What we need</div>
+        <div class="app-info-title" data-i18n="info_need_title">A standard transaction export</div>
+        <div class="app-info-body" data-i18n="info_need_body">Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.</div>
       </div>
       <div class="app-info-box">
-        <div class="app-info-label">What you get</div>
-        <div class="app-info-title">A Swiss tax-ready report</div>
-        <div class="app-info-body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.</div>
+        <div class="app-info-label" data-i18n="info_get_label">What you get</div>
+        <div class="app-info-title" data-i18n="info_get_title">A Swiss tax-ready report</div>
+        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.</div>
       </div>
       <div class="app-info-box">
-        <div class="app-info-label">Privacy</div>
-        <div class="app-info-title">Processed in your session only</div>
-        <div class="app-info-body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
+        <div class="app-info-label" data-i18n="info_priv_label">Privacy</div>
+        <div class="app-info-title" data-i18n="info_priv_title">Processed in your session only</div>
+        <div class="app-info-body" data-i18n="info_priv_body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
       </div>
     </div>
   </div>
@@ -2378,9 +2380,9 @@
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Ledger CSV
         </button>
-        <button class="btn-outline" onclick="openModal('professional')" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
+        <a class="btn-outline" href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" target="_blank" rel="noopener" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
           Upgrade to Pro
-        </button>
+        </a>
       </div>
     </div>
 
@@ -2482,13 +2484,10 @@
       <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
-      <p>Enter your email to continue to secure checkout via Stripe. You'll receive your report download link immediately after payment.</p>
+      <p id="modal-desc">You'll receive your unlock code by email immediately after payment. Enter it on this page to activate your plan.</p>
       <div class="modal-stripe-note">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z" stroke="#8A909E" stroke-width="1.2"/><path d="M8 7v4M8 5.5v.5" stroke="#8A909E" stroke-width="1.2" stroke-linecap="round"/></svg>
         Payments are processed securely by Stripe. We never see your card details.
-      </div>
-      <div class="modal-input-group">
-        <input class="modal-input" type="email" id="modal-email" placeholder="your@email.com" />
       </div>
       <a class="btn-stripe" id="stripe-checkout-btn" href="#" onclick="proceedToStripe(event)">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.5h12M4 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -2624,6 +2623,12 @@
       trial_strong: 'Try your first report at no cost.',
       trial_span: 'Upload any transaction file — we\'ll generate a full Swiss tax report instantly.',
       trial_used: 'Free trial used — upgrade to Pro to generate more reports',
+      info_need_label: 'What we need', info_need_title: 'A standard transaction export',
+      info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.',
+      info_get_label: 'What you get', info_get_title: 'A Swiss tax-ready report',
+      info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.',
+      info_priv_label: 'Privacy', info_priv_title: 'Processed in your session only',
+      info_priv_body: 'Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
       btn_download: '⬇ Download PDF',
       btn_upgrade: 'Upgrade to Pro',
@@ -2667,10 +2672,11 @@
       starter_f3: 'CHF conversion',
       starter_f4: 'Basic PDF report',
       pro_f1: 'Up to 1,000 transactions',
-      pro_f2: 'All exchanges & wallets',
-      pro_f3: 'Multi-year support',
-      pro_f4: 'Full PDF + CSV export',
-      pro_f5: 'FIFO method (ESTV standard)',
+      pro_f2: '1 portfolio / entity',
+      pro_f3: 'All 20+ supported exchanges',
+      pro_f4: 'Multi-year support',
+      pro_f5: 'Full PDF + CSV export',
+      pro_f6: 'FIFO method (ESTV standard)',
       biz_f1: 'Unlimited transactions',
       biz_f2: 'Unlimited exchanges & portfolios',
       biz_f3: 'Multi-year history',
@@ -2741,6 +2747,12 @@
       trial_strong: 'Essayez votre premier rapport gratuitement.',
       trial_span: 'Importez n\'importe quel fichier de transactions — nous générons un rapport fiscal complet instantanément.',
       trial_used: 'Essai gratuit utilisé — passez à Pro pour générer plus de rapports',
+      info_need_label: 'Ce dont nous avons besoin', info_need_title: 'Un export de transactions standard',
+      info_need_body: 'Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et tout CSV générique avec date, actif, montant et prix.',
+      info_get_label: 'Ce que vous obtenez', info_get_title: 'Un rapport prêt pour la déclaration suisse',
+      info_get_body: 'Notre moteur de calcul applique la méthode FIFO suisse à vos transactions, convertit tout en CHF selon les taux officiels ESTV et génère un rapport structuré pour votre déclaration cantonale.',
+      info_priv_label: 'Confidentialité', info_priv_title: 'Traité dans votre session uniquement',
+      info_priv_body: 'Vos données ne sont jamais stockées sur nos serveurs. Tout le traitement s\'effectue de manière sécurisée et éphémère — une fois votre session terminée, rien n\'est conservé.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
       btn_download: '⬇ Télécharger PDF',
       btn_upgrade: 'Passer à Pro',
@@ -2784,10 +2796,11 @@
       starter_f3: 'Conversion CHF',
       starter_f4: 'Rapport PDF basique',
       pro_f1: "Jusqu'à 1'000 transactions",
-      pro_f2: 'Toutes bourses & wallets',
-      pro_f3: 'Support multi-années',
-      pro_f4: 'Export PDF + CSV complet',
-      pro_f5: 'Méthode FIFO (norme ESTV)',
+      pro_f2: '1 portefeuille / entité',
+      pro_f3: '20+ bourses supportées',
+      pro_f4: 'Support multi-années',
+      pro_f5: 'Export PDF + CSV complet',
+      pro_f6: 'Méthode FIFO (norme ESTV)',
       biz_f1: 'Transactions illimitées',
       biz_f2: 'Bourses & portefeuilles illimités',
       biz_f3: 'Historique multi-années',
@@ -2837,8 +2850,8 @@
       report_body: "Propre, structuré et conforme. Votre rapport PDF inclut un journal complet des transactions, un résumé des gains en capital et une valorisation de fin d'année.",
       report_cta: 'Générer mon rapport',
       starter_period: "Jusqu'à 50 transactions", starter_cta: 'Commencer gratuitement',
-      pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Bientôt disponible',
-      biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Bientôt disponible',
+      pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Obtenir Pro',
+      biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Obtenir Business',
       footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Rapide, conforme et privé.',
       footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
       modal_body: "Entrez votre email pour continuer vers le paiement sécurisé via Stripe. Vous recevrez votre lien de téléchargement immédiatement après le paiement.",
@@ -2858,6 +2871,12 @@
       trial_strong: 'Ersten Bericht kostenlos testen.',
       trial_span: 'Laden Sie eine beliebige Transaktionsdatei hoch — wir erstellen sofort einen vollständigen Steuerbericht.',
       trial_used: 'Kostenlose Testversion verwendet — auf Pro upgraden für weitere Berichte',
+      info_need_label: 'Was wir benötigen', info_need_title: 'Ein Standard-Transaktionsexport',
+      info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und jedes generische CSV mit Datum, Vermögenswert, Betrag und Preis.',
+      info_get_label: 'Was Sie erhalten', info_get_title: 'Ein schweizkonformer Steuerbericht',
+      info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF gemäss offiziellen ESTV-Kursen und erstellt einen strukturierten Bericht für Ihre kantonale Steuererklärung.',
+      info_priv_label: 'Datenschutz', info_priv_title: 'Nur in Ihrer Sitzung verarbeitet',
+      info_priv_body: 'Ihre Daten werden nie auf unseren Servern gespeichert. Die gesamte Verarbeitung erfolgt sicher und ephemer — sobald Ihre Sitzung endet, werden keine Daten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
       btn_download: '⬇ PDF herunterladen',
       btn_upgrade: 'Auf Pro upgraden',
@@ -2901,10 +2920,11 @@
       starter_f3: 'CHF-Umrechnung',
       starter_f4: 'Einfacher PDF-Bericht',
       pro_f1: "Bis 1'000 Transaktionen",
-      pro_f2: 'Alle Börsen & Wallets',
-      pro_f3: 'Mehrjahres-Support',
-      pro_f4: 'Vollständiger PDF + CSV-Export',
-      pro_f5: 'FIFO-Methode (ESTV-Standard)',
+      pro_f2: '1 Portfolio / Unternehmen',
+      pro_f3: '20+ unterstützte Börsen',
+      pro_f4: 'Mehrjahres-Support',
+      pro_f5: 'Vollständiger PDF + CSV-Export',
+      pro_f6: 'FIFO-Methode (ESTV-Standard)',
       biz_f1: 'Unbegrenzte Transaktionen',
       biz_f2: 'Unbegrenzte Börsen & Portfolios',
       biz_f3: 'Mehrjahres-Historie',
@@ -2950,8 +2970,8 @@
       report_body: 'Sauber, strukturiert und konform. Ihr PDF-Bericht enthält ein vollständiges Transaktionsprotokoll, eine Kapitalgewinnzusammenfassung und eine Jahresend-Portfoliobewertung.',
       report_cta: 'Bericht erstellen',
       starter_period: 'Bis 50 Transaktionen', starter_cta: 'Kostenlos starten',
-      pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Demnächst verfügbar',
-      biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Demnächst verfügbar',
+      pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Pro kaufen',
+      biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Business kaufen',
       footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Schnell, konform und privat.',
       footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
       modal_body: 'Geben Sie Ihre E-Mail ein, um zur sicheren Zahlung über Stripe weiterzugehen. Sie erhalten Ihren Download-Link sofort nach der Zahlung.',
@@ -3151,7 +3171,7 @@
     const pCards = document.querySelectorAll('.pricing-card');
     const planKeys = [
       { name:'starter_name', features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
-      { name:'pro_name',     features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] },
+      { name:'pro_name',     features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5','pro_f6'] },
       { name:'biz_name',     features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6','biz_f7'] },
     ];
     pCards.forEach((card, i) => {
@@ -3209,6 +3229,16 @@
     if (ulInput && t.unlock_btn) ulInput.placeholder = lang === 'en' ? 'Enter your unlock code' : lang === 'fr' ? 'Entrez votre code d\'activation' : 'Freischaltcode eingeben';
     const ulErr = document.getElementById('unlock-error');
     if (ulErr && t.unlock_error) ulErr.textContent = t.unlock_error;
+
+    // Generic data-i18n attribute handler (info boxes, etc.)
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (t[key]) el.innerHTML = t[key];
+    });
 
     // Footer links
     const fLinks = document.querySelectorAll('.footer-links');
@@ -3276,8 +3306,8 @@
 
   // ── Stripe Modal ──
   const STRIPE_LINKS = {
-    professional: '', // Add Stripe payment link when ready
-    business: '',    // Add Stripe payment link when ready
+    professional: 'https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00',
+    business: 'https://buy.stripe.com/6oU9AT8DR5GPekr3CQ0Jq01',
   };
 
   const PLAN_DETAILS = {
@@ -3302,14 +3332,8 @@
 
   function proceedToStripe(e) {
     e.preventDefault();
-    const email = document.getElementById('modal-email').value.trim();
-    if (!email || !email.includes('@')) {
-      document.getElementById('modal-email').style.borderColor = '#C0392B';
-      document.getElementById('modal-email').focus();
-      return;
-    }
-    const base = STRIPE_LINKS[currentPlan];
-    const url = base + '?prefilled_email=' + encodeURIComponent(email);
+    const url = STRIPE_LINKS[currentPlan];
+    if (!url) return;
     window.open(url, '_blank');
     closeModal();
   }
@@ -3516,6 +3540,7 @@
   }
 
   async function processFiles(files) {
+    if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     if (files.length === 1) return processFile(files[0]);
 
     const indicator = document.getElementById('processing-indicator');
@@ -3593,6 +3618,7 @@
   }
 
   async function processFile(file) {
+    if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     const indicator = document.getElementById('processing-indicator');
     indicator.classList.add('visible');
     setProcessingText('Reading your file...');
