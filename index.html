@@ -3826,6 +3826,7 @@
     if (h.includes('instrument_name') && h.includes('create_time') && h.includes('side')) return 'crypto_com_ex';
     // ── Nexo ─────────────────────────────────────────────────────────────────
     if (h.includes('input currency') && h.includes('output currency') && h.includes('usd equivalent')) return 'nexo';
+    if (h.includes('transaction') && h.includes('currency') && h.includes('usd equivalent') && h.includes('outstanding loan')) return 'nexo';
     // ── Revolut ──────────────────────────────────────────────────────────────
     if (h.includes('started date') && h.includes('fiat amount') && h.includes('product')) return 'revolut';
     // ── Ledger Live ──────────────────────────────────────────────────────────
@@ -4130,7 +4131,7 @@
           // instId like BTC-USDT
           asset = instId.split('-')[0] || instId.slice(0,6);
           qty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty'])||0);
-          priceCHF = (parseFloat(r['filled price']||r['Filled Price'])||0) * USD_CHF;
+          priceCHF = (parseFloat(r['filled price']||r['Filled Price']||r['filled price(usdt)']||r['avg fill price']||r['Avg Fill Price']||r['price'])||0) * USD_CHF;
           totalCHF = qty * priceCHF;
         }
         else if (format === 'bitcoin_suisse') {
@@ -4267,32 +4268,45 @@
         // ── Nexo ─────────────────────────────────────────────────────────────
         else if (format === 'nexo') {
           date = (r['date / time']||r['date_time']||'').slice(0,10);
-          const txType = (r['type']||'').toLowerCase();
-          const inCur = (r['input currency']||'').toUpperCase();
-          const outCur = (r['output currency']||'').toUpperCase();
+          const txType = (r['type']||r['transaction']||'').toLowerCase();
+          const inCur  = (r['input currency'] ||r['currency']||'').toUpperCase();
+          const outCur = (r['output currency']||r['currency']||'').toUpperCase();
+          const inAmt  = Math.abs(parseFloat(r['input amount'] ||r['amount']||0));
+          const outAmt = Math.abs(parseFloat(r['output amount']||r['amount']||0));
           const usdVal = Math.abs(parseFloat(r['usd equivalent']||0));
+          const rawAmt = parseFloat(r['amount']||0); // for old format: negative = sell
+
           if (txType.includes('interest') || txType.includes('dividend') || txType.includes('cashback') || txType.includes('bonus') || txType.includes('earn')) {
             type = 'staking';
             asset = inCur;
-            qty = Math.abs(parseFloat(r['input amount']||0));
+            qty = inAmt || outAmt;
           } else if (txType === 'buy' || txType.includes('purchase')) {
             type = 'buy';
-            asset = outCur; qty = Math.abs(parseFloat(r['output amount']||0));
+            asset = outCur; qty = outAmt;
           } else if (txType === 'sell') {
             type = 'sell';
-            asset = inCur; qty = Math.abs(parseFloat(r['input amount']||0));
+            asset = inCur; qty = inAmt;
           } else if (txType === 'exchange') {
-            // Two tax events: sell inCur, buy outCur — emit sell here, buy pushed separately
-            if (!['USD','USDT','USDC','EUR','GBP','CHF'].includes(inCur)) {
-              out.push({ date, type:'sell', asset:inCur,
-                qty: Math.abs(parseFloat(r['input amount']||0)),
-                priceCHF: 0, totalCHF: usdVal * USD_CHF });
+            // Old format: negative amount = sell, positive = buy same currency
+            if (r['input currency']) {
+              // New format
+              if (!['USD','USDT','USDC','EUR','GBP','CHF'].includes(inCur)) {
+                out.push({ date, type:'sell', asset:inCur,
+                  qty: inAmt, priceCHF: 0, totalCHF: usdVal * USD_CHF });
+              }
+              type = 'buy'; asset = outCur; qty = outAmt;
+            } else {
+              // Old format: amount sign indicates direction
+              if (rawAmt < 0) {
+                type = 'sell'; asset = inCur; qty = Math.abs(rawAmt);
+              } else {
+                type = 'buy'; asset = inCur; qty = rawAmt;
+              }
             }
-            type = 'buy'; asset = outCur; qty = Math.abs(parseFloat(r['output amount']||0));
           } else if (txType.includes('deposit')) {
-            type = 'buy'; asset = inCur; qty = Math.abs(parseFloat(r['input amount']||0));
+            type = 'buy'; asset = inCur; qty = inAmt || outAmt;
           } else if (txType.includes('withdrawal')) {
-            type = 'withdrawal'; asset = inCur; qty = Math.abs(parseFloat(r['input amount']||0));
+            type = 'withdrawal'; asset = inCur; qty = inAmt || outAmt;
           } else continue;
           if (['USD','USDT','USDC','EUR','GBP','CHF'].includes(asset)) continue;
           priceCHF = qty > 0 ? (usdVal * USD_CHF) / qty : 0;
