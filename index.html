@@ -3906,10 +3906,9 @@
         if (format === 'kraken') {
           date = r['time']||'';
           const t = (r['type']||'').toLowerCase();
-          if (!['buy','sell','staking','reward'].some(x=>t.includes(x))) continue;
-          type = t.includes('buy')?'buy':t.includes('sell')?'sell':'staking';
-          // Fix: properly map Kraken ISO 4217 asset codes to standard symbols
-          // e.g. XXBT->BTC, XETH->ETH, XLTC->LTC, ZUSD->USD
+          const rawAmount = parseFloat(r['amount'])||0;
+
+          // Map Kraken asset codes first — needed for fiat check
           const krakenRaw = (r['asset']||'').toUpperCase();
           const KRAKEN_MAP = {
             'XXBT':'BTC','XBT':'BTC',
@@ -3918,8 +3917,27 @@
             'XXDG':'DOGE','XDG':'DOGE',
             'ZUSD':'USD','ZEUR':'EUR','ZCHF':'CHF','ZGBP':'GBP',
           };
-          asset = KRAKEN_MAP[krakenRaw] || krakenRaw.replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
-          qty = Math.abs(parseFloat(r['amount'])||0);
+          const mappedAsset = KRAKEN_MAP[krakenRaw] || krakenRaw.replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
+
+          // Skip fiat/stablecoin rows — they are the quote side of a trade pair
+          const FIAT = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
+          if (FIAT.includes(mappedAsset)) continue;
+
+          // Determine type: real Kraken exports use 'trade' + amount sign; some use 'buy'/'sell'
+          if (t === 'trade') {
+            type = rawAmount >= 0 ? 'buy' : 'sell';
+          } else if (t === 'staking' || t === 'earn' || t.includes('reward')) {
+            type = 'staking';
+          } else if (t.includes('buy')) {
+            type = 'buy';
+          } else if (t.includes('sell')) {
+            type = 'sell';
+          } else {
+            continue; // skip deposits, withdrawals, transfers, margin, etc.
+          }
+
+          asset = mappedAsset;
+          qty = Math.abs(rawAmount);
           // Kraken ledger has no price column — fetch historical CHF price
           const dateKey = date.slice(0,10); // YYYY-MM-DD
           priceCHF = await getHistoricalPriceCHF(asset, dateKey);
