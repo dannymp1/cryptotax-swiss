@@ -68,7 +68,7 @@
       "name": "Business",
       "price": "299",
       "priceCurrency": "CHF",
-      "description": "Unlimited transactions, LIFO support, accountant sharing"
+      "description": "Unlimited transactions, all exchanges, multi-entity support"
     }
   ],
   "provider": {
@@ -2128,8 +2128,8 @@
     </div>
     <div class="feature">
       <div class="feature-label">Accounting</div>
-      <div class="feature-title">FIFO & LIFO methods</div>
-      <div class="feature-body">Choose your cost basis method. FIFO is the Swiss standard, but we support LIFO for edge cases where your canton allows it.</div>
+      <div class="feature-title">FIFO method (ESTV standard)</div>
+      <div class="feature-body">We apply the FIFO method mandated by ESTV — the official Swiss tax authority standard for crypto asset valuation.</div>
     </div>
     <div class="feature">
       <div class="feature-label">Multi-year</div>
@@ -2267,8 +2267,8 @@
         <li>Unlimited exchanges & portfolios</li>
         <li>Multi-year history</li>
         <li>Full PDF + CSV export</li>
-        <li>FIFO & LIFO methods</li>
-        <li>Accountant sharing</li>
+        <li>FIFO method (ESTV standard)</li>
+        <li>Multi-entity support</li>
         <li>Priority support</li>
       </ul>
       <a href="https://buy.stripe.com/6oU9AT8DR5GPekr3CQ0Jq01" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Business</a>
@@ -2653,8 +2653,8 @@
       feat1_title: 'ESTV exchange rates',
       feat1_body: 'All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.',
       feat2_label: 'Accounting',
-      feat2_title: 'FIFO & LIFO methods',
-      feat2_body: 'Choose your cost basis method. FIFO is the Swiss standard, but we support LIFO for edge cases where your canton allows it.',
+      feat2_title: 'FIFO method (ESTV standard)',
+      feat2_body: 'We apply the FIFO method mandated by ESTV — the official Swiss tax authority standard for crypto asset valuation.',
       feat3_label: 'Multi-year',
       feat3_title: 'Full tax history',
       feat3_body: 'Declare multiple tax years at once. Import your full transaction history from 2017 to today and get a report for each year.',
@@ -2681,8 +2681,8 @@
       biz_f2: 'Unlimited exchanges & portfolios',
       biz_f3: 'Multi-year history',
       biz_f4: 'Full PDF + CSV export',
-      biz_f5: 'FIFO & LIFO methods',
-      biz_f6: 'Accountant sharing',
+      biz_f5: 'FIFO method (ESTV standard)',
+      biz_f6: 'Multi-entity support',
       biz_f7: 'Priority support',
       team_label: '07 — Team',
       team_title: 'Meet the<br><em>founder</em>',
@@ -2777,8 +2777,8 @@
       feat1_title: 'Taux de change ESTV',
       feat1_body: "Toutes les conversions utilisent les taux de change officiels de l'Administration fédérale des contributions. Votre rapport correspondra aux attentes des autorités.",
       feat2_label: 'Comptabilité',
-      feat2_title: 'Méthodes FIFO & LIFO',
-      feat2_body: 'Choisissez votre méthode de calcul du coût de base. FIFO est la norme suisse, mais nous supportons LIFO pour les cas particuliers.',
+      feat2_title: 'Méthode FIFO (norme ESTV)',
+      feat2_body: 'Nous appliquons la méthode FIFO mandatée par l\'ESTV — la norme officielle suisse pour la valorisation des cryptoactifs.',
       feat3_label: 'Multi-années',
       feat3_title: 'Historique fiscal complet',
       feat3_body: 'Déclarez plusieurs années fiscales à la fois. Importez votre historique complet depuis 2017.',
@@ -2805,8 +2805,8 @@
       biz_f2: 'Bourses & portefeuilles illimités',
       biz_f3: 'Historique multi-années',
       biz_f4: 'Export PDF + CSV complet',
-      biz_f5: 'Méthodes FIFO & LIFO',
-      biz_f6: 'Partage avec comptable',
+      biz_f5: 'Méthode FIFO (norme ESTV)',
+      biz_f6: 'Support multi-entités',
       biz_f7: 'Support prioritaire',
       team_label: '07 — Team',
       team_title: 'Meet the<br><em>founder</em>',
@@ -2901,8 +2901,8 @@
       feat1_title: 'ESTV-Wechselkurse',
       feat1_body: 'Alle Umrechnungen verwenden die offiziellen ESTV-Wechselkurse. Ihr Bericht entspricht den Erwartungen der Behörden.',
       feat2_label: 'Buchführung',
-      feat2_title: 'FIFO & LIFO-Methoden',
-      feat2_body: 'Wählen Sie Ihre Kostenbasis-Methode. FIFO ist der Schweizer Standard, aber wir unterstützen auch LIFO.',
+      feat2_title: 'FIFO-Methode (ESTV-Standard)',
+      feat2_body: 'Wir wenden die von der ESTV vorgeschriebene FIFO-Methode an — der offizielle Schweizer Standard für die Bewertung von Krypto-Assets.',
       feat3_label: 'Mehrjährig',
       feat3_title: 'Vollständige Steuerhistorie',
       feat3_body: 'Deklarieren Sie mehrere Steuerjahre auf einmal. Importieren Sie Ihre vollständige Transaktionshistorie seit 2017.',
@@ -2929,8 +2929,8 @@
       biz_f2: 'Unbegrenzte Börsen & Portfolios',
       biz_f3: 'Mehrjahres-Historie',
       biz_f4: 'Vollständiger PDF + CSV-Export',
-      biz_f5: 'FIFO & LIFO-Methoden',
-      biz_f6: 'Treuhänder-Freigabe',
+      biz_f5: 'FIFO-Methode (ESTV-Standard)',
+      biz_f6: 'Multi-Entitäten-Support',
       biz_f7: 'Prioritäts-Support',
       team_label: '07 — Team',
       team_title: 'Der<br><em>Gründer</em>',
@@ -3811,12 +3811,18 @@
     let text = csvText.trim();
     const lines = text.split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map(h => h.replace(/['"]/g,'').trim().toLowerCase());
+    // Auto-detect delimiter: comma, semicolon (Swissquote/EU), or tab
+    const first = lines[0];
+    const commas = (first.match(/,/g)||[]).length;
+    const semis  = (first.match(/;/g)||[]).length;
+    const tabs   = (first.match(/\t/g)||[]).length;
+    const delim  = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
+    const headers = lines[0].split(delim).map(h => h.replace(/['"]/g,'').trim().toLowerCase());
     return lines.slice(1).map(line => {
       const vals = []; let cur = '', inQ = false;
       for (const ch of line) {
         if (ch === '"') { inQ = !inQ; }
-        else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+        else if (ch === delim && !inQ) { vals.push(cur.trim()); cur = ''; }
         else cur += ch;
       }
       vals.push(cur.trim());
@@ -3825,7 +3831,6 @@
       return row;
     });
   }
-
   function detectFormat(headers) {
     const h = headers.join(',').toLowerCase();
     // ── Swiss-specific ───────────────────────────────────────────────────────
