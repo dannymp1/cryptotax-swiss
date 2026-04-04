@@ -4887,15 +4887,15 @@
 <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:24px">
   <thead>
     <tr style="background:rgba(255,255,255,0.05)">
-      <th style="padding:10px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Symbol</th>
-      <th style="padding:10px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Asset</th>
-      <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buys</th>
-      <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sells</th>
-      <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
-      ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Unmatched (Excluded)</th>` : ''}
+      <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Symbol</th>
+      <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Asset</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buys</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sells</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
+      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
+      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
+      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
+      ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Unmatched (Excluded)</th>` : ''}
     </tr>
   </thead>
   <tbody style="color:rgba(245,242,235,0.75)">
@@ -4918,7 +4918,7 @@
   </div>
 </div>
 
-${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${data.notes}</div>` : ''}
+${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${data.notes}</div>` : ''}
     `;
 
     document.getElementById('report-content').innerHTML = reportHTML;
@@ -5069,13 +5069,13 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .doc-header-right { text-align: right; display: flex; flex-direction: column; justify-content: flex-start; }
   /* Point 1: Report title bigger */
   .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 26pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; letter-spacing: -0.02em; }
-  .doc-meta { font-family: 'DM Mono', monospace; font-size: 7.5pt; color: #8A909E; line-height: 1.9; letter-spacing: 0.04em; white-space: nowrap; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 7pt; color: #9AA0AC; line-height: 1.85; letter-spacing: 0.04em; white-space: nowrap; }
 
   .doc-header-accent { height: 0; margin-bottom: 14px; }
 
   /* Info bar */
   .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border: 1px solid #D8D4CC; border-top: 3px solid #0D1117; overflow:hidden; margin-bottom: 32px; }
-  .info-cell { background: #FAFAF8; padding: 14px 16px; border-right: 1px solid #E8E4DC; }
+  .info-cell { background: #FAFAF8; padding: 14px 12px; border-right: 1px solid #E8E4DC; }
   .info-cell:last-child { border-right: none; }
   .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
   .info-val { font-family:'DM Serif Display',serif; font-size:15pt; color:#0D1117; font-weight:400; }
@@ -5096,7 +5096,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
           border: none; }
   thead tr { background:#1A1D21; }
   thead th {
-    padding:10px 10px; font-family:'DM Mono',monospace; font-size:6.5pt;
+    padding:10px 12px; font-family:'DM Mono',monospace; font-size:6.5pt;
     letter-spacing:0.12em; text-transform:uppercase; color:#B8960C; font-weight:500;
     border-right: 1px solid rgba(255,255,255,0.08);
   }
@@ -5108,12 +5108,10 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   tbody tr:nth-child(even) { background:#FAFAF8; }
   tbody tr:nth-child(odd) { background:#FFFFFF; }
   tbody td {
-    padding:11px 10px; color:#0D1117; vertical-align:middle; line-height:1.5;
+    padding:11px 12px; color:#0D1117; vertical-align:middle; line-height:1.5;
     border-right: 1px solid rgba(0,0,0,0.04);
   }
   tbody td:last-child { border-right: none; }
-  tbody td:first-child { padding-left:14px; }
-  tbody td:last-child { padding-right:14px; }
   .mono { font-family:'DM Mono',monospace; font-size:8.5pt; letter-spacing:0.02em; font-variant-numeric:tabular-nums; white-space:nowrap; }
   .right { text-align:right; }
   .center { text-align:center; }
@@ -5126,14 +5124,14 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
   /* Total row — strong, finance-grade */
   .total-row { background:#1A1D21 !important; border: none !important; border-top: 2px solid #B8960C !important; }
-  .total-row td { color:#F5F2EB; font-weight:700; padding:11px 10px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.08) !important; }
+  .total-row td { color:#F5F2EB; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.08) !important; }
   .total-row td:last-child { border-right: none !important; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#E0DDD5; border:none; margin:36px 0 36px 0; align-items:stretch; box-shadow: 0 1px 0 #E0DDD5; }
-  .summary-box { background:#FAFAF8; padding:28px 26px; display:flex; flex-direction:column; }
-  .summary-box:last-child { }
-  .summary-box.highlight { background:#1A1D21; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
+  .summary-box { background:#FAFAF8; padding:28px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
+  .summary-box:last-child { border-right:none; }
+  .summary-box.highlight { background:#1A1D21; border-right:1px solid #2A2D31; }
   .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
   .summary-helper { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.1em; text-transform:uppercase; color:#B8960C; margin-top:8px; opacity:0.85; }
   .summary-box.highlight .summary-label { color:rgba(184,150,12,0.55); }
@@ -5141,11 +5139,11 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .summary-box.highlight .summary-val { color:#F5F2EB; font-size:26pt; }
 
   /* Compliance */
-  .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 16px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
+  .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 12px 14px 9px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
   .compliance-box strong { color:#0D1117; }
 
   /* Notes */
-  .notes-box { background:#F5F2EB; border:1px solid #D8D4CC; border-left: 3px solid #0D1117; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
+  .notes-box { background:#F5F2EB; border:none; border-left: 3px solid #5A6070; padding:12px 12px 12px 9px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
 
   /* ── FOOTER — finance document style ─────────────────────────────────── */
   .doc-footer { display:none; }
@@ -5516,7 +5514,7 @@ onmouseout="this.style.color='#8A909E'">
   })()}
 
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
-  <div style="border-left:3px solid #B8960C;padding:10px 14px;margin-bottom:20px;background:#FFFCF5;">
+  <div style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
     <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
     <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'DM Mono',monospace;font-size:8pt;font-weight:600;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
   </div>` : ''}
@@ -5567,13 +5565,13 @@ onmouseout="this.style.color='#8A909E'">
     return '<div class="sec-title" style="margin-top:24px;break-before:avoid;">02 — FIFO Reconciliation</div>'
       +'<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">This table shows how your holdings were matched under FIFO. Unmatched quantities indicate disposals with no corresponding purchase history in this file — likely acquired on another exchange or in a prior period.</p>'
       +'<table style="font-size:7.5pt;"><thead><tr>'
-      +'<th style="text-align:left;padding:10px 10px;">Asset</th>'
-      +'<th class="right" style="padding:10px 8px;" title="Derived from closing balance + sells − buys">Opening Balance<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(derived from activity)</span></th>'
-      +'<th class="right" style="padding:10px 8px;">+ Buys</th>'
-      +'<th class="right" style="padding:10px 8px;">− Sells</th>'
-      +'<th class="right" style="padding:10px 8px;">= Closing</th>'
-      +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 8px 10px 14px;">Unmatched Qty</th>'
-      +'<th class="right" style="padding:10px 8px;">Unmatched Proceeds</th>'
+      +'<th style="text-align:left;padding:10px 12px;">Asset</th>'
+      +'<th class="right" style="padding:10px 12px;" title="Derived from closing balance + sells − buys">Opening Balance<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(derived from activity)</span></th>'
+      +'<th class="right" style="padding:10px 12px;">+ Buys</th>'
+      +'<th class="right" style="padding:10px 12px;">− Sells</th>'
+      +'<th class="right" style="padding:10px 12px;">= Closing</th>'
+      +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 12px 10px 14px;">Unmatched Qty</th>'
+      +'<th class="right" style="padding:10px 12px;">Unmatched Proceeds</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table>'
       +'<p style="font-size:8pt;color:#8A909E;font-family:\'Instrument Sans\',Arial,sans-serif;margin-top:8px;line-height:1.6;font-style:italic;">'
       +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>'
@@ -5600,7 +5598,7 @@ onmouseout="this.style.color='#8A909E'">
   </div>
 
   <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "05" : "04"} — Legal Notice &amp; Disclaimer</div>
-  <div style="background:#F5F2EB;border-left:4px solid #2D7A56;padding:10px 14px;margin-bottom:12px;border-radius:2px;font-size:9.5pt;">
+  <div style="background:#F5F2EB;border-left:3px solid #2D7A56;padding:10px 12px 10px 9px;margin-bottom:12px;border-radius:0;font-size:9.5pt;">
     <strong style="color:#0D1117;">Supporting document — not an official tax filing.</strong>
     Attach this annex to your standard cantonal tax return. For private individuals, realised crypto gains are generally tax-free; staking income is taxable. Consult a certified Swiss tax advisor for your situation.
   </div>
@@ -5622,7 +5620,7 @@ onmouseout="this.style.color='#8A909E'">
 
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
 
-  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
+  <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
