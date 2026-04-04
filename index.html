@@ -4075,18 +4075,26 @@
           totalCHF = execVal > 0 ? execVal * USD_CHF : qty * priceCHF;
         }
         else if (format === 'swissquote') {
-          // Swissquote: Date,Order #,Transaction,Symbol,Currency,Price,Quantity,Value,Gross Amount,Net Amount
-          date = r['date']||r['Date']||'';
+          // Swissquote: Date;Order number;Transaction;Symbol;Name;ISIN;Quantity;Unit price;Costs;Net amount;Balance;Currency;Exchange
+          // Date format is DD.MM.YYYY — normalise to YYYY-MM-DD
+          const rawDate = r['date']||r['Date']||'';
+          if (rawDate.includes('.')) {
+            const [d,m,y] = rawDate.split('.');
+            date = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+          } else { date = rawDate; }
           const txType = (r['transaction']||r['Transaction']||'').toLowerCase();
           if (txType.includes('buy')) type = 'buy';
           else if (txType.includes('sell')) type = 'sell';
+          else if (txType.includes('dividend') || txType.includes('interest') || txType.includes('staking')) type = 'staking';
           else continue;
           const sym = (r['symbol']||r['Symbol']||'').toUpperCase();
-          // sym is like BTC or BTCUSD — strip USD/CHF/EUR suffix
-          asset = sym.replace(/(USD|CHF|EUR|USDT|BTC)$/,'') || sym.slice(0,6);
+          // sym is like BTC/CHF or BTCUSD — strip /CHF, /USD, /EUR suffix first, then trailing currency
+          asset = sym.replace(/\/(CHF|USD|EUR|USDT)$/, '').replace(/(USD|CHF|EUR|USDT)$/, '') || sym.split('/')[0] || sym.slice(0,6);
+          if (!asset || ['CHF','USD','EUR','USDT'].includes(asset)) continue;
           qty = Math.abs(parseFloat(r['quantity']||r['Quantity'])||0);
-          const currency = (r['currency']||r['Currency']||'').toUpperCase();
-          const price = parseFloat(r['price']||r['Price'])||0;
+          const currency = (r['currency']||r['Currency']||'CHF').toUpperCase();
+          // Swissquote uses "Unit price" or "Price" column
+          const price = parseFloat(r['unit price']||r['unit_price']||r['price']||r['Price']||r['Unit price']||0)||0;
           priceCHF = currency === 'CHF' ? price : price * USD_CHF;
           totalCHF = qty * priceCHF;
         }
