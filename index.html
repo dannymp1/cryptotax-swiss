@@ -5417,12 +5417,18 @@ onmouseout="this.style.color='#8A909E'">
   <div class="doc-header">
     <div class="doc-header-left">
       <div class="doc-logo-line">
-        <div class="ch-flag"></div>
+        <svg width="40" height="40" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="border-radius:8px;flex-shrink:0;">
+          <rect width="400" height="400" fill="#0D1117"/>
+          <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
+          <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
+          <rect x="205" y="262" width="90" height="16" rx="4" fill="#B8960C"/>
+          <path d="M 205 130 L 223 130 Q 290 130 290 200 Q 290 270 223 270 L 205 270 Z" fill="#B8960C"/>
+          <path d="M 223 148 Q 269 148 269 200 Q 269 252 223 252 L 223 148 Z" fill="#0D1117"/>
+        </svg>
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
-      <div class="doc-subtitle">Prepared for Swiss cantonal tax declaration · FIFO · cryptodeclare.ch
-        <span class="estv-badge" style="margin-left:10px;">ESTV-Compatible</span>
-      </div>
+      <div class="doc-subtitle">Swiss Crypto Tax Declaration · cryptodeclare.ch</div>
+      <div style="margin-top:5px;"><span class="estv-badge">ESTV-Compatible</span><span style="font-family:'DM Mono',monospace;font-size:6.5pt;color:#8A909E;letter-spacing:0.1em;margin-left:10px;">FIFO METHOD</span></div>
     </div>
     <div class="doc-header-right">
       <div class="doc-report-title">Tax Declaration Annex ${data.taxYear}</div>
@@ -5435,16 +5441,6 @@ onmouseout="this.style.color='#8A909E'">
     </div>
   </div>
   <div class="doc-header-accent"></div>
-
-  <!-- Meta bar -->
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #D8D4CC;margin-bottom:20px;">
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;color:#8A909E;letter-spacing:0.06em;">
-      PREPARED FOR SWISS CANTONAL TAX DECLARATION
-    </div>
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;color:#8A909E;letter-spacing:0.06em;text-align:right;">
-      Generated: ${new Date().toLocaleDateString('en-CH')} &nbsp;·&nbsp; Period: ${data.dateRange||data.taxYear} &nbsp;·&nbsp; Method: ${data.complianceMethod||'FIFO'}
-    </div>
-  </div>
 
   <div class="info-bar">
     <div class="info-cell">
