@@ -5074,7 +5074,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .doc-header-accent { height: 0; margin-bottom: 14px; }
 
   /* Info bar */
-  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border: 1px solid #D8D4CC; border-top: 3px solid #0D1117; overflow:hidden; margin-bottom: 32px; }
+  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border: 1px solid #E0DDD5; overflow:hidden; margin-bottom: 32px; }
   .info-cell { background: #FAFAF8; padding: 14px 12px; border-right: 1px solid #E8E4DC; }
   .info-cell:last-child { border-right: none; }
   .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
@@ -5094,11 +5094,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   /* ── TABLES — Point 10: Finance-grade borders, strong structure ────────── */
   table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:24px;
           border: none; }
-  thead tr { background:#1A1D21; }
+  thead tr { background:#FFFFFF; border-bottom: 2px solid #0D1117; }
   thead th {
     padding:10px 12px; font-family:'DM Mono',monospace; font-size:6.5pt;
-    letter-spacing:0.12em; text-transform:uppercase; color:#B8960C; font-weight:500;
-    border-right: 1px solid rgba(255,255,255,0.08);
+    letter-spacing:0.12em; text-transform:uppercase; color:#5A6070; font-weight:600;
+    border-right: none;
   }
   thead th:last-child { border-right: none; }
   thead th.right { text-align:right; }
@@ -5123,7 +5123,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   table col.col-gl     { width:18%; }
 
   /* Total row — strong, finance-grade */
-  .total-row { background:#1A1D21 !important; border: none !important; border-top: 2px solid #B8960C !important; }
+  .total-row { background:#0D1117 !important; border: none !important; border-top: 2px solid #B8960C !important; }
   .total-row td { color:#F5F2EB; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.08) !important; }
   .total-row td:last-child { border-right: none !important; }
 
@@ -5135,8 +5135,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
   .summary-helper { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.1em; text-transform:uppercase; color:#B8960C; margin-top:8px; opacity:0.85; }
   .summary-box.highlight .summary-label { color:rgba(184,150,12,0.55); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:28pt; color:#0D1117; line-height:1.0; font-weight:400; }
-  .summary-box.highlight .summary-val { color:#F5F2EB; font-size:26pt; }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:24pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
+  .summary-box.highlight .summary-val { color:#F5F2EB; font-size:24pt; white-space:nowrap; }
 
   /* Compliance */
   .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 12px 14px 9px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
@@ -5578,7 +5578,7 @@ onmouseout="this.style.color='#8A909E'">
       +'</div>';
   })()}
 
-  <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Tax Declaration Summary</div>
+  <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
   <div class="summary-grid">
     <div class="summary-box">
       <div class="summary-label">Staking / Reward Income</div>
@@ -5597,7 +5597,7 @@ onmouseout="this.style.color='#8A909E'">
     </div>
   </div>
 
-  <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "05" : "04"} — Legal Notice &amp; Disclaimer</div>
+  <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Legal Notice &amp; Disclaimer</div>
   <div style="background:#F5F2EB;border-left:3px solid #2D7A56;padding:10px 12px 10px 9px;margin-bottom:12px;border-radius:0;font-size:9.5pt;">
     <strong style="color:#0D1117;">Supporting document — not an official tax filing.</strong>
     Attach this annex to your standard cantonal tax return. For private individuals, realised crypto gains are generally tax-free; staking income is taxable. Consult a certified Swiss tax advisor for your situation.
@@ -5661,7 +5661,7 @@ onmouseout="this.style.color='#8A909E'">
 
     // Section number adjusts based on whether FIFO reconciliation appears
     const hasMissingBasis = (data.assets||[]).some(a=>a.missingCostBasis);
-    const secNum = 'Appendix';
+    const secNum = hasMissingBasis ? '05' : '04';
     // Renumber Tax Summary and Legal Notice accordingly
     return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
       + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
