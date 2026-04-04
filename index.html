@@ -2306,7 +2306,7 @@
       <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
       <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
     </div>
-    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="147c7178787b5477666d64607b707177787566713a777c">[email&#160;protected]</a></div>
+    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
     <div class="unlock-success" id="unlock-success"></div>
     <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable. Each purchase is for one tax entity.</div>
   </div>
@@ -2722,7 +2722,7 @@
       footer_contact: 'Contact',
       integrations_label: '03 — Integrations',
       integrations_title: 'Supported exchanges <em>&amp; wallets</em>',
-      report_mock_title: 'Crypto Tax Report 2024',
+      report_mock_title: 'Tax Declaration Annex 2024',
       report_mock_meta: 'Sample · Zurich · Tax Year 2024',
       exchange_note: "Don't see your exchange? Use Manual CSV — most export formats are supported automatically.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
@@ -4685,6 +4685,9 @@
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
+      reportId: 'CD-' + data.taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      reportVersion: '2.1',
+      generatedAt: new Date().toISOString(),
       totalTransactions: transactions.length,
       assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
       stakingIncomeCHF: computed.stakingIncomeCHF,
@@ -4772,6 +4775,9 @@
 
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
+      reportId: 'CD-' + taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      reportVersion: '2.1',
+      generatedAt: new Date().toISOString(),
       totalTransactions:transactions.length,
       assets:computed.assets.map(a=>({...a,name:assetNames[a.symbol]||a.symbol})),
       stakingIncomeCHF:computed.stakingIncomeCHF,
@@ -4970,7 +4976,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     // Dynamic holdings column header — derived from period end date
     const _dr = data.dateRange || '';
     const _endPart = _dr.includes('–') ? _dr.split('–').pop().trim() : _dr;
-    const holdingsLabel = _endPart ? 'Holdings ' + _endPart : 'Closing Balance';
+    const holdingsLabel = '31.12.' + data.taxYear;
 
     // Capitalised exchange name
     const _EXCHANGE_NAMES = {
@@ -4988,17 +4994,26 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
       ? Math.round(_totalMatched / (_totalMatched + _totalExcluded) * 100) : 100;
     const statusColor = !_hasUnmatched ? '#2D7A56' : _coverage >= 80 ? '#B8960C' : '#C0392B';
     const statusIcon  = !_hasUnmatched ? '✓' : _coverage >= 80 ? '⚠' : '🔴';
+    const buyCount = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
+    const sellCount = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
+    const unmatchedCount = (data.assets||[]).filter(a=>a.missingCostBasis).length;
     const statusLabel = !_hasUnmatched
       ? 'Complete — all positions matched'
       : _coverage >= 80
         ? 'Partial — minor gaps in acquisition history'
         : 'Incomplete — additional data required for accurate tax reporting';
 
+    const _buyCount  = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
+    const _sellCount = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
+    const _stakCount = (data.assets||[]).reduce((s,a)=>s+(a.stakingCount||0),0);
+    const _unmatchedCount = (data.assets||[]).filter(a=>a.missingCostBasis).length;
+    const _assetCount = (data.assets||[]).length;
+
     const pdfHTML = `<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<title>Crypto Tax Report ${data.taxYear} — CryptoDeclare</title>
+<title>Tax Declaration Annex ${data.taxYear} — CryptoDeclare</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -5014,6 +5029,8 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     .summary-grid { page-break-inside: avoid; }
     .compliance-box { page-break-inside: avoid; }
     h2, h3 { page-break-after: avoid; }
+    @page { counter-increment: page; }
+    body { counter-reset: page 0; }
     .doc-footer::after {
       content: " · Page " counter(page);
       font-family: 'DM Mono', monospace;
@@ -5028,44 +5045,77 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
   .page { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; }
 
-  /* Header */
-  .doc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 3px solid #1B2A4A; }
+  /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
+  .doc-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 18px; margin-bottom: 0;
+    border-bottom: 4px solid #1B2A4A;
+  }
   .doc-header-left {}
-  .doc-logo-line { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .ch-flag { width: 20px; height: 20px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; }
-  .ch-flag::before { content:''; width:8px; height:2px; background:white; box-shadow: 0 -3px 0 white,0 3px 0 white,-3px 0 0 white,3px 0 0 white; }
-  .doc-brand { font-family: 'DM Serif Display', serif; font-size: 20pt; letter-spacing: -0.02em; color: #1B2A4A; }
+  .doc-logo-line { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .ch-flag { width: 22px; height: 22px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; flex-shrink:0; }
+  .ch-flag::before { content:''; width:9px; height:2px; background:white; box-shadow: 0 -3.5px 0 white,0 3.5px 0 white,-3.5px 0 0 white,3.5px 0 0 white; }
+  /* Point 1: Brand bigger, bolder */
+  .doc-brand { font-family: 'DM Serif Display', serif; font-size: 26pt; letter-spacing: -0.02em; color: #1B2A4A; }
   .doc-brand span { color: #B8960C; }
-  .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #8A909E; }
+  /* Point 1: Subtitle now mentions ESTV explicitly */
+  .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #5A6070; margin-top: 2px; }
+  .estv-badge {
+    display: inline-block; background: #1B2A4A; color: #D4AF37;
+    font-family: 'DM Mono', monospace; font-size: 6.5pt; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin-left: 10px;
+    vertical-align: middle;
+  }
   .doc-header-right { text-align: right; }
-  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 15pt; color: #0D1117; margin-bottom: 4px; }
-  .doc-meta { font-family: 'DM Mono', monospace; font-size: 8pt; color: #8A909E; line-height: 2.0; letter-spacing: 0.04em; white-space: nowrap; }
+  /* Point 1: Report title bigger */
+  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 18pt; color: #1B2A4A; margin-bottom: 6px; font-weight: 400; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 7.5pt; color: #8A909E; line-height: 1.9; letter-spacing: 0.04em; white-space: nowrap; }
+
+  /* Gold accent bar below header — finance documents always have this */
+  .doc-header-accent { height: 3px; background: linear-gradient(90deg,#B8960C,#D4AF37,#B8960C); margin-bottom: 22px; }
 
   /* Info bar */
-  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #E8E4DC; border: 1px solid #E8E4DC; border-radius:4px; overflow:hidden; margin-bottom: 24px; }
-  .info-cell { background: #F5F2EB; padding: 10px 12px; }
-  .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#9AA0AC; margin-bottom:4px; }
-  .info-val { font-family:'DM Serif Display',serif; font-size:13pt; color:#0D1117; }
+  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #1B2A4A; border: 2px solid #1B2A4A; overflow:hidden; margin-bottom: 24px; }
+  .info-cell { background: #F5F2EB; padding: 11px 14px; border-right: 1px solid #D8D4CC; }
+  .info-cell:last-child { border-right: none; }
+  .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#9AA0AC; margin-bottom:5px; }
+  .info-val { font-family:'DM Serif Display',serif; font-size:14pt; color:#1B2A4A; font-weight:400; }
 
-  /* Section title */
-  .sec-title { font-family:'DM Mono',monospace; font-size:8pt; letter-spacing:0.14em; text-transform:uppercase; color:#3D4451; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #E0DDD5; margin-top:24px; }
+  /* ── SECTION TITLES — Point 1: More hierarchy, finance weight ─────────── */
+  .sec-title {
+    font-family:'DM Mono',monospace; font-size:7.5pt; letter-spacing:0.18em;
+    text-transform:uppercase; color:#FFFFFF; margin-bottom:12px;
+    padding:7px 12px; margin-top:28px;
+    background: #1B2A4A;
+    border-left: 4px solid #B8960C;
+  }
 
-  /* Table — financial statement style */
-  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:20px; }
+  /* ── TABLES — Point 10: Finance-grade borders, strong structure ────────── */
+  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:20px;
+          border: 1px solid #C8C4BC; }
   thead tr { background:#1B2A4A; }
-  thead th { padding:9px 8px; font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.1em; text-transform:uppercase; color:#D4AF37; font-weight:500; }
+  thead th {
+    padding:9px 10px; font-family:'DM Mono',monospace; font-size:7pt;
+    letter-spacing:0.1em; text-transform:uppercase; color:#D4AF37; font-weight:500;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  thead th:last-child { border-right: none; }
   thead th.right { text-align:right; }
   thead th.center { text-align:center; }
-  tbody tr { border-bottom:1px solid #F0EDE6; }
-  tbody tr:nth-child(even) { background:#FAFAF8; }
+  /* Point 10: Visible row borders + vertical column borders */
+  tbody tr { border-bottom: 1px solid #D8D4CC; }
+  tbody tr:nth-child(even) { background:#F7F5F0; }
   tbody tr:nth-child(odd) { background:#FFFFFF; }
-  tbody td { padding:9px 8px; color:#0D1117; vertical-align:middle; line-height:1.6; }
-  tbody td:first-child { padding-left:12px; }
-  tbody td:last-child { padding-right:12px; }
+  tbody td {
+    padding:9px 10px; color:#0D1117; vertical-align:middle; line-height:1.5;
+    border-right: 1px solid #E8E4DC;
+  }
+  tbody td:last-child { border-right: none; }
+  tbody td:first-child { padding-left:14px; }
+  tbody td:last-child { padding-right:14px; }
   .mono { font-family:'DM Mono',monospace; font-size:8.5pt; letter-spacing:0.02em; font-variant-numeric:tabular-nums; white-space:nowrap; }
   .right { text-align:right; }
   .center { text-align:center; }
-  /* Column widths for clean alignment */
   table col.col-symbol { width:8%; }
   table col.col-name   { width:16%; }
   table col.col-count  { width:7%; }
@@ -5073,32 +5123,34 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   table col.col-val    { width:18%; }
   table col.col-gl     { width:18%; }
 
-  /* Total row */
-  .total-row { background:#1B2A4A !important; border:none !important; }
-  .total-row td { color:#F5F2EB; font-weight:700; padding:9px 7px; font-family:'DM Mono',monospace; font-size:9.5pt; }
+  /* Total row — strong, finance-grade */
+  .total-row { background:#1B2A4A !important; border: none !important; border-top: 2px solid #B8960C !important; }
+  .total-row td { color:#F5F2EB; font-weight:700; padding:10px 10px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.1) !important; }
+  .total-row td:last-child { border-right: none !important; }
 
-  /* Summary boxes */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#e0ddd5; border:1px solid #e0ddd5; margin-bottom:24px; align-items:stretch; }
-  .summary-box { background:#F5F2EB; padding:16px 18px; display:flex; flex-direction:column; }
-  .summary-box.highlight { background:#1B2A4A; }
+  /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:#1B2A4A; border:2px solid #1B2A4A; margin-bottom:24px; align-items:stretch; }
+  .summary-box { background:#F5F2EB; padding:18px 20px; display:flex; flex-direction:column; border-right: 1px solid #D8D4CC; }
+  .summary-box:last-child { border-right: none; }
+  .summary-box.highlight { background:#1B2A4A; border-right: none; }
   .summary-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#9AA0AC; margin-bottom:8px; }
   .summary-box.highlight .summary-label { color:rgba(212,175,55,0.6); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:18pt; color:#0D1117; line-height:1.1; }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:20pt; color:#1B2A4A; line-height:1.1; }
   .summary-box.highlight .summary-val { color:#F5F2EB; }
 
   /* Compliance */
-  .compliance-box { background:#F7F0D4; border:1px solid #D4AF37; border-radius:3px; padding:12px 16px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#3D4451; }
+  .compliance-box { background:#FAFAF5; border:1px solid #C8C4BC; border-left: 4px solid #D4AF37; border-radius:0; padding:14px 16px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#3D4451; page-break-inside:avoid; break-inside:avoid; }
   .compliance-box strong { color:#0D1117; }
 
   /* Notes */
-  .notes-box { background:#F5F2EB; border:1px solid #E8E4DC; border-radius:3px; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
+  .notes-box { background:#F5F2EB; border:1px solid #D8D4CC; border-left: 3px solid #1B2A4A; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
 
-  /* Footer */
-  .doc-footer { margin-top:28px; padding-top:12px; border-top:1px solid #e0ddd5; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#8A909E; letter-spacing:0.08em; }
+  /* ── FOOTER — finance document style ─────────────────────────────────── */
+  .doc-footer { margin-top:32px; padding-top:10px; border-top: 2px solid #1B2A4A; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#8A909E; letter-spacing:0.08em; }
 
   /* Print button */
-  .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#D4AF37; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; } @media print { .no-print { display:none !important; visibility:hidden !important; } }
-  .no-print:hover { background:#B8960C; color:#0D1117; }
+  .no-print { position:fixed; top:20px; right:20px; background:#1B2A4A; color:#D4AF37; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); } @media print { .no-print { display:none !important; visibility:hidden !important; } }
+  .no-print:hover { background:#B8960C; color:#1B2A4A; }
 
   /* ── TEAM ── */
   .team-section {
@@ -5374,17 +5426,19 @@ onmouseout="this.style.color='#8A909E'">
         </svg>
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
-      <div class="doc-subtitle" style="font-family:'DM Mono',monospace;font-size:7pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;margin-top:4px;">Prepared for Swiss cantonal tax declaration · FIFO · cryptodeclare.ch</div>
+      <div class="doc-subtitle">Swiss Crypto Tax Declaration Annex · FIFO · cryptodeclare.ch<span class="estv-badge">ESTV-Compatible</span></div>
     </div>
     <div class="doc-header-right">
-      <div class="doc-report-title">Crypto Tax Report ${data.taxYear}</div>
+      <div class="doc-report-title">Tax Declaration Annex ${data.taxYear}</div>
       <div class="doc-meta">
         Generated: ${new Date().toLocaleDateString('en-CH')}<br/>
         Method: ${data.complianceMethod || 'FIFO'}<br/>
-        Period: ${data.dateRange || data.taxYear}
+        Period: ${data.dateRange || data.taxYear}<br/>
+        Report ID: ${data.reportId || '—'} · v${data.reportVersion || '2.1'}
       </div>
     </div>
   </div>
+  <div class="doc-header-accent"></div>
 
   <div class="info-bar">
     <div class="info-cell">
@@ -5405,11 +5459,26 @@ onmouseout="this.style.color='#8A909E'">
     </div>
   </div>
 
+  <!-- Validation strip -->
+  ${(function(){
+    const _bc = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
+    const _sc = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
+    const _uc = (data.assets||[]).filter(a=>a.missingCostBasis).length;
+    const _sc2 = (data.assets||[]).reduce((s,a)=>s+(a.stakingCount||0),0);
+    const _ucColor = _uc===0?'#2D7A56':'#C0392B';
+    return '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#E0DDD5;border:1px solid #E0DDD5;border-radius:3px;margin-bottom:20px;">'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_bc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#9AA0AC;">Buys Matched</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#9AA0AC;">Sells Matched</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:'+_ucColor+';">'+_uc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#9AA0AC;">Unmatched Disposals</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc2+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#9AA0AC;">Staking Events</div></div>'
+      +'</div>';
+  })()}
+
   ${(function(){
     // Derive end date label from dateRange for the Holdings column header
     const dr = data.dateRange || '';
     const endPart = dr.includes('–') ? dr.split('–').pop().trim() : dr;
-    const holdingsLabel = endPart ? 'Holdings ' + endPart : 'Closing Balance';
+    const holdingsLabel = '31.12.' + data.taxYear;
 
     // Capitalise exchange name from notes
     const EXCHANGE_NAMES = {
@@ -5452,9 +5521,14 @@ onmouseout="this.style.color='#8A909E'">
         +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Exchange(s)</div>'
         +'<div style="font-weight:600;color:#0D1117;">'+exchangeDisplay+'</div>'
       +'</div>'
-      +'<div style="padding:10px 14px;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Report Status</div>'
-        +'<div style="font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</div>'
+      +'<div style="padding:10px 14px;grid-column:span 2;">'
+        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:6px;">Validation Summary</div>'
+        +'<div style="display:flex;gap:24px;align-items:center;">'
+        +'<span style="font-size:9pt;"><strong style="color:#2D7A56;font-size:13pt;">'+buyCount+'</strong> <span style="color:#8A909E;font-size:7pt;">BUYS MATCHED</span></span>'
+        +'<span style="font-size:9pt;"><strong style="color:#2D7A56;font-size:13pt;">'+sellCount+'</strong> <span style="color:#8A909E;font-size:7pt;">SELLS MATCHED</span></span>'
+        +'<span style="font-size:9pt;"><strong style="color:'+(unmatchedCount===0?'#2D7A56':'#C0392B')+';font-size:13pt;">'+unmatchedCount+'</strong> <span style="color:#8A909E;font-size:7pt;">UNMATCHED</span></span>'
+        +'<span style="margin-left:auto;font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</span>'
+        +'</div>'
       +'</div>'
       +'</div>';
   })()}
@@ -5524,7 +5598,47 @@ onmouseout="this.style.color='#8A909E'">
       +'</div>';
   })()}
 
-  <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
+  ${(function(){
+    // ── TRANSACTION LEDGER ───────────────────────────────────────────────
+    const txs = data.transactions || [];
+    if (!txs.length) return '';
+    const sectionNum = (data.assets||[]).some(a=>a.missingCostBasis) ? '03' : '02';
+    const fmtDate = d => d ? d.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3.$2.$1') : '—';
+    const fmtQty  = n => Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6});
+    const fmtCHF  = n => 'CHF ' + Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const typeLabel = t => t === 'buy' ? '▲ Buy' : t === 'sell' ? '▼ Sell' : t === 'staking' ? '★ Staking' : t === 'withdrawal' ? '← Out' : t || '—';
+    const typeColor = t => t === 'buy' ? '#2E7D32' : t === 'sell' ? '#C0392B' : t === 'staking' ? '#B8960C' : '#5A6070';
+
+    const rows = txs.map(tx => {
+      const priceFmt = tx.priceCHF ? fmtCHF(tx.priceCHF) : '—';
+      const totalFmt = tx.totalCHF ? fmtCHF(tx.totalCHF) : '—';
+      return '<tr>'
+        + '<td class="mono" style="font-size:8pt;white-space:nowrap;">' + fmtDate(tx.date) + '</td>'
+        + '<td style="font-weight:600;font-size:8.5pt;color:' + typeColor(tx.type) + ';">' + typeLabel(tx.type) + '</td>'
+        + '<td style="font-weight:700;">' + escHtml(tx.asset||'—') + '</td>'
+        + '<td class="right mono" style="font-size:8pt;">' + fmtQty(tx.qty) + '</td>'
+        + '<td class="right mono" style="font-size:8pt;">' + priceFmt + '</td>'
+        + '<td class="right mono" style="font-size:8pt;font-weight:600;">' + totalFmt + '</td>'
+        + '</tr>';
+    }).join('');
+
+    // Section number adjusts based on whether FIFO reconciliation appears
+    const hasMissingBasis = (data.assets||[]).some(a=>a.missingCostBasis);
+    const secNum = hasMissingBasis ? '03' : '02';
+    // Renumber Tax Summary and Legal Notice accordingly
+    return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
+      + '<p style="font-size:8.5pt;color:#5A6070;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
+      + '<table style="font-size:8pt;"><thead><tr>'
+      + '<th style="text-align:left;white-space:nowrap;">Date</th>'
+      + '<th style="text-align:left;">Type</th>'
+      + '<th style="text-align:left;">Asset</th>'
+      + '<th class="right">Quantity</th>'
+      + '<th class="right">Price (CHF)</th>'
+      + '<th class="right">Total (CHF)</th>'
+      + '</tr></thead><tbody>' + rows + '</tbody></table>';
+  })()}
+
+  <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Tax Declaration Summary</div>
   <div class="summary-grid">
     <div class="summary-box">
       <div class="summary-label">Staking / Reward Income</div>
@@ -5537,10 +5651,15 @@ onmouseout="this.style.color='#8A909E'">
     <div class="summary-box highlight">
       <div class="summary-label">Realised Gain / Loss</div>
       <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
+      <div style="font-size:7pt;color:#2D7A56;margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.04em;">✔ Generally tax-free for Swiss private individuals</div>
     </div>
   </div>
 
-  <div class="sec-title">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Legal Notice &amp; Disclaimer</div>
+  <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "05" : "04"} — Legal Notice &amp; Disclaimer</div>
+  <div style="background:#F0F7F0;border-left:4px solid #2D7A56;padding:10px 14px;margin-bottom:12px;border-radius:2px;font-size:9.5pt;">
+    <strong style="color:#0D1117;">Supporting document — not an official tax filing.</strong>
+    Attach this annex to your standard cantonal tax return. For private individuals, realised crypto gains are generally tax-free; staking income is taxable. Consult a Treuhänder for complex situations.
+  </div>
   <div class="compliance-box">
     <strong>🇬🇧 EN</strong><br/>
     <span style="color:#2D7A56;font-weight:600;">✔ Swiss private individuals</span> — Capital gains generally tax-free; declare holdings as wealth (Vermögen). Staking and lending income is taxable.<br/>
@@ -5559,15 +5678,15 @@ onmouseout="this.style.color='#8A909E'">
   <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#5A6070;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds. This produces marginally overstated gains (conservative approach); impact is typically below 0.5% of total proceeds. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.9000 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
   <div class="doc-footer">
-    <span>CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
-    <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
+    <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
+    <span>ID: ${data.reportId||'—'} · Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting annex — not an official tax filing</span>
   </div>
 
 </div>
