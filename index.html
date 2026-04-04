@@ -5074,7 +5074,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .doc-header-accent { height: 0; margin-bottom: 14px; }
 
   /* Info bar */
-  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border: 1px solid #E0DDD5; overflow:hidden; margin-bottom: 32px; }
+  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border-top: 1px solid #D8D4CC; border-bottom: 1px solid #D8D4CC; overflow:hidden; margin-bottom: 32px; }
   .info-cell { background: #FAFAF8; padding: 14px 12px; border-right: 1px solid #E8E4DC; }
   .info-cell:last-child { border-right: none; }
   .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
@@ -5133,7 +5133,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .summary-box:last-child { border-right:none; }
   .summary-box.highlight { background:#1A1D21; border-right:1px solid #2A2D31; }
   .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
-  .summary-helper { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.1em; text-transform:uppercase; color:#B8960C; margin-top:8px; opacity:0.85; }
+
   .summary-box.highlight .summary-label { color:rgba(184,150,12,0.55); }
   .summary-val { font-family:'DM Serif Display',serif; font-size:24pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
   .summary-box.highlight .summary-val { color:#F5F2EB; font-size:24pt; white-space:nowrap; }
@@ -5468,7 +5468,7 @@ onmouseout="this.style.color='#8A909E'">
     const _uc = (data.assets||[]).filter(a=>a.missingCostBasis).length;
     const _sc2 = (data.assets||[]).reduce((s,a)=>s+(a.stakingCount||0),0);
     const _ucColor = _uc===0?'#2D7A56':'#C0392B';
-    return '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#D8D4CC;border:1px solid #D8D4CC;border-radius:3px;margin-bottom:20px;">'
+    return '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#D8D4CC;border-top:1px solid #D8D4CC;border-bottom:1px solid #D8D4CC;margin-bottom:20px;">'
       +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_bc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Buys Matched</div></div>'
       +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Sells Matched</div></div>'
       +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:'+_ucColor+';">'+_uc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Unmatched Disposals</div></div>'
@@ -5583,17 +5583,14 @@ onmouseout="this.style.color='#8A909E'">
     <div class="summary-box">
       <div class="summary-label">Staking / Reward Income</div>
       <div class="summary-val" style="color:#2D7A56">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
-      <div class="summary-helper">Taxable income · declare as income</div>
     </div>
     <div class="summary-box">
       <div class="summary-label">Wealth Value 31.12.${data.taxYear}</div>
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
-      <div class="summary-helper" style="color:#5A6070;">Declare as Vermögen · all cantons</div>
     </div>
     <div class="summary-box highlight">
       <div class="summary-label">Realised Gain / Loss</div>
       <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
-      <div class="summary-helper" style="color:rgba(184,150,12,0.8);">Typically tax-free · Swiss private individuals</div>
     </div>
   </div>
 
@@ -5606,7 +5603,7 @@ onmouseout="this.style.color='#8A909E'">
     <strong>🇬🇧 EN</strong><br/>
     <span style="color:#2D7A56;font-weight:600;">✔ Swiss private individuals</span> — Capital gains generally tax-free; declare holdings as wealth (Vermögen). Staking and lending income is taxable.<br/>
     <span style="color:#B8960C;font-weight:600;">⚠ Professional traders &amp; legal entities</span> — Capital gains taxable as income; this report's gain figures are directly relevant for your declaration.<br/>
-    <span style="font-size:8.5pt;color:#8A909E;">This document is a supporting annex only — not an official tax filing. Consult a certified Swiss tax advisor for your specific situation.</span><br/>
+    
     <strong>🇩🇪 DE</strong><br/>
     <span style="color:#2D7A56;font-weight:600;">✔ Privatpersonen</span> — Kursgewinne steuerfrei; Bestände als Vermögen deklarieren. Staking-Erträge steuerpflichtig.<br/>
     <span style="color:#B8960C;font-weight:600;">⚠ Gewerbliche Händler &amp; juristische Personen</span> — Kursgewinne als Einkommen steuerpflichtig. Dieses Dokument ist eine Beilage und kein offizielles Steuerdokument.<br/>
@@ -5620,7 +5617,7 @@ onmouseout="this.style.color='#8A909E'">
 
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
 
-  <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
+  <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
