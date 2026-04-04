@@ -5047,8 +5047,8 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding-bottom: 18px; margin-bottom: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 16px; margin-bottom: 0;
     border-bottom: 3px solid #0D1117;
   }
   .doc-header-left {}
@@ -5071,7 +5071,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 18pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; }
   .doc-meta { font-family: 'DM Mono', monospace; font-size: 7.5pt; color: #8A909E; line-height: 1.9; letter-spacing: 0.04em; white-space: nowrap; }
 
-  .doc-header-accent { height: 0; margin-bottom: 22px; }
+  .doc-header-accent { height: 0; margin-bottom: 14px; }
 
   /* Info bar */
   .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #0D1117; border: 2px solid #0D1117; overflow:hidden; margin-bottom: 24px; }
@@ -5510,29 +5510,7 @@ onmouseout="this.style.color='#8A909E'">
         ? 'Partial — minor gaps in acquisition history'
         : 'Incomplete — additional data required for accurate tax reporting';
 
-    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #D8D4CC;border-radius:6px;overflow:hidden;margin-bottom:20px;font-size:8pt;">'
-      +'<div style="padding:10px 14px;border-right:1px solid #D8D4CC;border-bottom:1px solid #D8D4CC;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Imported Transactions</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+txCount+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;border-bottom:1px solid #D8D4CC;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Date Range</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+dateRange+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;border-right:1px solid #D8D4CC;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Exchange(s)</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+exchangeDisplay+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;grid-column:span 2;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:6px;">Validation Summary</div>'
-        +'<div style="display:flex;gap:24px;align-items:center;">'
-        +'<span style="font-size:9pt;"><strong style="color:#2D7A56;font-size:13pt;">'+buyCount+'</strong> <span style="color:#8A909E;font-size:7pt;">BUYS MATCHED</span></span>'
-        +'<span style="font-size:9pt;"><strong style="color:#2D7A56;font-size:13pt;">'+sellCount+'</strong> <span style="color:#8A909E;font-size:7pt;">SELLS MATCHED</span></span>'
-        +'<span style="font-size:9pt;"><strong style="color:'+(unmatchedCount===0?'#2D7A56':'#C0392B')+';font-size:13pt;">'+unmatchedCount+'</strong> <span style="color:#8A909E;font-size:7pt;">UNMATCHED</span></span>'
-        +'<span style="margin-left:auto;font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</span>'
-        +'</div>'
-      +'</div>'
-      +'</div>';
+    return '<div style="margin-bottom:12px;font-family:\'DM Mono\',monospace;font-size:8pt;font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</div>';
   })()}
 
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
