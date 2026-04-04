@@ -5049,7 +5049,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .doc-header {
     display: flex; justify-content: space-between; align-items: flex-start;
     padding-bottom: 18px; margin-bottom: 0;
-    border-bottom: 4px solid #1B2A4A;
+    border-bottom: 3px solid #0D1117;
   }
   .doc-header-left {}
   .doc-logo-line { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -5061,39 +5061,39 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   /* Point 1: Subtitle now mentions ESTV explicitly */
   .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #3D4451; margin-top: 2px; }
   .estv-badge {
-    display: inline-block; background: #1B2A4A; color: #B8960C;
+    display: inline-block; background: #0D1117; color: #B8960C; border: 1px solid #B8960C;
     font-family: 'DM Mono', monospace; font-size: 6.5pt; letter-spacing: 0.14em;
     text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin-left: 10px;
     vertical-align: middle;
   }
   .doc-header-right { text-align: right; }
   /* Point 1: Report title bigger */
-  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 18pt; color: #1B2A4A; margin-bottom: 6px; font-weight: 400; }
+  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 18pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; }
   .doc-meta { font-family: 'DM Mono', monospace; font-size: 7.5pt; color: #8A909E; line-height: 1.9; letter-spacing: 0.04em; white-space: nowrap; }
 
   .doc-header-accent { height: 0; margin-bottom: 22px; }
 
   /* Info bar */
-  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #1B2A4A; border: 2px solid #1B2A4A; overflow:hidden; margin-bottom: 24px; }
+  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #0D1117; border: 2px solid #0D1117; overflow:hidden; margin-bottom: 24px; }
   .info-cell { background: #F5F2EB; padding: 11px 14px; border-right: 1px solid #D8D4CC; }
   .info-cell:last-child { border-right: none; }
   .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
-  .info-val { font-family:'DM Serif Display',serif; font-size:14pt; color:#1B2A4A; font-weight:400; }
+  .info-val { font-family:'DM Serif Display',serif; font-size:14pt; color:#0D1117; font-weight:400; }
 
   /* ── SECTION TITLES — Point 1: More hierarchy, finance weight ─────────── */
   .sec-title {
     font-family:'DM Mono',monospace; font-size:7.5pt; letter-spacing:0.18em;
     text-transform:uppercase; color:#B8960C; margin-bottom:12px;
     padding:8px 14px; margin-top:28px;
-    background: #1B2A4A;
+    background: #0D1117;
     border-left: 5px solid #B8960C;
     page-break-after: avoid;
   }
 
   /* ── TABLES — Point 10: Finance-grade borders, strong structure ────────── */
   table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:20px;
-          border: 2px solid #1B2A4A; }
-  thead tr { background:#1B2A4A; }
+          border: 2px solid #0D1117; }
+  thead tr { background:#0D1117; }
   thead th {
     padding:9px 10px; font-family:'DM Mono',monospace; font-size:7pt;
     letter-spacing:0.1em; text-transform:uppercase; color:#B8960C; font-weight:500;
@@ -5124,18 +5124,18 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   table col.col-gl     { width:18%; }
 
   /* Total row — strong, finance-grade */
-  .total-row { background:#1B2A4A !important; border: none !important; border-top: 2px solid #B8960C !important; }
+  .total-row { background:#0D1117 !important; border: none !important; border-top: 2px solid #B8960C !important; }
   .total-row td { color:#F5F2EB; font-weight:700; padding:10px 10px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.1) !important; }
   .total-row td:last-child { border-right: none !important; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:#1B2A4A; border:2px solid #1B2A4A; margin-bottom:24px; align-items:stretch; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:#0D1117; border:2px solid #0D1117; margin-bottom:24px; align-items:stretch; }
   .summary-box { background:#F5F2EB; padding:18px 20px; display:flex; flex-direction:column; border-right: 1px solid #D8D4CC; }
   .summary-box:last-child { border-right: none; }
-  .summary-box.highlight { background:#1B2A4A; border-right: none; }
+  .summary-box.highlight { background:#0D1117; border-right: none; }
   .summary-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:8px; }
   .summary-box.highlight .summary-label { color:rgba(184,150,12,0.6); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:20pt; color:#1B2A4A; line-height:1.1; }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:20pt; color:#0D1117; line-height:1.1; }
   .summary-box.highlight .summary-val { color:#F5F2EB; }
 
   /* Compliance */
@@ -5143,14 +5143,14 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .compliance-box strong { color:#0D1117; }
 
   /* Notes */
-  .notes-box { background:#F5F2EB; border:1px solid #D8D4CC; border-left: 3px solid #1B2A4A; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
+  .notes-box { background:#F5F2EB; border:1px solid #D8D4CC; border-left: 3px solid #0D1117; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
 
   /* ── FOOTER — finance document style ─────────────────────────────────── */
-  .doc-footer { margin-top:32px; padding-top:10px; border-top: 3px solid #1B2A4A; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#3D4451; letter-spacing:0.08em; font-weight:500; }
+  .doc-footer { margin-top:32px; padding-top:10px; border-top: 3px solid #0D1117; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#3D4451; letter-spacing:0.08em; font-weight:500; }
 
   /* Print button */
-  .no-print { position:fixed; top:20px; right:20px; background:#1B2A4A; color:#B8960C; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); } @media print { .no-print { display:none !important; visibility:hidden !important; } }
-  .no-print:hover { background:#B8960C; color:#1B2A4A; }
+  .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#B8960C; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); } @media print { .no-print { display:none !important; visibility:hidden !important; } }
+  .no-print:hover { background:#B8960C; color:#0D1117; }
 
   /* ── TEAM ── */
   .team-section {
@@ -5413,37 +5413,30 @@ onmouseout="this.style.color='#8A909E'">
 
 <div class="page">
 
-  <!-- Full-width official document banner — Point 1 -->
-  <div style="background:#1B2A4A;margin:-18mm -16mm 0 -16mm;padding:10px 16mm 10px 16mm;display:flex;justify-content:space-between;align-items:center;margin-bottom:0;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <svg width="32" height="32" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="border-radius:6px;flex-shrink:0;">
-        <rect width="400" height="400" fill="#0D1117"/>
-        <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
-        <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
-        <rect x="205" y="262" width="90" height="16" rx="4" fill="#B8960C"/>
-        <path d="M 205 130 L 223 130 Q 290 130 290 200 Q 290 270 223 270 L 205 270 Z" fill="#B8960C"/>
-        <path d="M 223 148 Q 269 148 269 200 Q 269 252 223 252 L 223 148 Z" fill="#0D1117"/>
-      </svg>
-      <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:16pt;color:#F5F2EB;letter-spacing:-0.02em;"><span style="color:#F5F2EB;">Crypto</span><span style="color:#B8960C;">Declare</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:6.5pt;color:rgba(245,242,235,0.55);letter-spacing:0.14em;text-transform:uppercase;margin-top:1px;">Swiss Crypto Tax Tool · cryptodeclare.ch</div>
+  <!-- Classic two-column header — brand left, title right -->
+  <div class="doc-header">
+    <div class="doc-header-left">
+      <div class="doc-logo-line">
+        <div class="ch-flag"></div>
+        <div class="doc-brand">Crypto<span>Declare</span></div>
+      </div>
+      <div class="doc-subtitle">Prepared for Swiss cantonal tax declaration · FIFO · cryptodeclare.ch
+        <span class="estv-badge" style="margin-left:10px;">ESTV-Compatible</span>
       </div>
     </div>
-    <div style="text-align:right;">
-      <div style="font-family:'DM Serif Display',serif;font-size:14pt;color:#F5F2EB;margin-bottom:6px;letter-spacing:-0.01em;">Tax Declaration Annex ${data.taxYear}</div>
-      <div style="margin-bottom:4px;">
-        <span style="background:#B8960C;color:#0D1117;font-family:'DM Mono',monospace;font-size:6pt;letter-spacing:0.14em;font-weight:700;padding:2px 7px;text-transform:uppercase;">ESTV-Compatible</span>
-        <span style="font-family:'DM Mono',monospace;font-size:6pt;color:rgba(245,242,235,0.5);letter-spacing:0.1em;margin-left:8px;">FIFO METHOD</span>
-      </div>
-      <div style="font-family:'DM Mono',monospace;font-size:6pt;color:rgba(245,242,235,0.45);letter-spacing:0.08em;">
+    <div class="doc-header-right">
+      <div class="doc-report-title">Tax Declaration Annex ${data.taxYear}</div>
+      <div class="doc-meta">
+        Generated: ${new Date().toLocaleDateString('en-CH')}<br/>
+        Method: ${data.complianceMethod || 'FIFO'}<br/>
+        Period: ${data.dateRange || data.taxYear}<br/>
         ID: ${data.reportId||'—'} · v${data.reportVersion||'2.1'}
       </div>
     </div>
   </div>
-  <!-- Black divider strip -->
-  <div style="background:#0D1117;height:3px;margin:-18mm -16mm 20mm -16mm;"></div>
+  <div class="doc-header-accent"></div>
 
-  <!-- Meta bar: generated date, period, method -->
+  <!-- Meta bar -->
   <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #D8D4CC;margin-bottom:20px;">
     <div style="font-family:'DM Mono',monospace;font-size:7pt;color:#8A909E;letter-spacing:0.06em;">
       PREPARED FOR SWISS CANTONAL TAX DECLARATION
@@ -5646,6 +5639,26 @@ onmouseout="this.style.color='#8A909E'">
     <span style="color:#B8960C;font-weight:600;">⚠ Traders professionnels &amp; personnes morales</span> — Gains en capital imposables. Ce document est une annexe et non une déclaration fiscale officielle.
   </div>
 
+
+
+
+  ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
+
+  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
+    <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.9000 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
+  </div>
+  <div class="doc-footer">
+    <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
+    <span>ID: ${data.reportId||'—'} · Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting annex — not an official tax filing</span>
+  </div>
+
+
   ${(function(){
     // ── TRANSACTION LEDGER ───────────────────────────────────────────────
     const txs = data.transactions || [];
@@ -5685,24 +5698,6 @@ onmouseout="this.style.color='#8A909E'">
       + '<th class="right">Total (CHF)</th>'
       + '</tr></thead><tbody>' + rows + '</tbody></table>';
   })()}
-
-
-  ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
-
-  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border:1px solid #E8E4DC;">
-    <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.9000 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
-  </div>
-  <div class="doc-footer">
-    <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
-    <span>ID: ${data.reportId||'—'} · Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting annex — not an official tax filing</span>
-  </div>
-
 </div>
 </body>
 </html>`;
