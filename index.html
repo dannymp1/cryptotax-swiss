@@ -2306,7 +2306,7 @@
       <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
       <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
     </div>
-    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="/cdn-cgi/l/email-protection#e68e838a8a89a685949f9692898283858a879483c8858e" style="color:inherit;"><span class="__cf_email__" data-cfemail="b0d8d5dcdcdff0d3c2c9c0c4dfd4d5d3dcd1c2d59ed3d8">[email&#160;protected]</span></a></div>
+    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
     <div class="unlock-success" id="unlock-success"></div>
     <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable. Each purchase is for one tax entity.</div>
   </div>
@@ -2538,11 +2538,11 @@
       <p>Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.</p>
       <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;color:rgba(245,242,235,0.45);">
         <span data-i18n="contact_email_label">Or email us directly:</span><br/>
-        <a href="/cdn-cgi/l/email-protection#e9818c858586a98a9b90999d868d8c8a85889b8cc78a81" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;"><span class="__cf_email__" data-cfemail="147c7178787b5477666d64607b707177787566713a777c">[email&#160;protected]</span></a>
+        <a href="mailto:hello@cryptodeclare.ch" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;">hello@cryptodeclare.ch</a>
       </p>
     </div>
     <div class="contact-right">
-      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at <a href="/cdn-cgi/l/email-protection#452d2029292a0526373c35312a212026292437206b262d" style="color:#e05c5c;"><span class="__cf_email__" data-cfemail="761e131a1a193615040f0602191213151a17041358151e">[email&#160;protected]</span></a></div>
+      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at <a href="mailto:hello@cryptodeclare.ch" style="color:#e05c5c;">hello@cryptodeclare.ch</a></div>
       <form class="contact-form" id="contact-form">
         <div class="contact-field">
           <label class="contact-label" for="contact-name">Name</label>
@@ -2610,7 +2610,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -5480,7 +5480,7 @@ onmouseout="this.style.color='#8A909E'">
     // Derive end date label from dateRange for the Holdings column header
     const dr = data.dateRange || '';
     const endPart = dr.includes('–') ? dr.split('–').pop().trim() : dr;
-    const holdingsLabel = 'Holdings 31.12.' + data.taxYear;
+    const holdingsLabel = '31.12.' + data.taxYear;
 
     // Capitalise exchange name from notes
     const EXCHANGE_NAMES = {
@@ -5819,4 +5819,25 @@ onmouseout="this.style.color='#8A909E'">
       const res = await fetch('https://formspree.io/f/xkopjbbl', { signal: AbortSignal.timeout(10000),
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.str
+        body: JSON.stringify({
+          name: document.getElementById('contact-name').value,
+          email: document.getElementById('contact-email').value,
+          message: document.getElementById('contact-message').value,
+        })
+      });
+      if (res.ok) {
+        success.classList.add('visible');
+        this.reset();
+        btn.textContent = 'Sent ✓';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Send message';
+    }
+  });
+
+</script>
+</body>
+</html>
