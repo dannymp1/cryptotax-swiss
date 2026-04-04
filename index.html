@@ -5047,7 +5047,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: space-between; align-items: flex-start;
     padding-bottom: 16px; margin-bottom: 0;
     border-bottom: 3px solid #0D1117;
   }
@@ -5061,14 +5061,14 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   /* Point 1: Subtitle now mentions ESTV explicitly */
   .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #3D4451; margin-top: 2px; }
   .estv-badge {
-    display: inline-block; background: #0D1117; color: #B8960C; border: 1px solid #B8960C;
-    font-family: 'DM Mono', monospace; font-size: 6.5pt; letter-spacing: 0.14em;
-    text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin-left: 10px;
+    display: inline-block; background: none; color: #3D4451; border: none;
+    font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 0; border-radius: 0;
     vertical-align: middle;
   }
-  .doc-header-right { text-align: right; }
+  .doc-header-right { text-align: right; display: flex; flex-direction: column; justify-content: flex-start; }
   /* Point 1: Report title bigger */
-  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 18pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; }
+  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 26pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; letter-spacing: -0.02em; }
   .doc-meta { font-family: 'DM Mono', monospace; font-size: 7.5pt; color: #8A909E; line-height: 1.9; letter-spacing: 0.04em; white-space: nowrap; }
 
   .doc-header-accent { height: 0; margin-bottom: 14px; }
@@ -5428,7 +5428,7 @@ onmouseout="this.style.color='#8A909E'">
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
       <div class="doc-subtitle">Swiss Crypto Tax Declaration · cryptodeclare.ch</div>
-      <div style="margin-top:5px;"><span class="estv-badge">ESTV-Compatible</span><span style="font-family:'DM Mono',monospace;font-size:6.5pt;color:#8A909E;letter-spacing:0.1em;margin-left:10px;">FIFO METHOD</span></div>
+      <div style="margin-top:5px;"><span class="estv-badge">ESTV-Compatible</span></div>
     </div>
     <div class="doc-header-right">
       <div class="doc-report-title">Tax Declaration Annex ${data.taxYear}</div>
