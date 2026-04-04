@@ -5043,7 +5043,7 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     .mono, th, .doc-meta, .info-label, .summary-label, .sec-title { font-family: 'DM Mono', 'Courier New', monospace; }
   }
 
-  .page { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; }
+  .page { max-width: 210mm; margin: 0 auto; padding: 16mm 18mm; }
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
@@ -5074,41 +5074,42 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   .doc-header-accent { height: 0; margin-bottom: 14px; }
 
   /* Info bar */
-  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #0D1117; border: 2px solid #0D1117; overflow:hidden; margin-bottom: 24px; }
-  .info-cell { background: #F5F2EB; padding: 11px 14px; border-right: 1px solid #D8D4CC; }
+  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border: 1px solid #D8D4CC; border-top: 3px solid #0D1117; overflow:hidden; margin-bottom: 32px; }
+  .info-cell { background: #FAFAF8; padding: 14px 16px; border-right: 1px solid #E8E4DC; }
   .info-cell:last-child { border-right: none; }
   .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
-  .info-val { font-family:'DM Serif Display',serif; font-size:14pt; color:#0D1117; font-weight:400; }
+  .info-val { font-family:'DM Serif Display',serif; font-size:15pt; color:#0D1117; font-weight:400; }
 
   /* ── SECTION TITLES — Point 1: More hierarchy, finance weight ─────────── */
   .sec-title {
-    font-family:'DM Mono',monospace; font-size:7.5pt; letter-spacing:0.18em;
-    text-transform:uppercase; color:#B8960C; margin-bottom:12px;
-    padding:8px 14px; margin-top:28px;
-    background: #0D1117;
-    border-left: 5px solid #B8960C;
+    font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.2em;
+    text-transform:uppercase; color:#5A6070; margin-bottom:14px;
+    padding:5px 0; margin-top:36px;
+    background: transparent;
+    border-bottom: 1.5px solid #E0DDD5;
+    border-left: none;
     page-break-after: avoid;
   }
 
   /* ── TABLES — Point 10: Finance-grade borders, strong structure ────────── */
-  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:20px;
-          border: 2px solid #0D1117; }
-  thead tr { background:#0D1117; }
+  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:24px;
+          border: none; }
+  thead tr { background:#1A1D21; }
   thead th {
-    padding:9px 10px; font-family:'DM Mono',monospace; font-size:7pt;
-    letter-spacing:0.1em; text-transform:uppercase; color:#B8960C; font-weight:500;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    padding:10px 10px; font-family:'DM Mono',monospace; font-size:6.5pt;
+    letter-spacing:0.12em; text-transform:uppercase; color:#B8960C; font-weight:500;
+    border-right: 1px solid rgba(255,255,255,0.08);
   }
   thead th:last-child { border-right: none; }
   thead th.right { text-align:right; }
   thead th.center { text-align:center; }
   /* Point 10: Visible row borders + vertical column borders */
-  tbody tr { border-bottom: 1px solid #D8D4CC; }
-  tbody tr:nth-child(even) { background:#F5F2EB; }
+  tbody tr { border-bottom: 1px solid #EDEBE5; }
+  tbody tr:nth-child(even) { background:#FAFAF8; }
   tbody tr:nth-child(odd) { background:#FFFFFF; }
   tbody td {
-    padding:9px 10px; color:#0D1117; vertical-align:middle; line-height:1.5;
-    border-right: 1px solid #E8E4DC;
+    padding:11px 10px; color:#0D1117; vertical-align:middle; line-height:1.5;
+    border-right: 1px solid rgba(0,0,0,0.04);
   }
   tbody td:last-child { border-right: none; }
   tbody td:first-child { padding-left:14px; }
@@ -5124,29 +5125,30 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   table col.col-gl     { width:18%; }
 
   /* Total row — strong, finance-grade */
-  .total-row { background:#0D1117 !important; border: none !important; border-top: 2px solid #B8960C !important; }
-  .total-row td { color:#F5F2EB; font-weight:700; padding:10px 10px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.1) !important; }
+  .total-row { background:#1A1D21 !important; border: none !important; border-top: 2px solid #B8960C !important; }
+  .total-row td { color:#F5F2EB; font-weight:700; padding:11px 10px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.08) !important; }
   .total-row td:last-child { border-right: none !important; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:#0D1117; border:2px solid #0D1117; margin-bottom:24px; align-items:stretch; }
-  .summary-box { background:#F5F2EB; padding:18px 20px; display:flex; flex-direction:column; border-right: 1px solid #D8D4CC; }
-  .summary-box:last-child { border-right: none; }
-  .summary-box.highlight { background:#0D1117; border-right: none; }
-  .summary-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:8px; }
-  .summary-box.highlight .summary-label { color:rgba(184,150,12,0.6); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:20pt; color:#0D1117; line-height:1.1; }
-  .summary-box.highlight .summary-val { color:#F5F2EB; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#E0DDD5; border:none; margin:36px 0 36px 0; align-items:stretch; box-shadow: 0 1px 0 #E0DDD5; }
+  .summary-box { background:#FAFAF8; padding:28px 26px; display:flex; flex-direction:column; }
+  .summary-box:last-child { }
+  .summary-box.highlight { background:#1A1D21; }
+  .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
+  .summary-helper { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.1em; text-transform:uppercase; color:#B8960C; margin-top:8px; opacity:0.85; }
+  .summary-box.highlight .summary-label { color:rgba(184,150,12,0.55); }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:28pt; color:#0D1117; line-height:1.0; font-weight:400; }
+  .summary-box.highlight .summary-val { color:#F5F2EB; font-size:26pt; }
 
   /* Compliance */
-  .compliance-box { background:#F5F2EB; border:1px solid #D8D4CC; border-left: 4px solid #B8960C; border-radius:0; padding:14px 16px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#3D4451; page-break-inside:avoid; break-inside:avoid; }
+  .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 16px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
   .compliance-box strong { color:#0D1117; }
 
   /* Notes */
   .notes-box { background:#F5F2EB; border:1px solid #D8D4CC; border-left: 3px solid #0D1117; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
 
   /* ── FOOTER — finance document style ─────────────────────────────────── */
-  .doc-footer { margin-top:32px; padding-top:10px; border-top: 3px solid #0D1117; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#3D4451; letter-spacing:0.08em; font-weight:500; }
+  .doc-footer { display:none; }
 
   /* Print button */
   .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#B8960C; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); } @media print { .no-print { display:none !important; visibility:hidden !important; } }
@@ -5583,15 +5585,17 @@ onmouseout="this.style.color='#8A909E'">
     <div class="summary-box">
       <div class="summary-label">Staking / Reward Income</div>
       <div class="summary-val" style="color:#2D7A56">CHF ${Number(data.stakingIncomeCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      <div class="summary-helper">Taxable income · declare as income</div>
     </div>
     <div class="summary-box">
       <div class="summary-label">Wealth Value 31.12.${data.taxYear}</div>
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      <div class="summary-helper" style="color:#5A6070;">Declare as Vermögen · all cantons</div>
     </div>
     <div class="summary-box highlight">
       <div class="summary-label">Realised Gain / Loss</div>
-      <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
-      <div style="font-size:7pt;color:#2D7A56;margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.04em;">✔ Generally tax-free for Swiss private individuals</div>
+      <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
+      <div class="summary-helper" style="color:rgba(184,150,12,0.8);">Typically tax-free · Swiss private individuals</div>
     </div>
   </div>
 
