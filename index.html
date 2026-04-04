@@ -2606,7 +2606,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -2730,7 +2730,7 @@
       biz_period: 'Per entity / year · truly unlimited', biz_cta: 'Get Business',
       footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.',
       footer_product: 'Product', footer_legal: 'Legal', footer_support: 'Support',
-      modal_body: "Enter your email to continue to secure checkout via Stripe. You'll receive your report download link immediately after payment.",
+      modal_body: "You'll receive your unlock code by email immediately after payment. Enter it on this page to activate your plan.",
       modal_cta: 'Continue to Stripe Checkout',
       modal_terms: 'By continuing you agree to our Terms of Service and Privacy Policy.<br>Secure payment via Stripe · SSL encrypted',
     },
@@ -2854,7 +2854,7 @@
       biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Obtenir Business',
       footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Rapide, conforme et privé.',
       footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
-      modal_body: "Entrez votre email pour continuer vers le paiement sécurisé via Stripe. Vous recevrez votre lien de téléchargement immédiatement après le paiement.",
+      modal_body: "Vous recevrez votre code d'activation par email immédiatement après le paiement. Entrez-le sur cette page pour activer votre plan.",
       modal_cta: 'Continuer vers Stripe',
       modal_terms: "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.<br>Paiement sécurisé via Stripe · Chiffrement SSL",
     },
@@ -2974,7 +2974,7 @@
       biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Business kaufen',
       footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Schnell, konform und privat.',
       footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
-      modal_body: 'Geben Sie Ihre E-Mail ein, um zur sicheren Zahlung über Stripe weiterzugehen. Sie erhalten Ihren Download-Link sofort nach der Zahlung.',
+      modal_body: 'Sie erhalten Ihren Freischaltcode sofort nach der Zahlung per E-Mail. Geben Sie ihn auf dieser Seite ein, um Ihren Plan zu aktivieren.',
       modal_cta: 'Weiter zu Stripe',
       modal_terms: 'Mit dem Fortfahren stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu.<br>Sichere Zahlung via Stripe · SSL-verschlüsselt',
     }
@@ -3323,7 +3323,7 @@
     document.getElementById('modal-plan-name').textContent = details.name;
     document.getElementById('modal-plan-price').textContent = details.price;
     document.getElementById('stripe-modal').classList.add('open');
-    document.getElementById('modal-email').focus();
+    document.getElementById('stripe-checkout-btn').focus();
   }
 
   function closeModal() {
@@ -3343,17 +3343,21 @@
     if (e.target === this) closeModal();
   });
 
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
   // ── Unlock Code System ──
   // Codes are SHA-256 hashed — not reversible from source
   const PRO_HASHES = [
-    '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598', // PRODECLARE99
-    'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8', // PROSWISS2024
-    '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b', // PROCRYPTO99A
+    '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598',
+    'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8',
+    '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b',
   ];
   const BIZ_HASHES = [
-    'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d', // BIZDECLARE299
-    '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90', // BIZSWISS2024
-    '2e27cda7b84c5c2681f6270224d8a3352958c550d6e7049a2e74a7c58c5b467b', // BIZCRYPTO299A
+    'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d',
+    '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90',
+    '2e27cda7b84c5c2681f6270224d8a3352958c550d6e7049a2e74a7c58c5b467b',
   ];
 
   // Plan limits
@@ -3482,7 +3486,7 @@
   setPlanBadge(currentPlanTier);
 
   // ── Auto-unlock from Stripe redirect URL ──
-  // Stripe sends customer back to: cryptodeclare.ch/?code=PRODECLARE99
+  // Stripe sends customer back to: cryptodeclare.ch/?code=UNLOCK_CODE
   (async () => {
     const params = new URLSearchParams(window.location.search);
     const urlCode = params.get('code');
