@@ -3974,7 +3974,7 @@
   }
 
   async function normaliseRows(rows, format) {
-    const USD_CHF = 0.90;
+    const USD_CHF = 0.90625;
     const out = [];
     for (const r of rows) {
       try {
@@ -4300,6 +4300,9 @@
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
           const t = (r['transaction type']||'').toLowerCase();
+          asset = (r['asset']||'').toUpperCase().trim();
+          const FIAT_ASSETS = ['USD','EUR','GBP','CHF'];
+          if (!asset || FIAT_ASSETS.includes(asset)) continue;
           // Map all known Coinbase transaction types
           if (t.includes('buy') || t==='receive' || t.includes('deposit') || t.includes('advanced trade fill')) type='buy';
           else if (t.includes('sell') || t.includes('advanced trade sell') || t==='card spend') type='sell';
@@ -4312,8 +4315,8 @@
           else if (t==='send' || t.includes('withdrawal') || t.includes('transfer')) type='withdrawal';
           else if (t.includes('reward')||t.includes('staking')||t.includes('income')||t.includes('interest')||t.includes('cashback')) type='staking';
           else continue;
-          asset = (r['asset']||'').toUpperCase();
           qty = Math.abs(parseFloat(r['quantity transacted']||r['quantity'])||0);
+          if (qty <= 0) continue;
           // Column name variants: 'spot price currency' or 'price currency'
           const cur = (r['spot price currency']||r['price currency']||'').toUpperCase();
           // Column name variants: 'spot price at transaction' or 'spot price'
@@ -4714,7 +4717,7 @@
       : (dates[0]?formatDate(dates[0]):'2024');
     const computed = computeFIFO(transactions, taxYear);
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    let notes = `Multiple exchanges: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    let notes = `Multiple exchanges: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
@@ -4762,33 +4765,33 @@
 
     // Ask AI only for coin names and notes — never for numbers
     const assetList = computed.assets.map(a=>a.symbol+':held='+a.endHolding).join(', ');
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
       kraken: `Exchange format detected: Kraken (ledger). Historical CHF prices fetched via CoinGecko API. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      binance: `Exchange format detected: Binance. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      okx: `Exchange format detected: OKX. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
-      crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Interest and dividend income treated as taxable staking income.`,
-      revolut: `Exchange format detected: Revolut. Fiat amounts converted to CHF at 0.9000. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance: `Exchange format detected: Binance. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx: `Exchange format detected: OKX. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
+      crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}). Interest and dividend income treated as taxable staking income.`,
+      revolut: `Exchange format detected: Revolut. Fiat amounts converted to CHF at 0.906250. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as acquisitions (cost basis established at countervalue). Outgoing treated as withdrawals. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      gemini: `Exchange format detected: Gemini. USD amounts converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitfinex: `Exchange format detected: Bitfinex. USD amounts converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      gate: `Exchange format detected: Gate.io. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      mexc: `Exchange format detected: MEXC. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gemini: `Exchange format detected: Gemini. USD amounts converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitfinex: `Exchange format detected: Bitfinex. USD amounts converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gate: `Exchange format detected: Gate.io. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      mexc: `Exchange format detected: MEXC. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissquote: `Exchange format detected: Swissquote. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitpanda: `Exchange format detected: Bitpanda. Fiat amounts converted to CHF at 0.9000. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitpanda: `Exchange format detected: Bitpanda. Fiat amounts converted to CHF at 0.906250. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
-    let notes = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    let notes = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
       if (res.ok) {
@@ -5654,7 +5657,7 @@ onmouseout="this.style.color='#8A909E'">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.9000 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.906250 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
