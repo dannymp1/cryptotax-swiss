@@ -72,7 +72,7 @@
       "name": "Business",
       "price": "299",
       "priceCurrency": "CHF",
-      "description": "Unlimited transactions, all exchanges, multi-entity support"
+      "description": "Unlimited transactions, all supported exchanges, multi-entity support"
     }
   ],
   "provider": {
@@ -2091,7 +2091,7 @@
         </svg>
       </div>
       <h3 class="step-title">Import transactions</h3>
-      <p class="step-body">Upload a CSV from any major exchange — Kraken, Binance, Coinbase — or enter trades manually. We support all major Swiss-accessible platforms.</p>
+      <p class="step-body">Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our generic CSV format for other exports.</p>
     </div>
     <div class="step">
       <div class="step-num">02</div>
@@ -2102,7 +2102,7 @@
         </svg>
       </div>
       <h3 class="step-title">We calculate</h3>
-      <p class="step-body">Our engine applies Swiss FIFO accounting, converts all values to CHF using official ESTV exchange rates, and identifies taxable events.</p>
+      <p class="step-body">Our engine applies Swiss FIFO accounting, converts values to CHF using ESTV reference rates and transaction-date market data where available, and identifies taxable events.</p>
     </div>
     <div class="step">
       <div class="step-num">03</div>
@@ -2127,8 +2127,8 @@
   <div class="features-grid">
     <div class="feature">
       <div class="feature-label">Compliance</div>
-      <div class="feature-title">ESTV exchange rates</div>
-      <div class="feature-body">All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.</div>
+      <div class="feature-title">ESTV reference rates</div>
+      <div class="feature-body">CHF conversions use official ESTV annual reference rates together with transaction-date market and FX references where available.</div>
     </div>
     <div class="feature">
       <div class="feature-label">Accounting</div>
@@ -2138,7 +2138,7 @@
     <div class="feature">
       <div class="feature-label">Multi-year</div>
       <div class="feature-title">Full tax history</div>
-      <div class="feature-body">Declare multiple tax years at once. Import your full transaction history from 2017 to today and get a report for each year.</div>
+      <div class="feature-body">Import full transaction history from prior years and generate a tax-year report for the period covered by your uploaded data.</div>
     </div>
     <div class="feature">
       <div class="feature-label">Privacy</div>
@@ -2147,8 +2147,8 @@
     </div>
     <div class="feature feature-wide">
       <div class="feature-label">Coverage</div>
-      <div class="feature-title">50+ supported assets and all major exchanges</div>
-      <div class="feature-body">From Bitcoin to DeFi tokens, staking rewards, and NFT sales — our engine handles the full complexity of a modern crypto portfolio across Kraken, Binance, Coinbase, Swissquote, and more.</div>
+      <div class="feature-title">23 supported formats and major exchanges</div>
+      <div class="feature-body">Supports mainstream crypto tax workflows across Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg and more, with clear handling for staking and missing cost basis.</div>
     </div>
   </div>
 </section>
@@ -2226,7 +2226,7 @@
     <span class="exchange-pill"><span class="exchange-dot"></span>Manual CSV</span>
     <span class="exchange-pill" style="border-style:dashed;opacity:0.6">+ more coming</span>
   </div>
-  <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--ink-faint);text-align:center;" data-i18n="exchange_note">Don't see your exchange? Use Manual CSV — most export formats are supported automatically.</p>
+  <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--ink-faint);text-align:center;" data-i18n="exchange_note">Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.</p>
 </div>
 
 <!-- PRICING -->
@@ -2255,8 +2255,8 @@
       <ul class="pricing-features">
         <li>Up to 1,000 transactions</li>
         <li>1 portfolio / entity</li>
-        <li>All 20+ supported exchanges</li>
-        <li>Multi-year support</li>
+        <li>23 supported formats</li>
+        <li>Full history imports</li>
         <li>Full PDF + CSV export</li>
         <li>FIFO method (ESTV standard)</li>
       </ul>
@@ -2268,8 +2268,8 @@
       <div class="pricing-period">Per entity / year · truly unlimited</div>
       <ul class="pricing-features">
         <li>Unlimited transactions</li>
-        <li>Unlimited exchanges & portfolios</li>
-        <li>Multi-year history</li>
+        <li>All supported exchanges & unlimited portfolios</li>
+        <li>Historical data imports</li>
         <li>Full PDF + CSV export</li>
         <li>FIFO method (ESTV standard)</li>
         <li>Multi-entity support</li>
@@ -2361,7 +2361,7 @@
       <div class="app-info-box">
         <div class="app-info-label" data-i18n="info_get_label">What you get</div>
         <div class="app-info-title" data-i18n="info_get_title">A Swiss tax-ready report</div>
-        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.</div>
+        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured report for your cantonal tax declaration.</div>
       </div>
       <div class="app-info-box">
         <div class="app-info-label" data-i18n="info_priv_label">Privacy</div>
@@ -2434,7 +2434,7 @@
         <span class="faq-q-icon">+</span>
       </button>
       <div class="faq-a">
-        We use the official daily exchange rates published by the Swiss Federal Tax Administration (ESTV). These are the rates your canton will use to verify your declaration.
+        We use official ESTV annual reference rates together with transaction-date market prices and FX references where available, depending on the source data in your CSV export.
       </div>
     </div>
 
@@ -2453,7 +2453,7 @@
         <span class="faq-q-icon">+</span>
       </button>
       <div class="faq-a">
-        Yes. Simply upload your full transaction history and our engine will automatically group trades by tax year and generate a separate report for each year. This is useful if you are catching up on past declarations.
+        You can upload full transaction history from prior years. Each generated report is created for the tax year covered by the uploaded data, which is useful when preparing past declarations one year at a time.
       </div>
     </div>
     <div class="faq-item">
@@ -2462,7 +2462,7 @@
         <span class="faq-q-icon">+</span>
       </button>
       <div class="faq-a">
-        Staking rewards, mining income, and yield farming proceeds are treated as taxable income in Switzerland and are reported separately from capital gains in your report. We identify and categorise these automatically from your CSV export.
+        Staking rewards and similar income events identified in supported CSV exports are reported separately from capital gains. For complex DeFi activity, professional trading, or edge cases, we recommend review by a Swiss tax advisor.
       </div>
     </div>
     <div class="faq-item">
@@ -2471,7 +2471,7 @@
         <span class="faq-q-icon">+</span>
       </button>
       <div class="faq-a">
-        You can use our generic CSV format — any file with date, asset, quantity, type (buy/sell), and price columns will be parsed automatically. You can also enter trades manually directly in the tool.
+        You can use our generic CSV format — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.
       </div>
     </div>
   </div>
@@ -2630,7 +2630,7 @@
       info_need_label: 'What we need', info_need_title: 'A standard transaction export',
       info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.',
       info_get_label: 'What you get', info_get_title: 'A Swiss tax-ready report',
-      info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.',
+      info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured report for your cantonal tax declaration.',
       info_priv_label: 'Privacy', info_priv_title: 'Processed in your session only',
       info_priv_body: 'Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
@@ -2639,35 +2639,35 @@
       disclaimer_title: 'Document Disclaimer',
       disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, NFTs, professional trading), please consult a certified Swiss tax advisor.',
       how_label: '01 — Process', how_title: 'Three steps to a<br><em>clean declaration</em>',
-      step1_title: 'Import transactions', step1_body: 'Upload a CSV from any major exchange — Kraken, Binance, Coinbase — or enter trades manually. We support all major Swiss-accessible platforms.',
-      step2_title: 'We calculate', step2_body: 'Our engine applies Swiss FIFO accounting, converts all values to CHF using official ESTV exchange rates, and identifies taxable events.',
+      step1_title: 'Import transactions', step1_body: 'Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our generic CSV format for other exports.',
+      step2_title: 'We calculate', step2_body: 'Our engine applies Swiss FIFO accounting, converts values to CHF using ESTV reference rates and transaction-date market data where available, and identifies taxable events.',
       step3_title: 'Download your report', step3_body: 'Receive a PDF report formatted for Swiss tax authorities. Attach it to your annual declaration — no accountant required.',
       features_label: '02 — Features', features_title: 'Built for<br><em>Swiss residents</em>',
       pricing_label: '04 — Pricing', pricing_title: 'Simple,<br><em>transparent</em> pricing',
       faq_label: '06 — FAQ', faq_title: 'Common<br><em>questions</em>',
       faq_q1: 'Is crypto taxable in Switzerland?', faq_a1: 'Yes. Capital gains on crypto are generally tax-free for private individuals in Switzerland — but the holdings must be declared as assets, and income from staking, mining, or professional trading is taxable. We calculate all of this for you.',
       faq_q2: 'Which cantons does the report work for?', faq_a2: 'Our report follows federal ESTV guidelines, which are recognised across all Swiss cantons. We include guidance notes for Zurich, Geneva, Zug, Vaud, and Bern where local variations are commonly raised.',
-      faq_q3: 'What exchange rate do you use?', faq_a3: 'We use the official daily exchange rates published by the Swiss Federal Tax Administration (ESTV). These are the rates your canton will use to verify your declaration.',
+      faq_q3: 'What exchange rate do you use?', faq_a3: 'We use official ESTV annual reference rates together with transaction-date market prices and FX references where available, depending on the source data in your CSV export.',
 
       faq_q5: 'Is my data secure?', faq_a5: 'We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).',
-      faq_q6: 'Can I declare multiple tax years at once?', faq_a6: 'Yes. Upload your full transaction history and our engine groups trades by tax year and generates a separate report for each year — useful if you are catching up on past declarations.',
-      faq_q7: 'How is staking and DeFi income handled?', faq_a7: 'Staking rewards, mining income, and yield farming proceeds are treated as taxable income in Switzerland and reported separately from capital gains. We identify and categorise these automatically from your CSV.',
-      faq_q8: 'What if my exchange is not listed?', faq_a8: 'Use our generic CSV format — any file with date, asset, quantity, type, and price columns is parsed automatically. You can also enter trades manually directly in the tool.',
+      faq_q6: 'Can I declare multiple tax years at once?', faq_a6: 'You can upload full transaction history from prior years. Each generated report is created for the tax year covered by the uploaded data, which is useful when preparing past declarations one year at a time.',
+      faq_q7: 'How is staking and DeFi income handled?', faq_a7: 'Staking rewards and similar income events identified in supported CSV exports are reported separately from capital gains. For complex DeFi activity, professional trading, or edge cases, we recommend review by a Swiss tax advisor.',
+      faq_q8: 'What if my exchange is not listed?', faq_a8: 'Use our generic CSV format — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.',
       feat1_label: 'Compliance',
-      feat1_title: 'ESTV exchange rates',
-      feat1_body: 'All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.',
+      feat1_title: 'ESTV reference rates',
+      feat1_body: 'CHF conversions use official ESTV annual reference rates together with transaction-date market and FX references where available.',
       feat2_label: 'Accounting',
       feat2_title: 'FIFO method (ESTV standard)',
       feat2_body: 'We apply the FIFO method mandated by ESTV — the official Swiss tax authority standard for crypto asset valuation.',
       feat3_label: 'Multi-year',
       feat3_title: 'Full tax history',
-      feat3_body: 'Declare multiple tax years at once. Import your full transaction history from 2017 to today and get a report for each year.',
+      feat3_body: 'Import full transaction history from prior years and generate a tax-year report for the period covered by your uploaded data.',
       feat4_label: 'Privacy',
       feat4_title: 'Your data stays yours',
       feat4_body: "We never sell your data. Transaction data is processed ephemerally — we don't store your positions longer than your session.",
       feat5_label: 'Coverage',
-      feat5_title: '50+ supported assets and all major exchanges',
-      feat5_body: 'From Bitcoin to DeFi tokens, staking rewards, and NFT sales — our engine handles the full complexity of a modern crypto portfolio across Kraken, Binance, Coinbase, Swissquote, and more.',
+      feat5_title: '23 supported formats and major exchanges',
+      feat5_body: 'Supports mainstream crypto tax workflows across Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg and more, with clear handling for staking and missing cost basis.',
       starter_name: 'Starter', starter_price: 'Free',
       pro_name: 'Professional',
       biz_name: 'Business',
@@ -2677,13 +2677,13 @@
       starter_f4: 'Basic PDF report',
       pro_f1: 'Up to 1,000 transactions',
       pro_f2: '1 portfolio / entity',
-      pro_f3: 'All 20+ supported exchanges',
-      pro_f4: 'Multi-year support',
+      pro_f3: '23 supported formats',
+      pro_f4: 'Full history imports',
       pro_f5: 'Full PDF + CSV export',
       pro_f6: 'FIFO method (ESTV standard)',
       biz_f1: 'Unlimited transactions',
-      biz_f2: 'Unlimited exchanges & portfolios',
-      biz_f3: 'Multi-year history',
+      biz_f2: 'All supported exchanges & unlimited portfolios',
+      biz_f3: 'Historical data imports',
       biz_f4: 'Full PDF + CSV export',
       biz_f5: 'FIFO method (ESTV standard)',
       biz_f6: 'Multi-entity support',
@@ -2724,7 +2724,7 @@
       integrations_title: 'Supported exchanges <em>&amp; wallets</em>',
       report_mock_title: 'Tax Declaration Annex 2024',
       report_mock_meta: 'Sample · Zurich · Tax Year 2024',
-      exchange_note: "Don't see your exchange? Use Manual CSV — most export formats are supported automatically.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
+      exchange_note: "Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
       report_body: 'Clean, structured, and compliant. Your PDF report includes a full transaction log, capital gains summary, and end-of-year portfolio valuation — exactly what Swiss tax forms require.',
@@ -2754,7 +2754,7 @@
       info_need_label: 'Ce dont nous avons besoin', info_need_title: 'Un export de transactions standard',
       info_need_body: 'Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et tout CSV générique avec date, actif, montant et prix.',
       info_get_label: 'Ce que vous obtenez', info_get_title: 'Un rapport prêt pour la déclaration suisse',
-      info_get_body: 'Notre moteur de calcul applique la méthode FIFO suisse à vos transactions, convertit tout en CHF selon les taux officiels ESTV et génère un rapport structuré pour votre déclaration cantonale.',
+      info_get_body: 'Notre moteur applique la méthode FIFO suisse à vos transactions, convertit tout en CHF à l’aide des taux de référence ESTV et des références de marché à la date des transactions lorsque disponibles, puis génère un rapport structuré pour votre déclaration cantonale.',
       info_priv_label: 'Confidentialité', info_priv_title: 'Traité dans votre session uniquement',
       info_priv_body: 'Vos données ne sont jamais stockées sur nos serveurs. Tout le traitement s\'effectue de manière sécurisée et éphémère — une fois votre session terminée, rien n\'est conservé.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
@@ -2763,35 +2763,35 @@
       disclaimer_title: 'Avis de non-responsabilité',
       disclaimer_text: 'Ce rapport a été préparé selon la méthode comptable FIFO suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, NFTs, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
       how_label: '01 — Processus', how_title: 'Trois étapes pour une<br><em>déclaration impeccable</em>',
-      step1_title: 'Importez vos transactions', step1_body: "Importez un CSV depuis n'importe quelle grande bourse — Kraken, Binance, Coinbase — ou saisissez vos trades manuellement.",
-      step2_title: 'Nous calculons', step2_body: 'Notre moteur applique la méthode FIFO suisse, convertit toutes les valeurs en CHF avec les taux officiels ESTV et identifie les événements imposables.',
+      step1_title: 'Importez vos transactions', step1_body: "Importez un CSV depuis des plateformes supportées comme Kraken, Binance, Coinbase, Swissquote ou SwissBorg — ou utilisez notre format CSV générique pour d'autres exports.",
+      step2_title: 'Nous calculons', step2_body: 'Notre moteur applique la méthode FIFO suisse, convertit les valeurs en CHF avec les taux de référence ESTV et des références de marché à la date des transactions lorsque disponibles, puis identifie les événements imposables.',
       step3_title: 'Téléchargez votre rapport', step3_body: 'Recevez un rapport PDF formaté pour les autorités fiscales suisses. Joignez-le à votre déclaration annuelle — aucun comptable requis.',
       features_label: '02 — Fonctionnalités', features_title: 'Conçu pour<br><em>les résidents suisses</em>',
       pricing_label: '04 — Tarifs', pricing_title: 'Tarification<br><em>simple et transparente</em>',
       faq_label: '06 — FAQ', faq_title: 'Questions<br><em>fréquentes</em>',
       faq_q1: 'Les cryptos sont-elles imposables en Suisse ?', faq_a1: "Oui. Les gains en capital sont généralement exonérés pour les particuliers — mais les avoirs doivent être déclarés comme fortune, et les revenus du staking, minage ou trading professionnel sont imposables.",
       faq_q2: 'Pour quels cantons le rapport est-il valable ?', faq_a2: 'Notre rapport suit les directives fédérales ESTV, reconnues dans tous les cantons suisses. Nous incluons des notes pour Zurich, Genève, Zoug, Vaud et Berne où des variations locales sont fréquemment soulevées.',
-      faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons les taux journaliers officiels de l'Administration fédérale des contributions (AFC/ESTV).",
+      faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons les taux de référence annuels de l'AFC/ESTV ainsi que des références de prix de marché et de change à la date des transactions lorsque disponibles, selon les données fournies par votre export CSV.",
 
       faq_q5: 'Mes données sont-elles sécurisées ?', faq_a5: 'Nous traitons les transactions en session et ne conservons pas vos données après génération du rapport. Nous sommes établis en Suisse et soumis à la nLPD.',
-      faq_q6: 'Puis-je déclarer plusieurs années fiscales ?', faq_a6: 'Oui. Importez votre historique complet et notre moteur regroupe les transactions par année fiscale et génère un rapport séparé pour chaque année.',
-      faq_q7: 'Comment le staking et les revenus DeFi sont-ils traités ?', faq_a7: 'Les récompenses de staking, les revenus miniers et les rendements DeFi sont traités comme revenus imposables en Suisse et rapportés séparément des plus-values. Nous les identifions automatiquement.',
-      faq_q8: 'Ma bourse n\'est pas listée — que faire ?', faq_a8: 'Utilisez notre format CSV générique — tout fichier avec date, actif, quantité, type et prix est analysé automatiquement. Vous pouvez aussi saisir les transactions manuellement.',
+      faq_q6: 'Puis-je déclarer plusieurs années fiscales ?', faq_a6: 'Vous pouvez importer un historique couvrant plusieurs années. Chaque rapport généré correspond à l’année fiscale couverte par les données importées, ce qui est utile pour régulariser des années passées une par une.',
+      faq_q7: 'Comment le staking et les revenus DeFi sont-ils traités ?', faq_a7: 'Les récompenses de staking et revenus similaires identifiés dans les exports CSV supportés sont rapportés séparément des plus-values. Pour les cas DeFi complexes, le trading professionnel ou certains cas limites, nous recommandons une vérification par un conseiller fiscal suisse.',
+      faq_q8: 'Ma bourse n\'est pas listée — que faire ?', faq_a8: 'Utilisez notre format CSV générique — les fichiers avec date, actif, quantité, type et prix sont analysés automatiquement. Si votre export est inhabituel, contactez-nous et nous pourrons vous aider à le mapper.',
       feat1_label: 'Conformité',
-      feat1_title: 'Taux de change ESTV',
-      feat1_body: "Toutes les conversions utilisent les taux de change officiels de l'Administration fédérale des contributions. Votre rapport correspondra aux attentes des autorités.",
+      feat1_title: 'Taux de référence ESTV',
+      feat1_body: "Les conversions en CHF utilisent les taux de référence annuels ESTV ainsi que des références de marché et de change à la date des transactions lorsque disponibles.",
       feat2_label: 'Comptabilité',
       feat2_title: 'Méthode FIFO (norme ESTV)',
       feat2_body: 'Nous appliquons la méthode FIFO mandatée par l\'ESTV — la norme officielle suisse pour la valorisation des cryptoactifs.',
       feat3_label: 'Multi-années',
       feat3_title: 'Historique fiscal complet',
-      feat3_body: 'Déclarez plusieurs années fiscales à la fois. Importez votre historique complet depuis 2017.',
+      feat3_body: 'Importez un historique complet couvrant plusieurs années et générez un rapport correspondant à la période fiscale couverte par vos données.',
       feat4_label: 'Confidentialité',
       feat4_title: 'Vos données restent vôtres',
       feat4_body: 'Nous ne vendons jamais vos données. Les données de transaction sont traitées de manière éphémère.',
       feat5_label: 'Couverture',
-      feat5_title: '50+ actifs et toutes les grandes bourses',
-      feat5_body: "De Bitcoin aux tokens DeFi, staking et NFTs — notre moteur gère toute la complexité d'un portefeuille crypto moderne.",
+      feat5_title: '23 formats supportés et grandes bourses',
+      feat5_body: "Prend en charge les flux fiscaux crypto les plus courants sur Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg et d'autres, avec gestion claire du staking et des coûts d'acquisition manquants.",
       starter_name: 'Starter', starter_price: 'Gratuit',
       pro_name: 'Professionnel',
       biz_name: 'Business',
@@ -2801,13 +2801,13 @@
       starter_f4: 'Rapport PDF basique',
       pro_f1: "Jusqu'à 1'000 transactions",
       pro_f2: '1 portefeuille / entité',
-      pro_f3: '20+ bourses supportées',
-      pro_f4: 'Support multi-années',
+      pro_f3: '23 formats supportés',
+      pro_f4: 'Import historique complet',
       pro_f5: 'Export PDF + CSV complet',
       pro_f6: 'Méthode FIFO (norme ESTV)',
       biz_f1: 'Transactions illimitées',
-      biz_f2: 'Bourses & portefeuilles illimités',
-      biz_f3: 'Historique multi-années',
+      biz_f2: 'Toutes les plateformes supportées & portefeuilles illimités',
+      biz_f3: 'Import de données historiques',
       biz_f4: 'Export PDF + CSV complet',
       biz_f5: 'Méthode FIFO (norme ESTV)',
       biz_f6: 'Support multi-entités',
@@ -2848,7 +2848,7 @@
       integrations_title: 'Plateformes <em>&amp; wallets</em>',
       report_mock_title: 'Rapport Fiscal Crypto 2024',
       report_mock_meta: 'Exemple · Zurich · Année fiscale 2024',
-      exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel — la plupart des formats sont supportés automatiquement.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
+      exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel ou contactez-nous — nous pouvons aider à mapper les exports inhabituels.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
       report_body: "Propre, structuré et conforme. Votre rapport PDF inclut un journal complet des transactions, un résumé des gains en capital et une valorisation de fin d'année.",
@@ -2878,7 +2878,7 @@
       info_need_label: 'Was wir benötigen', info_need_title: 'Ein Standard-Transaktionsexport',
       info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und jedes generische CSV mit Datum, Vermögenswert, Betrag und Preis.',
       info_get_label: 'Was Sie erhalten', info_get_title: 'Ein schweizkonformer Steuerbericht',
-      info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF gemäss offiziellen ESTV-Kursen und erstellt einen strukturierten Bericht für Ihre kantonale Steuererklärung.',
+      info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF anhand von ESTV-Referenzkursen und transaktionsdatumsbezogenen Marktpreisen, sofern verfügbar, und erstellt einen strukturierten Bericht für Ihre kantonale Steuererklärung.',
       info_priv_label: 'Datenschutz', info_priv_title: 'Nur in Ihrer Sitzung verarbeitet',
       info_priv_body: 'Ihre Daten werden nie auf unseren Servern gespeichert. Die gesamte Verarbeitung erfolgt sicher und ephemer — sobald Ihre Sitzung endet, werden keine Daten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
@@ -2887,35 +2887,35 @@
       disclaimer_title: 'Haftungsausschluss',
       disclaimer_text: 'Dieser Bericht wurde nach der Schweizer FIFO-Buchführungsmethode erstellt und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, NFTs, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
       how_label: '01 — Prozess', how_title: 'Drei Schritte zu einer<br><em>sauberen Deklaration</em>',
-      step1_title: 'Transaktionen importieren', step1_body: 'Laden Sie eine CSV-Datei von Kraken, Binance, Coinbase hoch — oder erfassen Sie Trades manuell.',
-      step2_title: 'Wir berechnen', step2_body: 'Unser System wendet die Schweizer FIFO-Methode an, rechnet alle Werte mit offiziellen ESTV-Kursen in CHF um und identifiziert steuerpflichtige Ereignisse.',
+      step1_title: 'Transaktionen importieren', step1_body: 'Laden Sie eine CSV-Datei von unterstützten Plattformen wie Kraken, Binance, Coinbase, Swissquote oder SwissBorg hoch — oder verwenden Sie unser generisches CSV-Format für andere Exporte.',
+      step2_title: 'Wir berechnen', step2_body: 'Unser System wendet die Schweizer FIFO-Methode an, rechnet Werte mit ESTV-Referenzkursen und transaktionsdatumsbezogenen Marktpreisen in CHF um, sofern verfügbar, und identifiziert steuerpflichtige Ereignisse.',
       step3_title: 'Bericht herunterladen', step3_body: 'Erhalten Sie einen PDF-Bericht für die Schweizer Steuerbehörden. Legen Sie ihn Ihrer Steuererklärung bei — kein Steuerberater nötig.',
       features_label: '02 — Funktionen', features_title: 'Entwickelt für<br><em>Schweizer Einwohner</em>',
       pricing_label: '04 — Preise', pricing_title: 'Einfache,<br><em>transparente</em> Preise',
       faq_label: '06 — FAQ', faq_title: 'Häufige<br><em>Fragen</em>',
       faq_q1: 'Sind Kryptowährungen in der Schweiz steuerpflichtig?', faq_a1: 'Ja. Kursgewinne sind für Privatpersonen grundsätzlich steuerfrei — aber die Bestände müssen als Vermögen deklariert werden, und Erträge aus Staking, Mining oder professionellem Handel sind steuerpflichtig.',
       faq_q2: 'Für welche Kantone gilt der Bericht?', faq_a2: 'Unser Bericht folgt den bundesweiten ESTV-Richtlinien, die in allen Schweizer Kantonen anerkannt sind. Wir fügen Hinweise für Zürich, Genf, Zug, Waadt und Bern hinzu, wo lokale Besonderheiten häufig auftreten.',
-      faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden die offiziellen Tageskurse der Eidgenössischen Steuerverwaltung (ESTV).',
+      faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden offizielle ESTV-Jahresreferenzkurse sowie transaktionsdatumsbezogene Markt- und FX-Referenzen, sofern verfügbar, abhängig von den Daten in Ihrem CSV-Export.',
 
       faq_q5: 'Sind meine Daten sicher?', faq_a5: 'Wir verarbeiten Transaktionen sitzungsbasiert und speichern keine Portfoliodaten nach der Berichtserstellung. Wir unterliegen dem Schweizer Datenschutzgesetz (revDSG).',
-      faq_q6: 'Kann ich mehrere Steuerjahre gleichzeitig deklarieren?', faq_a6: 'Ja. Laden Sie Ihre vollständige Transaktionshistorie hoch — unser System gruppiert Trades nach Steuerjahr und erstellt für jedes Jahr einen separaten Bericht.',
-      faq_q7: 'Wie werden Staking- und DeFi-Erträge behandelt?', faq_a7: 'Staking-Erträge, Mining-Einnahmen und DeFi-Renditen gelten in der Schweiz als steuerpflichtiges Einkommen und werden separat von Kapitalgewinnen ausgewiesen. Wir erkennen diese automatisch.',
-      faq_q8: 'Was wenn meine Börse nicht aufgelistet ist?', faq_a8: 'Verwenden Sie unser generisches CSV-Format — jede Datei mit Datum, Asset, Menge, Typ und Preis wird automatisch verarbeitet. Sie können Trades auch manuell erfassen.',
+      faq_q6: 'Kann ich mehrere Steuerjahre gleichzeitig deklarieren?', faq_a6: 'Sie können eine vollständige Historie aus Vorjahren hochladen. Jeder erzeugte Bericht bezieht sich auf das Steuerjahr, das von den hochgeladenen Daten abgedeckt wird — praktisch, wenn Sie frühere Jahre nacheinander nachholen.',
+      faq_q7: 'Wie werden Staking- und DeFi-Erträge behandelt?', faq_a7: 'Staking-Erträge und ähnliche Einkommensereignisse, die in unterstützten CSV-Exporten erkannt werden, werden separat von Kapitalgewinnen ausgewiesen. Für komplexe DeFi-Fälle, professionellen Handel oder Grenzfälle empfehlen wir die Prüfung durch einen Schweizer Steuerberater.',
+      faq_q8: 'Was wenn meine Börse nicht aufgelistet ist?', faq_a8: 'Verwenden Sie unser generisches CSV-Format — Dateien mit Datum, Asset, Menge, Typ und Preis werden automatisch verarbeitet. Wenn Ihr Export ungewöhnlich ist, kontaktieren Sie uns und wir helfen beim Mapping.',
       feat1_label: 'Konformität',
-      feat1_title: 'ESTV-Wechselkurse',
-      feat1_body: 'Alle Umrechnungen verwenden die offiziellen ESTV-Wechselkurse. Ihr Bericht entspricht den Erwartungen der Behörden.',
+      feat1_title: 'ESTV-Referenzkurse',
+      feat1_body: 'CHF-Umrechnungen verwenden offizielle ESTV-Jahresreferenzkurse zusammen mit transaktionsdatumsbezogenen Markt- und FX-Referenzen, sofern verfügbar.',
       feat2_label: 'Buchführung',
       feat2_title: 'FIFO-Methode (ESTV-Standard)',
       feat2_body: 'Wir wenden die von der ESTV vorgeschriebene FIFO-Methode an — der offizielle Schweizer Standard für die Bewertung von Krypto-Assets.',
       feat3_label: 'Mehrjährig',
       feat3_title: 'Vollständige Steuerhistorie',
-      feat3_body: 'Deklarieren Sie mehrere Steuerjahre auf einmal. Importieren Sie Ihre vollständige Transaktionshistorie seit 2017.',
+      feat3_body: 'Importieren Sie vollständige Historien aus Vorjahren und erstellen Sie einen Bericht für den Steuerzeitraum, der von Ihren hochgeladenen Daten abgedeckt wird.',
       feat4_label: 'Datenschutz',
       feat4_title: 'Ihre Daten bleiben Ihre',
       feat4_body: 'Wir verkaufen Ihre Daten nie. Transaktionsdaten werden ephemer verarbeitet.',
       feat5_label: 'Abdeckung',
-      feat5_title: '50+ Assets und alle grossen Börsen',
-      feat5_body: 'Von Bitcoin bis DeFi-Token, Staking-Erträge und NFT-Verkäufe — unser System verarbeitet die volle Komplexität.',
+      feat5_title: '23 unterstützte Formate und grosse Börsen',
+      feat5_body: 'Unterstützt gängige Krypto-Steuer-Workflows für Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg und weitere, mit klarer Behandlung von Staking und fehlender Anschaffungshistorie.',
       starter_name: 'Starter', starter_price: 'Kostenlos',
       pro_name: 'Professionell',
       biz_name: 'Business',
@@ -2925,13 +2925,13 @@
       starter_f4: 'Einfacher PDF-Bericht',
       pro_f1: "Bis 1'000 Transaktionen",
       pro_f2: '1 Portfolio / Unternehmen',
-      pro_f3: '20+ unterstützte Börsen',
-      pro_f4: 'Mehrjahres-Support',
+      pro_f3: '23 unterstützte Formate',
+      pro_f4: 'Import vollständiger Historien',
       pro_f5: 'Vollständiger PDF + CSV-Export',
       pro_f6: 'FIFO-Methode (ESTV-Standard)',
       biz_f1: 'Unbegrenzte Transaktionen',
-      biz_f2: 'Unbegrenzte Börsen & Portfolios',
-      biz_f3: 'Mehrjahres-Historie',
+      biz_f2: 'Alle unterstützten Börsen & unbegrenzte Portfolios',
+      biz_f3: 'Import historischer Daten',
       biz_f4: 'Vollständiger PDF + CSV-Export',
       biz_f5: 'FIFO-Methode (ESTV-Standard)',
       biz_f6: 'Multi-Entitäten-Support',
@@ -2968,7 +2968,7 @@
       integrations_title: 'Börsen <em>&amp; Wallets</em>',
       report_mock_title: 'Krypto-Steuerbericht 2024',
       report_mock_meta: 'Muster · Zürich · Steuerjahr 2024',
-      exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import — die meisten Exportformate werden automatisch unterstützt.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
+      exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import oder kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
       report_body: 'Sauber, strukturiert und konform. Ihr PDF-Bericht enthält ein vollständiges Transaktionsprotokoll, eine Kapitalgewinnzusammenfassung und eine Jahresend-Portfoliobewertung.',
@@ -3369,7 +3369,8 @@
   const WARN_AT = 900; // warn before hitting pro limit
 
   let currentPlanTier = 'free'; // 'free' | 'pro' | 'business'
-  let pendingFile = null; // store file while waiting for unlock code
+  let pendingFile = null; // store single file while waiting for unlock code
+  let pendingFiles = null; // store multi-file uploads while waiting for unlock code
 
   async function sha256hex(str) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -3429,7 +3430,11 @@
     // If there's a pending file, process it now
     setTimeout(() => {
       document.getElementById('unlock-banner').classList.remove('visible');
-      if (pendingFile) {
+      if (pendingFiles && pendingFiles.length) {
+        const files = pendingFiles;
+        pendingFiles = null;
+        processFiles(files);
+      } else if (pendingFile) {
         const f = pendingFile;
         pendingFile = null;
         processFile(f);
@@ -3578,13 +3583,15 @@
         formats.push(format);
         const txs = await normaliseRows(rows, format);
         allTransactions = allTransactions.concat(txs);
-        totalTxCount += rows.length;
+        totalTxCount += txs.length;
       }
 
       // ── Step 2: Check transaction limit ──
       const limit = getTxLimit();
       if (totalTxCount > limit) {
         indicator.classList.remove('visible');
+        pendingFiles = files.slice();
+        pendingFile = null;
         showUnlockBanner(totalTxCount);
         return;
       }
@@ -3646,27 +3653,42 @@
       return;
     }
 
-    // Count transactions quickly before full parse
-    const quickRows = parseCSVRows(csvText);
-    const txCount = quickRows.length;
-    const limit = getTxLimit();
-
-    // Hard block if over limit
-    if (txCount > limit) {
-      indicator.classList.remove('visible');
-      pendingFile = file;
-      showUnlockBanner(txCount);
-      return;
-    }
-
-    // Warn if approaching Pro limit
-    if (currentPlanTier === 'pro' && txCount >= WARN_AT) {
-      setProcessingText(`Processing ${txCount} transactions — approaching Pro limit of 1,000...`);
-    }
-
-    setProcessingText('Calculating your tax report...');
-
     try {
+      const quickRows = parseCSVRows(csvText);
+      if (!quickRows.length) throw new Error('No transactions found in file');
+      const headers = Object.keys(quickRows[0] || {});
+      const format = detectFormat(headers);
+      const transactions = await normaliseRows(quickRows, format);
+
+      if (!transactions.length) {
+        const detectedMsg = format === 'unknown'
+          ? `Exchange format not recognised. Headers found: ${headers.slice(0,6).join(', ')}. Try exporting as a standard trade history CSV from your exchange settings.`
+          : `Format detected as ${format} but no valid transactions could be extracted. Check that the file contains actual trade rows and not just headers or summary data.`;
+        throw new Error(detectedMsg);
+      }
+
+      const txCount = transactions.length;
+      const limit = getTxLimit();
+
+      if (txCount > limit) {
+        indicator.classList.remove('visible');
+        pendingFile = file;
+        pendingFiles = null;
+        showUnlockBanner(txCount);
+        return;
+      }
+
+      if (currentPlanTier === 'pro' && txCount >= WARN_AT) {
+        setProcessingText(`Processing ${txCount} transactions — approaching Pro limit of 1,000...`);
+      }
+
+      setProcessingText('Calculating your tax report...');
+
+      const parseRate = transactions.length / Math.max(quickRows.length, 1);
+      const lowParseWarning = (parseRate < 0.10 && quickRows.length > 20)
+        ? ` Note: only ${transactions.length} of ${quickRows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
+        : '';
+
       // Update status text based on format
       const firstLines = csvText.slice(0, 300).toLowerCase();
       if (firstLines.includes('txid') && firstLines.includes('aclass')) {
@@ -3675,7 +3697,7 @@
         setProcessingText('Parsing SwissBorg account statement...');
       }
       const [result] = await Promise.all([
-        generateTaxReport(csvText, file.name),
+        buildSingleExchangeReport(transactions, format, lowParseWarning),
         new Promise(resolve => {
           const msgs = [
             'Reading your transactions...',
@@ -5073,6 +5095,15 @@
     return { assetNames, notes };
   }
 
+  async function buildSingleExchangeReport(transactions, format, lowParseWarning='') {
+    const meta = buildReportMeta(transactions);
+    const computed = computeFIFO(transactions, meta.taxYear);
+    let assetNames = getDefaultAssetNames();
+    let notes = buildExchangeNotes(format, meta.taxYear, lowParseWarning);
+    ({ assetNames, notes } = await enrichAssetNamesAndNotes(format, meta.taxYear, computed, assetNames, notes));
+    return buildFinalReport(meta, transactions, computed, assetNames, notes);
+  }
+
   async function generateTaxReportFromTransactions(transactions, filename, format) {
     if (!transactions.length) throw new Error('No transactions found');
     const meta = buildReportMeta(transactions);
@@ -5102,12 +5133,7 @@
       ? ` Note: only ${transactions.length} of ${rows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
       : '';
 
-    const meta = buildReportMeta(transactions);
-    const computed = computeFIFO(transactions, meta.taxYear);
-    let assetNames = getDefaultAssetNames();
-    let notes = buildExchangeNotes(format, meta.taxYear, lowParseWarning);
-    ({ assetNames, notes } = await enrichAssetNamesAndNotes(format, meta.taxYear, computed, assetNames, notes));
-    return buildFinalReport(meta, transactions, computed, assetNames, notes);
+    return buildSingleExchangeReport(transactions, format, lowParseWarning);
   }
 
   // Sanitize user-supplied strings before inserting into HTML
