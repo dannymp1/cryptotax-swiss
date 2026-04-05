@@ -3919,6 +3919,37 @@
     return 'unknown';
   }
 
+  const EXCHANGE_DISPLAY_NAMES = {
+    binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+    bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+    bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+    bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
+    crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', revolut:'Revolut',
+    ledger:'Ledger Live', kucoin:'KuCoin', gemini:'Gemini', bitfinex:'Bitfinex',
+    gate:'Gate.io', mexc:'MEXC', generic:'Generic CSV', unknown:'Unknown',
+  };
+
+  function formatExchangeName(exchangeId) {
+    const id = String(exchangeId || '').trim();
+    return EXCHANGE_DISPLAY_NAMES[id] || id || 'Unknown';
+  }
+
+  function formatExchangeList(exchangeList) {
+    return String(exchangeList || '')
+      .split(',')
+      .map(x => formatExchangeName(x))
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  function getReportExchangeLabel(notes) {
+    if (!notes) return '—';
+    const multi = (notes.match(/Multiple exchanges: ([^.]+)/) || [])[1];
+    if (multi) return formatExchangeList(multi);
+    const single = (notes.match(/Exchange format detected: ([^.]+)/) || [])[1];
+    return single ? formatExchangeName(single) : '—';
+  }
+
   // ── Historical price cache for Kraken (no prices in ledger export) ──────
   const _krakenPriceCache = {};
   const COINGECKO_ID = {
@@ -4105,11 +4136,18 @@
           asset = sym.replace(/(USDT|BUSD|USDC|USD|PERP)$/,'').slice(0,8) || sym.slice(0,4);
           if (!asset) continue;
           // Support old format (qty/price) and new format (Filled Qty/Avg. Filled Price/Filled Value)
-          qty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty']||r['Executed Qty']||r['executed qty']||r['qty']||r['quantity'])||0);
+          const grossQty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty']||r['Executed Qty']||r['executed qty']||r['qty']||r['quantity'])||0);
+          qty = grossQty;
           const execPrice = parseFloat(r['avg. filled price']||r['Avg. Filled Price']||r['Executed Price']||r['executed price']||r['price']||r['Order Price'])||0;
           const execVal = Math.abs(parseFloat(r['filled value']||r['Filled Value']||r['Executed Value']||r['executed value'])||0);
+          const feeQty = Math.abs(parseFloat(r['exec fee']||r['Exec Fee']||r['Trading Fee']||r['fee']||r['Fee'])||0);
+          const feeCoin = (r['fee coin']||r['Fee Coin']||r['fee currency']||r['Fee Currency']||r['Fee Token']||'').toUpperCase().trim();
           priceCHF = execPrice * USD_CHF;
-          totalCHF = execVal > 0 ? execVal * USD_CHF : qty * priceCHF;
+          totalCHF = execVal > 0 ? execVal * USD_CHF : grossQty * priceCHF;
+          if (type === 'buy' && feeQty > 0 && feeCoin === asset) {
+            qty = Math.max(0, qty - feeQty);
+            priceCHF = qty > 0 ? totalCHF / qty : 0;
+          }
         }
         else if (format === 'swissquote') {
           // Swissquote: Date;Order number;Transaction;Symbol;Name;ISIN;Quantity;Unit price;Costs;Net amount;Balance;Currency;Exchange
@@ -4242,7 +4280,7 @@
           } else if (txType === 'convert') {
             type = 'sell'; // always selling the base asset
           } else if (txType === 'deposit') {
-            type = 'buy'; // on-chain deposit: asset arrives, need cost basis
+            type = 'deposit'; // transfer in: preserve holdings but do not fabricate cost basis
           } else if (txType === 'withdrawal') {
             type = 'withdrawal';
           } else if (txType === 'airdrop' || txType.includes('interest') || txType.includes('reward') || txType.includes('cashback') || txType.includes('staking') || txType.includes('distribution')) {
@@ -4291,11 +4329,18 @@
           }
 
           // ── Quantity & value ─────────────────────────────────────────────
-          qty = Math.abs(parseFloat(r['executed_qty']||r['executed']||r['amount'])||0);
+          const grossQty = Math.abs(parseFloat(r['executed_qty']||r['executed']||r['amount'])||0);
+          qty = grossQty;
           const rawPrice = parseFloat(r['price'])||0;
           const rawTotal = Math.abs(parseFloat(r['quote_qty']||r['total'])||0);
+          const feeQty = Math.abs(parseFloat(r['fee']||r['trading fee']||0) || 0);
+          const feeCoin = (r['fee coin']||r['fee asset']||r['commission asset']||'').toUpperCase().trim();
           priceCHF = quotedInCHF ? rawPrice : rawPrice * USD_CHF;
-          totalCHF = rawTotal > 0 ? (quotedInCHF ? rawTotal : rawTotal * USD_CHF) : qty * priceCHF;
+          totalCHF = rawTotal > 0 ? (quotedInCHF ? rawTotal : rawTotal * USD_CHF) : grossQty * priceCHF;
+          if (type === 'buy' && feeQty > 0 && feeCoin === asset) {
+            qty = Math.max(0, qty - feeQty);
+            priceCHF = qty > 0 ? totalCHF / qty : 0;
+          }
         }
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
@@ -4304,7 +4349,8 @@
           const FIAT_ASSETS = ['USD','EUR','GBP','CHF'];
           if (!asset || FIAT_ASSETS.includes(asset)) continue;
           // Map all known Coinbase transaction types
-          if (t.includes('buy') || t==='receive' || t.includes('deposit') || t.includes('advanced trade fill')) type='buy';
+          if (t.includes('buy') || t.includes('advanced trade fill')) type='buy';
+          else if (t==='receive' || t.includes('deposit')) type='deposit';
           else if (t.includes('sell') || t.includes('advanced trade sell') || t==='card spend') type='sell';
           else if (t==='convert') {
             // Convert has two legs: the sell leg (asset going out) and buy leg (USDC/asset coming in)
@@ -4602,6 +4648,10 @@
         a.totalBought = Math.round((a.totalBought+tx.qty)*1e8)/1e8;
         a.lots.push({qty:tx.qty, priceCHF:tx.priceCHF||0});
       }
+      else if (tx.type==='deposit') {
+        // Transfer in / receive: preserve holding quantity but keep basis unresolved
+        a.lots.push({qty:tx.qty, priceCHF:0, unknownBasis:true});
+      }
       else if (tx.type==='sell') {
         a.sellCount++;
         a.totalSold = Math.round((a.totalSold+tx.qty)*1e8)/1e8;
@@ -4616,27 +4666,32 @@
           a.unresolvedQty = (a.unresolvedQty||0) + tx.qty;
         } else {
           // Partial or full cost basis available
-          let rem=tx.qty, cb=0;
+          let rem=tx.qty, cb=0, unresolvedMatchedQty=0;
           for (let i=0;i<a.lots.length&&rem>0;i++) {
             const take=Math.min(a.lots[i].qty,rem);
-            cb+=take*a.lots[i].priceCHF;
+            if (a.lots[i].unknownBasis) {
+              unresolvedMatchedQty += take;
+            } else {
+              cb+=take*a.lots[i].priceCHF;
+            }
             a.lots[i].qty=Math.round((a.lots[i].qty-take)*1e8)/1e8;
             rem=Math.round((rem-take)*1e8)/1e8;
           }
           a.lots=a.lots.filter(l=>l.qty>0.000001);
 
-          // Partial missing cost basis — rem > 0 means some qty had no lots
-          if (rem > 0.000001) {
+          // Partial missing cost basis — unresolvedMatchedQty means lots exist but basis is unknown
+          const unresolvedQty = rem + unresolvedMatchedQty;
+          if (unresolvedQty > 0.000001) {
             // Pro-rate: split proceeds between covered and uncovered qty
-            const coveredQty = tx.qty - rem;
+            const coveredQty = tx.qty - unresolvedQty;
             const coveredProceeds = proceeds * (coveredQty / tx.qty);
-            const uncoveredProceeds = proceeds * (rem / tx.qty);
+            const uncoveredProceeds = proceeds * (unresolvedQty / tx.qty);
             a.costBasisSold += cb;
             a.gainLoss += coveredProceeds - cb;
             // Exclude uncovered portion as unresolved proceeds
             a.missingCostBasis = true;
             a.unresolvedProceeds = (a.unresolvedProceeds||0) + uncoveredProceeds;
-            a.unresolvedQty = (a.unresolvedQty||0) + rem;
+            a.unresolvedQty = (a.unresolvedQty||0) + unresolvedQty;
           } else {
             a.costBasisSold += cb;
             a.gainLoss += proceeds - cb;
@@ -4717,7 +4772,7 @@
       : (dates[0]?formatDate(dates[0]):'2024');
     const computed = computeFIFO(transactions, taxYear);
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    let notes = `Multiple exchanges: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    let notes = `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
@@ -5014,15 +5069,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const _endPart = _dr.includes('–') ? _dr.split('–').pop().trim() : _dr;
     const holdingsLabel = '31.12.' + data.taxYear;
 
-    // Capitalised exchange name
-    const _EXCHANGE_NAMES = {
-      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
-      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
-      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
-      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV', unknown:'Unknown',
-    };
-    const _rawExch = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
-    const exchangeDisplay = _EXCHANGE_NAMES[_rawExch.trim()] || _rawExch;
+    const exchangeDisplay = getReportExchangeLabel(data.notes);
 
     // Report status (used in completeness box)
     const _totalMatched = Math.abs(totalGain);
@@ -5518,15 +5565,7 @@ onmouseout="this.style.color='#8A909E'">
     const endPart = dr.includes('–') ? dr.split('–').pop().trim() : dr;
     const holdingsLabel = '31.12.' + data.taxYear;
 
-    // Capitalise exchange name from notes
-    const EXCHANGE_NAMES = {
-      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
-      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
-      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
-      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV', unknown:'Unknown',
-    };
-    const rawExchange = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
-    const exchangeDisplay = EXCHANGE_NAMES[rawExchange.trim()] || rawExchange;
+    const exchangeDisplay = getReportExchangeLabel(data.notes);
 
     const dateRange = data.dateRange || data.taxYear;
     const txCount = data.totalTransactions || 0;
@@ -5725,14 +5764,7 @@ onmouseout="this.style.color='#8A909E'">
       showToast('No transaction data available — please re-upload your file.');
       return;
     }
-    const EXCHANGE_NAMES = {
-      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
-      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
-      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
-      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV',
-    };
-    const rawExchange = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '' : '';
-    const exchangeName = EXCHANGE_NAMES[rawExchange.trim()] || rawExchange || 'Unknown';
+    const exchangeName = getReportExchangeLabel(data.notes).replace('—', 'Unknown');
 
     const headers = ['Date','Type','Asset','Quantity','Price CHF','Total CHF'];
     const rows = data.transactions.map(t => [
