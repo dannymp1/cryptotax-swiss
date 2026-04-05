@@ -4854,10 +4854,6 @@
     return out;
   }
 
-  function isDerivativeAsset(symbol) {
-    return String(symbol || '').endsWith(':FUT');
-  }
-
   function computeFIFO(transactions, taxYear) {
     const assets = {};
     for (const tx of transactions) {
@@ -4952,7 +4948,7 @@
     }
 
     const result=[], dec31Prices=getYearEndPrices(taxYear);
-    let totalStaking=0, totalSpotGain=0, totalDerivative=0, totalPortfolio=0;
+    let totalStaking=0, totalGain=0, totalPortfolio=0;
 
     for (const [sym,a] of Object.entries(assets)) {
       // End holding = sum of remaining lot quantities (most accurate)
@@ -4962,15 +4958,9 @@
       // Use real Dec 31 year-end price if available, else fall back to last seen price
       const yearEndPrice = dec31Prices[sym] || a.lastPriceCHF;
       const endValueCHF = Math.round(endHolding*yearEndPrice*100)/100;
-      if (isDerivativeAsset(sym)) {
-        // Derivative contracts should not appear as owned spot assets or wealth.
-        totalDerivative += a.gainLoss + a.stakingIncome;
-        continue;
-      }
-
-      totalStaking += a.stakingIncome;
-      totalSpotGain += a.gainLoss;
-      totalPortfolio += endValueCHF;
+      totalStaking+=a.stakingIncome;
+      totalGain+=a.gainLoss;
+      totalPortfolio+=endValueCHF;
       result.push({
         symbol:sym, name:sym,
         missingCostBasis: a.missingCostBasis || false,
@@ -4990,9 +4980,7 @@
     return {
       assets:result,
       stakingIncomeCHF:Math.round(totalStaking*100)/100,
-      spotGainLossCHF:Math.round(totalSpotGain*100)/100,
-      derivativePnlCHF:Math.round(totalDerivative*100)/100,
-      totalGainLossCHF:Math.round((totalSpotGain + totalDerivative)*100)/100,
+      totalGainLossCHF:Math.round(totalGain*100)/100,
       totalPortfolioValueCHF:Math.round(totalPortfolio*100)/100,
     };
   }
@@ -5077,8 +5065,6 @@
       ...meta,
       assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
       stakingIncomeCHF: computed.stakingIncomeCHF,
-      spotGainLossCHF: computed.spotGainLossCHF,
-      derivativePnlCHF: computed.derivativePnlCHF,
       totalGainLossCHF: computed.totalGainLossCHF,
       totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
       notes,
@@ -5195,9 +5181,7 @@
       return;
     }
 
-    const gain = Number(data.totalGainLossCHF || 0);
-    const derivativePnl = Number(data.derivativePnlCHF || 0);
-    const hasDerivativeSummary = Math.abs(derivativePnl) > 0.000001;
+    const gain = data.totalGainLossCHF;
     const gainStr = gain !== null && gain !== undefined
       ? (gain >= 0 ? '+' + fmtCHF(gain) : '−' + fmtCHF(Math.abs(gain)))
       : '—';
@@ -5213,7 +5197,7 @@
         <div class="report-stat-val">${data.totalTransactions || '—'}</div>
       </div>
       <div class="report-stat">
-        <div class="report-stat-label">${hasDerivativeSummary ? 'Total Realised Result' : 'Net Gain / Loss'}</div>
+        <div class="report-stat-label">Net Gain / Loss</div>
         <div class="report-stat-val ${gainClass}">${gainStr}</div>
       </div>
     `;
@@ -5266,7 +5250,7 @@
   </tbody>
 </table>
 
-<div style="display:grid;grid-template-columns:${hasDerivativeSummary ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr'};gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:20px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:20px">
   <div style="background:rgba(245,242,235,0.03);padding:16px 18px">
     <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">Staking / Income</div>
     <div style="font-family:'DM Serif Display',serif;font-size:20px;color:#4caf82">${fmtCHF(data.stakingIncomeCHF)}</div>
@@ -5275,12 +5259,8 @@
     <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">Portfolio Value 31.12</div>
     <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--paper)">${fmtCHF(data.totalPortfolioValueCHF)}</div>
   </div>
-  ${hasDerivativeSummary ? `<div style="background:rgba(245,242,235,0.03);padding:16px 18px">
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">Derivative PnL</div>
-    <div style="font-family:'DM Serif Display',serif;font-size:20px;${derivativePnl>=0?'color:#4caf82':'color:#e05c5c'}">${derivativePnl >= 0 ? '+' + fmtCHF(derivativePnl) : '−' + fmtCHF(Math.abs(derivativePnl))}</div>
-  </div>` : ''}
   <div style="background:rgba(245,242,235,0.03);padding:16px 18px">
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">${hasDerivativeSummary ? 'Total Realised Result' : 'Net Taxable Gain'}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">Net Taxable Gain</div>
     <div style="font-family:'DM Serif Display',serif;font-size:20px;${gain>=0?'color:#4caf82':'color:#e05c5c'}">${gainStr}</div>
   </div>
 </div>
@@ -5334,22 +5314,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       </tr>`;
     }).join('');
 
-    const spotGain = Number(data.spotGainLossCHF ?? data.totalGainLossCHF ?? 0);
-    const derivativePnl = Number(data.derivativePnlCHF || 0);
     const totalGain = Number(data.totalGainLossCHF||0);
-    const spotGainStr = spotGain >= 0
-      ? `+CHF ${spotGain.toLocaleString('de-CH',{minimumFractionDigits:2})}`
-      : `-CHF ${Math.abs(spotGain).toLocaleString('de-CH',{minimumFractionDigits:2})}`;
-    const derivativePnlStr = derivativePnl >= 0
-      ? `+CHF ${derivativePnl.toLocaleString('de-CH',{minimumFractionDigits:2})}`
-      : `-CHF ${Math.abs(derivativePnl).toLocaleString('de-CH',{minimumFractionDigits:2})}`;
     const totalGainStr = totalGain >= 0
       ? `+CHF ${totalGain.toLocaleString('de-CH',{minimumFractionDigits:2})}`
       : `-CHF ${Math.abs(totalGain).toLocaleString('de-CH',{minimumFractionDigits:2})}`;
-    const spotColor = spotGain >= 0 ? '#2D7A56' : '#C0392B';
-    const derivativeColor = derivativePnl >= 0 ? '#2D7A56' : '#C0392B';
     const totalColor = totalGain >= 0 ? '#2D7A56' : '#C0392B';
-    const hasDerivativeSummary = Math.abs(derivativePnl) > 0.000001;
 
     // Dynamic holdings column header — derived from period end date
     const _dr = data.dateRange || '';
@@ -5359,7 +5328,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const exchangeDisplay = getReportExchangeLabel(data.notes);
 
     // Report status (used in completeness box)
-    const _totalMatched = Math.abs(spotGain);
+    const _totalMatched = Math.abs(totalGain);
     const _coverage = _totalExcluded > 0
       ? Math.round(_totalMatched / (_totalMatched + _totalExcluded) * 100) : 100;
     const statusColor = !_hasUnmatched ? '#2D7A56' : _coverage >= 80 ? '#B8960C' : '#C0392B';
@@ -5491,7 +5460,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .total-row td:last-child { border-right: none !important; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
-    .summary-grid { display:grid; grid-template-columns:${hasDerivativeSummary ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr'}; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
   .summary-box { background:#FAFAF8; padding:28px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
   .summary-box:last-child { border-right:none; }
   .summary-box.highlight { background:#1A1D21; border-right:1px solid #2A2D31; }
@@ -5851,7 +5820,7 @@ onmouseout="this.style.color='#8A909E'">
     const txCount = data.totalTransactions || 0;
     const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
     const totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
-    const totalMatched = Number(data.spotGainLossCHF ?? data.totalGainLossCHF ?? 0);
+    const totalMatched = Number(data.totalGainLossCHF||0);
     const coverage = totalExcluded > 0
       ? Math.round(Math.abs(totalMatched) / (Math.abs(totalMatched) + totalExcluded) * 100)
       : 100;
@@ -5890,7 +5859,7 @@ onmouseout="this.style.color='#8A909E'">
       <tr class="total-row">
         <td colspan="6">Net Total</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-        <td class="right" style="color:${spotColor};">${spotGainStr}</td>
+        <td class="right" style="color:${totalColor};">${totalGainStr}</td>
         ${_hasUnmatched ? `<td class="right" style="color:#B8960C;font-weight:600;padding-right:10px;">CHF ${_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})}</td>` : ''}
       </tr>
     </tbody>
@@ -5943,13 +5912,8 @@ onmouseout="this.style.color='#8A909E'">
       <div class="summary-label">Wealth Value 31.12.${data.taxYear}</div>
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
-    ${hasDerivativeSummary ? `
-    <div class="summary-box">
-      <div class="summary-label">Derivative PnL</div>
-      <div class="summary-val" style="color:${derivativeColor}">${derivativePnlStr.replace('CHF ', 'CHF ')}</div>
-    </div>` : ''}
     <div class="summary-box highlight">
-      <div class="summary-label">${hasDerivativeSummary ? 'Total Realised Result' : 'Realised Gain / Loss'}</div>
+      <div class="summary-label">Realised Gain / Loss</div>
       <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
     </div>
   </div>
@@ -5983,8 +5947,7 @@ onmouseout="this.style.color='#8A909E'">
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). USD-denominated values use the ESTV annual reference rate of 0.906250 CHF/USD for 31.12.${data.taxYear}. Non-CHF fiat countervalues such as EUR and GBP are converted using historical FX references where available; otherwise annual reference rates are applied. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Exchange-specific tickers are normalised to standard asset symbols (for example Kraken XBT → BTC). All assets identified by base currency. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates) for directly owned spot assets only. ·
-    ${hasDerivativeSummary ? `<strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Derivatives:</strong> Realised futures / perpetual P&amp;L reported separately from spot holdings and excluded from year-end wealth unless an explicit owned balance or closing contract value is available. · ` : ''}
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
   <div class="doc-footer">
