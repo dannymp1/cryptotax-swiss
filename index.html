@@ -3968,6 +3968,8 @@
   // ── Historical price cache for Kraken (no prices in ledger export) ──────
   const _krakenPriceCache = {};
   const _krakenPricePromises = {};
+  const _krakenRangeCache = {};
+  const _krakenRangePromises = {};
   const COINGECKO_ID = {
     BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin',
     ADA:'cardano', XRP:'ripple', DOT:'polkadot', AVAX:'avalanche-2',
@@ -3985,6 +3987,40 @@
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
     }
+  }
+
+  async function getHistoricalPriceSeriesCHF(asset, year) {
+    const cgId = COINGECKO_ID[asset];
+    const seriesKey = asset + '_' + year;
+    if (!cgId) return null;
+    if (_krakenRangeCache[seriesKey]) return _krakenRangeCache[seriesKey];
+    if (_krakenRangePromises[seriesKey]) return _krakenRangePromises[seriesKey];
+
+    _krakenRangePromises[seriesKey] = (async () => {
+      try {
+        const from = Math.floor(Date.UTC(year, 0, 1, 0, 0, 0) / 1000);
+        const to = Math.floor(Date.UTC(year, 11, 31, 23, 59, 59) / 1000);
+        const url = `https://api.coingecko.com/api/v3/coins/${cgId}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
+        const data = await fetchJsonWithTimeout(url, 15000);
+        const daily = {};
+        for (const point of (data?.prices || [])) {
+          const ts = Array.isArray(point) ? point[0] : null;
+          const usdPrice = Array.isArray(point) ? Number(point[1] || 0) : 0;
+          if (!ts || !usdPrice) continue;
+          const dateKey = new Date(ts).toISOString().slice(0,10);
+          daily[dateKey] = usdPrice * 0.906250;
+        }
+        _krakenRangeCache[seriesKey] = daily;
+        return daily;
+      } catch (e) {
+        _krakenRangeCache[seriesKey] = null;
+        return null;
+      } finally {
+        delete _krakenRangePromises[seriesKey];
+      }
+    })();
+
+    return _krakenRangePromises[seriesKey];
   }
 
   // Rate-limit historical fetches to avoid burning CoinGecko quota needed by the live ticker
@@ -4007,6 +4043,12 @@
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
+    const year = parseInt(dateStr.slice(0,4)) || 2024;
+    const yearlySeries = await getHistoricalPriceSeriesCHF(asset, year);
+    if (yearlySeries && yearlySeries[dateStr]) {
+      _krakenPriceCache[key] = yearlySeries[dateStr];
+      return yearlySeries[dateStr];
+    }
     _krakenPricePromises[key] = (async () => {
       try {
       // Throttle: wait at least 1.2s between CoinGecko history calls (max ~50/min on free tier)
@@ -4026,8 +4068,7 @@
       return chfPrice;
       } catch (e) {
       // Fallback to year-end prices — derive year from dateStr to avoid scope issues
-      const yr = parseInt(dateStr.slice(0,4)) || 2024;
-      const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
+      const fallback = getYearEndPrices(year)[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
       } finally {
