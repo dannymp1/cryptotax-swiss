@@ -4951,7 +4951,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
         : '—';
       return `<tr>
-        <td class="mono" style="font-weight:700;">${escHtml(a.symbol)}</td>
+        <td class="mono" style="font-weight:700;padding-left:10px">${escHtml(a.symbol)}</td>
         <td style="color:#0D1117">${escHtml(a.name)}</td>
         <td class="center mono" style="color:#5A6070;">${a.buyCount||0}</td>
         <td class="center mono" style="color:#5A6070;">${a.sellCount||0}</td>
@@ -4961,7 +4961,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         <td class="right mono" style="font-weight:700;color:${a.missingCostBasis ? '#9AA0AC' : glColor};">
           ${a.missingCostBasis ? '—' : glStr}
         </td>
-        ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;">
+        ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:10px;">
           ${unmatchedStr === '—' ? '<span style="color:#9AA0AC;font-weight:400;">—</span>' : unmatchedStr}
         </td>` : ''}
       </tr>`;
@@ -4976,7 +4976,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     // Dynamic holdings column header — derived from period end date
     const _dr = data.dateRange || '';
     const _endPart = _dr.includes('–') ? _dr.split('–').pop().trim() : _dr;
-    const holdingsLabel = '31.12.' + data.taxYear;
+    const holdingsLabel = 'Holdings 31.12.' + data.taxYear;
 
     // Capitalised exchange name
     const _EXCHANGE_NAMES = {
@@ -5066,8 +5066,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     text-transform: uppercase; padding: 0; border-radius: 0;
     vertical-align: middle;
   }
-  .doc-header-right { text-align: right; display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0; }
   .doc-header-left { flex: 1; min-width: 0; }
+  .doc-header-right { text-align: right; display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0; }
   .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 16pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; letter-spacing: -0.02em; white-space: nowrap; }
   .doc-meta { font-family: 'DM Mono', monospace; font-size: 7pt; color: #9AA0AC; line-height: 1.85; letter-spacing: 0.04em; white-space: nowrap; }
 
@@ -5480,7 +5480,7 @@ onmouseout="this.style.color='#8A909E'">
     // Derive end date label from dateRange for the Holdings column header
     const dr = data.dateRange || '';
     const endPart = dr.includes('–') ? dr.split('–').pop().trim() : dr;
-    const holdingsLabel = '31.12.' + data.taxYear;
+    const holdingsLabel = 'Holdings 31.12.' + data.taxYear;
 
     // Capitalise exchange name from notes
     const EXCHANGE_NAMES = {
@@ -5567,16 +5567,14 @@ onmouseout="this.style.color='#8A909E'">
     }).join('');
     return '<div class="sec-title" style="margin-top:24px;break-before:avoid;">02 — FIFO Reconciliation</div>'
       +'<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">This table shows how your holdings were matched under FIFO. Unmatched quantities indicate disposals with no corresponding purchase history in this file — likely acquired on another exchange or in a prior period.</p>'
-      +'<table style="font-size:8pt;"><colgroup>'
-      +'<col style="width:10%"><col style="width:17%"><col style="width:17%"><col style="width:17%"><col style="width:13%"><col style="width:13%"><col style="width:13%">'
-      +'</colgroup><thead><tr>'
-      +'<th style="text-align:left;">Asset</th>'
-      +'<th class="right" title="Derived from closing balance + sells − buys">Opening Balance<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(derived)</span></th>'
-      +'<th class="right">+ Buys</th>'
-      +'<th class="right">− Sells</th>'
-      +'<th class="right">= Closing</th>'
-      +'<th class="right">Unmatched Qty</th>'
-      +'<th class="right">Unmatched Proceeds</th>'
+      +'<table style="font-size:7.5pt;"><thead><tr>'
+      +'<th style="text-align:left;padding:10px 12px;">Asset</th>'
+      +'<th class="right" style="padding:10px 12px;" title="Derived from closing balance + sells − buys">Opening Balance<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(derived from activity)</span></th>'
+      +'<th class="right" style="padding:10px 12px;">+ Buys</th>'
+      +'<th class="right" style="padding:10px 12px;">− Sells</th>'
+      +'<th class="right" style="padding:10px 12px;">= Closing</th>'
+      +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 12px 10px 14px;">Unmatched Qty</th>'
+      +'<th class="right" style="padding:10px 12px;">Unmatched Proceeds</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table>'
       +'<p style="font-size:8pt;color:#8A909E;font-family:\'Instrument Sans\',Arial,sans-serif;margin-top:8px;line-height:1.6;font-style:italic;">'
       +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>'
@@ -5667,10 +5665,8 @@ onmouseout="this.style.color='#8A909E'">
     // Renumber Tax Summary and Legal Notice accordingly
     return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
       + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
-      + '<table style="font-size:8pt;"><colgroup>'
-      + '<col style="width:12%"><col style="width:12%"><col style="width:10%"><col style="width:22%"><col style="width:22%"><col style="width:22%">'
-      + '</colgroup><thead><tr>'
-      + '<th style="text-align:left;">Date</th>'
+      + '<table style="font-size:8pt;"><thead><tr>'
+      + '<th style="text-align:left;white-space:nowrap;">Date</th>'
       + '<th style="text-align:left;">Type</th>'
       + '<th style="text-align:left;">Asset</th>'
       + '<th class="right">Quantity</th>'
