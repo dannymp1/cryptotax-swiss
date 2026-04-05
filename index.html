@@ -3812,8 +3812,8 @@
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
   function parseCSVRows(csvText) {
-    let text = csvText.trim();
-    const lines = text.split('\n').filter(l => l.trim());
+    const text = String(csvText || '').replace(/^\uFEFF/, '');
+    const lines = text.split(/\r\n|\n|\r/).filter(l => l.trim());
     if (lines.length < 2) return [];
     // Auto-detect delimiter: comma, semicolon (Swissquote/EU), or tab
     const first = lines[0];
@@ -3821,18 +3821,51 @@
     const semis  = (first.match(/;/g)||[]).length;
     const tabs   = (first.match(/\t/g)||[]).length;
     const delim  = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
-    const headers = lines[0].split(delim).map(h => h.replace(/['"]/g,'').trim().toLowerCase());
-    return lines.slice(1).map(line => {
-      const vals = []; let cur = '', inQ = false;
-      for (const ch of line) {
-        if (ch === '"') { inQ = !inQ; }
-        else if (ch === delim && !inQ) { vals.push(cur.trim()); cur = ''; }
-        else cur += ch;
+
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const next = text[i + 1];
+
+      if (ch === '"') {
+        if (inQuotes && next === '"') {
+          field += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (ch === delim && !inQuotes) {
+        row.push(field.trim());
+        field = '';
+      } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+        if (ch === '\r' && next === '\n') i++;
+        row.push(field.trim());
+        field = '';
+        if (row.some(cell => cell !== '')) rows.push(row);
+        row = [];
+      } else {
+        field += ch;
       }
-      vals.push(cur.trim());
-      const row = {};
-      headers.forEach((h, i) => row[h] = (vals[i]||'').replace(/^"|"$/g,'').trim());
-      return row;
+    }
+
+    if (field.length || row.length) {
+      row.push(field.trim());
+      if (row.some(cell => cell !== '')) rows.push(row);
+    }
+
+    if (inQuotes || rows.length < 2) return [];
+
+    const headers = rows[0].map(h => String(h || '').replace(/['"]/g,'').trim().toLowerCase());
+    return rows.slice(1).map(values => {
+      const parsedRow = {};
+      headers.forEach((h, i) => {
+        parsedRow[h] = String(values[i] || '').replace(/^"|"$/g,'').trim();
+      });
+      return parsedRow;
     });
   }
   function detectFormat(headers) {
@@ -4685,7 +4718,7 @@
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
-      reportId: 'CD-' + data.taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      reportId: 'CD-' + taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
       reportVersion: '2.1',
       generatedAt: new Date().toISOString(),
       totalTransactions: transactions.length,
@@ -4918,7 +4951,7 @@
   </div>
 </div>
 
-${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${data.notes}</div>` : ''}
+${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${escHtml(data.notes)}</div>` : ''}
     `;
 
     document.getElementById('report-content').innerHTML = reportHTML;
