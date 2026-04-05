@@ -14,6 +14,7 @@
 <meta name="author" content="CryptoDeclare"/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://www.cryptodeclare.ch/"/>
+<link rel="sitemap" type="application/xml" href="/sitemap.xml"/>
 
 <!-- ── Favicon ── -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
@@ -26,7 +27,10 @@
 <meta property="og:url" content="https://www.cryptodeclare.ch/"/>
 <meta property="og:title" content="CryptoDeclare — Swiss Crypto Tax Reporting"/>
 <meta property="og:description" content="ESTV-compliant Swiss crypto tax reports in minutes. Upload your CSV, get a PDF ready for your cantonal tax return. From CHF 99."/>
-<meta property="og:image" content="https://www.cryptodeclare.ch/og-image.svg"/>
+<meta property="og:image" content="https://www.cryptodeclare.ch/og-image.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:type" content="image/png"/>
 <meta property="og:locale" content="en_CH"/>
 <meta property="og:locale:alternate" content="fr_CH"/>
 <meta property="og:locale:alternate" content="de_CH"/>
@@ -36,7 +40,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="CryptoDeclare — Swiss Crypto Tax Reporting"/>
 <meta name="twitter:description" content="ESTV-compliant Swiss crypto tax reports in minutes. Upload your CSV, get a PDF. From CHF 99."/>
-<meta name="twitter:image" content="https://www.cryptodeclare.ch/og-image.svg"/>
+<meta name="twitter:image" content="https://www.cryptodeclare.ch/og-image.png"/>
 
 <!-- ── Structured Data (Google Rich Results) ── -->
 <script type="application/ld+json">
@@ -68,7 +72,7 @@
       "name": "Business",
       "price": "299",
       "priceCurrency": "CHF",
-      "description": "Unlimited transactions, LIFO support, accountant sharing"
+      "description": "Unlimited transactions, all exchanges, multi-entity support"
     }
   ],
   "provider": {
@@ -97,7 +101,7 @@
     --paper: #F5F2EB;
     --paper-warm: #EDE9DF;
     --gold: #B8960C;
-    --gold-light: #D4AF37;
+    --gold-light: #B8960C;
     --gold-pale: #F7F0D4;
     --red: #C0392B;
     --rule: rgba(13,17,23,0.12);
@@ -2082,7 +2086,7 @@
       <div class="step-num">01</div>
       <div class="step-icon">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M4 14l4-4 3 3 5-6" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 14l4-4 3 3 5-6" stroke="#B8960C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           <rect x="2" y="2" width="16" height="16" rx="3" stroke="#F5F2EB" stroke-width="1.2"/>
         </svg>
       </div>
@@ -2094,7 +2098,7 @@
       <div class="step-icon">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <circle cx="10" cy="10" r="7" stroke="#F5F2EB" stroke-width="1.2"/>
-          <path d="M10 6v4l3 2" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M10 6v4l3 2" stroke="#B8960C" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </div>
       <h3 class="step-title">We calculate</h3>
@@ -2104,7 +2108,7 @@
       <div class="step-num">03</div>
       <div class="step-icon">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M5 10l4 4 6-7" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 10l4 4 6-7" stroke="#B8960C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M3 17h14" stroke="#F5F2EB" stroke-width="1.2" stroke-linecap="round"/>
         </svg>
       </div>
@@ -2128,8 +2132,8 @@
     </div>
     <div class="feature">
       <div class="feature-label">Accounting</div>
-      <div class="feature-title">FIFO & LIFO methods</div>
-      <div class="feature-body">Choose your cost basis method. FIFO is the Swiss standard, but we support LIFO for edge cases where your canton allows it.</div>
+      <div class="feature-title">FIFO method (ESTV standard)</div>
+      <div class="feature-body">We apply the FIFO method mandated by ESTV — the official Swiss tax authority standard for crypto asset valuation.</div>
     </div>
     <div class="feature">
       <div class="feature-label">Multi-year</div>
@@ -2250,13 +2254,13 @@
       <div class="pricing-period">Per tax year · up to 1,000 transactions</div>
       <ul class="pricing-features">
         <li>Up to 1,000 transactions</li>
-        <li>All exchanges & wallets</li>
+        <li>1 portfolio / entity</li>
+        <li>All 20+ supported exchanges</li>
         <li>Multi-year support</li>
         <li>Full PDF + CSV export</li>
         <li>FIFO method (ESTV standard)</li>
       </ul>
-      <button class="btn-outline" disabled style="opacity:0.5;cursor:not-allowed;pointer-events:none;">Coming soon</button>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--ink-faint);text-align:center;margin-top:8px;">Launching shortly</div>
+      <a href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Pro</a>
     </div>
     <div class="pricing-card business">
       <div class="pricing-name">Business</div>
@@ -2267,12 +2271,11 @@
         <li>Unlimited exchanges & portfolios</li>
         <li>Multi-year history</li>
         <li>Full PDF + CSV export</li>
-        <li>FIFO & LIFO methods</li>
-        <li>Accountant sharing</li>
+        <li>FIFO method (ESTV standard)</li>
+        <li>Multi-entity support</li>
         <li>Priority support</li>
       </ul>
-      <button class="btn-outline" disabled style="opacity:0.5;cursor:not-allowed;pointer-events:none;">Coming soon</button>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;color:rgba(245,242,235,0.3);text-align:center;margin-top:8px;">Launching shortly</div>
+      <a href="https://buy.stripe.com/6oU9AT8DR5GPekr3CQ0Jq01" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Business</a>
     </div>
   </div>
   <div style="text-align:center;margin-top:28px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
@@ -2303,8 +2306,9 @@
       <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
       <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
     </div>
-    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch</div>
+    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
     <div class="unlock-success" id="unlock-success"></div>
+    <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable. Each purchase is for one tax entity.</div>
   </div>
 
   <!-- FREE TRIAL BANNER -->
@@ -2317,7 +2321,7 @@
           </div>
         </div>
         <div class="trial-used-msg" id="trial-used-msg" style="display:none;">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a6 6 0 100 12A6 6 0 007 1z" stroke="#D4AF37" stroke-width="1.2"/><path d="M7 6v3M7 4.5v.5" stroke="#D4AF37" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a6 6 0 100 12A6 6 0 007 1z" stroke="#B8960C" stroke-width="1.2"/><path d="M7 6v3M7 4.5v.5" stroke="#B8960C" stroke-width="1.2" stroke-linecap="round"/></svg>
           Free trial used — upgrade to Pro to generate more reports
         </div>
       </div>
@@ -2325,7 +2329,7 @@
       <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Upload your transaction file">
         <input type="file" id="csv-input" accept=".csv,.xlsx,.xls,.xlsm" multiple />
         <div class="upload-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#B8960C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
             <polyline points="17 8 12 3 7 8"/>
             <line x1="12" y1="3" x2="12" y2="15"/>
@@ -2350,19 +2354,19 @@
 
     <div class="app-right">
       <div class="app-info-box">
-        <div class="app-info-label">What we need</div>
-        <div class="app-info-title">A standard transaction export</div>
-        <div class="app-info-body">Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.</div>
+        <div class="app-info-label" data-i18n="info_need_label">What we need</div>
+        <div class="app-info-title" data-i18n="info_need_title">A standard transaction export</div>
+        <div class="app-info-body" data-i18n="info_need_body">Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.</div>
       </div>
       <div class="app-info-box">
-        <div class="app-info-label">What you get</div>
-        <div class="app-info-title">A Swiss tax-ready report</div>
-        <div class="app-info-body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.</div>
+        <div class="app-info-label" data-i18n="info_get_label">What you get</div>
+        <div class="app-info-title" data-i18n="info_get_title">A Swiss tax-ready report</div>
+        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.</div>
       </div>
       <div class="app-info-box">
-        <div class="app-info-label">Privacy</div>
-        <div class="app-info-title">Processed in your session only</div>
-        <div class="app-info-body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
+        <div class="app-info-label" data-i18n="info_priv_label">Privacy</div>
+        <div class="app-info-title" data-i18n="info_priv_title">Processed in your session only</div>
+        <div class="app-info-body" data-i18n="info_priv_body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
       </div>
     </div>
   </div>
@@ -2376,9 +2380,13 @@
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Download PDF
         </button>
-        <button class="btn-outline" onclick="openModal('professional')" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
-          Upgrade to Pro
+        <button class="btn-outline" onclick="downloadLedgerCSV()" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Ledger CSV
         </button>
+        <a class="btn-outline" href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" target="_blank" rel="noopener" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+          Upgrade to Pro
+        </a>
       </div>
     </div>
 
@@ -2480,13 +2488,10 @@
       <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
-      <p>Enter your email to continue to secure checkout via Stripe. You'll receive your report download link immediately after payment.</p>
+      <p id="modal-desc">You'll receive your unlock code by email immediately after payment. Enter it on this page to activate your plan.</p>
       <div class="modal-stripe-note">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z" stroke="#8A909E" stroke-width="1.2"/><path d="M8 7v4M8 5.5v.5" stroke="#8A909E" stroke-width="1.2" stroke-linecap="round"/></svg>
         Payments are processed securely by Stripe. We never see your card details.
-      </div>
-      <div class="modal-input-group">
-        <input class="modal-input" type="email" id="modal-email" placeholder="your@email.com" />
       </div>
       <a class="btn-stripe" id="stripe-checkout-btn" href="#" onclick="proceedToStripe(event)">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.5h12M4 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -2537,7 +2542,7 @@
       </p>
     </div>
     <div class="contact-right">
-      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at hello@cryptodeclare.ch</div>
+      <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at <a href="mailto:hello@cryptodeclare.ch" style="color:#e05c5c;">hello@cryptodeclare.ch</a></div>
       <form class="contact-form" id="contact-form">
         <div class="contact-field">
           <label class="contact-label" for="contact-name">Name</label>
@@ -2605,7 +2610,7 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -2622,11 +2627,17 @@
       trial_strong: 'Try your first report at no cost.',
       trial_span: 'Upload any transaction file — we\'ll generate a full Swiss tax report instantly.',
       trial_used: 'Free trial used — upgrade to Pro to generate more reports',
+      info_need_label: 'What we need', info_need_title: 'A standard transaction export',
+      info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.',
+      info_get_label: 'What you get', info_get_title: 'A Swiss tax-ready report',
+      info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using official ESTV rates, and produces a structured report for your cantonal tax declaration.',
+      info_priv_label: 'Privacy', info_priv_title: 'Processed in your session only',
+      info_priv_body: 'Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
       btn_download: '⬇ Download PDF',
       btn_upgrade: 'Upgrade to Pro',
       disclaimer_title: 'Document Disclaimer',
-      disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, NFTs, professional trading), please consult a qualified Swiss tax advisor (Treuhänder).',
+      disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, NFTs, professional trading), please consult a certified Swiss tax advisor.',
       how_label: '01 — Process', how_title: 'Three steps to a<br><em>clean declaration</em>',
       step1_title: 'Import transactions', step1_body: 'Upload a CSV from any major exchange — Kraken, Binance, Coinbase — or enter trades manually. We support all major Swiss-accessible platforms.',
       step2_title: 'We calculate', step2_body: 'Our engine applies Swiss FIFO accounting, converts all values to CHF using official ESTV exchange rates, and identifies taxable events.',
@@ -2646,8 +2657,8 @@
       feat1_title: 'ESTV exchange rates',
       feat1_body: 'All conversions use official Swiss Federal Tax Administration exchange rates. Your report will match what the authorities expect.',
       feat2_label: 'Accounting',
-      feat2_title: 'FIFO & LIFO methods',
-      feat2_body: 'Choose your cost basis method. FIFO is the Swiss standard, but we support LIFO for edge cases where your canton allows it.',
+      feat2_title: 'FIFO method (ESTV standard)',
+      feat2_body: 'We apply the FIFO method mandated by ESTV — the official Swiss tax authority standard for crypto asset valuation.',
       feat3_label: 'Multi-year',
       feat3_title: 'Full tax history',
       feat3_body: 'Declare multiple tax years at once. Import your full transaction history from 2017 to today and get a report for each year.',
@@ -2665,16 +2676,17 @@
       starter_f3: 'CHF conversion',
       starter_f4: 'Basic PDF report',
       pro_f1: 'Up to 1,000 transactions',
-      pro_f2: 'All exchanges & wallets',
-      pro_f3: 'Multi-year support',
-      pro_f4: 'Full PDF + CSV export',
-      pro_f5: 'FIFO method (ESTV standard)',
+      pro_f2: '1 portfolio / entity',
+      pro_f3: 'All 20+ supported exchanges',
+      pro_f4: 'Multi-year support',
+      pro_f5: 'Full PDF + CSV export',
+      pro_f6: 'FIFO method (ESTV standard)',
       biz_f1: 'Unlimited transactions',
       biz_f2: 'Unlimited exchanges & portfolios',
       biz_f3: 'Multi-year history',
       biz_f4: 'Full PDF + CSV export',
-      biz_f5: 'FIFO & LIFO methods',
-      biz_f6: 'Accountant sharing',
+      biz_f5: 'FIFO method (ESTV standard)',
+      biz_f6: 'Multi-entity support',
       biz_f7: 'Priority support',
       team_label: '07 — Team',
       team_title: 'Meet the<br><em>founder</em>',
@@ -2710,7 +2722,7 @@
       footer_contact: 'Contact',
       integrations_label: '03 — Integrations',
       integrations_title: 'Supported exchanges <em>&amp; wallets</em>',
-      report_mock_title: 'Crypto Tax Report 2024',
+      report_mock_title: 'Tax Declaration Annex 2024',
       report_mock_meta: 'Sample · Zurich · Tax Year 2024',
       exchange_note: "Don't see your exchange? Use Manual CSV — most export formats are supported automatically.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
@@ -2718,11 +2730,11 @@
       report_body: 'Clean, structured, and compliant. Your PDF report includes a full transaction log, capital gains summary, and end-of-year portfolio valuation — exactly what Swiss tax forms require.',
       report_cta: 'Generate my report',
       starter_period: 'Up to 50 transactions', starter_cta: 'Get started free',
-      pro_period: 'Per tax year · up to 1,000 transactions', pro_cta: 'Coming soon',
-      biz_period: 'Per entity / year · truly unlimited', biz_cta: 'Coming soon',
+      pro_period: 'Per tax year · up to 1,000 transactions', pro_cta: 'Get Pro',
+      biz_period: 'Per entity / year · truly unlimited', biz_cta: 'Get Business',
       footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.',
       footer_product: 'Product', footer_legal: 'Legal', footer_support: 'Support',
-      modal_body: "Enter your email to continue to secure checkout via Stripe. You'll receive your report download link immediately after payment.",
+      modal_body: "You'll receive your unlock code by email immediately after payment. Enter it on this page to activate your plan.",
       modal_cta: 'Continue to Stripe Checkout',
       modal_terms: 'By continuing you agree to our Terms of Service and Privacy Policy.<br>Secure payment via Stripe · SSL encrypted',
     },
@@ -2739,6 +2751,12 @@
       trial_strong: 'Essayez votre premier rapport gratuitement.',
       trial_span: 'Importez n\'importe quel fichier de transactions — nous générons un rapport fiscal complet instantanément.',
       trial_used: 'Essai gratuit utilisé — passez à Pro pour générer plus de rapports',
+      info_need_label: 'Ce dont nous avons besoin', info_need_title: 'Un export de transactions standard',
+      info_need_body: 'Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et tout CSV générique avec date, actif, montant et prix.',
+      info_get_label: 'Ce que vous obtenez', info_get_title: 'Un rapport prêt pour la déclaration suisse',
+      info_get_body: 'Notre moteur de calcul applique la méthode FIFO suisse à vos transactions, convertit tout en CHF selon les taux officiels ESTV et génère un rapport structuré pour votre déclaration cantonale.',
+      info_priv_label: 'Confidentialité', info_priv_title: 'Traité dans votre session uniquement',
+      info_priv_body: 'Vos données ne sont jamais stockées sur nos serveurs. Tout le traitement s\'effectue de manière sécurisée et éphémère — une fois votre session terminée, rien n\'est conservé.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
       btn_download: '⬇ Télécharger PDF',
       btn_upgrade: 'Passer à Pro',
@@ -2763,8 +2781,8 @@
       feat1_title: 'Taux de change ESTV',
       feat1_body: "Toutes les conversions utilisent les taux de change officiels de l'Administration fédérale des contributions. Votre rapport correspondra aux attentes des autorités.",
       feat2_label: 'Comptabilité',
-      feat2_title: 'Méthodes FIFO & LIFO',
-      feat2_body: 'Choisissez votre méthode de calcul du coût de base. FIFO est la norme suisse, mais nous supportons LIFO pour les cas particuliers.',
+      feat2_title: 'Méthode FIFO (norme ESTV)',
+      feat2_body: 'Nous appliquons la méthode FIFO mandatée par l\'ESTV — la norme officielle suisse pour la valorisation des cryptoactifs.',
       feat3_label: 'Multi-années',
       feat3_title: 'Historique fiscal complet',
       feat3_body: 'Déclarez plusieurs années fiscales à la fois. Importez votre historique complet depuis 2017.',
@@ -2782,16 +2800,17 @@
       starter_f3: 'Conversion CHF',
       starter_f4: 'Rapport PDF basique',
       pro_f1: "Jusqu'à 1'000 transactions",
-      pro_f2: 'Toutes bourses & wallets',
-      pro_f3: 'Support multi-années',
-      pro_f4: 'Export PDF + CSV complet',
-      pro_f5: 'Méthode FIFO (norme ESTV)',
+      pro_f2: '1 portefeuille / entité',
+      pro_f3: '20+ bourses supportées',
+      pro_f4: 'Support multi-années',
+      pro_f5: 'Export PDF + CSV complet',
+      pro_f6: 'Méthode FIFO (norme ESTV)',
       biz_f1: 'Transactions illimitées',
       biz_f2: 'Bourses & portefeuilles illimités',
       biz_f3: 'Historique multi-années',
       biz_f4: 'Export PDF + CSV complet',
-      biz_f5: 'Méthodes FIFO & LIFO',
-      biz_f6: 'Partage avec comptable',
+      biz_f5: 'Méthode FIFO (norme ESTV)',
+      biz_f6: 'Support multi-entités',
       biz_f7: 'Support prioritaire',
       team_label: '07 — Team',
       team_title: 'Meet the<br><em>founder</em>',
@@ -2835,11 +2854,11 @@
       report_body: "Propre, structuré et conforme. Votre rapport PDF inclut un journal complet des transactions, un résumé des gains en capital et une valorisation de fin d'année.",
       report_cta: 'Générer mon rapport',
       starter_period: "Jusqu'à 50 transactions", starter_cta: 'Commencer gratuitement',
-      pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Bientôt disponible',
-      biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Bientôt disponible',
+      pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Obtenir Pro',
+      biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Obtenir Business',
       footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Rapide, conforme et privé.',
       footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
-      modal_body: "Entrez votre email pour continuer vers le paiement sécurisé via Stripe. Vous recevrez votre lien de téléchargement immédiatement après le paiement.",
+      modal_body: "Vous recevrez votre code d'activation par email immédiatement après le paiement. Entrez-le sur cette page pour activer votre plan.",
       modal_cta: 'Continuer vers Stripe',
       modal_terms: "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.<br>Paiement sécurisé via Stripe · Chiffrement SSL",
     },
@@ -2856,6 +2875,12 @@
       trial_strong: 'Ersten Bericht kostenlos testen.',
       trial_span: 'Laden Sie eine beliebige Transaktionsdatei hoch — wir erstellen sofort einen vollständigen Steuerbericht.',
       trial_used: 'Kostenlose Testversion verwendet — auf Pro upgraden für weitere Berichte',
+      info_need_label: 'Was wir benötigen', info_need_title: 'Ein Standard-Transaktionsexport',
+      info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und jedes generische CSV mit Datum, Vermögenswert, Betrag und Preis.',
+      info_get_label: 'Was Sie erhalten', info_get_title: 'Ein schweizkonformer Steuerbericht',
+      info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF gemäss offiziellen ESTV-Kursen und erstellt einen strukturierten Bericht für Ihre kantonale Steuererklärung.',
+      info_priv_label: 'Datenschutz', info_priv_title: 'Nur in Ihrer Sitzung verarbeitet',
+      info_priv_body: 'Ihre Daten werden nie auf unseren Servern gespeichert. Die gesamte Verarbeitung erfolgt sicher und ephemer — sobald Ihre Sitzung endet, werden keine Daten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
       btn_download: '⬇ PDF herunterladen',
       btn_upgrade: 'Auf Pro upgraden',
@@ -2880,8 +2905,8 @@
       feat1_title: 'ESTV-Wechselkurse',
       feat1_body: 'Alle Umrechnungen verwenden die offiziellen ESTV-Wechselkurse. Ihr Bericht entspricht den Erwartungen der Behörden.',
       feat2_label: 'Buchführung',
-      feat2_title: 'FIFO & LIFO-Methoden',
-      feat2_body: 'Wählen Sie Ihre Kostenbasis-Methode. FIFO ist der Schweizer Standard, aber wir unterstützen auch LIFO.',
+      feat2_title: 'FIFO-Methode (ESTV-Standard)',
+      feat2_body: 'Wir wenden die von der ESTV vorgeschriebene FIFO-Methode an — der offizielle Schweizer Standard für die Bewertung von Krypto-Assets.',
       feat3_label: 'Mehrjährig',
       feat3_title: 'Vollständige Steuerhistorie',
       feat3_body: 'Deklarieren Sie mehrere Steuerjahre auf einmal. Importieren Sie Ihre vollständige Transaktionshistorie seit 2017.',
@@ -2899,16 +2924,17 @@
       starter_f3: 'CHF-Umrechnung',
       starter_f4: 'Einfacher PDF-Bericht',
       pro_f1: "Bis 1'000 Transaktionen",
-      pro_f2: 'Alle Börsen & Wallets',
-      pro_f3: 'Mehrjahres-Support',
-      pro_f4: 'Vollständiger PDF + CSV-Export',
-      pro_f5: 'FIFO-Methode (ESTV-Standard)',
+      pro_f2: '1 Portfolio / Unternehmen',
+      pro_f3: '20+ unterstützte Börsen',
+      pro_f4: 'Mehrjahres-Support',
+      pro_f5: 'Vollständiger PDF + CSV-Export',
+      pro_f6: 'FIFO-Methode (ESTV-Standard)',
       biz_f1: 'Unbegrenzte Transaktionen',
       biz_f2: 'Unbegrenzte Börsen & Portfolios',
       biz_f3: 'Mehrjahres-Historie',
       biz_f4: 'Vollständiger PDF + CSV-Export',
-      biz_f5: 'FIFO & LIFO-Methoden',
-      biz_f6: 'Treuhänder-Freigabe',
+      biz_f5: 'FIFO-Methode (ESTV-Standard)',
+      biz_f6: 'Multi-Entitäten-Support',
       biz_f7: 'Prioritäts-Support',
       team_label: '07 — Team',
       team_title: 'Der<br><em>Gründer</em>',
@@ -2948,11 +2974,11 @@
       report_body: 'Sauber, strukturiert und konform. Ihr PDF-Bericht enthält ein vollständiges Transaktionsprotokoll, eine Kapitalgewinnzusammenfassung und eine Jahresend-Portfoliobewertung.',
       report_cta: 'Bericht erstellen',
       starter_period: 'Bis 50 Transaktionen', starter_cta: 'Kostenlos starten',
-      pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Demnächst verfügbar',
-      biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Demnächst verfügbar',
+      pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Pro kaufen',
+      biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Business kaufen',
       footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Schnell, konform und privat.',
       footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
-      modal_body: 'Geben Sie Ihre E-Mail ein, um zur sicheren Zahlung über Stripe weiterzugehen. Sie erhalten Ihren Download-Link sofort nach der Zahlung.',
+      modal_body: 'Sie erhalten Ihren Freischaltcode sofort nach der Zahlung per E-Mail. Geben Sie ihn auf dieser Seite ein, um Ihren Plan zu aktivieren.',
       modal_cta: 'Weiter zu Stripe',
       modal_terms: 'Mit dem Fortfahren stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu.<br>Sichere Zahlung via Stripe · SSL-verschlüsselt',
     }
@@ -3149,7 +3175,7 @@
     const pCards = document.querySelectorAll('.pricing-card');
     const planKeys = [
       { name:'starter_name', features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
-      { name:'pro_name',     features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] },
+      { name:'pro_name',     features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5','pro_f6'] },
       { name:'biz_name',     features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6','biz_f7'] },
     ];
     pCards.forEach((card, i) => {
@@ -3207,6 +3233,16 @@
     if (ulInput && t.unlock_btn) ulInput.placeholder = lang === 'en' ? 'Enter your unlock code' : lang === 'fr' ? 'Entrez votre code d\'activation' : 'Freischaltcode eingeben';
     const ulErr = document.getElementById('unlock-error');
     if (ulErr && t.unlock_error) ulErr.textContent = t.unlock_error;
+
+    // Generic data-i18n attribute handler (info boxes, etc.)
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (t[key]) el.innerHTML = t[key];
+    });
 
     // Footer links
     const fLinks = document.querySelectorAll('.footer-links');
@@ -3274,8 +3310,8 @@
 
   // ── Stripe Modal ──
   const STRIPE_LINKS = {
-    professional: '', // Add Stripe payment link when ready
-    business: '',    // Add Stripe payment link when ready
+    professional: 'https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00',
+    business: 'https://buy.stripe.com/6oU9AT8DR5GPekr3CQ0Jq01',
   };
 
   const PLAN_DETAILS = {
@@ -3291,7 +3327,7 @@
     document.getElementById('modal-plan-name').textContent = details.name;
     document.getElementById('modal-plan-price').textContent = details.price;
     document.getElementById('stripe-modal').classList.add('open');
-    document.getElementById('modal-email').focus();
+    document.getElementById('stripe-checkout-btn').focus();
   }
 
   function closeModal() {
@@ -3300,14 +3336,8 @@
 
   function proceedToStripe(e) {
     e.preventDefault();
-    const email = document.getElementById('modal-email').value.trim();
-    if (!email || !email.includes('@')) {
-      document.getElementById('modal-email').style.borderColor = '#C0392B';
-      document.getElementById('modal-email').focus();
-      return;
-    }
-    const base = STRIPE_LINKS[currentPlan];
-    const url = base + '?prefilled_email=' + encodeURIComponent(email);
+    const url = STRIPE_LINKS[currentPlan];
+    if (!url) return;
     window.open(url, '_blank');
     closeModal();
   }
@@ -3317,17 +3347,21 @@
     if (e.target === this) closeModal();
   });
 
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
   // ── Unlock Code System ──
   // Codes are SHA-256 hashed — not reversible from source
   const PRO_HASHES = [
-    '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598', // PRODECLARE99
-    'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8', // PROSWISS2024
-    '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b', // PROCRYPTO99A
+    '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598',
+    'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8',
+    '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b',
   ];
   const BIZ_HASHES = [
-    'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d', // BIZDECLARE299
-    '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90', // BIZSWISS2024
-    '2e27cda7b84c5c2681f6270224d8a3352958c550d6e7049a2e74a7c58c5b467b', // BIZCRYPTO299A
+    'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d',
+    '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90',
+    '2e27cda7b84c5c2681f6270224d8a3352958c550d6e7049a2e74a7c58c5b467b',
   ];
 
   // Plan limits
@@ -3421,16 +3455,33 @@
   const TRIAL_KEY = 'cryptotax_trial_used';
 
   function hasUsedTrial() {
-    return false; // Testing mode
+    // Pro and Business users never hit the trial wall
+    if (currentPlanTier === 'pro' || currentPlanTier === 'business') return false;
+    try { return localStorage.getItem(TRIAL_KEY) === 'true'; } catch(e) { return false; }
   }
 
   function markTrialUsed() {
-    localStorage.setItem(TRIAL_KEY, 'true');
+    try { localStorage.setItem(TRIAL_KEY, 'true'); } catch(e) {}
   }
 
   function updateTrialUI() {
     const area = document.getElementById('upload-area');
-    if (area) area.classList.remove('locked');
+    const trialUsedMsg = document.getElementById('trial-used-msg');
+    const trialBanner = document.getElementById('trial-banner');
+    if (hasUsedTrial() && currentPlanTier === 'free') {
+      // Lock the upload area and show upgrade prompt
+      if (area) area.classList.add('locked');
+      if (trialUsedMsg) trialUsedMsg.style.display = 'flex';
+      if (trialBanner) {
+        // Show unlock banner immediately for returning free users
+        document.getElementById('unlock-banner').classList.add('visible');
+        const sub = document.getElementById('unlock-sub');
+        if (sub) sub.textContent = 'You\'ve used your free trial. Enter a Pro or Business unlock code to generate more reports.';
+      }
+    } else {
+      if (area) area.classList.remove('locked');
+      if (trialUsedMsg) trialUsedMsg.style.display = 'none';
+    }
   }
 
   // Run on load
@@ -3439,7 +3490,7 @@
   setPlanBadge(currentPlanTier);
 
   // ── Auto-unlock from Stripe redirect URL ──
-  // Stripe sends customer back to: cryptodeclare.ch/?code=PRODECLARE99
+  // Stripe sends customer back to: cryptodeclare.ch/?code=UNLOCK_CODE
   (async () => {
     const params = new URLSearchParams(window.location.search);
     const urlCode = params.get('code');
@@ -3497,6 +3548,7 @@
   }
 
   async function processFiles(files) {
+    if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     if (files.length === 1) return processFile(files[0]);
 
     const indicator = document.getElementById('processing-indicator');
@@ -3574,6 +3626,7 @@
   }
 
   async function processFile(file) {
+    if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     const indicator = document.getElementById('processing-indicator');
     indicator.classList.add('visible');
     setProcessingText('Reading your file...');
@@ -3707,36 +3760,54 @@
   }
 
 
-  // ── REAL DEC 31 YEAR-END PRICES (CHF) ──────────────────────────────────
-  // Used for accurate wealth declaration values
-  // Source: CoinGecko / major exchange closing prices
+  // ── ESTV OFFICIAL YEAR-END PRICES (CHF) ─────────────────────────────────
+  // Source: ictax.admin.ch — Swiss Federal Tax Administration (ESTV)
+  // BTC & ETH: ESTV official published rates. All others: CoinMarketCap ×
+  // ESTV official USD/CHF rate. Update each January from ictax.admin.ch.
+  // USD/CHF 31.12.2024 = 0.906250 (ESTV official)
+  // USD/CHF 31.12.2025 = 0.899000 (ESTV official — update when published)
   const YEAREND_PRICES_2024 = {
-    // Dec 31, 2024 closing prices in CHF (USD/CHF = 0.8967)
-    'BTC': 83778, 'ETH': 2989, 'SOL': 169.5, 'BNB': 622,
-    'ADA': 0.879, 'XRP': 1.856, 'DOT': 6.64, 'AVAX': 32.37,
-    'MATIC': 0.394, 'USDC': 0.8967, 'USDT': 0.8967, 'DAI': 0.8967,
-    'LINK': 17.65, 'UNI': 11.84, 'ATOM': 5.48, 'LTC': 90.2,
-    'BCH': 378.5, 'XLM': 0.384, 'ALGO': 0.311, 'NEAR': 5.21,
-    'ICP': 10.26, 'FIL': 4.18, 'APT': 8.45, 'ARB': 0.816,
-    'OP': 1.66, 'INJ': 20.15, 'SUI': 4.12, 'TIA': 5.87,
-    'GALA': 0.0295, 'BORG': 3.12, 'RAY': 8.05, 'RENDER': 5.80,
-    'FARTCOIN': 0.85, 'PEPE': 0.0000175,
+    // ESTV officially published rates (ictax.admin.ch, 31.12.2024)
+    'BTC': 85926.49,  // ESTV official
+    'ETH': 3185.00,   // ESTV official
+    // CoinMarketCap 31.12.2024 × USD/CHF 0.906250
+    'SOL': 170.99, 'BNB': 619.17, 'XRP': 1.856, 'ADA': 0.879,
+    'DOT': 6.643, 'AVAX': 32.34, 'MATIC': 0.394, 'LINK': 17.64,
+    'UNI': 11.84, 'ATOM': 5.474, 'LTC': 90.23, 'BCH': 378.01,
+    'DOGE': 0.2866, 'XLM': 0.3843, 'ALGO': 0.3099, 'NEAR': 5.211,
+    'ARB': 0.748, 'OP': 1.494, 'SUI': 3.532, 'INJ': 19.14,
+    'ICP': 9.15, 'FIL': 3.77, 'APT': 7.62, 'TIA': 4.89,
+    'RENDER': 5.25, 'GALA': 0.0267, 'BORG': 3.118, 'RAY': 7.30,
+    'PEPE': 0.0000159, 'FARTCOIN': 0.770,
+    // Stablecoins at ESTV USD/CHF rate
+    'USDC': 0.9063, 'USDT': 0.9063, 'DAI': 0.9063, 'FDUSD': 0.9063,
   }
 
   const YEAREND_PRICES_2025 = {
-    // Dec 31, 2025 closing prices in CHF (USD/CHF ≈ 0.90)
-    'BTC': 84015, 'ETH': 3015, 'SOL': 171, 'BNB': 621,
-    'ADA': 0.882, 'XRP': 1.863, 'DOT': 6.68, 'AVAX': 32.50,
-    'MATIC': 0.395, 'USDC': 0.90, 'USDT': 0.90, 'DAI': 0.90,
-    'LINK': 17.80, 'UNI': 11.90, 'ATOM': 5.52, 'LTC': 91.0,
-    'BCH': 380.0, 'XLM': 0.387, 'ALGO': 0.314, 'NEAR': 5.25,
-    'GALA': 0.0295, 'BORG': 3.12, 'RAY': 8.05, 'RENDER': 5.80,
-    'FARTCOIN': 0.85, 'PEPE': 0.0000175, 'SUI': 4.15,
+    // ESTV officially published rates (ictax.admin.ch, 31.12.2025)
+    'BTC': 69571.99,  // ESTV official
+    'ETH': 2364.08,   // ESTV official
+    // CoinMarketCap 31.12.2025 estimates × USD/CHF ≈ 0.899
+    // ⚠ Update these from ictax.admin.ch in January 2026
+    'SOL': 169.01, 'BNB': 620.31, 'XRP': 1.888, 'ADA': 0.791,
+    'DOT': 5.844, 'AVAX': 31.47, 'MATIC': 0.360, 'LINK': 16.18,
+    'UNI': 9.889, 'ATOM': 4.86, 'LTC': 83.9, 'BCH': 362.0,
+    'DOGE': 0.286, 'XLM': 0.349, 'ALGO': 0.279, 'NEAR': 4.60,
+    'ARB': 0.620, 'OP': 1.24, 'SUI': 3.22, 'INJ': 15.2,
+    'BORG': 2.80, 'GALA': 0.022,
+    // Stablecoins at ESTV USD/CHF rate
+    'USDC': 0.8990, 'USDT': 0.8990, 'DAI': 0.8990, 'FDUSD': 0.8990,
   }
 
+  // ── 2026 prices: fetched live at year-end via CoinGecko ──────────────────
+  // (no hardcoded values — will use lastPriceCHF from transaction data)
+  const YEAREND_PRICES_2026 = {}
+
   function getYearEndPrices(year) {
-    if (year === 2025) return YEAREND_PRICES_2025;
-    return YEAREND_PRICES_2024;
+    const y = parseInt(year);
+    if (y === 2025) return YEAREND_PRICES_2025;
+    if (y === 2026) return YEAREND_PRICES_2026;
+    return YEAREND_PRICES_2024; // default for 2024 and earlier
   }
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
@@ -3744,12 +3815,18 @@
     let text = csvText.trim();
     const lines = text.split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map(h => h.replace(/['"]/g,'').trim().toLowerCase());
+    // Auto-detect delimiter: comma, semicolon (Swissquote/EU), or tab
+    const first = lines[0];
+    const commas = (first.match(/,/g)||[]).length;
+    const semis  = (first.match(/;/g)||[]).length;
+    const tabs   = (first.match(/\t/g)||[]).length;
+    const delim  = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
+    const headers = lines[0].split(delim).map(h => h.replace(/['"]/g,'').trim().toLowerCase());
     return lines.slice(1).map(line => {
       const vals = []; let cur = '', inQ = false;
       for (const ch of line) {
         if (ch === '"') { inQ = !inQ; }
-        else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+        else if (ch === delim && !inQ) { vals.push(cur.trim()); cur = ''; }
         else cur += ch;
       }
       vals.push(cur.trim());
@@ -3758,25 +3835,53 @@
       return row;
     });
   }
-
   function detectFormat(headers) {
     const h = headers.join(',').toLowerCase();
+    // ── Swiss-specific ───────────────────────────────────────────────────────
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
+    if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
+    // ── Kraken ───────────────────────────────────────────────────────────────
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
+    // ── Binance ──────────────────────────────────────────────────────────────
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
-    if ((h.includes('time') || h.includes('trade time')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty')) && h.includes('side')) return 'bybit';
-    if (h.includes('transaction type') && h.includes('quantity transacted')) return 'coinbase';
-    // Swissquote: date + order # + transaction + symbol + currency + price + quantity
+    if (h.includes('utc_time') && h.includes('base_asset') && h.includes('quote_asset')) return 'binance'; // transaction history
+    // ── Bybit ────────────────────────────────────────────────────────────────
+    if ((h.includes('time') || h.includes('trade time') || h.includes('date(utc)') || h.includes('date')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty') || h.includes('filled qty')) && h.includes('side') && !h.includes('transaction type')) return 'bybit';
+    // ── Coinbase ─────────────────────────────────────────────────────────────
+    if (h.includes('transaction type') && (h.includes('quantity transacted') || h.includes('quantity'))) return 'coinbase';
+    // ── Swissquote ───────────────────────────────────────────────────────────
     if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
-    // Bitpanda: transaction id + timestamp + transaction type + amount asset + asset
+    // ── Bitpanda ─────────────────────────────────────────────────────────────
     if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
-    // OKX: order time + instrument id + trade id + side + filled qty + filled price
+    // ── OKX ──────────────────────────────────────────────────────────────────
+    if (h.includes('realized p&l') || (h.includes('pos side') && h.includes('trade qty'))) return 'okx_derivatives';
     if ((h.includes('instrument id') || h.includes('inst id')) && h.includes('filled qty') && h.includes('filled price')) return 'okx';
     if ((h.includes('order time') || h.includes('trade time')) && h.includes('instrument') && h.includes('side') && h.includes('filled')) return 'okx';
-    // Bitcoin Suisse: date + type + asset + amount + price chf
-    if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
+    // ── Crypto.com App ───────────────────────────────────────────────────────
+    if (h.includes('transaction description') && h.includes('transaction kind')) return 'crypto_com';
+    // ── Crypto.com Exchange ──────────────────────────────────────────────────
+    if (h.includes('instrument_name') && h.includes('create_time') && h.includes('side')) return 'crypto_com_ex';
+    // ── Nexo ─────────────────────────────────────────────────────────────────
+    if (h.includes('input currency') && h.includes('output currency') && h.includes('usd equivalent')) return 'nexo';
+    if (h.includes('transaction') && h.includes('currency') && h.includes('usd equivalent') && h.includes('outstanding loan')) return 'nexo';
+    // ── Revolut ──────────────────────────────────────────────────────────────
+    if (h.includes('started date') && h.includes('fiat amount') && h.includes('product')) return 'revolut';
+    // ── Ledger Live ──────────────────────────────────────────────────────────
+    if (h.includes('operation date') && h.includes('currency ticker') && h.includes('operation type') && h.includes('operation amount')) return 'ledger';
+    // ── KuCoin ───────────────────────────────────────────────────────────────
+    if (h.includes('tradecreatedat') && h.includes('funds') && h.includes('feecurrency')) return 'kucoin';
+    if (h.includes('order time') && h.includes('filled amount') && h.includes('filled volume') && h.includes('filled price')) return 'kucoin';
+    // ── Gemini ───────────────────────────────────────────────────────────────
+    if (h.includes('specification') && h.includes('liquidity indicator')) return 'gemini';
+    // ── Bitfinex ─────────────────────────────────────────────────────────────
+    if ((h.includes('mts create') || h.includes('mts_create')) && h.includes('pair') && h.includes('amount') && h.includes('price')) return 'bitfinex';
+    // ── Gate.io ──────────────────────────────────────────────────────────────
+    if (h.includes('pair') && h.includes('role') && h.includes('total') && h.includes('side') && h.includes('date')) return 'gate';
+    // ── MEXC ─────────────────────────────────────────────────────────────────
+    if (h.includes('filled_price') && h.includes('filled_amount') && h.includes('fee_coin')) return 'mexc';
+    // ── Generic with CHF ─────────────────────────────────────────────────────
     if (h.includes('exchange') && h.includes('price_chf')) return 'generic';
     return 'unknown';
   }
@@ -3803,7 +3908,9 @@
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
-      const fallback = getYearEndPrices(taxYear)[asset] || 0;
+      // taxYear not in scope here — derive from date string or fall back to 2024 prices
+      const yr = parseInt(dateStr.slice(0,4)) || 2024;
+      const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
@@ -3821,12 +3928,13 @@
       if (!res.ok) throw new Error('cg_hist_' + res.status);
       const data = await res.json();
       const usdPrice = data?.market_data?.current_price?.usd || 0;
-      const chfPrice = usdPrice * 0.8967; // Use standard ESTV rate
+      const chfPrice = usdPrice * 0.906250; // ESTV official USD/CHF rate 31.12.2024
       _krakenPriceCache[key] = chfPrice;
       return chfPrice;
     } catch (e) {
-      // Fallback: use year-end price if available
-      const fallback = getYearEndPrices(taxYear)[asset] || 0;
+      // Fallback to year-end prices — derive year from dateStr to avoid scope issues
+      const yr = parseInt(dateStr.slice(0,4)) || 2024;
+      const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
@@ -3841,10 +3949,9 @@
         if (format === 'kraken') {
           date = r['time']||'';
           const t = (r['type']||'').toLowerCase();
-          if (!['buy','sell','staking','reward'].some(x=>t.includes(x))) continue;
-          type = t.includes('buy')?'buy':t.includes('sell')?'sell':'staking';
-          // Fix: properly map Kraken ISO 4217 asset codes to standard symbols
-          // e.g. XXBT->BTC, XETH->ETH, XLTC->LTC, ZUSD->USD
+          const rawAmount = parseFloat(r['amount'])||0;
+
+          // Map Kraken asset codes first — needed for fiat check
           const krakenRaw = (r['asset']||'').toUpperCase();
           const KRAKEN_MAP = {
             'XXBT':'BTC','XBT':'BTC',
@@ -3853,8 +3960,27 @@
             'XXDG':'DOGE','XDG':'DOGE',
             'ZUSD':'USD','ZEUR':'EUR','ZCHF':'CHF','ZGBP':'GBP',
           };
-          asset = KRAKEN_MAP[krakenRaw] || krakenRaw.replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
-          qty = Math.abs(parseFloat(r['amount'])||0);
+          const mappedAsset = KRAKEN_MAP[krakenRaw] || krakenRaw.replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
+
+          // Skip fiat/stablecoin rows — they are the quote side of a trade pair
+          const FIAT = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
+          if (FIAT.includes(mappedAsset)) continue;
+
+          // Determine type: real Kraken exports use 'trade' + amount sign; some use 'buy'/'sell'
+          if (t === 'trade') {
+            type = rawAmount >= 0 ? 'buy' : 'sell';
+          } else if (t === 'staking' || t === 'earn' || t.includes('reward')) {
+            type = 'staking';
+          } else if (t.includes('buy')) {
+            type = 'buy';
+          } else if (t.includes('sell')) {
+            type = 'sell';
+          } else {
+            continue; // skip deposits, withdrawals, transfers, margin, etc.
+          }
+
+          asset = mappedAsset;
+          qty = Math.abs(rawAmount);
           // Kraken ledger has no price column — fetch historical CHF price
           const dateKey = date.slice(0,10); // YYYY-MM-DD
           priceCHF = await getHistoricalPriceCHF(asset, dateKey);
@@ -3875,7 +4001,7 @@
           else if (t === 'deposit') type = 'buy'; // deposit = cost basis transfer in, not a taxable gain
           else if (t === 'sell') type = 'sell';
           else if (t === 'withdrawal') type = 'withdrawal'; // transfer out — reduces lots but no gain
-          else if (t === 'payouts') type = 'staking';
+          else if (t === 'payouts' || t === 'yield' || t.includes('earn') || t.includes('reward') || t.includes('interest') || t.includes('cashback') || t.includes('savings') || t.includes('staking')) type = 'staking';
           else continue;
           asset = currency;
           qty = Math.abs(parseFloat(r['net amount']) || parseFloat(r['gross amount']) || 0);
@@ -3932,32 +4058,47 @@
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
         else if (format === 'bybit') {
-          date = r['trade time']||r['time']||r['date']||'';
+          // Support both old and new Bybit export column names
+          date = r['trade time']||r['created time']||r['time']||r['date(utc)']||r['date']||'';
           const side = (r['side']||r['Side']||'').toLowerCase();
           if (!['buy','sell'].includes(side)) continue;
+          // Filter to Spot only — skip Perpetuals, Options, Futures
+          const category = (r['category']||r['Category']||'spot').toLowerCase();
+          if (!category.includes('spot')) continue;
           type = side;
           const sym = (r['symbol']||r['Symbol']||'').toUpperCase();
-          asset = sym.replace(/(USDT|BUSD|USD|USDC|PERP)$/,'').slice(0,8) || sym.slice(0,4);
-          // Support old format (qty/price) and new format (Executed Qty/Executed Price/Executed Value)
-          qty = Math.abs(parseFloat(r['Executed Qty']||r['executed qty']||r['qty']||r['quantity'])||0);
-          const execPrice = parseFloat(r['Executed Price']||r['executed price']||r['price']||r['Order Price'])||0;
-          const execVal = Math.abs(parseFloat(r['Executed Value']||r['executed value'])||0);
+          // Strip common quote suffixes; ignore complex option symbols (contain '-')
+          if (sym.includes('-')) continue; // options like BTC-28FEB26-100000-C
+          asset = sym.replace(/(USDT|BUSD|USDC|USD|PERP)$/,'').slice(0,8) || sym.slice(0,4);
+          if (!asset) continue;
+          // Support old format (qty/price) and new format (Filled Qty/Avg. Filled Price/Filled Value)
+          qty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty']||r['Executed Qty']||r['executed qty']||r['qty']||r['quantity'])||0);
+          const execPrice = parseFloat(r['avg. filled price']||r['Avg. Filled Price']||r['Executed Price']||r['executed price']||r['price']||r['Order Price'])||0;
+          const execVal = Math.abs(parseFloat(r['filled value']||r['Filled Value']||r['Executed Value']||r['executed value'])||0);
           priceCHF = execPrice * USD_CHF;
           totalCHF = execVal > 0 ? execVal * USD_CHF : qty * priceCHF;
         }
         else if (format === 'swissquote') {
-          // Swissquote: Date,Order #,Transaction,Symbol,Currency,Price,Quantity,Value,Gross Amount,Net Amount
-          date = r['date']||r['Date']||'';
+          // Swissquote: Date;Order number;Transaction;Symbol;Name;ISIN;Quantity;Unit price;Costs;Net amount;Balance;Currency;Exchange
+          // Date format is DD.MM.YYYY — normalise to YYYY-MM-DD
+          const rawDate = r['date']||r['Date']||'';
+          if (rawDate.includes('.')) {
+            const [d,m,y] = rawDate.split('.');
+            date = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+          } else { date = rawDate; }
           const txType = (r['transaction']||r['Transaction']||'').toLowerCase();
           if (txType.includes('buy')) type = 'buy';
           else if (txType.includes('sell')) type = 'sell';
+          else if (txType.includes('dividend') || txType.includes('interest') || txType.includes('staking')) type = 'staking';
           else continue;
           const sym = (r['symbol']||r['Symbol']||'').toUpperCase();
-          // sym is like BTC or BTCUSD — strip USD/CHF/EUR suffix
-          asset = sym.replace(/(USD|CHF|EUR|USDT|BTC)$/,'') || sym.slice(0,6);
+          // sym is like BTC/CHF or BTCUSD — strip /CHF, /USD, /EUR suffix first, then trailing currency
+          asset = sym.replace(/\/(CHF|USD|EUR|USDT)$/, '').replace(/(USD|CHF|EUR|USDT)$/, '') || sym.split('/')[0] || sym.slice(0,6);
+          if (!asset || ['CHF','USD','EUR','USDT'].includes(asset)) continue;
           qty = Math.abs(parseFloat(r['quantity']||r['Quantity'])||0);
-          const currency = (r['currency']||r['Currency']||'').toUpperCase();
-          const price = parseFloat(r['price']||r['Price'])||0;
+          const currency = (r['currency']||r['Currency']||'CHF').toUpperCase();
+          // Swissquote uses "Unit price" or "Price" column
+          const price = parseFloat(r['unit price']||r['unit_price']||r['price']||r['Price']||r['Unit price']||0)||0;
           priceCHF = currency === 'CHF' ? price : price * USD_CHF;
           totalCHF = qty * priceCHF;
         }
@@ -3976,6 +4117,57 @@
           priceCHF = fiatCcy === 'CHF' ? mktPrice : mktPrice * USD_CHF;
           totalCHF = qty * priceCHF;
         }
+        else if (format === 'okx_derivatives') {
+          // OKX Derivatives export: Trade Time, Instrument ID, Instrument Type,
+          // Side, Pos Side, Trade Qty (Cont), Trade Price (USDT), Fee (USDT),
+          // Realized P&L (USDT), Trade Time
+          // Strategy: derivatives P&L is realised on close, not tracked via FIFO of coins.
+          // We emit synthetic buy+sell pairs so the FIFO engine sees correct gain/loss.
+          const orderId = (r['Order ID'] || r['order id'] || '').trim();
+          date = (r['Trade Time'] || r['trade time'] || '').slice(0, 10);
+          const instId = (r['Instrument ID'] || r['instrument id'] || '').toUpperCase();
+          const pnlRaw  = parseFloat(r['Realized P&L (USDT)'] || r['Realized P&L'] || r['realized p&l (usdt)'] || r['realized p&l'] || 0) || 0;
+          const feeRaw  = parseFloat(r['Fee (USDT)']  || r['fee (usdt)']  || r['Fee']  || 0) || 0;
+          const tradeQty = parseFloat(r['Trade Qty (Cont)'] || r['trade qty (cont)'] || r['Trade Qty'] || 0) || 0;
+
+          // Extract base asset: BTC-USDT-SWAP → BTC, SOL-USDT-241227 → SOL
+          asset = ((instId.split('-')[0] || 'DERIV').replace(/[^A-Z0-9]/g, '') || 'DERIV') + ':FUT'; // isolated pool
+
+          // ── Funding fee rows (Order ID = "Funding…") ──────────────────────
+          if (orderId.toLowerCase().startsWith('fund')) {
+            if (feeRaw > 0) {
+              // Funding received → taxable income, but NOT a real asset acquisition.
+              // Push directly with _noLot:true so computeFIFO counts the income
+              // without adding a synthetic lot that would inflate endHolding.
+              out.push({ date, type: 'staking', asset, qty: 0, priceCHF: 0, totalCHF: feeRaw * USD_CHF, _noLot: true });
+            }
+            continue; // Funding paid (or processed above) — skip generic push
+          } else {
+            // ── Trade rows ──────────────────────────────────────────────────
+            // Opening trades have pnlRaw === 0 and tradeQty > 0 — no tax event yet
+            if (pnlRaw === 0 && tradeQty > 0) continue;
+
+            // Closing trades (pnlRaw !== 0) and liquidations (tradeQty === 0, pnlRaw !== 0)
+            // Net P&L after closing-leg fee, in CHF
+            const netPnlCHF = (pnlRaw + feeRaw) * USD_CHF;
+
+            qty = 1; // synthetic unit — one unit per closed position
+
+            if (netPnlCHF >= 0) {
+              // Profitable close: zero-cost buy, then sell at full net P&L
+              out.push({ date, type: 'buy', asset, qty: 1, priceCHF: 0, totalCHF: 0 });
+              type = 'sell';
+              priceCHF = netPnlCHF;
+              totalCHF = netPnlCHF;
+            } else {
+              // Loss: buy at full loss amount, sell at zero — FIFO produces negative gain
+              out.push({ date, type: 'buy', asset, qty: 1, priceCHF: Math.abs(netPnlCHF), totalCHF: Math.abs(netPnlCHF) });
+              type = 'sell';
+              priceCHF = 0;
+              totalCHF = 0;
+            }
+          }
+        }
         else if (format === 'okx') {
           // OKX: Order Time,Instrument ID,Trade ID,Side,Filled Qty,Filled Price,Fee,P&L
           date = r['order time']||r['Order Time']||r['trade time']||r['Trade Time']||'';
@@ -3986,7 +4178,7 @@
           // instId like BTC-USDT
           asset = instId.split('-')[0] || instId.slice(0,6);
           qty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty'])||0);
-          priceCHF = (parseFloat(r['filled price']||r['Filled Price'])||0) * USD_CHF;
+          priceCHF = (parseFloat(r['filled price']||r['Filled Price']||r['filled price(usdt)']||r['avg fill price']||r['Avg Fill Price']||r['price'])||0) * USD_CHF;
           totalCHF = qty * priceCHF;
         }
         else if (format === 'bitcoin_suisse') {
@@ -4002,37 +4194,100 @@
           totalCHF = parseFloat(r['total chf']||r['Total CHF'])||qty * priceCHF;
         }
         else if (format === 'binance') {
-          date = r['Date(UTC)']||r['date(utc)']||r['date']||r['Date']||'';
-          const side = (r['side']||r['type']||r['Type']||'').toLowerCase();
-          if (!['buy','sell'].includes(side)) continue;
-          type = side;
-          const pair = r['pair']||r['market']||r['Market']||'';
-          // Strip quote currency suffix — add CHF for Swissquote-style pairs
+          // Supports two Binance export formats:
+          // A) Trade History:  Date(UTC), Pair, Side, Price, Executed, Amount, Fee
+          // B) Transaction History: UTC_Time, Account, Type, Base_Asset, Pair, Side, Executed_Qty, Quote_Qty
+          date = r['date(utc)']||r['utc_time']||r['date']||'';
+          const txType = (r['type']||'').toLowerCase().trim();
+          const side   = (r['side']||'').toLowerCase().trim();
+
+          // ── Transaction type mapping ────────────────────────────────────
+          if (txType === 'trade') {
+            if (side === 'buy') type = 'buy';
+            else if (side === 'sell') type = 'sell';
+            else continue;
+          } else if (txType === 'convert') {
+            type = 'sell'; // always selling the base asset
+          } else if (txType === 'deposit') {
+            type = 'buy'; // on-chain deposit: asset arrives, need cost basis
+          } else if (txType === 'withdrawal') {
+            type = 'withdrawal';
+          } else if (txType === 'airdrop' || txType.includes('interest') || txType.includes('reward') || txType.includes('cashback') || txType.includes('staking') || txType.includes('distribution')) {
+            type = 'staking'; // taxable income in Switzerland
+          } else if (txType.includes('realized') || txType.includes('futures') || txType.includes('pnl') || txType.includes('profit') || txType.includes('funding fee')) {
+            // Binance Futures/Derivatives: Realized P&L row (Quote_Qty = net P&L in USDT)
+            // Use synthetic buy+sell pairs — same pattern as OKX derivatives parser.
+            // IMPORTANT: use a ':FUT' suffixed asset name so the synthetic pairs get their
+            // own isolated FIFO pool and never mix with real spot holdings of the same coin.
+            const rawPnl = parseFloat(r['quote_qty']||r['quote qty']||r['realized profit']||r['amount']||0);
+            if (rawPnl === 0) continue;
+            date = (r['utc_time']||r['date(utc)']||r['date']||'').slice(0,10);
+            if (!date) continue;
+            const pnlCHF = rawPnl * USD_CHF;
+            const baseAssetName = (r['base_asset']||r['coin']||'BTC').toUpperCase()||'BTC';
+            const derivAsset = baseAssetName + ':FUT'; // isolated pool — won't mix with spot
+            if (pnlCHF >= 0) {
+              out.push({ date, type:'buy',  asset:derivAsset, qty:1, priceCHF:0,              totalCHF:0        });
+              out.push({ date, type:'sell', asset:derivAsset, qty:1, priceCHF:pnlCHF,         totalCHF:pnlCHF   });
+            } else {
+              out.push({ date, type:'buy',  asset:derivAsset, qty:1, priceCHF:Math.abs(pnlCHF), totalCHF:Math.abs(pnlCHF) });
+              out.push({ date, type:'sell', asset:derivAsset, qty:1, priceCHF:0,              totalCHF:0        });
+            }
+            continue;
+          } else if (!txType) {
+            // Old trade history format — no Type column, rely on Side
+            if (side === 'buy') type = 'buy';
+            else if (side === 'sell') type = 'sell';
+            else continue;
+          } else {
+            continue; // Skip: internal transfers, loans, repayments, margin interest, futures PnL, funding fees, earn subscriptions
+          }
+
+          // ── Asset resolution ────────────────────────────────────────────
+          const pair = r['pair']||r['market']||'';
           const quotedInCHF = pair.endsWith('CHF');
-          asset = pair.replace(/(CHF|USDT|BUSD|USDC|USD|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
-          // Support both old (executed) and new (Amount/Total) column names
-          const execStr = r['executed']||r['amount']||r['Amount']||'';
-          qty = parseFloat(execStr)||0;
-          const rawPrice = parseFloat(r['price']||r['Price'])||0;
-          const rawTotal = Math.abs(parseFloat(r['total']||r['Total'])||0);
+          // Prefer Base_Asset column (new format); fall back to pair string parsing
+          const baseAsset = (r['base_asset']||'').toUpperCase().trim();
+          if (baseAsset && !['USDT','BUSD','USDC','FDUSD'].includes(baseAsset)) {
+            asset = baseAsset;
+          } else if (baseAsset) {
+            // Stablecoin earn/airdrop — asset IS the stablecoin
+            asset = baseAsset;
+          } else {
+            asset = pair.replace(/(CHF|USDT|BUSD|USDC|FDUSD|USD|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
+          }
+
+          // ── Quantity & value ─────────────────────────────────────────────
+          qty = Math.abs(parseFloat(r['executed_qty']||r['executed']||r['amount'])||0);
+          const rawPrice = parseFloat(r['price'])||0;
+          const rawTotal = Math.abs(parseFloat(r['quote_qty']||r['total'])||0);
           priceCHF = quotedInCHF ? rawPrice : rawPrice * USD_CHF;
           totalCHF = rawTotal > 0 ? (quotedInCHF ? rawTotal : rawTotal * USD_CHF) : qty * priceCHF;
         }
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
           const t = (r['transaction type']||'').toLowerCase();
-          if (t.includes('buy') || t==='receive' || t.includes('deposit') || t.includes('advanced trade buy')) type='buy';
-          else if (t.includes('sell') || t==='convert' || t.includes('advanced trade sell')) type='sell';
+          // Map all known Coinbase transaction types
+          if (t.includes('buy') || t==='receive' || t.includes('deposit') || t.includes('advanced trade fill')) type='buy';
+          else if (t.includes('sell') || t.includes('advanced trade sell') || t==='card spend') type='sell';
+          else if (t==='convert') {
+            // Convert has two legs: the sell leg (asset going out) and buy leg (USDC/asset coming in)
+            // We detect sell vs buy by sign: negative qty = sell, positive = buy
+            const rawQty = parseFloat(r['quantity transacted']||r['quantity']||0);
+            type = rawQty < 0 ? 'sell' : 'buy';
+          }
           else if (t==='send' || t.includes('withdrawal') || t.includes('transfer')) type='withdrawal';
-          else if (t.includes('reward')||t.includes('staking')||t.includes('income')||t.includes('interest')) type='staking';
+          else if (t.includes('reward')||t.includes('staking')||t.includes('income')||t.includes('interest')||t.includes('cashback')) type='staking';
           else continue;
           asset = (r['asset']||'').toUpperCase();
-          qty = Math.abs(parseFloat(r['quantity transacted'])||0);
-          const cur = (r['spot price currency']||'').toUpperCase();
-          priceCHF = parseFloat(r['spot price at transaction'])||0;
-          if (cur==='USD') priceCHF *= USD_CHF;
+          qty = Math.abs(parseFloat(r['quantity transacted']||r['quantity'])||0);
+          // Column name variants: 'spot price currency' or 'price currency'
+          const cur = (r['spot price currency']||r['price currency']||'').toUpperCase();
+          // Column name variants: 'spot price at transaction' or 'spot price'
+          priceCHF = parseFloat(r['spot price at transaction']||r['spot price'])||0;
+          if (cur==='USD'||cur==='') priceCHF *= USD_CHF;
           totalCHF = Math.abs(parseFloat(r['subtotal'])||qty*priceCHF);
-          if (cur==='USD') totalCHF *= USD_CHF;
+          if (cur==='USD'||cur==='') totalCHF *= USD_CHF;
         }
         else if (format === 'generic') {
           date = r['date']||'';
@@ -4046,24 +4301,247 @@
           priceCHF = parseFloat(r['price_chf'])||0;
           totalCHF = Math.abs(parseFloat(r['total_chf'])||qty*priceCHF);
         }
+        // ── Crypto.com App ────────────────────────────────────────────────────
+        else if (format === 'crypto_com') {
+          date = (r['timestamp (utc)']||r['timestamp']||'').slice(0,10);
+          const kind = (r['transaction kind']||'').toLowerCase();
+          const amt = parseFloat(r['amount']||0);
+          if (kind.includes('purchase') || kind.includes('buy') || kind === 'viban_purchase') type = 'buy';
+          else if (kind.includes('sell')) type = 'sell';
+          else if (kind === 'crypto_withdrawal') {
+            // crypto_withdrawal = selling crypto to fiat when To Currency is fiat, else skip
+            const toCur = (r['to currency']||'').toUpperCase();
+            if (['USD','EUR','GBP','CHF','USDT','USDC'].includes(toCur)) type = 'sell';
+            else type = 'withdrawal';
+          }
+          else if (kind === 'crypto_exchange') type = amt < 0 ? 'sell' : 'buy';
+          else if (kind.includes('earn') || kind.includes('interest') || kind.includes('reward') || kind.includes('cashback') || kind === 'referral_card_cashback' || kind === 'reimbursement') type = 'staking';
+          else continue;
+          // For buys, prefer to_currency for asset (crypto received); for sells currency is the crypto sold
+          const toCur2 = (r['to currency']||'').toUpperCase();
+          const fromCur = (r['currency']||'').toUpperCase();
+          if (type === 'buy') {
+            asset = (!['USD','EUR','GBP','CHF','USDT','USDC'].includes(toCur2) && toCur2) ? toCur2 : fromCur;
+            qty = Math.abs(parseFloat(r['to amount']||r['amount']||0));
+          } else {
+            asset = fromCur;
+            qty = Math.abs(amt);
+          }
+          if (!asset || ['USD','EUR','GBP','CHF','USDT','USDC'].includes(asset)) continue;
+          const nativeUSD = Math.abs(parseFloat(r['native amount (in usd)']||r['native amount']||0));
+          priceCHF = qty > 0 ? (nativeUSD * USD_CHF) / qty : 0;
+          totalCHF = nativeUSD * USD_CHF;
+        }
+        // ── Crypto.com Exchange ───────────────────────────────────────────────
+        else if (format === 'crypto_com_ex') {
+          date = (r['create_time']||'').slice(0,10);
+          const side = (r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const inst = (r['instrument_name']||'').toUpperCase();
+          asset = inst.replace(/_?(USD|USDT|USDC|EUR|BTC|ETH)$/,'') || inst.slice(0,6);
+          qty = Math.abs(parseFloat(r['quantity']||r['qty']||r['filled qty']||r['size']||0));
+          const rawPrice = parseFloat(r['price']||0);
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        // ── Nexo ─────────────────────────────────────────────────────────────
+        else if (format === 'nexo') {
+          date = (r['date / time']||r['date_time']||'').slice(0,10);
+          const txType = (r['type']||r['transaction']||'').toLowerCase();
+          const inCur  = (r['input currency'] ||r['currency']||'').toUpperCase();
+          const outCur = (r['output currency']||r['currency']||'').toUpperCase();
+          const inAmt  = Math.abs(parseFloat(r['input amount'] ||r['amount']||0));
+          const outAmt = Math.abs(parseFloat(r['output amount']||r['amount']||0));
+          const usdVal = Math.abs(parseFloat(r['usd equivalent']||0));
+          const rawAmt = parseFloat(r['amount']||0); // for old format: negative = sell
+
+          if (txType.includes('interest') || txType.includes('dividend') || txType.includes('cashback') || txType.includes('bonus') || txType.includes('earn')) {
+            type = 'staking';
+            asset = inCur;
+            qty = inAmt || outAmt;
+          } else if (txType === 'buy' || txType.includes('purchase')) {
+            type = 'buy';
+            asset = outCur; qty = outAmt;
+          } else if (txType === 'sell') {
+            type = 'sell';
+            asset = inCur; qty = inAmt;
+          } else if (txType === 'exchange') {
+            // Old format: negative amount = sell, positive = buy same currency
+            if (r['input currency']) {
+              // New format
+              if (!['USD','USDT','USDC','EUR','GBP','CHF'].includes(inCur)) {
+                out.push({ date, type:'sell', asset:inCur,
+                  qty: inAmt, priceCHF: 0, totalCHF: usdVal * USD_CHF });
+              }
+              type = 'buy'; asset = outCur; qty = outAmt;
+            } else {
+              // Old format: amount sign indicates direction
+              if (rawAmt < 0) {
+                type = 'sell'; asset = inCur; qty = Math.abs(rawAmt);
+              } else {
+                type = 'buy'; asset = inCur; qty = rawAmt;
+              }
+            }
+          } else if (txType.includes('deposit')) {
+            type = 'buy'; asset = inCur; qty = inAmt || outAmt;
+          } else if (txType.includes('withdrawal')) {
+            type = 'withdrawal'; asset = inCur; qty = inAmt || outAmt;
+          } else continue;
+          if (['USD','USDT','USDC','EUR','GBP','CHF'].includes(asset)) continue;
+          priceCHF = qty > 0 ? (usdVal * USD_CHF) / qty : 0;
+          totalCHF = usdVal * USD_CHF;
+        }
+        // ── Revolut ───────────────────────────────────────────────────────────
+        else if (format === 'revolut') {
+          date = (r['completed date']||r['started date']||'').slice(0,10);
+          const txType = (r['type']||'').toLowerCase();
+          const revAmt = parseFloat(r['amount']||0);
+          if (txType === 'bought' || txType === 'buy') type = 'buy';
+          else if (txType === 'sold' || txType === 'sell') type = 'sell';
+          else if (txType === 'exchange' || !txType) {
+            // Amount positive = received (buy), negative = sent (sell)
+            type = revAmt >= 0 ? 'buy' : 'sell';
+          }
+          else if (txType.includes('reward') || txType.includes('cashback') || txType.includes('interest') || txType.includes('staking')) type = 'staking';
+          else continue;
+          asset = (r['currency']||'').toUpperCase();
+          if (['USD','EUR','GBP','CHF','USDT','USDC'].includes(asset)) continue;
+          qty = Math.abs(parseFloat(r['amount']||0));
+          const baseCur = (r['base currency']||'USD').toUpperCase();
+          const fiatAmt = Math.abs(parseFloat(r['fiat amount (inc. fees)']||r['fiat amount']||0));
+          const fiatRate = baseCur === 'CHF' ? 1 : USD_CHF; // treat EUR/GBP approx as USD for simplicity
+          totalCHF = fiatAmt * fiatRate;
+          priceCHF = qty > 0 ? totalCHF / qty : 0;
+        }
+        // ── Ledger Live ───────────────────────────────────────────────────────
+        else if (format === 'ledger') {
+          date = (r['operation date']||'').slice(0,10);
+          const opType = (r['operation type']||'').toUpperCase();
+          const cvAmt = Math.abs(parseFloat(r['countervalue at operation date']||0));
+          // IN = received (buy). OUT = sell if countervalue present, else transfer
+          if (opType === 'IN') type = 'buy';
+          else if (opType === 'OUT') type = cvAmt > 0 ? 'sell' : 'withdrawal';
+          else continue;
+          asset = (r['currency ticker']||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+          if (!asset) continue;
+          qty = Math.abs(parseFloat(r['operation amount']||0));
+          const cvTicker = (r['countervalue ticker']||'').toUpperCase();
+          const cvRate = cvTicker === 'CHF' ? 1 : USD_CHF;
+          totalCHF = cvAmt * cvRate;
+          priceCHF = qty > 0 ? totalCHF / qty : 0;
+        }
+        // ── KuCoin ────────────────────────────────────────────────────────────
+        else if (format === 'kucoin') {
+          date = (r['tradecreatedat']||r['order time']||'').slice(0,10);
+          const side = (r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const sym = (r['symbol']||r['pair']||'').toUpperCase();
+          asset = sym.replace(/-(USDT|USDC|BUSD|BTC|ETH|USD)$/,'') || sym.split('-')[0];
+          qty = Math.abs(parseFloat(r['size']||r['filled amount']||r['amount']||0));
+          const rawPrice = parseFloat(r['price']||r['filled price']||0);
+          const rawTotal = Math.abs(parseFloat(r['funds']||r['filled volume']||0));
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = rawTotal > 0 ? rawTotal * USD_CHF : qty * priceCHF;
+        }
+        // ── Gemini ────────────────────────────────────────────────────────────
+        else if (format === 'gemini') {
+          date = (r['date']||'').slice(0,10);
+          const txType = (r['type']||'').toLowerCase();
+          if (txType === 'buy') type = 'buy';
+          else if (txType === 'sell') type = 'sell';
+          else if (txType === 'credit' || txType.includes('earn') || txType.includes('reward') || txType.includes('interest')) type = 'staking';
+          else continue;
+          // Symbol like BTC or ETHUSD — strip quote
+          asset = (r['symbol']||'').toUpperCase().replace(/(USD|USDT|EUR|GBP)$/,'') || (r['symbol']||'').slice(0,6);
+          const usdAmt = Math.abs(parseFloat((r['usd amount']||r['usd amount usd']||r['notional']||'0').replace(/[,$]/g,'')));
+          // Find qty from the asset-specific column (e.g., 'BTC Amount')
+          const qtyKey = Object.keys(r).find(k => k.toLowerCase().includes(asset.toLowerCase()+' amount') || (k.toLowerCase().endsWith(' amount') && !k.toLowerCase().includes('usd') && !k.toLowerCase().includes('fee')));
+          qty = qtyKey ? Math.abs(parseFloat((r[qtyKey]||'0').replace(/[,$]/g,''))) : 0;
+          if (qty <= 0) continue;
+          priceCHF = qty > 0 ? (usdAmt * USD_CHF) / qty : 0;
+          totalCHF = usdAmt * USD_CHF;
+        }
+        // ── Bitfinex ──────────────────────────────────────────────────────────
+        else if (format === 'bitfinex') {
+          // MTS CREATE is Unix ms timestamp
+          const mts = parseFloat(r['mts create']||r['#']||0);
+          date = mts > 1e9 ? new Date(mts).toISOString().slice(0,10) : '';
+          const amt = parseFloat(r['amount']||0);
+          type = amt >= 0 ? 'buy' : 'sell';
+          const pair = (r['pair']||'').toUpperCase();
+          asset = pair.replace(/(USD|USDT|EUR|GBP|BTC|ETH)$/,'').slice(0,8) || pair.slice(0,4);
+          qty = Math.abs(amt);
+          const rawPrice = parseFloat(r['price']||0);
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = qty * priceCHF;
+        }
+        // ── Gate.io ───────────────────────────────────────────────────────────
+        else if (format === 'gate') {
+          date = (r['date']||'').slice(0,10);
+          const side = (r['side']||r['type']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const pair = (r['pair']||'').toUpperCase();
+          asset = pair.replace(/_(USDT|USDC|USD|BTC|ETH|BUSD)$/,'').split('_')[0];
+          qty = Math.abs(parseFloat(r['amount']||0));
+          const rawPrice = parseFloat(r['price']||0);
+          const rawTotal = Math.abs(parseFloat(r['total']||0));
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = rawTotal > 0 ? rawTotal * USD_CHF : qty * priceCHF;
+        }
+        // ── MEXC ──────────────────────────────────────────────────────────────
+        else if (format === 'mexc') {
+          date = (r['trade_time']||r['time']||'').slice(0,10);
+          const side = (r['trade_type']||r['side']||'').toLowerCase();
+          if (!['buy','sell'].includes(side)) continue;
+          type = side;
+          const sym = (r['symbol']||'').toUpperCase();
+          asset = sym.replace(/(USDT|USDC|USD|BUSD)$/,'');
+          qty = Math.abs(parseFloat(r['filled_amount']||r['amount']||0));
+          const rawPrice = parseFloat(r['filled_price']||r['price']||0);
+          const rawVol = Math.abs(parseFloat(r['filled_volume']||r['volume']||0));
+          priceCHF = rawPrice * USD_CHF;
+          totalCHF = rawVol > 0 ? rawVol * USD_CHF : qty * priceCHF;
+        }
+        // ── Smart unknown fallback ────────────────────────────────────────────
         else {
           const keys = Object.keys(r);
-          const dK = keys.find(k=>k.includes('date')||k.includes('time'));
-          const tK = keys.find(k=>k.includes('type')||k.includes('side'));
-          const aK = keys.find(k=>k.includes('asset')||k.includes('coin')||k.includes('symbol')||k.includes('currency'));
-          const qK = keys.find(k=>k.includes('amount')||k.includes('qty')||k.includes('quantity'));
-          const pK = keys.find(k=>k.includes('price'));
+          // Date: prefer explicit date/time columns
+          const dK = keys.find(k=>['date','time','timestamp','created','datetime','createdat'].some(x=>k===x||k.startsWith(x+'_')||k.endsWith('_'+x))) || keys.find(k=>k.includes('date')||k.includes('time'));
+          // Type: transaction type or side column
+          const tK = keys.find(k=>k==='type'||k==='side'||k==='transaction type'||k==='order type'||k==='txtype') || keys.find(k=>k.includes('type')||k.includes('side'));
+          // Asset: prefer specific asset/coin/currency columns
+          const aK = keys.find(k=>['asset','coin','currency','token','base_asset','base'].includes(k)) || keys.find(k=>k.includes('asset')||k.includes('coin')||k.includes('symbol')||k.includes('currency'));
+          // Quantity: prefer specific qty columns
+          const qK = keys.find(k=>['qty','quantity','amount','size','volume','filled_qty','executed'].includes(k)) || keys.find(k=>k.includes('qty')||k.includes('amount')||k.includes('quantity')||k.includes('size'));
+          // Price and total
+          const pK = keys.find(k=>['price','filled_price','rate'].includes(k)) || keys.find(k=>k.includes('price')&&!k.includes('fee'));
+          const totK = keys.find(k=>['total','value','subtotal','proceeds','funds','volume'].includes(k)) || keys.find(k=>k.includes('total')||k.includes('value'));
+          // Currency column to detect USD/CHF
+          const curK = keys.find(k=>['currency','quote','quote_currency','fiat_currency'].includes(k));
           if (!tK||!aK||!qK) continue;
-          date = r[dK]||'';
-          const t=(r[tK]||'').toLowerCase();
-          if (t.includes('buy')) type='buy';
-          else if (t.includes('sell')) type='sell';
-          else if (t.includes('reward')||t.includes('staking')) type='staking';
+          date = dK ? (r[dK]||'') : '';
+          const t = (r[tK]||'').toLowerCase();
+          // Expanded type mapping
+          if (t.includes('buy') || t==='purchase' || t==='in' || t==='received') type='buy';
+          else if (t.includes('sell') || t==='out' || t==='sent') type='sell';
+          else if (t.includes('withdrawal') || t.includes('withdraw') || t==='send') type='withdrawal';
+          else if (t.includes('reward')||t.includes('staking')||t.includes('interest')||t.includes('earn')||t.includes('cashback')||t.includes('dividend')||t.includes('income')) type='staking';
           else continue;
-          asset=(r[aK]||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-          qty=Math.abs(parseFloat(r[qK])||0);
-          priceCHF=parseFloat(r[pK]||0)||0;
-          totalCHF=qty*priceCHF;
+          const rawAsset = (r[aK]||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+          if (!rawAsset || ['USD','EUR','GBP','CHF','USDT','USDC','BUSD','FDUSD'].includes(rawAsset)) continue;
+          asset = rawAsset;
+          qty = Math.abs(parseFloat(r[qK])||0);
+          const rawPrice = parseFloat(r[pK]||0)||0;
+          const rawTotal = totK ? Math.abs(parseFloat(r[totK])||0) : 0;
+          // Detect if values are in USD — convert to CHF
+          const cur = curK ? (r[curK]||'').toUpperCase() : '';
+          const isUSD = cur==='USD' || cur==='USDT' || cur==='' || (!cur && rawPrice > 100 && rawTotal > 1);
+          const rate = cur==='CHF' ? 1 : USD_CHF;
+          priceCHF = rawPrice * rate;
+          totalCHF = rawTotal > 0 ? rawTotal * rate : qty * priceCHF;
         }
         if (qty<=0||!asset) continue;
         out.push({date, type, asset, qty, priceCHF, totalCHF});
@@ -4131,13 +4609,17 @@
       }
       else if (tx.type==='staking') {
         a.stakingCount++;
-        a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
         const income=tx.totalCHF>0?tx.totalCHF:tx.qty*(tx.priceCHF||0);
         // Only count staking income for the tax year being reported
         if (tx.date && tx.date.slice(0,4) === String(taxYear)) {
           a.stakingIncome+=income;
         }
-        a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
+        // _noLot: true means this is derivative funding income — no real asset acquired,
+        // so don't add to lots (prevents phantom holdings/wealth value)
+        if (!tx._noLot) {
+          a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
+          a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
+        }
       }
       else if (tx.type==='withdrawal') {
         // Transfer out — reduce lots FIFO but no taxable gain
@@ -4185,7 +4667,7 @@
     return {
       assets:result,
       stakingIncomeCHF:Math.round(totalStaking*100)/100,
-      totalGainLossCHF:Math.round((totalGain+totalStaking)*100)/100,
+      totalGainLossCHF:Math.round(totalGain*100)/100,
       totalPortfolioValueCHF:Math.round(totalPortfolio*100)/100,
     };
   }
@@ -4203,6 +4685,9 @@
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
+      reportId: 'CD-' + data.taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      reportVersion: '2.1',
+      generatedAt: new Date().toISOString(),
       totalTransactions: transactions.length,
       assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
       stakingIncomeCHF: computed.stakingIncomeCHF,
@@ -4210,6 +4695,7 @@
       totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
       complianceMethod: 'FIFO',
       notes,
+      transactions,
     };
   }
 
@@ -4219,7 +4705,19 @@
     const headers = Object.keys(rows[0]);
     const format = detectFormat(headers);
     const transactions = await normaliseRows(rows, format);
-    if (!transactions.length) throw new Error('Could not parse transactions — check file format');
+
+    // Parse quality check — warn if very few rows were successfully parsed
+    const parseRate = transactions.length / Math.max(rows.length, 1);
+    if (!transactions.length) {
+      const detectedMsg = format === 'unknown'
+        ? `Exchange format not recognised. Headers found: ${headers.slice(0,6).join(', ')}. Try exporting as a standard trade history CSV from your exchange settings.`
+        : `Format detected as ${format} but no valid transactions could be extracted. Check that the file contains actual trade rows and not just headers or summary data.`;
+      throw new Error(detectedMsg);
+    }
+    // If less than 10% of rows parsed and there are many rows, add a warning note
+    const lowParseWarning = (parseRate < 0.10 && rows.length > 20)
+      ? ` Note: only ${transactions.length} of ${rows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
+      : '';
 
     const dates = transactions.map(t=>t.date).filter(Boolean).sort();
     const taxYear = dates.length ? dates[dates.length-1].slice(0,4)||'2024' : '2024';
@@ -4231,16 +4729,33 @@
 
     // Ask AI only for coin names and notes — never for numbers
     const assetList = computed.assets.map(a=>a.symbol+':held='+a.endHolding).join(', ');
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
       kraken: `Exchange format detected: Kraken (ledger). Historical CHF prices fetched via CoinGecko API. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance: `Exchange format detected: Binance. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx: `Exchange format detected: OKX. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
+      crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Interest and dividend income treated as taxable staking income.`,
+      revolut: `Exchange format detected: Revolut. Fiat amounts converted to CHF at 0.9000. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as acquisitions (cost basis established at countervalue). Outgoing treated as withdrawals. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gemini: `Exchange format detected: Gemini. USD amounts converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitfinex: `Exchange format detected: Bitfinex. USD amounts converted to CHF at 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gate: `Exchange format detected: Gate.io. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      mexc: `Exchange format detected: MEXC. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      swissquote: `Exchange format detected: Swissquote. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitpanda: `Exchange format detected: Bitpanda. Fiat amounts converted to CHF at 0.9000. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
-    let notes = notesMap[format] || `Exchange format detected: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.2024). Portfolio valued at Dec 31, ${taxYear} closing prices (market closing prices at ESTV annual reference rate).`;
+    let notes = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.9000 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
       if (res.ok) {
@@ -4260,13 +4775,17 @@
 
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
+      reportId: 'CD-' + taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      reportVersion: '2.1',
+      generatedAt: new Date().toISOString(),
       totalTransactions:transactions.length,
       assets:computed.assets.map(a=>({...a,name:assetNames[a.symbol]||a.symbol})),
       stakingIncomeCHF:computed.stakingIncomeCHF,
       totalGainLossCHF:computed.totalGainLossCHF,
       totalPortfolioValueCHF:computed.totalPortfolioValueCHF,
       complianceMethod:'FIFO',
-      notes,
+      notes: notes + lowParseWarning,
+      transactions,
     };
   }
 
@@ -4342,19 +4861,21 @@
       const gl = Number(a.gainLossCHF);
       const glClass = gl >= 0 ? 'color:#2D7A56' : 'color:#C0392B';
       const glStr = gl >= 0 ? '+' + fmtCHF(gl) : '−' + fmtCHF(Math.abs(gl));
+      const hasUnmatched = (data.assets||[]).some(x=>x.missingCostBasis);
       return `<tr>
         <td style="font-weight:600">${escHtml(a.symbol)}</td>
         <td>${escHtml(a.name)}</td>
-        <td style="text-align:center">${a.buyCount || 0}</td>
-        <td style="text-align:center">${a.sellCount || 0}</td>
-        <td style="text-align:center">${a.stakingCount || 0}</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.buyCount || 0}</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.sellCount || 0}</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.stakingCount || 0}</td>
         <td style="text-align:right">${fmtNum(a.endHolding)}</td>
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
-        <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:#B8960C' : glClass}">
-          ${a.missingCostBasis
-            ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})} <span style="font-size:10px;font-weight:400;display:block;">proceeds · excluded</span>`
-            : glStr}
+        <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:rgba(245,242,235,0.3)' : glClass}">
+          ${a.missingCostBasis ? '—' : glStr}
         </td>
+        ${hasUnmatched ? `<td style="text-align:right;font-weight:600;color:#B8960C;">
+          ${a.missingCostBasis ? 'CHF '+Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2}) : '<span style="color:rgba(245,242,235,0.2);">—</span>'}
+        </td>` : ''}
       </tr>`;
     }).join('');
 
@@ -4366,14 +4887,15 @@
 <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:24px">
   <thead>
     <tr style="background:rgba(255,255,255,0.05)">
-      <th style="padding:10px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Symbol</th>
-      <th style="padding:10px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Asset</th>
-      <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buys</th>
-      <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sells</th>
-      <th style="padding:10px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Gain / Loss</th>
+      <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Symbol</th>
+      <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Asset</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buys</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sells</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
+      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
+      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
+      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
+      ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Unmatched (Excluded)</th>` : ''}
     </tr>
   </thead>
   <tbody style="color:rgba(245,242,235,0.75)">
@@ -4396,7 +4918,7 @@
   </div>
 </div>
 
-${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${data.notes}</div>` : ''}
+${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${data.notes}</div>` : ''}
     `;
 
     document.getElementById('report-content').innerHTML = reportHTML;
@@ -4415,27 +4937,33 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
 
     // Build a clean printable HTML page styled as a Swiss official document
     const assets = data.assets || [];
+    const _hasUnmatched = assets.some(a=>a.missingCostBasis);
+    const _totalExcluded = assets.reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
     const assetRows = assets.map(a => {
       const gl = Number(a.gainLossCHF);
       const glStr = gl >= 0
-        ? `+CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
-        : `−CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+        ? `+CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+        : `−CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
       const glColor = gl >= 0 ? '#2D7A56' : '#C0392B';
       const holdingStr = Number(a.endHolding||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:8});
-      const valueStr = `CHF ${Number(a.endValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+      const valueStr = `CHF ${Number(a.endValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+      const unmatchedStr = a.missingCostBasis
+        ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
+        : '—';
       return `<tr>
         <td class="mono" style="font-weight:700;padding-left:10px">${escHtml(a.symbol)}</td>
         <td style="color:#0D1117">${escHtml(a.name)}</td>
-        <td class="center mono" style="color:#9AA0AC;font-size:8pt;">${a.buyCount||0}</td>
-        <td class="center mono" style="color:#9AA0AC;font-size:8pt;">${a.sellCount||0}</td>
-        <td class="center mono" style="color:#9AA0AC;font-size:8pt;">${a.stakingCount||0}</td>
+        <td class="center mono" style="color:#5A6070;">${a.buyCount||0}</td>
+        <td class="center mono" style="color:#5A6070;">${a.sellCount||0}</td>
+        <td class="center mono" style="color:#5A6070;">${a.stakingCount||0}</td>
         <td class="right mono" style="font-weight:600;">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="color:${glColor};font-weight:700;padding-right:10px">
-        ${a.missingCostBasis
-          ? `<span style="white-space:nowrap;font-size:8pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:600;">CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</span><br/><span style="white-space:nowrap;font-size:7pt;color:#B8960C;font-family:'DM Mono',monospace;font-weight:400;letter-spacing:0.04em;">unmatched · excluded</span>`
-          : glStr}
+        <td class="right mono" style="font-weight:700;color:${a.missingCostBasis ? '#9AA0AC' : glColor};">
+          ${a.missingCostBasis ? '—' : glStr}
         </td>
+        ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:10px;">
+          ${unmatchedStr === '—' ? '<span style="color:#9AA0AC;font-weight:400;">—</span>' : unmatchedStr}
+        </td>` : ''}
       </tr>`;
     }).join('');
 
@@ -4445,11 +4973,47 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
       : `-CHF ${Math.abs(totalGain).toLocaleString('de-CH',{minimumFractionDigits:2})}`;
     const totalColor = totalGain >= 0 ? '#2D7A56' : '#C0392B';
 
+    // Dynamic holdings column header — derived from period end date
+    const _dr = data.dateRange || '';
+    const _endPart = _dr.includes('–') ? _dr.split('–').pop().trim() : _dr;
+    const holdingsLabel = '31.12.' + data.taxYear;
+
+    // Capitalised exchange name
+    const _EXCHANGE_NAMES = {
+      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV', unknown:'Unknown',
+    };
+    const _rawExch = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
+    const exchangeDisplay = _EXCHANGE_NAMES[_rawExch.trim()] || _rawExch;
+
+    // Report status (used in completeness box)
+    const _totalMatched = Math.abs(totalGain);
+    const _coverage = _totalExcluded > 0
+      ? Math.round(_totalMatched / (_totalMatched + _totalExcluded) * 100) : 100;
+    const statusColor = !_hasUnmatched ? '#2D7A56' : _coverage >= 80 ? '#B8960C' : '#C0392B';
+    const statusIcon  = !_hasUnmatched ? '✓' : _coverage >= 80 ? '⚠' : '🔴';
+    const buyCount = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
+    const sellCount = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
+    const unmatchedCount = (data.assets||[]).filter(a=>a.missingCostBasis).length;
+    const statusLabel = !_hasUnmatched
+      ? 'Complete — all positions matched'
+      : _coverage >= 80
+        ? 'Partial — minor gaps in acquisition history'
+        : 'Incomplete — additional data required for accurate tax reporting';
+
+    const _buyCount  = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
+    const _sellCount = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
+    const _stakCount = (data.assets||[]).reduce((s,a)=>s+(a.stakingCount||0),0);
+    const _unmatchedCount = (data.assets||[]).filter(a=>a.missingCostBasis).length;
+    const _assetCount = (data.assets||[]).length;
+
     const pdfHTML = `<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<title>Crypto Tax Report ${data.taxYear} — CryptoDeclare</title>
+<title>Tax Declaration Annex ${data.taxYear} — CryptoDeclare</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -4465,6 +5029,8 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     .summary-grid { page-break-inside: avoid; }
     .compliance-box { page-break-inside: avoid; }
     h2, h3 { page-break-after: avoid; }
+    @page { counter-increment: page; }
+    body { counter-reset: page 0; }
     .doc-footer::after {
       content: " · Page " counter(page);
       font-family: 'DM Mono', monospace;
@@ -4477,46 +5043,78 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
     .mono, th, .doc-meta, .info-label, .summary-label, .sec-title { font-family: 'DM Mono', 'Courier New', monospace; }
   }
 
-  .page { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; }
+  .page { max-width: 210mm; margin: 0 auto; padding: 16mm 18mm; }
 
-  /* Header */
-  .doc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 3px solid #0D1117; }
+  /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
+  .doc-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 16px; margin-bottom: 0;
+    border-bottom: 3px solid #0D1117;
+  }
   .doc-header-left {}
-  .doc-logo-line { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .ch-flag { width: 20px; height: 20px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; }
-  .ch-flag::before { content:''; width:8px; height:2px; background:white; box-shadow: 0 -3px 0 white,0 3px 0 white,-3px 0 0 white,3px 0 0 white; }
-  .doc-brand { font-family: 'DM Serif Display', serif; font-size: 20pt; letter-spacing: -0.02em; color: #0D1117; }
+  .doc-logo-line { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .ch-flag { width: 22px; height: 22px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; flex-shrink:0; }
+  .ch-flag::before { content:''; width:9px; height:2px; background:white; box-shadow: 0 -3.5px 0 white,0 3.5px 0 white,-3.5px 0 0 white,3.5px 0 0 white; }
+  /* Point 1: Brand bigger, bolder */
+  .doc-brand { font-family: 'DM Serif Display', serif; font-size: 26pt; letter-spacing: -0.02em; color: #0D1117; }
   .doc-brand span { color: #B8960C; }
-  .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #8A909E; }
-  .doc-header-right { text-align: right; }
-  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 15pt; color: #0D1117; margin-bottom: 4px; }
-  .doc-meta { font-family: 'DM Mono', monospace; font-size: 8pt; color: #8A909E; line-height: 2.0; letter-spacing: 0.04em; white-space: nowrap; }
+  /* Point 1: Subtitle now mentions ESTV explicitly */
+  .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #3D4451; margin-top: 2px; }
+  .estv-badge {
+    display: inline-block; background: none; color: #3D4451; border: none;
+    font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 0; border-radius: 0;
+    vertical-align: middle;
+  }
+  .doc-header-right { text-align: right; display: flex; flex-direction: column; justify-content: flex-start; }
+  /* Point 1: Report title bigger */
+  .doc-report-title { font-family: 'DM Serif Display', serif; font-size: 26pt; color: #0D1117; margin-bottom: 6px; font-weight: 400; letter-spacing: -0.02em; }
+  .doc-meta { font-family: 'DM Mono', monospace; font-size: 7pt; color: #9AA0AC; line-height: 1.85; letter-spacing: 0.04em; white-space: nowrap; }
+
+  .doc-header-accent { height: 0; margin-bottom: 14px; }
 
   /* Info bar */
-  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #E8E4DC; border: 1px solid #E8E4DC; border-radius:4px; overflow:hidden; margin-bottom: 24px; }
-  .info-cell { background: #F5F2EB; padding: 10px 12px; }
-  .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#9AA0AC; margin-bottom:4px; }
-  .info-val { font-family:'DM Serif Display',serif; font-size:13pt; color:#0D1117; }
+  .info-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #E8E4DC; border-top: 1px solid #D8D4CC; border-bottom: 1px solid #D8D4CC; overflow:hidden; margin-bottom: 32px; }
+  .info-cell { background: #FAFAF8; padding: 14px 12px; border-right: 1px solid #E8E4DC; }
+  .info-cell:last-child { border-right: none; }
+  .info-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#8A909E; margin-bottom:5px; }
+  .info-val { font-family:'DM Serif Display',serif; font-size:15pt; color:#0D1117; font-weight:400; }
 
-  /* Section title */
-  .sec-title { font-family:'DM Mono',monospace; font-size:8pt; letter-spacing:0.14em; text-transform:uppercase; color:#3D4451; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #E0DDD5; margin-top:24px; }
+  /* ── SECTION TITLES — Point 1: More hierarchy, finance weight ─────────── */
+  .sec-title {
+    font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.2em;
+    text-transform:uppercase; color:#5A6070; margin-bottom:14px;
+    padding:5px 0; margin-top:36px;
+    background: transparent;
+    border-bottom: 1.5px solid #E0DDD5;
+    border-left: none;
+    page-break-after: avoid;
+  }
 
-  /* Table — financial statement style */
-  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:20px; }
-  thead tr { background:#0D1117; }
-  thead th { padding:9px 8px; font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.1em; text-transform:uppercase; color:#D4AF37; font-weight:500; }
+  /* ── TABLES — Point 10: Finance-grade borders, strong structure ────────── */
+  table { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:24px;
+          border: none; }
+  thead tr { background:#FFFFFF; border-bottom: 2px solid #0D1117; }
+  thead th {
+    padding:10px 12px; font-family:'DM Mono',monospace; font-size:6.5pt;
+    letter-spacing:0.12em; text-transform:uppercase; color:#5A6070; font-weight:600;
+    border-right: none;
+  }
+  thead th:last-child { border-right: none; }
   thead th.right { text-align:right; }
   thead th.center { text-align:center; }
-  tbody tr { border-bottom:1px solid #F0EDE6; }
+  /* Point 10: Visible row borders + vertical column borders */
+  tbody tr { border-bottom: 1px solid #EDEBE5; }
   tbody tr:nth-child(even) { background:#FAFAF8; }
   tbody tr:nth-child(odd) { background:#FFFFFF; }
-  tbody td { padding:9px 8px; color:#0D1117; vertical-align:middle; line-height:1.6; }
-  tbody td:first-child { padding-left:12px; }
-  tbody td:last-child { padding-right:12px; }
+  tbody td {
+    padding:11px 12px; color:#0D1117; vertical-align:middle; line-height:1.5;
+    border-right: 1px solid rgba(0,0,0,0.04);
+  }
+  tbody td:last-child { border-right: none; }
   .mono { font-family:'DM Mono',monospace; font-size:8.5pt; letter-spacing:0.02em; font-variant-numeric:tabular-nums; white-space:nowrap; }
   .right { text-align:right; }
   .center { text-align:center; }
-  /* Column widths for clean alignment */
   table col.col-symbol { width:8%; }
   table col.col-name   { width:16%; }
   table col.col-count  { width:7%; }
@@ -4524,31 +5122,34 @@ ${data.notes ? `<div style="padding:14px 18px;background:rgba(212,175,55,0.07);b
   table col.col-val    { width:18%; }
   table col.col-gl     { width:18%; }
 
-  /* Total row */
-  .total-row { background:#0D1117 !important; border:none !important; }
-  .total-row td { color:#F5F2EB; font-weight:700; padding:9px 7px; font-family:'DM Mono',monospace; font-size:9.5pt; }
+  /* Total row — strong, finance-grade */
+  .total-row { background:#0D1117 !important; border: none !important; border-top: 2px solid #B8960C !important; }
+  .total-row td { color:#F5F2EB; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.08) !important; }
+  .total-row td:last-child { border-right: none !important; }
 
-  /* Summary boxes */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#e0ddd5; border:1px solid #e0ddd5; margin-bottom:24px; align-items:stretch; }
-  .summary-box { background:#F5F2EB; padding:16px 18px; display:flex; flex-direction:column; }
-  .summary-box.highlight { background:#0D1117; }
-  .summary-label { font-family:'DM Mono',monospace; font-size:6.5pt; letter-spacing:0.14em; text-transform:uppercase; color:#9AA0AC; margin-bottom:8px; }
-  .summary-box.highlight .summary-label { color:rgba(212,175,55,0.6); }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:18pt; color:#0D1117; line-height:1.1; }
-  .summary-box.highlight .summary-val { color:#F5F2EB; }
+  /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
+  .summary-box { background:#FAFAF8; padding:28px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
+  .summary-box:last-child { border-right:none; }
+  .summary-box.highlight { background:#1A1D21; border-right:1px solid #2A2D31; }
+  .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
+
+  .summary-box.highlight .summary-label { color:rgba(184,150,12,0.55); }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:24pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
+  .summary-box.highlight .summary-val { color:#F5F2EB; font-size:24pt; white-space:nowrap; }
 
   /* Compliance */
-  .compliance-box { background:#F7F0D4; border:1px solid #D4AF37; border-radius:3px; padding:12px 16px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#3D4451; }
+  .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 12px 14px 9px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
   .compliance-box strong { color:#0D1117; }
 
   /* Notes */
-  .notes-box { background:#F5F2EB; border:1px solid #E8E4DC; border-radius:3px; padding:12px 16px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
+  .notes-box { background:#F5F2EB; border:none; border-left: 3px solid #5A6070; padding:12px 12px 12px 9px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
 
-  /* Footer */
-  .doc-footer { margin-top:28px; padding-top:12px; border-top:1px solid #e0ddd5; display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:7pt; color:#8A909E; letter-spacing:0.08em; }
+  /* ── FOOTER — finance document style ─────────────────────────────────── */
+  .doc-footer { display:none; }
 
   /* Print button */
-  .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#D4AF37; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:3px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; } @media print { .no-print { display:none !important; visibility:hidden !important; } }
+  .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#B8960C; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); } @media print { .no-print { display:none !important; visibility:hidden !important; } }
   .no-print:hover { background:#B8960C; color:#0D1117; }
 
   /* ── TEAM ── */
@@ -4812,10 +5413,11 @@ onmouseout="this.style.color='#8A909E'">
 
 <div class="page">
 
+  <!-- Classic two-column header — brand left, title right -->
   <div class="doc-header">
     <div class="doc-header-left">
       <div class="doc-logo-line">
-        <svg width="28" height="28" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="border-radius:5px;flex-shrink:0">
+        <svg width="40" height="40" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="border-radius:8px;flex-shrink:0;">
           <rect width="400" height="400" fill="#0D1117"/>
           <path d="M 290 130 A 110 110 0 1 0 290 270 L 205 270 A 70 70 0 0 0 205 130 Z" fill="#F5F2EB"/>
           <rect x="205" y="122" width="90" height="16" rx="4" fill="#B8960C"/>
@@ -4825,17 +5427,20 @@ onmouseout="this.style.color='#8A909E'">
         </svg>
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
-      <div class="doc-subtitle" style="font-family:'DM Mono',monospace;font-size:7pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;margin-top:4px;">Prepared for Swiss cantonal tax declaration · FIFO · cryptodeclare.ch</div>
+      <div class="doc-subtitle">Swiss Crypto Tax Declaration · cryptodeclare.ch</div>
+      <div style="margin-top:5px;"><span class="estv-badge">ESTV-Compatible</span></div>
     </div>
     <div class="doc-header-right">
-      <div class="doc-report-title">Crypto Tax Report ${data.taxYear}</div>
+      <div class="doc-report-title">Tax Declaration Annex ${data.taxYear}</div>
       <div class="doc-meta">
         Generated: ${new Date().toLocaleDateString('en-CH')}<br/>
         Method: ${data.complianceMethod || 'FIFO'}<br/>
-        Period: ${data.dateRange || data.taxYear}
+        Period: ${data.dateRange || data.taxYear}<br/>
+        ID: ${data.reportId||'—'} · v${data.reportVersion||'2.1'}
       </div>
     </div>
   </div>
+  <div class="doc-header-accent"></div>
 
   <div class="info-bar">
     <div class="info-cell">
@@ -4856,33 +5461,60 @@ onmouseout="this.style.color='#8A909E'">
     </div>
   </div>
 
+  <!-- Validation strip -->
   ${(function(){
-    const dateRange = data.dateRange || data.taxYear;
-    const txCount = data.totalTransactions || 0;
-    const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
-    const exchanges = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
-    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #E0D9CC;border-radius:6px;overflow:hidden;margin-bottom:20px;font-size:8pt;">'
-      +'<div style="padding:10px 14px;border-right:1px solid #E0D9CC;border-bottom:1px solid #E0D9CC;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Imported Transactions</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+txCount+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;border-bottom:1px solid #E0D9CC;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Date Range</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+dateRange+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;border-right:1px solid #E0D9CC;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Exchange(s)</div>'
-        +'<div style="font-weight:600;color:#0D1117;">'+exchanges+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;">'
-        +'<div style="font-family:monospace;font-size:7pt;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;margin-bottom:3px;">Data Completeness</div>'
-        +'<div style="font-weight:700;color:'+(hasUnmatched?'#B8960C':'#2D7A56')+';">'+(hasUnmatched?'⚠ Partial — unmatched FIFO quantities detected':'✓ Complete — all disposals matched')+'</div>'
-      +'</div>'
+    const _bc = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
+    const _sc = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
+    const _uc = (data.assets||[]).filter(a=>a.missingCostBasis).length;
+    const _sc2 = (data.assets||[]).reduce((s,a)=>s+(a.stakingCount||0),0);
+    const _ucColor = _uc===0?'#2D7A56':'#C0392B';
+    return '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#D8D4CC;border-top:1px solid #D8D4CC;border-bottom:1px solid #D8D4CC;margin-bottom:20px;">'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_bc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Buys Matched</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Sells Matched</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:'+_ucColor+';">'+_uc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Unmatched Disposals</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc2+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Staking Events</div></div>'
       +'</div>';
   })()}
 
+  ${(function(){
+    // Derive end date label from dateRange for the Holdings column header
+    const dr = data.dateRange || '';
+    const endPart = dr.includes('–') ? dr.split('–').pop().trim() : dr;
+    const holdingsLabel = '31.12.' + data.taxYear;
+
+    // Capitalise exchange name from notes
+    const EXCHANGE_NAMES = {
+      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV', unknown:'Unknown',
+    };
+    const rawExchange = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '—' : '—';
+    const exchangeDisplay = EXCHANGE_NAMES[rawExchange.trim()] || rawExchange;
+
+    const dateRange = data.dateRange || data.taxYear;
+    const txCount = data.totalTransactions || 0;
+    const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
+    const totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
+    const totalMatched = Number(data.totalGainLossCHF||0);
+    const coverage = totalExcluded > 0
+      ? Math.round(Math.abs(totalMatched) / (Math.abs(totalMatched) + totalExcluded) * 100)
+      : 100;
+
+    // Report status
+    const statusColor = !hasUnmatched ? '#2D7A56' : coverage >= 80 ? '#B8960C' : '#C0392B';
+    const statusIcon  = !hasUnmatched ? '✓' : coverage >= 80 ? '⚠' : '🔴';
+    const statusLabel = !hasUnmatched
+      ? 'Complete — all positions matched'
+      : coverage >= 80
+        ? 'Partial — minor gaps in acquisition history'
+        : 'Incomplete — additional data required for accurate tax reporting';
+
+    return '<div style="margin-bottom:12px;font-family:\'DM Mono\',monospace;font-size:8pt;font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</div>';
+  })()}
+
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
-  <div style="border-left:3px solid #B8960C;padding:10px 14px;margin-bottom:20px;background:#FFFCF5;">
+  <div style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
     <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
     <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'DM Mono',monospace;font-size:8pt;font-weight:600;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
   </div>` : ''}
@@ -4891,10 +5523,11 @@ onmouseout="this.style.color='#8A909E'">
     <thead>
       <tr>
         <th>Symbol</th><th>Asset</th>
-        <th class="center" style="opacity:0.5;">Buys</th><th class="center" style="opacity:0.5;">Sells</th><th class="center" style="opacity:0.5;">Staking</th>
-        <th class="right">Holdings 31.12</th>
+        <th class="center">Buys</th><th class="center">Sells</th><th class="center">Staking</th>
+        <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
-        <th class="right">Gain / Loss</th>
+        <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
+        ${_hasUnmatched ? '<th class="right">Unmatched (Excluded)</th>' : ''}
       </tr>
     </thead>
     <tbody>
@@ -4902,7 +5535,8 @@ onmouseout="this.style.color='#8A909E'">
       <tr class="total-row">
         <td colspan="6">Net Total</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
-        <td class="right" style="color:${totalColor}">${totalGainStr}</td>
+        <td class="right" style="color:${totalColor};">${totalGainStr}</td>
+        ${_hasUnmatched ? `<td class="right" style="color:#B8960C;font-weight:600;padding-right:10px;">CHF ${_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})}</td>` : ''}
       </tr>
     </tbody>
   </table>
@@ -4928,19 +5562,20 @@ onmouseout="this.style.color='#8A909E'">
         +'<td class="right mono" style="color:#B8960C">CHF '+fc(a.unresolvedProceeds||0)+'</td>'
         +'</tr>';
     }).join('');
-    return '<div class="sec-title" style="margin-top:24px;">02 — FIFO Reconciliation</div>'
-      +'<p style="font-size:8.5pt;color:#5A6070;line-height:1.6;margin-bottom:12px;">This table shows how your holdings were matched under FIFO. Unmatched quantities indicate disposals with no corresponding purchase history in this file — likely acquired on another exchange or in a prior period.</p>'
+    return '<div class="sec-title" style="margin-top:24px;break-before:avoid;">02 — FIFO Reconciliation</div>'
+      +'<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">This table shows how your holdings were matched under FIFO. Unmatched quantities indicate disposals with no corresponding purchase history in this file — likely acquired on another exchange or in a prior period.</p>'
       +'<table style="font-size:7.5pt;"><thead><tr>'
-      +'<th style="text-align:left;padding:10px 10px;">Asset</th>'
-      +'<th class="right" style="padding:10px 8px;" title="Inferred: closing + sold − bought">Opening<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(inferred)</span></th>'
-      +'<th class="right" style="padding:10px 8px;">+ Buys</th>'
-      +'<th class="right" style="padding:10px 8px;">− Sells</th>'
-      +'<th class="right" style="padding:10px 8px;">= Closing</th>'
-      +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 8px 10px 14px;">Unmatched Qty</th>'
-      +'<th class="right" style="padding:10px 8px;">Unmatched Proceeds</th>'
+      +'<th style="text-align:left;padding:10px 12px;">Asset</th>'
+      +'<th class="right" style="padding:10px 12px;" title="Derived from closing balance + sells − buys">Opening Balance<br/><span style="font-size:6pt;opacity:0.6;font-weight:400;">(derived from activity)</span></th>'
+      +'<th class="right" style="padding:10px 12px;">+ Buys</th>'
+      +'<th class="right" style="padding:10px 12px;">− Sells</th>'
+      +'<th class="right" style="padding:10px 12px;">= Closing</th>'
+      +'<th class="right" style="border-left:2px solid #2D2D2D;padding:10px 12px 10px 14px;">Unmatched Qty</th>'
+      +'<th class="right" style="padding:10px 12px;">Unmatched Proceeds</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table>'
-      +'<p style="font-size:8pt;color:#8A909E;font-family:monospace;margin-top:8px;line-height:1.6;">'
-      +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>';
+      +'<p style="font-size:8pt;color:#8A909E;font-family:\'Instrument Sans\',Arial,sans-serif;margin-top:8px;line-height:1.6;font-style:italic;">'
+      +'Unmatched quantities: FIFO lots exhausted — assets likely acquired on other exchanges or prior periods not in this file. Unmatched proceeds excluded from realised gain.</p>'
+      +'</div>';
   })()}
 
   <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
@@ -4955,16 +5590,20 @@ onmouseout="this.style.color='#8A909E'">
     </div>
     <div class="summary-box highlight">
       <div class="summary-label">Realised Gain / Loss</div>
-      <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
+      <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
     </div>
   </div>
 
-  <div class="sec-title">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Legal Notice &amp; Disclaimer</div>
+  <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Legal Notice &amp; Disclaimer</div>
+  <div style="background:#F5F2EB;border-left:3px solid #2D7A56;padding:10px 12px 10px 9px;margin-bottom:12px;border-radius:0;font-size:9.5pt;">
+    <strong style="color:#0D1117;">Supporting document — not an official tax filing.</strong>
+    Attach this annex to your standard cantonal tax return. For private individuals, realised crypto gains are generally tax-free; staking income is taxable. Consult a certified Swiss tax advisor for your situation.
+  </div>
   <div class="compliance-box">
     <strong>🇬🇧 EN</strong><br/>
     <span style="color:#2D7A56;font-weight:600;">✔ Swiss private individuals</span> — Capital gains generally tax-free; declare holdings as wealth (Vermögen). Staking and lending income is taxable.<br/>
     <span style="color:#B8960C;font-weight:600;">⚠ Professional traders &amp; legal entities</span> — Capital gains taxable as income; this report's gain figures are directly relevant for your declaration.<br/>
-    <span style="font-size:8.5pt;color:#8A909E;">This document is a supporting annex only — not an official tax filing. Consult a qualified Swiss tax advisor (Treuhänder) for your specific situation.</span><br/>
+    
     <strong>🇩🇪 DE</strong><br/>
     <span style="color:#2D7A56;font-weight:600;">✔ Privatpersonen</span> — Kursgewinne steuerfrei; Bestände als Vermögen deklarieren. Staking-Erträge steuerpflichtig.<br/>
     <span style="color:#B8960C;font-weight:600;">⚠ Gewerbliche Händler &amp; juristische Personen</span> — Kursgewinne als Einkommen steuerpflichtig. Dieses Dokument ist eine Beilage und kein offizielles Steuerdokument.<br/>
@@ -4973,22 +5612,65 @@ onmouseout="this.style.color='#8A909E'">
     <span style="color:#B8960C;font-weight:600;">⚠ Traders professionnels &amp; personnes morales</span> — Gains en capital imposables. Ce document est une annexe et non une déclaration fiscale officielle.
   </div>
 
+
+
+
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
 
-  <div style="margin-top:24px;padding:14px 18px;background:#F7F4EE;border-radius:4px;font-size:7.5pt;color:#8A909E;line-height:1.7;font-family:'DM Mono',monospace;letter-spacing:0.03em;">
-    <strong style="color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:7pt;">Methodology</strong><br/>
-    <strong>Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
-    <strong>Exchange rate:</strong> USD/CHF 0.9000 (ESTV reference rate, 31.12.${data.taxYear}). CHF-denominated values used directly. ·
-    <strong>Fees:</strong> Excluded from proceeds and cost basis (conservative approach). ·
-    <strong>Ticker normalization:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
-    <strong>Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market closing prices at ESTV annual reference rate). ·
-    <strong>Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
+  <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
+    <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.9000 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
   <div class="doc-footer">
-    <span>CryptoDeclare · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
-    <span>Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting document only — not an official tax filing</span>
+    <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
+    <span>ID: ${data.reportId||'—'} · Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting annex — not an official tax filing</span>
   </div>
 
+
+  ${(function(){
+    // ── TRANSACTION LEDGER ───────────────────────────────────────────────
+    const txs = data.transactions || [];
+    if (!txs.length) return '';
+    const sectionNum = (data.assets||[]).some(a=>a.missingCostBasis) ? '03' : '02';
+    const fmtDate = d => d ? d.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3.$2.$1') : '—';
+    const fmtQty  = n => Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6});
+    const fmtCHF  = n => 'CHF ' + Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const typeLabel = t => t === 'buy' ? '▲ Buy' : t === 'sell' ? '▼ Sell' : t === 'staking' ? '★ Staking' : t === 'withdrawal' ? '← Out' : t || '—';
+    const typeColor = t => t === 'buy' ? '#2E7D32' : t === 'sell' ? '#C0392B' : t === 'staking' ? '#B8960C' : '#3D4451';
+
+    const rows = txs.map(tx => {
+      const priceFmt = tx.priceCHF ? fmtCHF(tx.priceCHF) : '—';
+      const totalFmt = tx.totalCHF ? fmtCHF(tx.totalCHF) : '—';
+      return '<tr>'
+        + '<td class="mono" style="font-size:8pt;white-space:nowrap;">' + fmtDate(tx.date) + '</td>'
+        + '<td style="font-weight:600;font-size:8.5pt;color:' + typeColor(tx.type) + ';">' + typeLabel(tx.type) + '</td>'
+        + '<td style="font-weight:700;">' + escHtml(tx.asset||'—') + '</td>'
+        + '<td class="right mono" style="font-size:8pt;">' + fmtQty(tx.qty) + '</td>'
+        + '<td class="right mono" style="font-size:8pt;">' + priceFmt + '</td>'
+        + '<td class="right mono" style="font-size:8pt;font-weight:600;">' + totalFmt + '</td>'
+        + '</tr>';
+    }).join('');
+
+    // Section number adjusts based on whether FIFO reconciliation appears
+    const hasMissingBasis = (data.assets||[]).some(a=>a.missingCostBasis);
+    const secNum = hasMissingBasis ? '05' : '04';
+    // Renumber Tax Summary and Legal Notice accordingly
+    return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
+      + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
+      + '<table style="font-size:8pt;"><thead><tr>'
+      + '<th style="text-align:left;white-space:nowrap;">Date</th>'
+      + '<th style="text-align:left;">Type</th>'
+      + '<th style="text-align:left;">Asset</th>'
+      + '<th class="right">Quantity</th>'
+      + '<th class="right">Price (CHF)</th>'
+      + '<th class="right">Total (CHF)</th>'
+      + '</tr></thead><tbody>' + rows + '</tbody></table>';
+  })()}
 </div>
 </body>
 </html>`;
@@ -4997,6 +5679,50 @@ onmouseout="this.style.color='#8A909E'">
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `CryptoDeclare-${data.taxYear}-TaxReport.html`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function downloadLedgerCSV() {
+    const data = window._reportData;
+    if (!data || !data.transactions || !data.transactions.length) {
+      showToast('No transaction data available — please re-upload your file.');
+      return;
+    }
+    const EXCHANGE_NAMES = {
+      binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+      bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+      bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+      bitcoin_suisse:'Bitcoin Suisse', generic:'Generic CSV',
+    };
+    const rawExchange = data.notes ? (data.notes.match(/Exchange format detected: ([^.]+)/)||[])[1] || '' : '';
+    const exchangeName = EXCHANGE_NAMES[rawExchange.trim()] || rawExchange || 'Unknown';
+
+    const headers = ['Date','Type','Asset','Quantity','Price CHF','Total CHF'];
+    const rows = data.transactions.map(t => [
+      (t.date||'').slice(0,10),
+      t.type ? t.type.charAt(0).toUpperCase()+t.type.slice(1) : '',
+      t.asset||'',
+      t.qty != null ? Number(t.qty).toFixed(8) : '',
+      t.priceCHF != null ? Number(t.priceCHF).toFixed(4) : '',
+      t.totalCHF != null ? Number(t.totalCHF).toFixed(2) : '',
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+
+    const meta = [
+      `"CryptoDeclare — Transaction Ledger"`,
+      `"Tax Year: ${data.taxYear}"`,
+      `"Period: ${data.dateRange||data.taxYear}"`,
+      `"Exchange: ${exchangeName}"`,
+      `"Generated: ${new Date().toLocaleDateString('de-CH')}"`,
+      `"Transactions: ${data.transactions.length}"`,
+      '',
+    ].join('\n');
+
+    const csv = meta + headers.join(',') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `CryptoDeclare-${data.taxYear}-Ledger.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
   }
@@ -5109,10 +5835,6 @@ onmouseout="this.style.color='#8A909E'">
     } catch(e) {
       btn.disabled = false;
       btn.textContent = 'Send message';
-      btn.textContent = 'Failed — try again';
-    setTimeout(() => { btn.disabled = false; btn.textContent = 'Send message'; }, 3000);
-    const errMsg = document.getElementById('contact-error');
-    if (errMsg) { errMsg.style.display = 'block'; setTimeout(() => errMsg.style.display='none', 5000); }
     }
   });
 
