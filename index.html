@@ -4963,67 +4963,47 @@
     };
   }
 
-  async function generateTaxReportFromTransactions(transactions, filename, format) {
-    if (!transactions.length) throw new Error('No transactions found');
+  function buildReportMeta(transactions) {
     const dates = transactions.map(t=>t.date).filter(Boolean).sort();
-    const taxYear = dates.length ? dates[dates.length-1].slice(0,4)||'2024' : '2024';
-    const dateRange = dates.length>=2
-      ? formatDate(dates[0])+' – '+formatDate(dates[dates.length-1])
-      : (dates[0]?formatDate(dates[0]):'2024');
-    const computed = computeFIFO(transactions, taxYear);
-    let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    let notes = `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`;
-    const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
+    const taxYear = dates.length ? String(dates[dates.length-1]).slice(0,4) || '2024' : '2024';
+    const dateRange = dates.length >= 2
+      ? formatDate(dates[0]) + ' – ' + formatDate(dates[dates.length-1])
+      : (dates[0] ? formatDate(dates[0]) : taxYear);
+
     return {
-      taxYear, clientRef:'Auto-generated', dateRange,
+      taxYear,
+      clientRef: 'Auto-generated',
+      dateRange,
       reportId: 'CD-' + taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
       reportVersion: '2.1',
       generatedAt: new Date().toISOString(),
       totalTransactions: transactions.length,
-      assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
-      stakingIncomeCHF: computed.stakingIncomeCHF,
-      totalGainLossCHF: computed.totalGainLossCHF,
-      totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
       complianceMethod: 'FIFO',
-      notes,
-      transactions,
     };
   }
 
-  async function generateTaxReport(csvContent, filename) {
-    const rows = parseCSVRows(csvContent);
-    if (!rows.length) throw new Error('No transactions found in file');
-    const headers = Object.keys(rows[0]);
-    const format = detectFormat(headers);
-    const transactions = await normaliseRows(rows, format);
+  function getDefaultAssetNames() {
+    return {
+      BTC:'Bitcoin',
+      ETH:'Ethereum',
+      SOL:'Solana',
+      BNB:'BNB Chain',
+      ADA:'Cardano',
+      XRP:'Ripple',
+      DOT:'Polkadot',
+      AVAX:'Avalanche',
+      MATIC:'Polygon',
+      USDC:'USD Coin',
+      LINK:'Chainlink',
+      UNI:'Uniswap',
+      ATOM:'Cosmos',
+      LTC:'Litecoin',
+      BCH:'Bitcoin Cash',
+    };
+  }
 
-    // Parse quality check — warn if very few rows were successfully parsed
-    const parseRate = transactions.length / Math.max(rows.length, 1);
-    if (!transactions.length) {
-      const detectedMsg = format === 'unknown'
-        ? `Exchange format not recognised. Headers found: ${headers.slice(0,6).join(', ')}. Try exporting as a standard trade history CSV from your exchange settings.`
-        : `Format detected as ${format} but no valid transactions could be extracted. Check that the file contains actual trade rows and not just headers or summary data.`;
-      throw new Error(detectedMsg);
-    }
-    // If less than 10% of rows parsed and there are many rows, add a warning note
-    const lowParseWarning = (parseRate < 0.10 && rows.length > 20)
-      ? ` Note: only ${transactions.length} of ${rows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
-      : '';
-
-    const dates = transactions.map(t=>t.date).filter(Boolean).sort();
-    const taxYear = dates.length ? dates[dates.length-1].slice(0,4)||'2024' : '2024';
-    const dateRange = dates.length>=2
-      ? formatDate(dates[0])+' – '+formatDate(dates[dates.length-1])
-      : (dates[0]?formatDate(dates[0]):'2024');
-
-    const computed = computeFIFO(transactions, taxYear);
-
-    // Ask AI only for coin names and notes — never for numbers
-    const assetList = computed.assets.map(a=>a.symbol+':held='+a.endHolding).join(', ');
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
-
-    let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    const notesMap = {
+  function getReportNotesMap(taxYear) {
+    return {
       kraken: `Exchange format detected: Kraken (ledger). Trade values derived from paired ledger entries; reward income valued using Coinbase and CoinGecko historical market references where available. USD-denominated trades converted at 0.906250 CHF/USD. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). Quote-currency values converted to CHF using exchange quote currency and historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. CHF values used directly where exported; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
@@ -5046,7 +5026,33 @@
       bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitpanda: `Exchange format detected: Bitpanda. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
-    let notes = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+  }
+
+  function buildExchangeNotes(format, taxYear, lowParseWarning='') {
+    const notesMap = getReportNotesMap(taxYear);
+    const base = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    return base + lowParseWarning;
+  }
+
+  function buildMultiExchangeNotes(format, taxYear) {
+    return `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+  }
+
+  function buildFinalReport(meta, transactions, computed, assetNames, notes) {
+    return {
+      ...meta,
+      assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
+      stakingIncomeCHF: computed.stakingIncomeCHF,
+      totalGainLossCHF: computed.totalGainLossCHF,
+      totalPortfolioValueCHF: computed.totalPortfolioValueCHF,
+      notes,
+      transactions,
+    };
+  }
+
+  async function enrichAssetNamesAndNotes(format, taxYear, computed, assetNames, notes) {
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
       if (res.ok) {
@@ -5054,30 +5060,54 @@
         const text=(data.content||[]).map(c=>c.text||'').join('');
         const clean=text.replace(/```json|```/gi,'').trim();
         const s=clean.indexOf('{'),e=clean.lastIndexOf('}');
-        if(s!==-1&&e>s){const p=JSON.parse(clean.slice(s,e+1));assetNames={...assetNames,...(p.assetNames||{})};notes=p.notes||notes;}
+        if (s!==-1 && e>s) {
+          const parsed = JSON.parse(clean.slice(s,e+1));
+          return {
+            assetNames: {...assetNames, ...(parsed.assetNames||{})},
+            notes: parsed.notes || notes,
+          };
+        }
       }
     } catch(e) {}
 
-    // Append missing cost basis warning if any asset had zero-cost sells
-    const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
-    if (missingCB.length > 0) {
-      // Missing cost basis shown in report banner — not duplicated in notes
-    }
+    return { assetNames, notes };
+  }
 
-    return {
-      taxYear, clientRef:'Auto-generated', dateRange,
-      reportId: 'CD-' + taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
-      reportVersion: '2.1',
-      generatedAt: new Date().toISOString(),
-      totalTransactions:transactions.length,
-      assets:computed.assets.map(a=>({...a,name:assetNames[a.symbol]||a.symbol})),
-      stakingIncomeCHF:computed.stakingIncomeCHF,
-      totalGainLossCHF:computed.totalGainLossCHF,
-      totalPortfolioValueCHF:computed.totalPortfolioValueCHF,
-      complianceMethod:'FIFO',
-      notes: notes + lowParseWarning,
-      transactions,
-    };
+  async function generateTaxReportFromTransactions(transactions, filename, format) {
+    if (!transactions.length) throw new Error('No transactions found');
+    const meta = buildReportMeta(transactions);
+    const computed = computeFIFO(transactions, meta.taxYear);
+    const assetNames = getDefaultAssetNames();
+    const notes = buildMultiExchangeNotes(format, meta.taxYear);
+    return buildFinalReport(meta, transactions, computed, assetNames, notes);
+  }
+
+  async function generateTaxReport(csvContent, filename) {
+    const rows = parseCSVRows(csvContent);
+    if (!rows.length) throw new Error('No transactions found in file');
+    const headers = Object.keys(rows[0]);
+    const format = detectFormat(headers);
+    const transactions = await normaliseRows(rows, format);
+
+    // Parse quality check — warn if very few rows were successfully parsed
+    const parseRate = transactions.length / Math.max(rows.length, 1);
+    if (!transactions.length) {
+      const detectedMsg = format === 'unknown'
+        ? `Exchange format not recognised. Headers found: ${headers.slice(0,6).join(', ')}. Try exporting as a standard trade history CSV from your exchange settings.`
+        : `Format detected as ${format} but no valid transactions could be extracted. Check that the file contains actual trade rows and not just headers or summary data.`;
+      throw new Error(detectedMsg);
+    }
+    // If less than 10% of rows parsed and there are many rows, add a warning note
+    const lowParseWarning = (parseRate < 0.10 && rows.length > 20)
+      ? ` Note: only ${transactions.length} of ${rows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
+      : '';
+
+    const meta = buildReportMeta(transactions);
+    const computed = computeFIFO(transactions, meta.taxYear);
+    let assetNames = getDefaultAssetNames();
+    let notes = buildExchangeNotes(format, meta.taxYear, lowParseWarning);
+    ({ assetNames, notes } = await enrichAssetNamesAndNotes(format, meta.taxYear, computed, assetNames, notes));
+    return buildFinalReport(meta, transactions, computed, assetNames, notes);
   }
 
   // Sanitize user-supplied strings before inserting into HTML
