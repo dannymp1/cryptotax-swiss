@@ -5897,7 +5897,7 @@ onmouseout="this.style.color='#8A909E'">
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). USD-denominated values use the ESTV annual reference rate of 0.906250 CHF/USD for 31.12.${data.taxYear}. Non-CHF fiat countervalues such as EUR and GBP are converted using historical FX references where available; otherwise annual reference rates are applied. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Exchange-specific tickers are normalised to standard asset symbols (for example Kraken XBT → BTC). All assets identified by base currency. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
@@ -5915,12 +5915,23 @@ onmouseout="this.style.color='#8A909E'">
     const fmtDate = d => d ? d.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3.$2.$1') : '—';
     const fmtQty  = n => Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6});
     const fmtCHF  = n => 'CHF ' + Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
-    const typeLabel = t => t === 'buy' ? '▲ Buy' : t === 'sell' ? '▼ Sell' : t === 'staking' ? '★ Staking' : t === 'withdrawal' ? '← Out' : t || '—';
+    const typeLabel = t => t === 'buy'
+      ? '▲ Buy'
+      : t === 'sell'
+        ? '▼ Sell'
+        : t === 'staking'
+          ? '★ Staking'
+          : t === 'deposit'
+            ? '⇢ Transfer In'
+            : t === 'withdrawal'
+              ? '⇠ Transfer Out'
+              : t || '—';
     const typeColor = t => t === 'buy' ? '#2E7D32' : t === 'sell' ? '#C0392B' : t === 'staking' ? '#B8960C' : '#3D4451';
 
     const rows = txs.map(tx => {
-      const priceFmt = tx.priceCHF ? fmtCHF(tx.priceCHF) : '—';
-      const totalFmt = tx.totalCHF ? fmtCHF(tx.totalCHF) : '—';
+      const isTransfer = tx.type === 'deposit' || tx.type === 'withdrawal';
+      const priceFmt = !isTransfer && tx.priceCHF ? fmtCHF(tx.priceCHF) : '—';
+      const totalFmt = !isTransfer && tx.totalCHF ? fmtCHF(tx.totalCHF) : '—';
       return '<tr>'
         + '<td class="mono" style="font-size:8pt;white-space:nowrap;">' + fmtDate(tx.date) + '</td>'
         + '<td style="font-weight:600;font-size:8.5pt;color:' + typeColor(tx.type) + ';">' + typeLabel(tx.type) + '</td>'
@@ -5966,14 +5977,21 @@ onmouseout="this.style.color='#8A909E'">
     }
     const exchangeName = getReportExchangeLabel(data.notes).replace('—', 'Unknown');
 
+    const formatLedgerType = (type) => {
+      if (type === 'deposit') return 'Transfer In';
+      if (type === 'withdrawal') return 'Transfer Out';
+      if (!type) return '';
+      return type.charAt(0).toUpperCase() + type.slice(1);
+    };
+
     const headers = ['Date','Type','Asset','Quantity','Price CHF','Total CHF'];
     const rows = data.transactions.map(t => [
       (t.date||'').slice(0,10),
-      t.type ? t.type.charAt(0).toUpperCase()+t.type.slice(1) : '',
+      formatLedgerType(t.type),
       t.asset||'',
       t.qty != null ? Number(t.qty).toFixed(8) : '',
-      t.priceCHF != null ? Number(t.priceCHF).toFixed(4) : '',
-      t.totalCHF != null ? Number(t.totalCHF).toFixed(2) : '',
+      (t.type !== 'deposit' && t.type !== 'withdrawal' && t.priceCHF != null) ? Number(t.priceCHF).toFixed(4) : '',
+      (t.type !== 'deposit' && t.type !== 'withdrawal' && t.totalCHF != null) ? Number(t.totalCHF).toFixed(2) : '',
     ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
 
     const meta = [
