@@ -3967,6 +3967,7 @@
 
   // ── Historical price cache for Kraken (no prices in ledger export) ──────
   const _krakenPriceCache = {};
+  const _krakenPricePromises = {};
   const COINGECKO_ID = {
     BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin',
     ADA:'cardano', XRP:'ripple', DOT:'polkadot', AVAX:'avalanche-2',
@@ -3974,12 +3975,25 @@
     LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
   };
 
+  async function fetchJsonWithTimeout(url, timeoutMs) {
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+    try {
+      const res = await fetch(url, controller ? { signal: controller.signal } : undefined);
+      if (!res.ok) throw new Error('http_' + res.status);
+      return await res.json();
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  }
+
   // Rate-limit historical fetches to avoid burning CoinGecko quota needed by the live ticker
   let _lastCgHistFetch = 0;
   async function getHistoricalPriceCHF(asset, dateStr) {
     // dateStr: 'YYYY-MM-DD'
     const key = asset + '_' + dateStr;
     if (_krakenPriceCache[key] !== undefined) return _krakenPriceCache[key];
+    if (_krakenPricePromises[key]) return _krakenPricePromises[key];
     // Use YEAREND_PRICES_2024 as fallback if date is Dec 31 2024
     if (dateStr === '2024-12-31' && YEAREND_PRICES_2024[asset]) {
       _krakenPriceCache[key] = YEAREND_PRICES_2024[asset];
@@ -3993,30 +4007,34 @@
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
-    try {
+    _krakenPricePromises[key] = (async () => {
+      try {
       // Throttle: wait at least 1.2s between CoinGecko history calls (max ~50/min on free tier)
       const now = Date.now();
-      const wait = 1200 - (now - _lastCgHistFetch);
+      const wait = 350 - (now - _lastCgHistFetch);
       if (wait > 0) await new Promise(r => setTimeout(r, wait));
       _lastCgHistFetch = Date.now();
       // CoinGecko history endpoint: date must be dd-mm-yyyy
       const [y, m, d] = dateStr.split('-');
       const cgDate = `${d}-${m}-${y}`;
       const url = `https://api.coingecko.com/api/v3/coins/${cgId}/history?date=${cgDate}&localization=false`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
-      if (!res.ok) throw new Error('cg_hist_' + res.status);
-      const data = await res.json();
+      const data = await fetchJsonWithTimeout(url, 10000);
       const usdPrice = data?.market_data?.current_price?.usd || 0;
+      if (!usdPrice) throw new Error('cg_hist_missing_price');
       const chfPrice = usdPrice * 0.906250; // ESTV official USD/CHF rate 31.12.2024
       _krakenPriceCache[key] = chfPrice;
       return chfPrice;
-    } catch (e) {
+      } catch (e) {
       // Fallback to year-end prices — derive year from dateStr to avoid scope issues
       const yr = parseInt(dateStr.slice(0,4)) || 2024;
       const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
-    }
+      } finally {
+        delete _krakenPricePromises[key];
+      }
+    })();
+    return _krakenPricePromises[key];
   }
 
   async function normaliseRows(rows, format) {
