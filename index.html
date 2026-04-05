@@ -3950,6 +3950,21 @@
     return single ? formatExchangeName(single) : '—';
   }
 
+  const KRAKEN_ASSET_MAP = {
+    'XXBT':'BTC','XBT':'BTC',
+    'XETH':'ETH','XLTC':'LTC',
+    'XXLM':'XLM','XXRP':'XRP',
+    'XXDG':'DOGE','XDG':'DOGE',
+    'ZUSD':'USD','ZEUR':'EUR','ZCHF':'CHF','ZGBP':'GBP',
+  };
+  const KRAKEN_FIAT_ASSETS = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
+
+  function normalizeKrakenAsset(rawAsset) {
+    const raw = String(rawAsset || '').toUpperCase().trim();
+    const mapped = KRAKEN_ASSET_MAP[raw] || raw.replace(/\.S$/, '').replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
+    return mapped.replace(/\.S$/, '');
+  }
+
   // ── Historical price cache for Kraken (no prices in ledger export) ──────
   const _krakenPriceCache = {};
   const COINGECKO_ID = {
@@ -4007,33 +4022,42 @@
   async function normaliseRows(rows, format) {
     const USD_CHF = 0.90625;
     const out = [];
+    const krakenTradeValues = {};
+
+    if (format === 'kraken') {
+      for (const r of rows) {
+        const t = (r['type'] || '').toLowerCase();
+        if (t !== 'trade') continue;
+        const refid = String(r['refid'] || '').trim();
+        if (!refid) continue;
+        const assetCode = normalizeKrakenAsset(r['asset']);
+        if (!KRAKEN_FIAT_ASSETS.includes(assetCode)) continue;
+        const amount = Math.abs(parseFloat(r['amount']) || 0);
+        if (amount <= 0) continue;
+        krakenTradeValues[refid] = { quoteAsset: assetCode, quoteAmount: amount };
+      }
+    }
+
     for (const r of rows) {
       try {
         let date='', type='', asset='', qty=0, priceCHF=0, totalCHF=0;
         if (format === 'kraken') {
           date = r['time']||'';
           const t = (r['type']||'').toLowerCase();
+          const subtype = (r['subtype']||'').toLowerCase();
           const rawAmount = parseFloat(r['amount'])||0;
-
-          // Map Kraken asset codes first — needed for fiat check
-          const krakenRaw = (r['asset']||'').toUpperCase();
-          const KRAKEN_MAP = {
-            'XXBT':'BTC','XBT':'BTC',
-            'XETH':'ETH','XLTC':'LTC',
-            'XXLM':'XLM','XXRP':'XRP',
-            'XXDG':'DOGE','XDG':'DOGE',
-            'ZUSD':'USD','ZEUR':'EUR','ZCHF':'CHF','ZGBP':'GBP',
-          };
-          const mappedAsset = KRAKEN_MAP[krakenRaw] || krakenRaw.replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
-
-          // Skip fiat/stablecoin rows — they are the quote side of a trade pair
-          const FIAT = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
-          if (FIAT.includes(mappedAsset)) continue;
+          const mappedAsset = normalizeKrakenAsset(r['asset']);
 
           // Determine type: real Kraken exports use 'trade' + amount sign; some use 'buy'/'sell'
           if (t === 'trade') {
+            // Kraken ledger writes two rows per trade; use only the crypto leg
+            if (KRAKEN_FIAT_ASSETS.includes(mappedAsset)) continue;
             type = rawAmount >= 0 ? 'buy' : 'sell';
-          } else if (t === 'staking' || t === 'earn' || t.includes('reward')) {
+          } else if (
+            t === 'staking' ||
+            (t === 'earn' && rawAmount > 0 && !['allocation','autoallocate'].includes(subtype)) ||
+            subtype.includes('reward') || subtype.includes('interest') || subtype.includes('cashback')
+          ) {
             type = 'staking';
           } else if (t.includes('buy')) {
             type = 'buy';
@@ -4045,10 +4069,24 @@
 
           asset = mappedAsset;
           qty = Math.abs(rawAmount);
-          // Kraken ledger has no price column — fetch historical CHF price
           const dateKey = date.slice(0,10); // YYYY-MM-DD
-          priceCHF = await getHistoricalPriceCHF(asset, dateKey);
-          totalCHF = qty * priceCHF;
+
+          if (t === 'trade') {
+            const pairedQuote = krakenTradeValues[String(r['refid'] || '').trim()];
+            if (pairedQuote && pairedQuote.quoteAmount > 0) {
+              const quoteRate = pairedQuote.quoteAsset === 'CHF' ? 1 : USD_CHF;
+              totalCHF = pairedQuote.quoteAmount * quoteRate;
+              priceCHF = qty > 0 ? totalCHF / qty : 0;
+            } else {
+              // Fallback only if the paired fiat leg is missing
+              priceCHF = await getHistoricalPriceCHF(asset, dateKey);
+              totalCHF = qty * priceCHF;
+            }
+          } else {
+            // Reward income rows have no paired fiat leg — use historical spot reference
+            priceCHF = await getHistoricalPriceCHF(asset, dateKey);
+            totalCHF = qty * priceCHF;
+          }
         }
         else if (format === 'swissborg') {
           // SwissBorg: columns are Local time, Type, Currency, Gross amount,
@@ -4824,7 +4862,7 @@
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
-      kraken: `Exchange format detected: Kraken (ledger). Historical CHF prices fetched via CoinGecko API. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kraken: `Exchange format detected: Kraken (ledger). Trade values derived from paired ledger entries; reward income valued using historical market references where available. USD-denominated trades converted at 0.906250 CHF/USD. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       binance: `Exchange format detected: Binance. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
