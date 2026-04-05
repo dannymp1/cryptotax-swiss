@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io; frame-ancestors 'none';"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app; frame-ancestors 'none';"/>
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <meta http-equiv="X-Frame-Options" content="DENY"/>
 
@@ -3810,6 +3810,15 @@
     return YEAREND_PRICES_2024; // default for 2024 and earlier
   }
 
+  const FIAT_REFERENCE_CHF = {
+    2024: { USD: 0.906250, EUR: 0.939470, GBP: 1.136060 },
+    2025: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
+    2026: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
+  };
+  const USD_LINKED_FIAT = ['USD','USDT','USDC','BUSD','DAI','FDUSD'];
+  const _fiatFxCache = {};
+  const _fiatFxPromises = {};
+
   // ── CSV PARSER ───────────────────────────────────────────────────────────
   function parseCSVRows(csvText) {
     const text = String(csvText || '').replace(/^\uFEFF/, '');
@@ -3989,6 +3998,80 @@
     }
   }
 
+  function getReferenceFiatToChfRate(currency, dateStr) {
+    const cur = String(currency || '').toUpperCase().trim();
+    if (!cur || cur === 'CHF') return 1;
+    const year = parseInt(String(dateStr || '').slice(0,4), 10);
+    const yearlyRates = FIAT_REFERENCE_CHF[year] || FIAT_REFERENCE_CHF[2024];
+    if (USD_LINKED_FIAT.includes(cur)) return yearlyRates.USD;
+    return yearlyRates[cur] || yearlyRates.USD;
+  }
+
+  async function getFiatToChfRate(currency, dateStr) {
+    const cur = String(currency || '').toUpperCase().trim();
+    if (!cur || cur === 'CHF') return 1;
+    if (USD_LINKED_FIAT.includes(cur) || !['EUR','GBP'].includes(cur)) {
+      return getReferenceFiatToChfRate(cur, dateStr);
+    }
+
+    const key = cur + '_' + String(dateStr || '').slice(0,10);
+    if (_fiatFxCache[key] !== undefined) return _fiatFxCache[key];
+    if (_fiatFxPromises[key]) return _fiatFxPromises[key];
+
+    _fiatFxPromises[key] = (async () => {
+      try {
+        const safeDate = /^\d{4}-\d{2}-\d{2}$/.test(String(dateStr || '').slice(0,10))
+          ? String(dateStr).slice(0,10)
+          : '2024-12-31';
+        const url = `https://api.frankfurter.app/${safeDate}?from=${cur}&to=CHF`;
+        const data = await fetchJsonWithTimeout(url, 8000);
+        const rate = Number(data?.rates?.CHF || 0);
+        if (!rate) throw new Error('fx_missing_rate');
+        _fiatFxCache[key] = rate;
+        return rate;
+      } catch (e) {
+        const fallback = getReferenceFiatToChfRate(cur, dateStr);
+        _fiatFxCache[key] = fallback;
+        return fallback;
+      } finally {
+        delete _fiatFxPromises[key];
+      }
+    })();
+
+    return _fiatFxPromises[key];
+  }
+
+  const _coinbaseHistPriceCache = {};
+  const _coinbaseHistPricePromises = {};
+
+  async function getCoinbaseHistoricalPriceCHF(asset, dateStr) {
+    const sym = String(asset || '').toUpperCase().trim();
+    const safeDate = String(dateStr || '').slice(0,10);
+    if (!sym || !/^\d{4}-\d{2}-\d{2}$/.test(safeDate)) return null;
+    const key = sym + '_' + safeDate;
+    if (_coinbaseHistPriceCache[key] !== undefined) return _coinbaseHistPriceCache[key];
+    if (_coinbaseHistPricePromises[key]) return _coinbaseHistPricePromises[key];
+
+    _coinbaseHistPricePromises[key] = (async () => {
+      try {
+        const url = `https://api.coinbase.com/v2/prices/${sym}-USD/spot?date=${safeDate}`;
+        const data = await fetchJsonWithTimeout(url, 10000);
+        const usdPrice = Number(data?.data?.amount || 0);
+        if (!usdPrice) throw new Error('coinbase_hist_missing_price');
+        const chfPrice = usdPrice * getReferenceFiatToChfRate('USD', safeDate);
+        _coinbaseHistPriceCache[key] = chfPrice;
+        return chfPrice;
+      } catch (e) {
+        _coinbaseHistPriceCache[key] = null;
+        return null;
+      } finally {
+        delete _coinbaseHistPricePromises[key];
+      }
+    })();
+
+    return _coinbaseHistPricePromises[key];
+  }
+
   async function getHistoricalPriceSeriesCHF(asset, year) {
     const cgId = COINGECKO_ID[asset];
     const seriesKey = asset + '_' + year;
@@ -4034,6 +4117,11 @@
     if (dateStr === '2024-12-31' && YEAREND_PRICES_2024[asset]) {
       _krakenPriceCache[key] = YEAREND_PRICES_2024[asset];
       return YEAREND_PRICES_2024[asset];
+    }
+    const coinbasePrice = await getCoinbaseHistoricalPriceCHF(asset, dateStr);
+    if (coinbasePrice && coinbasePrice > 0) {
+      _krakenPriceCache[key] = coinbasePrice;
+      return coinbasePrice;
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
@@ -4133,7 +4221,7 @@
           if (t === 'trade') {
             const pairedQuote = krakenTradeValues[String(r['refid'] || '').trim()];
             if (pairedQuote && pairedQuote.quoteAmount > 0) {
-              const quoteRate = pairedQuote.quoteAsset === 'CHF' ? 1 : USD_CHF;
+              const quoteRate = await getFiatToChfRate(pairedQuote.quoteAsset, dateKey);
               totalCHF = pairedQuote.quoteAmount * quoteRate;
               priceCHF = qty > 0 ? totalCHF / qty : 0;
             } else {
@@ -4156,10 +4244,10 @@
           // Skip fiat rows — they are the CHF side of an exchange pair
           if (currency === 'CHF' || currency === 'EUR' || currency === 'USD') continue;
           // Map SwissBorg types to internal types
-          // Deposits = assets arriving (treat as buy for cost basis)
+          // Deposits = assets arriving from elsewhere (preserve holdings, unresolved basis)
           // Withdrawals = assets leaving (treat as sell for proceeds)
           if (t === 'buy') type = 'buy';
-          else if (t === 'deposit') type = 'buy'; // deposit = cost basis transfer in, not a taxable gain
+          else if (t === 'deposit') type = 'deposit';
           else if (t === 'sell') type = 'sell';
           else if (t === 'withdrawal') type = 'withdrawal'; // transfer out — reduces lots but no gain
           else if (t === 'payouts' || t === 'yield' || t.includes('earn') || t.includes('reward') || t.includes('interest') || t.includes('cashback') || t.includes('savings') || t.includes('staking')) type = 'staking';
@@ -4214,8 +4302,8 @@
           if (!asset || asset.length < 2) asset = krPair;
           qty = Math.abs(parseFloat(r['vol'])||0);
           const costRaw = Math.abs(parseFloat(r['cost'])||0);
-          const isChf = krQuote === 'CHF' || pair.includes('CHF');
-          totalCHF = isChf ? costRaw : costRaw * USD_CHF;
+          const quoteRate = await getFiatToChfRate(krQuote, date.slice(0,10));
+          totalCHF = costRaw * quoteRate;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
         else if (format === 'bybit') {
@@ -4267,7 +4355,8 @@
           const currency = (r['currency']||r['Currency']||'CHF').toUpperCase();
           // Swissquote uses "Unit price" or "Price" column
           const price = parseFloat(r['unit price']||r['unit_price']||r['price']||r['Price']||r['Unit price']||0)||0;
-          priceCHF = currency === 'CHF' ? price : price * USD_CHF;
+          const fxRate = await getFiatToChfRate(currency, date);
+          priceCHF = price * fxRate;
           totalCHF = qty * priceCHF;
         }
         else if (format === 'bitpanda') {
@@ -4282,7 +4371,8 @@
           qty = Math.abs(parseFloat(r['amount asset']||r['Amount Asset'])||0);
           const mktPrice = parseFloat(r['asset market price']||r['Asset market price'])||0;
           const fiatCcy = (r['fiat']||r['Fiat']||'EUR').toUpperCase();
-          priceCHF = fiatCcy === 'CHF' ? mktPrice : mktPrice * USD_CHF;
+          const fxRate = await getFiatToChfRate(fiatCcy, date);
+          priceCHF = mktPrice * fxRate;
           totalCHF = qty * priceCHF;
         }
         else if (format === 'okx_derivatives') {
@@ -4413,7 +4503,8 @@
 
           // ── Asset resolution ────────────────────────────────────────────
           const pair = r['pair']||r['market']||'';
-          const quotedInCHF = pair.endsWith('CHF');
+          const quoteAsset = (pair.match(/(CHF|USDT|BUSD|USDC|FDUSD|USD|EUR|GBP)$/) || [])[1] || 'USD';
+          const quoteRate = await getFiatToChfRate(quoteAsset, date.slice(0,10));
           // Prefer Base_Asset column (new format); fall back to pair string parsing
           const baseAsset = (r['base_asset']||'').toUpperCase().trim();
           if (baseAsset && !['USDT','BUSD','USDC','FDUSD'].includes(baseAsset)) {
@@ -4422,7 +4513,7 @@
             // Stablecoin earn/airdrop — asset IS the stablecoin
             asset = baseAsset;
           } else {
-            asset = pair.replace(/(CHF|USDT|BUSD|USDC|FDUSD|USD|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
+            asset = pair.replace(/(CHF|USDT|BUSD|USDC|FDUSD|USD|EUR|GBP|BTC|ETH|BNB)$/,'').slice(0,8)||pair.slice(0,4);
           }
 
           // ── Quantity & value ─────────────────────────────────────────────
@@ -4432,8 +4523,8 @@
           const rawTotal = Math.abs(parseFloat(r['quote_qty']||r['total'])||0);
           const feeQty = Math.abs(parseFloat(r['fee']||r['trading fee']||0) || 0);
           const feeCoin = (r['fee coin']||r['fee asset']||r['commission asset']||'').toUpperCase().trim();
-          priceCHF = quotedInCHF ? rawPrice : rawPrice * USD_CHF;
-          totalCHF = rawTotal > 0 ? (quotedInCHF ? rawTotal : rawTotal * USD_CHF) : grossQty * priceCHF;
+          priceCHF = rawPrice * quoteRate;
+          totalCHF = rawTotal > 0 ? rawTotal * quoteRate : grossQty * priceCHF;
           if (type === 'buy' && feeQty > 0 && feeCoin === asset) {
             qty = Math.max(0, qty - feeQty);
             priceCHF = qty > 0 ? totalCHF / qty : 0;
@@ -4518,10 +4609,13 @@
           if (!['buy','sell'].includes(side)) continue;
           type = side;
           const inst = (r['instrument_name']||'').toUpperCase();
-          asset = inst.replace(/_?(USD|USDT|USDC|EUR|BTC|ETH)$/,'') || inst.slice(0,6);
+          const quoteCur = (inst.split('_')[1] || '').toUpperCase();
+          if (quoteCur && !['USD','USDT','USDC','EUR','GBP','CHF'].includes(quoteCur)) continue;
+          asset = inst.replace(/_?(USD|USDT|USDC|EUR|GBP|CHF|BTC|ETH)$/,'') || inst.slice(0,6);
           qty = Math.abs(parseFloat(r['quantity']||r['qty']||r['filled qty']||r['size']||0));
           const rawPrice = parseFloat(r['price']||0);
-          priceCHF = rawPrice * USD_CHF;
+          const quoteRate = await getFiatToChfRate(quoteCur || 'USD', date);
+          priceCHF = rawPrice * quoteRate;
           totalCHF = qty * priceCHF;
         }
         // ── Nexo ─────────────────────────────────────────────────────────────
@@ -4563,7 +4657,7 @@
               }
             }
           } else if (txType.includes('deposit')) {
-            type = 'buy'; asset = inCur; qty = inAmt || outAmt;
+            type = 'deposit'; asset = inCur; qty = inAmt || outAmt;
           } else if (txType.includes('withdrawal')) {
             type = 'withdrawal'; asset = inCur; qty = inAmt || outAmt;
           } else continue;
@@ -4589,7 +4683,7 @@
           qty = Math.abs(parseFloat(r['amount']||0));
           const baseCur = (r['base currency']||'USD').toUpperCase();
           const fiatAmt = Math.abs(parseFloat(r['fiat amount (inc. fees)']||r['fiat amount']||0));
-          const fiatRate = baseCur === 'CHF' ? 1 : USD_CHF; // treat EUR/GBP approx as USD for simplicity
+          const fiatRate = await getFiatToChfRate(baseCur, date);
           totalCHF = fiatAmt * fiatRate;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
@@ -4598,15 +4692,15 @@
           date = (r['operation date']||'').slice(0,10);
           const opType = (r['operation type']||'').toUpperCase();
           const cvAmt = Math.abs(parseFloat(r['countervalue at operation date']||0));
-          // IN = received (buy). OUT = sell if countervalue present, else transfer
-          if (opType === 'IN') type = 'buy';
+          // IN = transfer in with unresolved basis. OUT = sell if countervalue present, else transfer
+          if (opType === 'IN') type = 'deposit';
           else if (opType === 'OUT') type = cvAmt > 0 ? 'sell' : 'withdrawal';
           else continue;
           asset = (r['currency ticker']||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
           if (!asset) continue;
           qty = Math.abs(parseFloat(r['operation amount']||0));
           const cvTicker = (r['countervalue ticker']||'').toUpperCase();
-          const cvRate = cvTicker === 'CHF' ? 1 : USD_CHF;
+          const cvRate = await getFiatToChfRate(cvTicker, date);
           totalCHF = cvAmt * cvRate;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
@@ -4617,12 +4711,15 @@
           if (!['buy','sell'].includes(side)) continue;
           type = side;
           const sym = (r['symbol']||r['pair']||'').toUpperCase();
-          asset = sym.replace(/-(USDT|USDC|BUSD|BTC|ETH|USD)$/,'') || sym.split('-')[0];
+          const quoteCur = (sym.match(/-(USDT|USDC|BUSD|BTC|ETH|USD|EUR|GBP)$/) || [])[1] || 'USD';
+          if (!['USD','USDT','USDC','BUSD','EUR','GBP','CHF'].includes(quoteCur)) continue;
+          asset = sym.replace(/-(USDT|USDC|BUSD|BTC|ETH|USD|EUR|GBP|CHF)$/,'') || sym.split('-')[0];
           qty = Math.abs(parseFloat(r['size']||r['filled amount']||r['amount']||0));
           const rawPrice = parseFloat(r['price']||r['filled price']||0);
           const rawTotal = Math.abs(parseFloat(r['funds']||r['filled volume']||0));
-          priceCHF = rawPrice * USD_CHF;
-          totalCHF = rawTotal > 0 ? rawTotal * USD_CHF : qty * priceCHF;
+          const quoteRate = await getFiatToChfRate(quoteCur, date);
+          priceCHF = rawPrice * quoteRate;
+          totalCHF = rawTotal > 0 ? rawTotal * quoteRate : qty * priceCHF;
         }
         // ── Gemini ────────────────────────────────────────────────────────────
         else if (format === 'gemini') {
@@ -4650,10 +4747,13 @@
           const amt = parseFloat(r['amount']||0);
           type = amt >= 0 ? 'buy' : 'sell';
           const pair = (r['pair']||'').toUpperCase();
+          const quoteCur = (pair.match(/(USD|USDT|EUR|GBP|CHF|BTC|ETH)$/) || [])[1] || 'USD';
+          if (!['USD','USDT','EUR','GBP','CHF'].includes(quoteCur)) continue;
           asset = pair.replace(/(USD|USDT|EUR|GBP|BTC|ETH)$/,'').slice(0,8) || pair.slice(0,4);
           qty = Math.abs(amt);
           const rawPrice = parseFloat(r['price']||0);
-          priceCHF = rawPrice * USD_CHF;
+          const quoteRate = await getFiatToChfRate(quoteCur, date);
+          priceCHF = rawPrice * quoteRate;
           totalCHF = qty * priceCHF;
         }
         // ── Gate.io ───────────────────────────────────────────────────────────
@@ -4663,12 +4763,15 @@
           if (!['buy','sell'].includes(side)) continue;
           type = side;
           const pair = (r['pair']||'').toUpperCase();
-          asset = pair.replace(/_(USDT|USDC|USD|BTC|ETH|BUSD)$/,'').split('_')[0];
+          const quoteCur = (pair.match(/_(USDT|USDC|USD|EUR|GBP|CHF|BTC|ETH|BUSD)$/) || [])[1] || 'USD';
+          if (!['USD','USDT','USDC','BUSD','EUR','GBP','CHF'].includes(quoteCur)) continue;
+          asset = pair.replace(/_(USDT|USDC|USD|EUR|GBP|CHF|BTC|ETH|BUSD)$/,'').split('_')[0];
           qty = Math.abs(parseFloat(r['amount']||0));
           const rawPrice = parseFloat(r['price']||0);
           const rawTotal = Math.abs(parseFloat(r['total']||0));
-          priceCHF = rawPrice * USD_CHF;
-          totalCHF = rawTotal > 0 ? rawTotal * USD_CHF : qty * priceCHF;
+          const quoteRate = await getFiatToChfRate(quoteCur, date);
+          priceCHF = rawPrice * quoteRate;
+          totalCHF = rawTotal > 0 ? rawTotal * quoteRate : qty * priceCHF;
         }
         // ── MEXC ──────────────────────────────────────────────────────────────
         else if (format === 'mexc') {
@@ -4677,12 +4780,14 @@
           if (!['buy','sell'].includes(side)) continue;
           type = side;
           const sym = (r['symbol']||'').toUpperCase();
-          asset = sym.replace(/(USDT|USDC|USD|BUSD)$/,'');
+          const quoteCur = (sym.match(/(USDT|USDC|USD|BUSD|EUR|GBP|CHF)$/) || [])[1] || 'USD';
+          asset = sym.replace(/(USDT|USDC|USD|BUSD|EUR|GBP|CHF)$/,'');
           qty = Math.abs(parseFloat(r['filled_amount']||r['amount']||0));
           const rawPrice = parseFloat(r['filled_price']||r['price']||0);
           const rawVol = Math.abs(parseFloat(r['filled_volume']||r['volume']||0));
-          priceCHF = rawPrice * USD_CHF;
-          totalCHF = rawVol > 0 ? rawVol * USD_CHF : qty * priceCHF;
+          const quoteRate = await getFiatToChfRate(quoteCur, date);
+          priceCHF = rawPrice * quoteRate;
+          totalCHF = rawVol > 0 ? rawVol * quoteRate : qty * priceCHF;
         }
         // ── Smart unknown fallback ────────────────────────────────────────────
         else {
@@ -4715,10 +4820,8 @@
           qty = Math.abs(parseFloat(r[qK])||0);
           const rawPrice = parseFloat(r[pK]||0)||0;
           const rawTotal = totK ? Math.abs(parseFloat(r[totK])||0) : 0;
-          // Detect if values are in USD — convert to CHF
           const cur = curK ? (r[curK]||'').toUpperCase() : '';
-          const isUSD = cur==='USD' || cur==='USDT' || cur==='' || (!cur && rawPrice > 100 && rawTotal > 1);
-          const rate = cur==='CHF' ? 1 : USD_CHF;
+          const rate = await getFiatToChfRate(cur || 'USD', date);
           priceCHF = rawPrice * rate;
           totalCHF = rawTotal > 0 ? rawTotal * rate : qty * priceCHF;
         }
@@ -4869,7 +4972,7 @@
       : (dates[0]?formatDate(dates[0]):'2024');
     const computed = computeFIFO(transactions, taxYear);
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
-    let notes = `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    let notes = `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     const missingCB = computed.assets.filter(a => a.missingCostBasis).map(a => a.symbol);
     return {
       taxYear, clientRef:'Auto-generated', dateRange,
@@ -4917,31 +5020,31 @@
 
     // Ask AI only for coin names and notes — never for numbers
     const assetList = computed.assets.map(a=>a.symbol+':held='+a.endHolding).join(', ');
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
 
     let assetNames = {BTC:'Bitcoin',ETH:'Ethereum',SOL:'Solana',BNB:'BNB Chain',ADA:'Cardano',XRP:'Ripple',DOT:'Polkadot',AVAX:'Avalanche',MATIC:'Polygon',USDC:'USD Coin',LINK:'Chainlink',UNI:'Uniswap'};
     const notesMap = {
-      kraken: `Exchange format detected: Kraken (ledger). Trade values derived from paired ledger entries; reward income valued using historical market references where available. USD-denominated trades converted at 0.906250 CHF/USD. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      kraken_trades: `Exchange format detected: Kraken (trades). All values in CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      swissborg: `Exchange format detected: SwissBorg. All values in CHF as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      binance: `Exchange format detected: Binance. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kraken: `Exchange format detected: Kraken (ledger). Trade values derived from paired ledger entries; reward income valued using Coinbase and CoinGecko historical market references where available. USD-denominated trades converted at 0.906250 CHF/USD. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kraken_trades: `Exchange format detected: Kraken (trades). Quote-currency values converted to CHF using exchange quote currency and historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      swissborg: `Exchange format detected: SwissBorg. CHF values used directly where exported; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance: `Exchange format detected: Binance. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx: `Exchange format detected: OKX. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
       crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}). Interest and dividend income treated as taxable staking income.`,
-      revolut: `Exchange format detected: Revolut. Fiat amounts converted to CHF at 0.906250. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as acquisitions (cost basis established at countervalue). Outgoing treated as withdrawals. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}); inbound deposits preserved as transfer-ins with unresolved basis. Interest and dividend income treated as taxable staking income.`,
+      revolut: `Exchange format detected: Revolut. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as transfer-ins with unresolved basis; outgoing transactions without countervalue treated as withdrawals. Non-CHF countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       gemini: `Exchange format detected: Gemini. USD amounts converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitfinex: `Exchange format detected: Bitfinex. USD amounts converted to CHF at 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      gate: `Exchange format detected: Gate.io. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      mexc: `Exchange format detected: MEXC. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      swissquote: `Exchange format detected: Swissquote. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitfinex: `Exchange format detected: Bitfinex. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gate: `Exchange format detected: Gate.io. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      mexc: `Exchange format detected: MEXC. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      swissquote: `Exchange format detected: Swissquote. CHF values used directly where exported; non-CHF countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitpanda: `Exchange format detected: Bitpanda. Fiat amounts converted to CHF at 0.906250. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitpanda: `Exchange format detected: Bitpanda. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
     let notes = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     try {
@@ -5793,7 +5896,7 @@ onmouseout="this.style.color='#8A909E'">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). For USD-denominated exchanges, transaction-date CHF prices are fetched via CoinGecko historical API where available; otherwise USD/CHF 0.906250 is applied as the ESTV annual reference rate for 31.12.${data.taxYear}. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). USD-denominated values use the ESTV annual reference rate of 0.906250 CHF/USD for 31.12.${data.taxYear}. Non-CHF fiat countervalues such as EUR and GBP are converted using historical FX references where available; otherwise annual reference rates are applied. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Kraken XBT normalised to BTC. All assets identified by base currency. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
