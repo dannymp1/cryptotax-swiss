@@ -5671,7 +5671,7 @@
       <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
+      <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Gain' : 'Gain / Loss'}</th>
       ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Excluded Proceeds</th>` : ''}
     </tr>
   </thead>
@@ -6082,7 +6082,7 @@ onmouseout="this.style.color='#8A909E'">
         <th class="center">Buys</th><th class="center">Sells</th><th class="center">Staking</th>
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
-        <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
+        <th class="right">${_hasUnmatched ? 'Gain' : 'Gain / Loss'}</th>
         ${_hasUnmatched ? '<th class="right">Excluded Proceeds</th>' : ''}
       </tr>
     </thead>
