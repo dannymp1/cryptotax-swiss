@@ -4836,19 +4836,37 @@
           const cur = (r['spot price currency']||r['price currency']||'').toUpperCase();
           // Column name variants: 'spot price at transaction' or 'spot price'
           priceCHF = parseFloat(r['spot price at transaction']||r['spot price'])||0;
-          const quoteRate = await getFiatToChfRate(cur || 'USD', date.slice(0,10));
+          const rewardDate = String(date || '').slice(0,10);
+          const quoteRate = await getFiatToChfRate(cur || 'USD', rewardDate);
           priceCHF = priceCHF * quoteRate;
           const subtotal = Math.abs(parseFloat(r['subtotal'])||0);
           const totalInclFees = Math.abs(parseFloat(r['total (inclusive of fees and/or spread)']||r['total']||0));
           const feeTotal = Math.abs(parseFloat(r['fees and/or spread']||r['fee']||0));
-          totalCHF = subtotal > 0 ? subtotal * quoteRate : qty * priceCHF;
-          if (totalInclFees > 0) {
-            totalCHF = totalInclFees * quoteRate;
-          } else if (feeTotal > 0 && (type === 'buy' || type === 'sell')) {
-            ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
-              date, type, asset, qty, priceCHF, totalCHF,
-              feeQty: feeTotal, feeCoin: cur || 'USD', quoteAsset: cur || 'USD', quoteRate
-            }));
+          if (type === 'staking') {
+            if (totalInclFees > 0) {
+              totalCHF = totalInclFees * quoteRate;
+              priceCHF = qty > 0 ? totalCHF / qty : 0;
+            } else if (subtotal > 0) {
+              totalCHF = subtotal * quoteRate;
+              priceCHF = qty > 0 ? totalCHF / qty : 0;
+            } else {
+              if (isFeeCurrencyAsset(asset)) {
+                priceCHF = await getFiatToChfRate(asset, rewardDate);
+              } else {
+                priceCHF = await getHistoricalPriceCHF(asset, rewardDate);
+              }
+              totalCHF = qty * priceCHF;
+            }
+          } else {
+            totalCHF = subtotal > 0 ? subtotal * quoteRate : qty * priceCHF;
+            if (totalInclFees > 0) {
+              totalCHF = totalInclFees * quoteRate;
+            } else if (feeTotal > 0 && (type === 'buy' || type === 'sell')) {
+              ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+                date, type, asset, qty, priceCHF, totalCHF,
+                feeQty: feeTotal, feeCoin: cur || 'USD', quoteAsset: cur || 'USD', quoteRate
+              }));
+            }
           }
         }
         else if (format === 'generic') {
