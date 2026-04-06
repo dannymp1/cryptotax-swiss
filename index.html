@@ -5650,7 +5650,7 @@
         <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:rgba(245,242,235,0.3)' : glClass}">
           ${a.missingCostBasis ? '—' : glStr}
         </td>
-        ${hasUnmatched ? `<td style="text-align:right;font-weight:600;color:#B8960C;">
+        ${hasUnmatched ? `<td style="text-align:right;font-weight:600;color:#B8960C;font-size:11px;padding:10px 8px;">
           ${a.missingCostBasis ? 'CHF '+Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2}) : '<span style="color:rgba(245,242,235,0.2);">—</span>'}
         </td>` : ''}
       </tr>`;
@@ -5671,8 +5671,8 @@
       <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
-      ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Unmatched (Excluded)</th>` : ''}
+      <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
+      ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Excluded Proceeds</th>` : ''}
     </tr>
   </thead>
   <tbody style="color:rgba(245,242,235,0.75)">
@@ -5762,7 +5762,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         <td class="right mono" style="font-weight:700;color:${a.missingCostBasis ? '#9AA0AC' : glColor};">
           ${a.missingCostBasis ? '—' : glStr}
         </td>
-        ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:10px;">
+        ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:8px;font-size:7.8pt;">
           ${unmatchedStr === '—' ? '<span style="color:#9AA0AC;font-weight:400;">—</span>' : unmatchedStr}
         </td>` : ''}
       </tr>`;
@@ -5915,6 +5915,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .total-row { background:#FAFAF8 !important; border: none !important; border-top: 2px solid #B8960C !important; }
   .total-row td { color:#1A1D21; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(0,0,0,0.04) !important; }
   .total-row td:last-child { border-right: none !important; }
+  .overview-table.tight thead th { padding:9px 8px; font-size:6pt; letter-spacing:0.1em; }
+  .overview-table.tight tbody td { padding:10px 8px; }
+  .overview-table.tight .mono { font-size:7.8pt; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
   .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
@@ -6072,7 +6075,7 @@ onmouseout="this.style.color='#8A909E'">
     <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'DM Mono',monospace;font-size:8pt;font-weight:600;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
   </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
-  <table>
+  <table class="overview-table${_hasUnmatched ? ' tight' : ''}">
     <thead>
       <tr>
         <th>Symbol</th><th>Asset</th>
@@ -6080,7 +6083,7 @@ onmouseout="this.style.color='#8A909E'">
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
         <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
-        ${_hasUnmatched ? '<th class="right">Unmatched (Excluded)</th>' : ''}
+        ${_hasUnmatched ? '<th class="right">Excluded Proceeds</th>' : ''}
       </tr>
     </thead>
     <tbody>
@@ -6089,7 +6092,7 @@ onmouseout="this.style.color='#8A909E'">
         <td colspan="6">Net Total</td>
         <td class="right">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2})}</td>
         <td class="right" style="color:${totalColor};">${totalGainStr}</td>
-        ${_hasUnmatched ? `<td class="right" style="color:#B8960C;font-weight:600;padding-right:10px;">CHF ${_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})}</td>` : ''}
+        ${_hasUnmatched ? `<td class="right" style="color:#B8960C;font-weight:600;padding-right:8px;">CHF ${_totalExcluded.toLocaleString('de-CH',{minimumFractionDigits:2})}</td>` : ''}
       </tr>
     </tbody>
   </table>
