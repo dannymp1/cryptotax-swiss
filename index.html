@@ -5505,6 +5505,24 @@
     return Number(val).toLocaleString('de-CH', { minimumFractionDigits: dp, maximumFractionDigits: dp });
   }
 
+  function getReportAssetDisplay(symbol, name='') {
+    const sym = String(symbol || '').trim();
+    if (sym.endsWith(':FUT')) {
+      const base = sym.replace(/:FUT$/, '');
+      const baseName = getDefaultAssetNames()[base] || base;
+      return {
+        symbol: `${base} Deriv.`,
+        name: `${baseName} Derivatives`,
+        ledger: `${base} Derivatives`,
+      };
+    }
+    return {
+      symbol: sym,
+      name: name || sym,
+      ledger: sym,
+    };
+  }
+
   function displayReport(data) {
     document.getElementById('processing-indicator').classList.remove('visible');
 
@@ -5538,13 +5556,14 @@
     // Build HTML preview of the report
     const assets = data.assets || [];
     const assetRows = assets.map(a => {
+      const displayAsset = getReportAssetDisplay(a.symbol, a.name);
       const gl = Number(a.gainLossCHF);
       const glClass = gl >= 0 ? 'color:#2D7A56' : 'color:#C0392B';
       const glStr = gl >= 0 ? '+' + fmtCHF(gl) : '−' + fmtCHF(Math.abs(gl));
       const hasUnmatched = (data.assets||[]).some(x=>x.missingCostBasis);
       return `<tr>
-        <td style="font-weight:600">${escHtml(a.symbol)}</td>
-        <td>${escHtml(a.name)}</td>
+        <td style="font-weight:600">${escHtml(displayAsset.symbol)}</td>
+        <td>${escHtml(displayAsset.name)}</td>
         <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.buyCount || 0}</td>
         <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.sellCount || 0}</td>
         <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.stakingCount || 0}</td>
@@ -5620,6 +5639,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const _hasUnmatched = assets.some(a=>a.missingCostBasis);
     const _totalExcluded = assets.reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
     const assetRows = assets.map(a => {
+      const displayAsset = getReportAssetDisplay(a.symbol, a.name);
       const gl = Number(a.gainLossCHF);
       const glStr = gl >= 0
         ? `+CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
@@ -5631,8 +5651,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         ? `CHF ${Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
         : '—';
       return `<tr>
-        <td class="mono" style="font-weight:700;padding-left:10px">${escHtml(a.symbol)}</td>
-        <td style="color:#0D1117">${escHtml(a.name)}</td>
+        <td class="mono" style="font-weight:700;padding-left:10px">${escHtml(displayAsset.symbol)}</td>
+        <td style="color:#0D1117">${escHtml(displayAsset.name)}</td>
         <td class="center mono" style="color:#5A6070;">${a.buyCount||0}</td>
         <td class="center mono" style="color:#5A6070;">${a.sellCount||0}</td>
         <td class="center mono" style="color:#5A6070;">${a.stakingCount||0}</td>
@@ -6086,13 +6106,14 @@ onmouseout="this.style.color='#8A909E'">
     const typeColor = t => t === 'buy' ? '#2E7D32' : t === 'sell' ? '#C0392B' : t === 'staking' ? '#B8960C' : '#3D4451';
 
     const rows = txs.map(tx => {
+      const displayAsset = getReportAssetDisplay(tx.asset, tx.asset);
       const isTransfer = tx.type === 'deposit' || tx.type === 'withdrawal';
       const priceFmt = !isTransfer && tx.priceCHF ? fmtCHF(tx.priceCHF) : '—';
       const totalFmt = !isTransfer && tx.totalCHF ? fmtCHF(tx.totalCHF) : '—';
       return '<tr>'
         + '<td class="mono" style="font-size:8pt;white-space:nowrap;">' + fmtDate(tx.date) + '</td>'
         + '<td style="font-weight:600;font-size:8.5pt;color:' + typeColor(tx.type) + ';">' + typeLabel(tx.type) + '</td>'
-        + '<td style="font-weight:700;">' + escHtml(tx.asset||'—') + '</td>'
+        + '<td style="font-weight:700;">' + escHtml(displayAsset.ledger||'—') + '</td>'
         + '<td class="right mono" style="font-size:8pt;">' + fmtQty(tx.qty) + '</td>'
         + '<td class="right mono" style="font-size:8pt;">' + priceFmt + '</td>'
         + '<td class="right mono" style="font-size:8pt;font-weight:600;">' + totalFmt + '</td>'
@@ -6145,7 +6166,7 @@ onmouseout="this.style.color='#8A909E'">
     const rows = data.transactions.map(t => [
       (t.date||'').slice(0,10),
       formatLedgerType(t.type),
-      t.asset||'',
+      getReportAssetDisplay(t.asset, t.asset).ledger || '',
       t.qty != null ? Number(t.qty).toFixed(8) : '',
       (t.type !== 'deposit' && t.type !== 'withdrawal' && t.priceCHF != null) ? Number(t.priceCHF).toFixed(4) : '',
       (t.type !== 'deposit' && t.type !== 'withdrawal' && t.totalCHF != null) ? Number(t.totalCHF).toFixed(2) : '',
