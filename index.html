@@ -4789,12 +4789,27 @@
           const rawTotal = Math.abs(parseFloat(r['quote_qty']||r['total'])||0);
           const feeQty = Math.abs(parseFloat(r['fee']||r['trading fee']||0) || 0);
           const feeCoin = (r['fee coin']||r['fee asset']||r['commission asset']||'').toUpperCase().trim();
-          priceCHF = rawPrice * quoteRate;
-          totalCHF = rawTotal > 0 ? rawTotal * quoteRate : grossQty * priceCHF;
-          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
-            date, type, asset, qty, priceCHF, totalCHF,
-            feeQty, feeCoin, quoteAsset, quoteRate
-          }));
+          if (type === 'staking') {
+            if (rawTotal > 0) {
+              totalCHF = rawTotal * quoteRate;
+              priceCHF = qty > 0 ? totalCHF / qty : 0;
+            } else {
+              const rewardDate = String(date || '').slice(0,10);
+              if (isFeeCurrencyAsset(asset)) {
+                priceCHF = await getFiatToChfRate(asset, rewardDate);
+              } else {
+                priceCHF = await getHistoricalPriceCHF(asset, rewardDate);
+              }
+              totalCHF = qty * priceCHF;
+            }
+          } else {
+            priceCHF = rawPrice * quoteRate;
+            totalCHF = rawTotal > 0 ? rawTotal * quoteRate : grossQty * priceCHF;
+            ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+              date, type, asset, qty, priceCHF, totalCHF,
+              feeQty, feeCoin, quoteAsset, quoteRate
+            }));
+          }
         }
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
