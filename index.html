@@ -1322,6 +1322,68 @@
 
   .app-left {}
 
+  .taxpayer-card {
+    background: rgba(245,242,235,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+
+  .taxpayer-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+  }
+
+  .taxpayer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .taxpayer-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .taxpayer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(245,242,235,0.4);
+  }
+
+  .taxpayer-input {
+    background: rgba(245,242,235,0.05);
+    border: 1px solid rgba(245,242,235,0.12);
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    color: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .taxpayer-input::placeholder { color: rgba(245,242,235,0.22); }
+  .taxpayer-input:focus { border-color: var(--gold-light); }
+
+  .taxpayer-note {
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+
   .app-right {
     display: flex;
     flex-direction: column;
@@ -2297,6 +2359,25 @@
 
   <div class="app-layout">
     <div class="app-left">
+      <div class="taxpayer-card">
+        <div class="taxpayer-card-title">Taxpayer details for the report</div>
+        <div class="taxpayer-grid">
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="taxpayer-name">Full name</label>
+            <input class="taxpayer-input" type="text" id="taxpayer-name" placeholder="Max Muster" autocomplete="name"/>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="taxpayer-address">Address</label>
+            <input class="taxpayer-input" type="text" id="taxpayer-address" placeholder="Bahnhofstrasse 10, 8001 Zurich" autocomplete="street-address"/>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="taxpayer-id">AHV / Tax ID (optional)</label>
+            <input class="taxpayer-input" type="text" id="taxpayer-id" placeholder="756.1234.5678.97" autocomplete="off"/>
+          </div>
+        </div>
+        <div class="taxpayer-note">Saved locally in your browser and added to the generated report header if provided.</div>
+      </div>
+
       <!-- UNLOCK CODE BANNER -->
   <div class="unlock-banner" id="unlock-banner">
     <div class="unlock-title">Enter your unlock code</div>
@@ -2308,7 +2389,7 @@
     </div>
     <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
     <div class="unlock-success" id="unlock-success"></div>
-    <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable. Each purchase is for one tax entity.</div>
+    <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable.</div>
   </div>
 
   <!-- FREE TRIAL BANNER -->
@@ -3371,10 +3452,58 @@
   let currentPlanTier = 'free'; // 'free' | 'pro' | 'business'
   let pendingFile = null; // store single file while waiting for unlock code
   let pendingFiles = null; // store multi-file uploads while waiting for unlock code
+  const TAXPAYER_KEY = 'cd_taxpayer_details';
 
   async function sha256hex(str) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  function getTaxpayerDetails() {
+    const readField = (id) => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    };
+
+    const current = {
+      name: readField('taxpayer-name'),
+      address: readField('taxpayer-address'),
+      taxId: readField('taxpayer-id'),
+    };
+
+    if (current.name || current.address || current.taxId) return current;
+
+    try {
+      const stored = JSON.parse(localStorage.getItem(TAXPAYER_KEY) || '{}');
+      return {
+        name: String(stored.name || '').trim(),
+        address: String(stored.address || '').trim(),
+        taxId: String(stored.taxId || '').trim(),
+      };
+    } catch(e) {
+      return { name: '', address: '', taxId: '' };
+    }
+  }
+
+  function saveTaxpayerDetails() {
+    const details = getTaxpayerDetails();
+    try { localStorage.setItem(TAXPAYER_KEY, JSON.stringify(details)); } catch(e) {}
+  }
+
+  function hydrateTaxpayerDetails() {
+    const details = getTaxpayerDetails();
+    const mapping = [
+      ['taxpayer-name', details.name],
+      ['taxpayer-address', details.address],
+      ['taxpayer-id', details.taxId],
+    ];
+    mapping.forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.value = value || '';
+      el.addEventListener('input', saveTaxpayerDetails);
+      el.addEventListener('change', saveTaxpayerDetails);
+    });
   }
 
   function getPlanFromStorage() {
@@ -3491,6 +3620,7 @@
 
   // Run on load
   currentPlanTier = getPlanFromStorage();
+  hydrateTaxpayerDetails();
   updateTrialUI();
   setPlanBadge(currentPlanTier);
 
@@ -5063,6 +5193,7 @@
   function buildFinalReport(meta, transactions, computed, assetNames, notes) {
     return {
       ...meta,
+      taxpayer: getTaxpayerDetails(),
       assets: computed.assets.map(a=>({...a, name: assetNames[a.symbol]||a.symbol})),
       stakingIncomeCHF: computed.stakingIncomeCHF,
       totalGainLossCHF: computed.totalGainLossCHF,
@@ -5399,6 +5530,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .doc-brand span { color: #B8960C; }
   /* Point 1: Subtitle now mentions ESTV explicitly */
   .doc-subtitle { font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #3D4451; margin-top: 2px; }
+  .doc-taxpayer { margin-top: 14px; padding-top: 10px; border-top: 1px solid #E8E4DC; }
+  .doc-taxpayer-line { font-size: 8.5pt; line-height: 1.7; color: #3D4451; }
+  .doc-taxpayer-label { font-family: 'DM Mono', monospace; font-size: 6.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #8A909E; display: inline-block; min-width: 82px; }
   .estv-badge {
     display: inline-block; background: none; color: #3D4451; border: none;
     font-family: 'DM Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em;
@@ -5748,6 +5882,14 @@ onmouseout="this.style.color='#8A909E'">
   <!-- Classic two-column header — brand left, title right -->
   <div class="doc-header">
     <div class="doc-header-left">
+      ${(function(){
+        const taxpayer = data.taxpayer || {};
+        const lines = [];
+        if (taxpayer.name) lines.push('<div class="doc-taxpayer-line"><span class="doc-taxpayer-label">Taxpayer</span>' + escHtml(taxpayer.name) + '</div>');
+        if (taxpayer.address) lines.push('<div class="doc-taxpayer-line"><span class="doc-taxpayer-label">Address</span>' + escHtml(taxpayer.address) + '</div>');
+        if (taxpayer.taxId) lines.push('<div class="doc-taxpayer-line"><span class="doc-taxpayer-label">AHV / Tax ID</span>' + escHtml(taxpayer.taxId) + '</div>');
+        const taxpayerHtml = lines.length ? '<div class="doc-taxpayer">' + lines.join('') + '</div>' : '';
+        return `
       <div class="doc-logo-line">
         <svg width="40" height="40" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="border-radius:8px;flex-shrink:0;">
           <rect width="400" height="400" fill="#0D1117"/>
@@ -5761,6 +5903,9 @@ onmouseout="this.style.color='#8A909E'">
       </div>
       <div class="doc-subtitle">Swiss Crypto Tax Declaration · cryptodeclare.ch</div>
       <div style="margin-top:5px;"><span class="estv-badge">ESTV-Compatible</span></div>
+      ${taxpayerHtml}
+      `;
+      })()}
     </div>
     <div class="doc-header-right">
       <div class="doc-report-title">Tax Declaration Annex ${data.taxYear}</div>
