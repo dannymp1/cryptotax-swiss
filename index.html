@@ -4318,6 +4318,89 @@
     return _krakenPricePromises[key];
   }
 
+  function isFeeCurrencyAsset(symbol) {
+    const cur = String(symbol || '').toUpperCase().trim();
+    return ['USD','EUR','GBP','CHF','USDT','USDC','BUSD','FDUSD','DAI'].includes(cur);
+  }
+
+  async function applyTradeFeeAdjustments(out, params) {
+    let {
+      date, type, asset, qty, priceCHF, totalCHF,
+      feeQty = 0, feeCoin = '', feeCHF = 0,
+      quoteAsset = '', quoteRate = 1
+    } = params;
+
+    feeQty = Math.abs(Number(feeQty || 0));
+    feeCHF = Math.abs(Number(feeCHF || 0));
+    feeCoin = String(feeCoin || '').toUpperCase().trim();
+    quoteAsset = String(quoteAsset || '').toUpperCase().trim();
+
+    if (!feeQty && !feeCHF) {
+      return { qty, priceCHF, totalCHF };
+    }
+
+    const feeInAsset = feeQty > 0 && feeCoin === asset;
+    const feeInQuote = feeQty > 0 && quoteAsset && feeCoin === quoteAsset;
+    const feeInThirdAsset = feeQty > 0 && feeCoin && feeCoin !== asset && feeCoin !== quoteAsset && !isFeeCurrencyAsset(feeCoin);
+
+    if (feeInAsset) {
+      if (type === 'buy') {
+        qty = Math.max(0, qty - feeQty);
+      } else if (type === 'sell') {
+        qty = qty + feeQty;
+      }
+    }
+
+    if (!feeCHF && feeQty > 0 && feeCoin) {
+      if (feeInQuote) {
+        feeCHF = feeQty * quoteRate;
+      } else if (isFeeCurrencyAsset(feeCoin)) {
+        const feeRate = await getFiatToChfRate(feeCoin, String(date || '').slice(0,10));
+        feeCHF = feeQty * feeRate;
+      } else if (feeInThirdAsset) {
+        const feePriceCHF = await getHistoricalPriceCHF(feeCoin, String(date || '').slice(0,10));
+        if (feePriceCHF > 0) {
+          feeCHF = feeQty * feePriceCHF;
+          out.push({
+            date,
+            type: 'withdrawal',
+            asset: feeCoin,
+            qty: feeQty,
+            priceCHF: feePriceCHF,
+            totalCHF: feeCHF,
+            _isFee: true
+          });
+        }
+      }
+    } else if (feeInThirdAsset) {
+      const impliedFeePrice = feeQty > 0 ? feeCHF / feeQty : 0;
+      out.push({
+        date,
+        type: 'withdrawal',
+        asset: feeCoin,
+        qty: feeQty,
+        priceCHF: impliedFeePrice,
+        totalCHF: feeCHF,
+        _isFee: true
+      });
+    }
+
+    // Only fees charged in the quote/fiat currency should alter the trade's
+    // acquisition cost or disposal proceeds directly. Fees charged in the base
+    // asset are already reflected via qty adjustment; fees charged in a third
+    // asset are tracked as separate withdrawals of that asset.
+    if (feeCHF > 0 && !feeInAsset && !feeInThirdAsset) {
+      if (type === 'buy') totalCHF += feeCHF;
+      else if (type === 'sell') totalCHF = Math.max(0, totalCHF - feeCHF);
+    }
+
+    if (qty > 0 && totalCHF > 0) {
+      priceCHF = totalCHF / qty;
+    }
+
+    return { qty, priceCHF, totalCHF };
+  }
+
   async function normaliseRows(rows, format) {
     const USD_CHF = 0.90625;
     const out = [];
@@ -4406,7 +4489,15 @@
           else continue;
           asset = currency;
           qty = Math.abs(parseFloat(r['net amount']) || parseFloat(r['gross amount']) || 0);
-          totalCHF = Math.abs(parseFloat(r['net amount (chf)']) || 0);
+          const grossChf = Math.abs(parseFloat(r['gross amount (chf)']) || 0);
+          const netChf = Math.abs(parseFloat(r['net amount (chf)']) || 0);
+          const feeChf = Math.abs(parseFloat(r['fee (chf)']) || 0);
+          totalCHF = netChf || grossChf || 0;
+          if ((type === 'buy' || type === 'sell') && feeChf > 0) {
+            totalCHF = type === 'buy'
+              ? (grossChf > 0 ? grossChf + feeChf : totalCHF + feeChf)
+              : (netChf > 0 ? netChf : Math.max(0, grossChf - feeChf));
+          }
           priceCHF = qty > 0 ? totalCHF / qty : 0;
         }
         else if (format === 'kraken_trades') {
@@ -4454,9 +4545,14 @@
           if (!asset || asset.length < 2) asset = krPair;
           qty = Math.abs(parseFloat(r['vol'])||0);
           const costRaw = Math.abs(parseFloat(r['cost'])||0);
+          const feeRaw = Math.abs(parseFloat(r['fee'])||0);
           const quoteRate = await getFiatToChfRate(krQuote, date.slice(0,10));
           totalCHF = costRaw * quoteRate;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty: feeRaw, feeCoin: krQuote, quoteAsset: krQuote, quoteRate
+          }));
         }
         else if (format === 'bybit') {
           // Support both old and new Bybit export column names
@@ -4481,10 +4577,10 @@
           const feeCoin = (r['fee coin']||r['Fee Coin']||r['fee currency']||r['Fee Currency']||r['Fee Token']||'').toUpperCase().trim();
           priceCHF = execPrice * USD_CHF;
           totalCHF = execVal > 0 ? execVal * USD_CHF : grossQty * priceCHF;
-          if (type === 'buy' && feeQty > 0 && feeCoin === asset) {
-            qty = Math.max(0, qty - feeQty);
-            priceCHF = qty > 0 ? totalCHF / qty : 0;
-          }
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: 'USDT', quoteRate: USD_CHF
+          }));
         }
         else if (format === 'swissquote') {
           // Swissquote: Date;Order number;Transaction;Symbol;Name;ISIN;Quantity;Unit price;Costs;Net amount;Balance;Currency;Exchange
@@ -4508,8 +4604,14 @@
           // Swissquote uses "Unit price" or "Price" column
           const price = parseFloat(r['unit price']||r['unit_price']||r['price']||r['Price']||r['Unit price']||0)||0;
           const fxRate = await getFiatToChfRate(currency, date);
+          const netAmt = Math.abs(parseFloat(r['net amount']||r['Net amount'])||0);
+          const costs = Math.abs(parseFloat(r['costs']||r['Costs'])||0);
           priceCHF = price * fxRate;
-          totalCHF = qty * priceCHF;
+          totalCHF = netAmt > 0 ? netAmt * fxRate : qty * priceCHF;
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty: costs, feeCoin: currency, quoteAsset: currency, quoteRate: fxRate
+          }));
         }
         else if (format === 'bitpanda') {
           // Bitpanda: Transaction ID,Timestamp,Transaction Type,In/Out,Amount Fiat,Fiat,Amount Asset,Asset,Asset market price,Asset class,Product ID,Fee,Tax
@@ -4526,6 +4628,11 @@
           const fxRate = await getFiatToChfRate(fiatCcy, date);
           priceCHF = mktPrice * fxRate;
           totalCHF = qty * priceCHF;
+          const feeAmt = Math.abs(parseFloat(r['fee']||r['Fee'])||0);
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty: feeAmt, feeCoin: fiatCcy, quoteAsset: fiatCcy, quoteRate: fxRate
+          }));
         }
         else if (format === 'okx_derivatives') {
           // OKX Derivatives export: Trade Time, Instrument ID, Instrument Type,
@@ -4588,8 +4695,15 @@
           // instId like BTC-USDT
           asset = instId.split('-')[0] || instId.slice(0,6);
           qty = Math.abs(parseFloat(r['filled qty']||r['Filled Qty'])||0);
-          priceCHF = (parseFloat(r['filled price']||r['Filled Price']||r['filled price(usdt)']||r['avg fill price']||r['Avg Fill Price']||r['price'])||0) * USD_CHF;
+          const quoteCur = instId.split('-')[1] || 'USD';
+          const quoteRate = await getFiatToChfRate(quoteCur, date);
+          priceCHF = (parseFloat(r['filled price']||r['Filled Price']||r['filled price(usdt)']||r['avg fill price']||r['Avg Fill Price']||r['price'])||0) * quoteRate;
           totalCHF = qty * priceCHF;
+          const feeAmt = Math.abs(parseFloat(r['fee']||r['Fee'])||0);
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty: feeAmt, feeCoin: quoteCur, quoteAsset: quoteCur, quoteRate
+          }));
         }
         else if (format === 'bitcoin_suisse') {
           // Bitcoin Suisse: Date,Type,Asset,Amount,Price CHF,Total CHF
@@ -4677,10 +4791,10 @@
           const feeCoin = (r['fee coin']||r['fee asset']||r['commission asset']||'').toUpperCase().trim();
           priceCHF = rawPrice * quoteRate;
           totalCHF = rawTotal > 0 ? rawTotal * quoteRate : grossQty * priceCHF;
-          if (type === 'buy' && feeQty > 0 && feeCoin === asset) {
-            qty = Math.max(0, qty - feeQty);
-            priceCHF = qty > 0 ? totalCHF / qty : 0;
-          }
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset, quoteRate
+          }));
         }
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
@@ -4707,9 +4821,20 @@
           const cur = (r['spot price currency']||r['price currency']||'').toUpperCase();
           // Column name variants: 'spot price at transaction' or 'spot price'
           priceCHF = parseFloat(r['spot price at transaction']||r['spot price'])||0;
-          if (cur==='USD'||cur==='') priceCHF *= USD_CHF;
-          totalCHF = Math.abs(parseFloat(r['subtotal'])||qty*priceCHF);
-          if (cur==='USD'||cur==='') totalCHF *= USD_CHF;
+          const quoteRate = await getFiatToChfRate(cur || 'USD', date.slice(0,10));
+          priceCHF = priceCHF * quoteRate;
+          const subtotal = Math.abs(parseFloat(r['subtotal'])||0);
+          const totalInclFees = Math.abs(parseFloat(r['total (inclusive of fees and/or spread)']||r['total']||0));
+          const feeTotal = Math.abs(parseFloat(r['fees and/or spread']||r['fee']||0));
+          totalCHF = subtotal > 0 ? subtotal * quoteRate : qty * priceCHF;
+          if (totalInclFees > 0) {
+            totalCHF = totalInclFees * quoteRate;
+          } else if (feeTotal > 0 && (type === 'buy' || type === 'sell')) {
+            ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+              date, type, asset, qty, priceCHF, totalCHF,
+              feeQty: feeTotal, feeCoin: cur || 'USD', quoteAsset: cur || 'USD', quoteRate
+            }));
+          }
         }
         else if (format === 'generic') {
           date = r['date']||'';
@@ -4722,6 +4847,13 @@
           qty = Math.abs(parseFloat(r['amount'])||0);
           priceCHF = parseFloat(r['price_chf'])||0;
           totalCHF = Math.abs(parseFloat(r['total_chf'])||qty*priceCHF);
+          const feeChf = Math.abs(parseFloat(r['fee_chf']||0)||0);
+          const feeQty = Math.abs(parseFloat(r['fee']||0)||0);
+          const feeCoin = (r['fee_currency']||r['fee coin']||'CHF').toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, feeCHF: feeChf
+          }));
         }
         // ── Crypto.com App ────────────────────────────────────────────────────
         else if (format === 'crypto_com') {
@@ -4753,6 +4885,12 @@
           const nativeUSD = Math.abs(parseFloat(r['native amount (in usd)']||r['native amount']||0));
           priceCHF = qty > 0 ? (nativeUSD * USD_CHF) / qty : 0;
           totalCHF = nativeUSD * USD_CHF;
+          const feeNative = Math.abs(parseFloat(r['fee amount']||r['fee']||0));
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty: feeNative, feeCoin: (r['native currency']||r['to currency']||r['currency']||'USD').toUpperCase(),
+            quoteAsset: (r['native currency']||'USD').toUpperCase(), quoteRate: USD_CHF
+          }));
         }
         // ── Crypto.com Exchange ───────────────────────────────────────────────
         else if (format === 'crypto_com_ex') {
@@ -4769,6 +4907,12 @@
           const quoteRate = await getFiatToChfRate(quoteCur || 'USD', date);
           priceCHF = rawPrice * quoteRate;
           totalCHF = qty * priceCHF;
+          const feeQty = Math.abs(parseFloat(r['fee']||r['fee_amount']||0)||0);
+          const feeCoin = (r['fee_currency']||r['fee coin']||quoteCur||'USD').toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: quoteCur || 'USD', quoteRate
+          }));
         }
         // ── Nexo ─────────────────────────────────────────────────────────────
         else if (format === 'nexo') {
@@ -4816,6 +4960,12 @@
           if (['USD','USDT','USDC','EUR','GBP','CHF'].includes(asset)) continue;
           priceCHF = qty > 0 ? (usdVal * USD_CHF) / qty : 0;
           totalCHF = usdVal * USD_CHF;
+          const feeQty = Math.abs(parseFloat(r['fee amount']||r['fee']||0)||0);
+          const feeCoin = (r['fee currency']||'USD').toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: 'USD', quoteRate: USD_CHF
+          }));
         }
         // ── Revolut ───────────────────────────────────────────────────────────
         else if (format === 'revolut') {
@@ -4872,6 +5022,12 @@
           const quoteRate = await getFiatToChfRate(quoteCur, date);
           priceCHF = rawPrice * quoteRate;
           totalCHF = rawTotal > 0 ? rawTotal * quoteRate : qty * priceCHF;
+          const feeQty = Math.abs(parseFloat(r['fee']||r['fee amount']||0)||0);
+          const feeCoin = (r['fee currency']||r['feecurrency']||quoteCur).toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: quoteCur, quoteRate
+          }));
         }
         // ── Gemini ────────────────────────────────────────────────────────────
         else if (format === 'gemini') {
@@ -4884,12 +5040,17 @@
           // Symbol like BTC or ETHUSD — strip quote
           asset = (r['symbol']||'').toUpperCase().replace(/(USD|USDT|EUR|GBP)$/,'') || (r['symbol']||'').slice(0,6);
           const usdAmt = Math.abs(parseFloat((r['usd amount']||r['usd amount usd']||r['notional']||'0').replace(/[,$]/g,'')));
+          const usdFee = Math.abs(parseFloat((r['fee']||r['fee amount']||r['fee amount usd']||'0').replace(/[,$]/g,'')));
           // Find qty from the asset-specific column (e.g., 'BTC Amount')
           const qtyKey = Object.keys(r).find(k => k.toLowerCase().includes(asset.toLowerCase()+' amount') || (k.toLowerCase().endsWith(' amount') && !k.toLowerCase().includes('usd') && !k.toLowerCase().includes('fee')));
           qty = qtyKey ? Math.abs(parseFloat((r[qtyKey]||'0').replace(/[,$]/g,''))) : 0;
           if (qty <= 0) continue;
           priceCHF = qty > 0 ? (usdAmt * USD_CHF) / qty : 0;
           totalCHF = usdAmt * USD_CHF;
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty: usdFee, feeCoin: 'USD', quoteAsset: 'USD', quoteRate: USD_CHF
+          }));
         }
         // ── Bitfinex ──────────────────────────────────────────────────────────
         else if (format === 'bitfinex') {
@@ -4907,6 +5068,12 @@
           const quoteRate = await getFiatToChfRate(quoteCur, date);
           priceCHF = rawPrice * quoteRate;
           totalCHF = qty * priceCHF;
+          const feeQty = Math.abs(parseFloat(r['fee']||0)||0);
+          const feeCoin = (r['fee currency']||quoteCur).toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: quoteCur, quoteRate
+          }));
         }
         // ── Gate.io ───────────────────────────────────────────────────────────
         else if (format === 'gate') {
@@ -4924,6 +5091,12 @@
           const quoteRate = await getFiatToChfRate(quoteCur, date);
           priceCHF = rawPrice * quoteRate;
           totalCHF = rawTotal > 0 ? rawTotal * quoteRate : qty * priceCHF;
+          const feeQty = Math.abs(parseFloat(r['fee']||0)||0);
+          const feeCoin = (r['fee currency']||quoteCur).toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: quoteCur, quoteRate
+          }));
         }
         // ── MEXC ──────────────────────────────────────────────────────────────
         else if (format === 'mexc') {
@@ -4940,6 +5113,12 @@
           const quoteRate = await getFiatToChfRate(quoteCur, date);
           priceCHF = rawPrice * quoteRate;
           totalCHF = rawVol > 0 ? rawVol * quoteRate : qty * priceCHF;
+          const feeQty = Math.abs(parseFloat(r['fee']||r['trading fee']||0)||0);
+          const feeCoin = (r['fee_coin']||r['fee coin']||quoteCur).toUpperCase();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: quoteCur, quoteRate
+          }));
         }
         // ── Smart unknown fallback ────────────────────────────────────────────
         else {
@@ -4976,6 +5155,14 @@
           const rate = await getFiatToChfRate(cur || 'USD', date);
           priceCHF = rawPrice * rate;
           totalCHF = rawTotal > 0 ? rawTotal * rate : qty * priceCHF;
+          const feeK = keys.find(k=>k==='fee'||k==='fees'||k.includes('fee'));
+          const feeCurK = keys.find(k=>k==='fee_currency'||k==='fee coin'||k.includes('fee currency')||k.includes('fee coin'));
+          const feeQty = feeK ? Math.abs(parseFloat(r[feeK])||0) : 0;
+          const feeCoin = feeCurK ? (r[feeCurK]||'').toUpperCase() : (cur || 'USD');
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset: cur || 'USD', quoteRate: rate
+          }));
         }
         if (qty<=0||!asset) continue;
         out.push({date, type, asset, qty, priceCHF, totalCHF});
@@ -5183,11 +5370,11 @@
   function buildExchangeNotes(format, taxYear, lowParseWarning='') {
     const notesMap = getReportNotesMap(taxYear);
     const base = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
-    return base + lowParseWarning;
+    return base + ` Transaction fees included where explicitly exported by the source file.` + lowParseWarning;
   }
 
   function buildMultiExchangeNotes(format, taxYear) {
-    return `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    return `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices. Transaction fees included where explicitly exported by the source files.`;
   }
 
   function buildFinalReport(meta, transactions, computed, assetNames, notes) {
@@ -5204,7 +5391,7 @@
   }
 
   async function enrichAssetNamesAndNotes(format, taxYear, computed, assetNames, notes) {
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices. Transaction fees included where explicitly exported by the source file."}`;
 
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
@@ -5217,7 +5404,7 @@
           const parsed = JSON.parse(clean.slice(s,e+1));
           return {
             assetNames: {...assetNames, ...(parsed.assetNames||{})},
-            notes: parsed.notes || notes,
+            notes,
           };
         }
       }
@@ -5589,8 +5776,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .right { text-align:right; }
   .center { text-align:center; }
   /* Total row — strong, finance-grade */
-  .total-row { background:#0D1117 !important; border: none !important; border-top: 2px solid #B8960C !important; }
-  .total-row td { color:#F5F2EB; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(255,255,255,0.08) !important; }
+  .total-row { background:#FAFAF8 !important; border: none !important; border-top: 2px solid #B8960C !important; }
+  .total-row td { color:#1A1D21; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(0,0,0,0.04) !important; }
   .total-row td:last-child { border-right: none !important; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
@@ -5618,245 +5805,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .no-print { position:fixed; top:20px; right:20px; background:#0D1117; color:#B8960C; border:none; padding:12px 24px; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); } @media print { .no-print { display:none !important; visibility:hidden !important; } }
   .no-print:hover { background:#B8960C; color:#0D1117; }
 
-  /* ── TEAM ── */
-  .team-section {
-    position: relative;
-    z-index: 1;
-    padding: 80px 48px;
-    background: var(--paper);
-  }
-
-  .team-card {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 56px;
-    align-items: start;
-    background: var(--paper-warm);
-    border: 1px solid var(--rule);
-    border-radius: 4px;
-    padding: 48px;
-    margin-top: 48px;
-  }
-
-  .team-photo {
-    width: 200px;
-    height: 240px;
-    border-radius: 4px;
-    background: var(--ink);
-    overflow: hidden;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .team-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-  }
-
-  .team-photo-placeholder {
-    font-family: 'DM Serif Display', serif;
-    font-size: 48px;
-    color: var(--gold-light);
-    letter-spacing: -0.02em;
-  }
-
-  .team-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 28px;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-
-  .team-role {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 20px;
-  }
-
-  .team-bio {
-    font-size: 15px;
-    line-height: 1.75;
-    color: var(--ink-muted);
-    margin-bottom: 24px;
-  }
-
-  .team-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .team-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    padding: 4px 12px;
-    border-radius: 100px;
-  }
-
-  .team-linkedin {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--ink-faint);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .team-linkedin:hover { color: var(--gold); }
-
-  @media (max-width: 768px) {
-    .team-section { padding: 60px 24px; }
-    .team-card { grid-template-columns: 1fr; gap: 32px; padding: 32px 24px; }
-    .team-photo { width: 120px; height: 120px; }
-  }
-
-  /* ── CONTACT ── */
-  .contact-section {
-    position: relative;
-    z-index: 1;
-    padding: 80px 48px;
-    background: var(--ink);
-  }
-
-  .contact-section .section-number { color: var(--gold); }
-  .contact-section .section-title { color: var(--paper); }
-  .contact-section .section-title em { color: var(--gold); }
-  .contact-section .section-header { border-bottom-color: rgba(255,255,255,0.08); }
-
-  .contact-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
-    margin-top: 60px;
-  }
-
-  .contact-left p {
-    font-size: 16px;
-    line-height: 1.75;
-    color: rgba(245,242,235,0.6);
-    margin-bottom: 32px;
-  }
-
-  .contact-detail {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    color: rgba(245,242,235,0.4);
-    margin-bottom: 12px;
-  }
-
-  .contact-detail-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.6;
-    flex-shrink: 0;
-  }
-
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .contact-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .contact-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(245,242,235,0.4);
-  }
-
-  .contact-input {
-    background: rgba(245,242,235,0.05);
-    border: 1px solid rgba(245,242,235,0.1);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 14px;
-    color: var(--paper);
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-
-  .contact-input::placeholder { color: rgba(245,242,235,0.25); }
-  .contact-input:focus { border-color: var(--gold); }
-
-  textarea.contact-input {
-    resize: vertical;
-    min-height: 120px;
-    line-height: 1.6;
-  }
-
-  .contact-submit {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--gold-light);
-    color: var(--ink);
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 14px 28px;
-    border-radius: var(--radius);
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    margin-top: 8px;
-    align-self: flex-start;
-  }
-
-  .contact-submit:hover { background: #e5c84f; transform: translateY(-1px); }
-  .contact-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .contact-success {
-    display: none;
-    padding: 16px 20px;
-    background: rgba(26,122,74,0.15);
-    border: 1px solid rgba(26,122,74,0.3);
-    border-radius: var(--radius);
-    font-size: 14px;
-    color: #4caf82;
-    margin-top: 8px;
-  }
-
-  .contact-success.visible { display: block; }
-
-  @media (max-width: 768px) {
-    .contact-section { padding: 60px 24px; }
-    .contact-layout { grid-template-columns: 1fr; gap: 48px; }
-  }
 </style>
 </head>
 <body>
@@ -6070,7 +6018,7 @@ onmouseout="this.style.color='#8A909E'">
   </div>
   <div class="compliance-box">
     <strong>🇬🇧 EN</strong><br/>
-    <span style="color:#2D7A56;font-weight:600;">✔ Swiss private individuals</span> — Capital gains generally tax-free; declare holdings as wealth (Vermögen). Staking and lending income is taxable.<br/>
+    <span style="color:#2D7A56;font-weight:600;">✔ Swiss private individuals</span> — Capital gains generally tax-free; declare holdings as wealth. Staking and lending income is taxable.<br/>
     <span style="color:#B8960C;font-weight:600;">⚠ Professional traders &amp; legal entities</span> — Capital gains taxable as income; this report's gain figures are directly relevant for your declaration.<br/>
     
     <strong>🇩🇪 DE</strong><br/>
@@ -6088,8 +6036,8 @@ onmouseout="this.style.color='#8A909E'">
 
   <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Excluded from cost basis and proceeds (conservative approach). Estimated impact: &lt;0.5% of total proceeds (~CHF ${Math.round(Math.abs(data.totalGainLossCHF||0)*0.005)}) — actual overstatement is typically lower. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss tax reporting standard. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). USD-denominated values use the ESTV annual reference rate of 0.906250 CHF/USD for 31.12.${data.taxYear}. Non-CHF fiat countervalues such as EUR and GBP are converted using historical FX references where available; otherwise annual reference rates are applied. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Exchange-specific tickers are normalised to standard asset symbols (for example Kraken XBT → BTC). All assets identified by base currency. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
