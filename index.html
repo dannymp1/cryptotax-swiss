@@ -9,7 +9,7 @@
 
 <!-- ── Primary SEO ── -->
 <title>CryptoDeclare — Swiss Crypto Tax Report | Krypto Steuern Schweiz</title>
-<meta name="description" content="Generate your Swiss crypto tax report in minutes. ESTV-compliant, FIFO method, CHF conversion. Supports Coinbase, Kraken, Binance, SwissBorg and more. From CHF 99."/>
+<meta name="description" content="Generate your Swiss crypto tax report in minutes. Aligned with ESTV guidance, FIFO method, CHF conversion. Supports Coinbase, Kraken, Binance, SwissBorg and more. From CHF 99."/>
 <meta name="keywords" content="crypto tax switzerland, crypto steuern schweiz, déclaration crypto suisse, krypto steuererklärung, bitcoin steuer schweiz, ESTV crypto, cryptodeclare, crypto tax report CHF, coinbase tax switzerland, kraken tax switzerland"/>
 <meta name="author" content="CryptoDeclare"/>
 <meta name="robots" content="index, follow"/>
@@ -26,7 +26,7 @@
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://www.cryptodeclare.ch/"/>
 <meta property="og:title" content="CryptoDeclare — Swiss Crypto Tax Reporting"/>
-<meta property="og:description" content="Swiss crypto tax reports in minutes, ESTV-compliant. Upload your CSV and generate a downloadable annex for your cantonal tax return. From CHF 99."/>
+<meta property="og:description" content="Swiss crypto tax reports in minutes, aligned with ESTV guidance. Upload your CSV and generate a downloadable annex for your cantonal tax return. From CHF 99."/>
 <meta property="og:image" content="https://www.cryptodeclare.ch/og-image.png"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -39,7 +39,7 @@
 <!-- ── Twitter / X Card ── -->
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="CryptoDeclare — Swiss Crypto Tax Reporting"/>
-<meta name="twitter:description" content="Swiss crypto tax reports in minutes, ESTV-compliant. Upload your CSV and generate a downloadable annex. From CHF 99."/>
+<meta name="twitter:description" content="Swiss crypto tax reports in minutes, aligned with ESTV guidance. Upload your CSV and generate a downloadable annex. From CHF 99."/>
 <meta name="twitter:image" content="https://www.cryptodeclare.ch/og-image.png"/>
 
 <!-- ── Structured Data (Google Rich Results) ── -->
@@ -49,7 +49,7 @@
   "@type": "SoftwareApplication",
   "name": "CryptoDeclare",
   "url": "https://www.cryptodeclare.ch",
-  "description": "Swiss crypto tax reporting platform. Generate FIFO-based reports for your cantonal tax return in minutes.",
+  "description": "Swiss crypto tax reporting platform aligned with ESTV guidance. Generate FIFO-based reports for your cantonal tax return in minutes.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Web",
   "offers": [
@@ -1484,6 +1484,44 @@
     gap: 12px;
   }
 
+  .report-actions button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .report-ack-box {
+    margin: -10px 0 24px;
+    padding: 14px 16px;
+    background: rgba(245,242,235,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-left: 2px solid rgba(184,150,12,0.7);
+    border-radius: 4px;
+  }
+
+  .report-ack-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(245,242,235,0.9);
+  }
+
+  .report-ack-label input {
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .report-ack-note {
+    margin-top: 8px;
+    padding-left: 26px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: rgba(245,242,235,0.48);
+  }
+
   .report-generated {
     background: rgba(245,242,235,0.04);
     border: 1px solid rgba(255,255,255,0.08);
@@ -2096,11 +2134,11 @@
     <div class="hero-eyebrow">Swiss crypto tax reporting</div>
     <h1 class="hero-headline">
       Your crypto.<br>
-      <em>Tax-ready</em> in<br>
+      <em>Prepared</em> in<br>
       minutes.
     </h1>
     <p class="hero-sub">
-      Upload your exchange transactions, we calculate the report, and you receive a clean Swiss tax report for your cantonal declaration.
+      Upload your exchange transactions, we calculate the report, and you receive a clean Swiss tax annex to review for your cantonal declaration.
     </p>
     <div class="hero-actions">
       <a href="#" onclick="navScrollTo('declare');return false;" class="btn-primary">
@@ -2175,7 +2213,7 @@
         </svg>
       </div>
       <h3 class="step-title">Download your report</h3>
-      <p class="step-body">Receive a PDF report formatted for Swiss tax filing. Review it and attach it as supporting documentation to your annual declaration.</p>
+      <p class="step-body">Receive a downloadable report formatted for Swiss tax reporting. Review it and attach it as supporting documentation to your annual declaration.</p>
     </div>
   </div>
 </section>
@@ -2199,8 +2237,8 @@
     </div>
     <div class="feature">
       <div class="feature-label">Multi-year</div>
-      <div class="feature-title">Multi-year reports</div>
-      <div class="feature-body">Import full transaction history from prior years and generate a separate report for each tax year automatically.</div>
+      <div class="feature-title">Full tax history</div>
+      <div class="feature-body">Import full transaction history from prior years and generate a tax-year report for the period covered by your uploaded data.</div>
     </div>
     <div class="feature">
       <div class="feature-label">Privacy</div>
@@ -2221,7 +2259,7 @@
     <div class="report-left">
       <div class="report-eyebrow">Your output</div>
       <h2 class="report-headline">A report ready<br>for your<br><em>Swiss tax return</em></h2>
-      <p class="report-body">Clean, structured, and compliant. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation.</p>
+      <p class="report-body">Clean, structured, and built for Swiss tax reporting. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation based on imported data.</p>
       <a href="#" onclick="navScrollTo('pricing');return false;" class="btn-gold">
         Generate my report
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2441,13 +2479,18 @@
       </div>
       <div class="app-info-box">
         <div class="app-info-label" data-i18n="info_get_label">What you get</div>
-        <div class="app-info-title" data-i18n="info_get_title">A Swiss tax-ready report</div>
-        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured report for your declaration.</div>
+        <div class="app-info-title" data-i18n="info_get_title">A Swiss tax reporting annex</div>
+        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured annex based on the data you import.</div>
       </div>
       <div class="app-info-box">
         <div class="app-info-label" data-i18n="info_priv_label">Privacy</div>
         <div class="app-info-title" data-i18n="info_priv_title">Processed in your session only</div>
         <div class="app-info-body" data-i18n="info_priv_body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
+      </div>
+      <div class="app-info-box">
+        <div class="app-info-label">Important</div>
+        <div class="app-info-title">Review data completeness</div>
+        <div class="app-info-body">Results reflect imported files only. Missing wallets, exchanges, opening balances, or prior-period history can materially change the outcome. Review all figures before export and see our <a href="terms.html" style="color:var(--gold-light);text-decoration:none;">Terms of Service</a>.</div>
       </div>
     </div>
   </div>
@@ -2457,18 +2500,25 @@
     <div class="report-output-header">
       <div class="report-output-title">Your <em>tax report</em> is ready</div>
       <div class="report-actions">
-        <button class="btn-gold" onclick="downloadReport()" style="font-size:12px;padding:10px 20px;">
+        <button class="btn-gold btn-download-report" id="report-download-btn" onclick="downloadReport()" style="font-size:12px;padding:10px 20px;">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Download PDF
         </button>
-        <button class="btn-outline" onclick="downloadLedgerCSV()" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
+        <button class="btn-outline btn-ledger-export" id="ledger-download-btn" onclick="downloadLedgerCSV()" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Ledger CSV
         </button>
-        <a class="btn-outline" href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" target="_blank" rel="noopener" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+        <a class="btn-outline btn-upgrade-pro" href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" target="_blank" rel="noopener" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
           Upgrade to Pro
         </a>
       </div>
+    </div>
+    <div class="report-ack-box">
+      <label class="report-ack-label" for="export-ack">
+        <input type="checkbox" id="export-ack" onchange="syncExportActions()"/>
+        <span>I confirm that I have reviewed the imported data, understand this report is generated from imported files only and is not tax or legal advice, and remain responsible for my tax declaration.</span>
+      </label>
+      <div class="report-ack-note">Required before export. Missing exchanges, wallets, opening balances, or prior-period history can materially change the result.</div>
     </div>
 
     <div class="report-summary-grid" id="report-stats"></div>
@@ -2476,7 +2526,7 @@
     <div class="report-generated">
       <div class="report-generated-header">
         <span class="report-generated-title">Krypto-Steuerbericht — Generated Report</span>
-        <span class="report-generated-badge">ESTV Compliant</span>
+        <span class="report-generated-badge">Aligned with ESTV guidance</span>
       </div>
       <div class="report-generated-body" id="report-content">
       </div>
@@ -2578,7 +2628,7 @@
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.5h12M4 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
         Continue to Stripe Checkout
       </a>
-      <div class="modal-terms">By continuing you agree to our Terms of Service and Privacy Policy.<br>Secure payment via Stripe · SSL encrypted</div>
+      <div class="modal-terms">By continuing you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Notice</a>.<br>Secure payment via Stripe · SSL encrypted</div>
     </div>
   </div>
 </div>
@@ -2654,7 +2704,7 @@
   <div class="footer-top">
     <div>
       <div class="footer-brand-name">Crypto<span>Declare</span></div>
-      <p class="footer-brand-text">Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.</p>
+      <p class="footer-brand-text">Swiss crypto tax reporting for individuals and businesses. Structured, fast, and private.</p>
     </div>
     <div>
       <div class="footer-col-title">Product</div>
@@ -2698,8 +2748,8 @@
       nav_how: 'How it works', nav_features: 'Features', nav_pricing: 'Pricing',
       nav_declare: 'Declare', nav_faq: 'FAQ', nav_team: 'Team', nav_start: 'Get started',
       hero_eyebrow: 'Swiss crypto tax reporting',
-      hero_headline: 'Your crypto.<br><em>Tax-ready</em> in<br>minutes.',
-      hero_sub: 'Upload your exchange transactions, we calculate the report, and you receive a clean Swiss tax report for your cantonal declaration.',
+      hero_headline: 'Your crypto.<br><em>Prepared</em> in<br>minutes.',
+      hero_sub: 'Upload your exchange transactions, we calculate the report, and you receive a clean Swiss tax annex to review for your cantonal declaration.',
       hero_cta1: 'Declare now — it\'s free',
       hero_cta2: 'See how it works',
       upload_title: 'Drop your files here',
@@ -2709,19 +2759,19 @@
       trial_used: 'Free trial used — upgrade to Pro to generate more reports',
       info_need_label: 'What we need', info_need_title: 'A standard transaction export',
       info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.',
-      info_get_label: 'What you get', info_get_title: 'A Swiss tax-ready report',
-      info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured report for your declaration.',
+      info_get_label: 'What you get', info_get_title: 'A Swiss tax reporting annex',
+      info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured annex based on the data you import.',
       info_priv_label: 'Privacy', info_priv_title: 'Processed in your session only',
       info_priv_body: 'Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
       btn_download: '⬇ Download PDF',
       btn_upgrade: 'Upgrade to Pro',
       disclaimer_title: 'Document Disclaimer',
-      disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, NFTs, professional trading), please consult a certified Swiss tax advisor.',
+      disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, professional trading), please consult a certified Swiss tax advisor.',
       how_label: '01 — Process', how_title: 'Three steps to a<br><em>clean declaration</em>',
       step1_title: 'Import transactions', step1_body: 'Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our generic CSV format for other exports.',
       step2_title: 'We calculate', step2_body: 'Our engine applies Swiss FIFO accounting, converts values to CHF using ESTV reference rates and transaction-date market data where available, and identifies taxable events.',
-      step3_title: 'Download your report', step3_body: 'Receive a PDF report formatted for Swiss tax filing. Review it and attach it as supporting documentation to your annual declaration.',
+      step3_title: 'Download your report', step3_body: 'Receive a downloadable report formatted for Swiss tax reporting. Review it and attach it as supporting documentation to your annual declaration.',
       features_label: '02 — Features', features_title: 'Built for<br><em>Swiss residents</em>',
       pricing_label: '04 — Pricing', pricing_title: 'Simple,<br><em>transparent</em> pricing',
       faq_label: '06 — FAQ', faq_title: 'Common<br><em>questions</em>',
@@ -2740,8 +2790,8 @@
       feat2_title: 'FIFO method (ESTV standard)',
       feat2_body: 'We apply the FIFO method mandated by ESTV — the official Swiss tax authority standard for crypto asset valuation.',
       feat3_label: 'Multi-year',
-      feat3_title: 'Multi-year reports',
-      feat3_body: 'Import full transaction history from prior years and generate a separate report for each tax year automatically.',
+      feat3_title: 'Full tax history',
+      feat3_body: 'Import full transaction history from prior years and generate a tax-year report for the period covered by your uploaded data.',
       feat4_label: 'Privacy',
       feat4_title: 'Your data stays yours',
       feat4_body: "We never sell your data. Transaction data is processed ephemerally — we don't store your positions longer than your session.",
@@ -2807,24 +2857,24 @@
       exchange_note: "Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
-      report_badge: 'ESTV Compliant',
-      report_body: 'Clean, structured, and compliant. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation.',
+      report_badge: 'Aligned with ESTV guidance',
+      report_body: 'Clean, structured, and built for Swiss tax reporting. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation based on imported data.',
       report_cta: 'Generate my report',
       starter_period: 'Up to 50 transactions', starter_cta: 'Get started free',
       pro_period: 'Per tax year · up to 1,000 transactions', pro_cta: 'Get Pro',
       biz_period: 'Per entity / year · truly unlimited', biz_cta: 'Get Business',
-      footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Fast, compliant, and private.',
+      footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Structured, fast, and private.',
       footer_product: 'Product', footer_legal: 'Legal', footer_support: 'Support',
       modal_body: "You'll receive your unlock code by email immediately after payment. Enter it on this page to activate your plan.",
       modal_cta: 'Continue to Stripe Checkout',
-      modal_terms: 'By continuing you agree to our Terms of Service and Privacy Policy.<br>Secure payment via Stripe · SSL encrypted',
+      modal_terms: 'By continuing you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Notice</a>.<br>Secure payment via Stripe · SSL encrypted',
     },
     fr: {
       nav_how: 'Comment ça marche', nav_features: 'Fonctionnalités', nav_pricing: 'Tarifs',
       nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_team: 'Équipe', nav_start: 'Commencer',
       hero_eyebrow: 'Déclaration fiscale crypto suisse',
-      hero_headline: 'Votre crypto.<br><em>Prête fiscalement</em><br>en minutes.',
-      hero_sub: 'Importez vos transactions, nous calculons le rapport, et vous recevez un rapport fiscal suisse clair pour votre déclaration cantonale.',
+      hero_headline: 'Votre crypto.<br><em>Préparée</em><br>en minutes.',
+      hero_sub: 'Importez vos transactions, nous calculons le rapport, et vous recevez une annexe fiscale suisse claire à relire pour votre déclaration cantonale.',
       hero_cta1: 'Déclarer maintenant — gratuit',
       hero_cta2: 'Voir comment ça marche',
       upload_title: 'Déposez vos fichiers ici',
@@ -2834,19 +2884,19 @@
       trial_used: 'Essai gratuit utilisé — passez à Pro pour générer plus de rapports',
       info_need_label: 'Ce dont nous avons besoin', info_need_title: 'Un export de transactions standard',
       info_need_body: 'Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et tout CSV générique avec date, actif, montant et prix.',
-      info_get_label: 'Ce que vous obtenez', info_get_title: 'Un rapport fiscal suisse prêt',
-      info_get_body: 'Notre moteur applique la méthode FIFO suisse à vos transactions, convertit tout en CHF à l’aide des taux de référence ESTV et des références de marché à la date des transactions lorsque disponibles, puis génère un rapport structuré pour votre déclaration.',
+      info_get_label: 'Ce que vous obtenez', info_get_title: 'Une annexe de reporting fiscal suisse',
+      info_get_body: 'Notre moteur applique la méthode FIFO suisse à vos transactions, convertit tout en CHF à l’aide des taux de référence ESTV et des références de marché à la date des transactions lorsque disponibles, puis génère une annexe structurée à partir des données importées.',
       info_priv_label: 'Confidentialité', info_priv_title: 'Traité dans votre session uniquement',
       info_priv_body: 'Vos données ne sont jamais stockées sur nos serveurs. Tout le traitement s\'effectue de manière sécurisée et éphémère — une fois votre session terminée, rien n\'est conservé.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
       btn_download: '⬇ Télécharger PDF',
       btn_upgrade: 'Passer à Pro',
       disclaimer_title: 'Avis de non-responsabilité',
-      disclaimer_text: 'Ce rapport a été préparé selon la méthode comptable FIFO suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, NFTs, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
+      disclaimer_text: 'Ce rapport a été préparé selon la méthode comptable FIFO suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
       how_label: '01 — Processus', how_title: 'Trois étapes pour une<br><em>déclaration impeccable</em>',
       step1_title: 'Importez vos transactions', step1_body: "Importez un CSV depuis des plateformes supportées comme Kraken, Binance, Coinbase, Swissquote ou SwissBorg — ou utilisez notre format CSV générique pour d'autres exports.",
       step2_title: 'Nous calculons', step2_body: 'Notre moteur applique la méthode FIFO suisse, convertit les valeurs en CHF avec les taux de référence ESTV et des références de marché à la date des transactions lorsque disponibles, puis identifie les événements imposables.',
-      step3_title: 'Téléchargez votre rapport', step3_body: 'Recevez un rapport PDF formaté pour la déclaration fiscale suisse. Relisez-le puis joignez-le comme pièce justificative à votre déclaration annuelle.',
+      step3_title: 'Téléchargez votre rapport', step3_body: 'Recevez un rapport téléchargeable formaté pour le reporting fiscal suisse. Relisez-le puis joignez-le comme pièce justificative à votre déclaration annuelle.',
       features_label: '02 — Fonctionnalités', features_title: 'Conçu pour<br><em>les résidents suisses</em>',
       pricing_label: '04 — Tarifs', pricing_title: 'Tarification<br><em>simple et transparente</em>',
       faq_label: '06 — FAQ', faq_title: 'Questions<br><em>fréquentes</em>',
@@ -2865,8 +2915,8 @@
       feat2_title: 'Méthode FIFO (norme ESTV)',
       feat2_body: 'Nous appliquons la méthode FIFO mandatée par l\'ESTV — la norme officielle suisse pour la valorisation des cryptoactifs.',
       feat3_label: 'Multi-années',
-      feat3_title: 'Rapports multi-années',
-      feat3_body: 'Importez un historique complet couvrant plusieurs années et générez automatiquement un rapport séparé pour chaque année fiscale.',
+      feat3_title: 'Historique fiscal complet',
+      feat3_body: 'Importez un historique complet couvrant plusieurs années et générez un rapport correspondant à la période fiscale couverte par vos données.',
       feat4_label: 'Confidentialité',
       feat4_title: 'Vos données restent vôtres',
       feat4_body: 'Nous ne vendons jamais vos données. Les données de transaction sont traitées de manière éphémère.',
@@ -2932,24 +2982,24 @@
       exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel ou contactez-nous — nous pouvons aider à mapper les exports inhabituels.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
-      report_badge: 'Compatible ESTV',
-      report_body: "Propre, structuré et conforme. Votre rapport téléchargeable inclut un journal complet des transactions, un résumé des résultats réalisés et une valorisation de fin d'année.",
+      report_badge: 'Aligné sur les directives ESTV',
+      report_body: "Propre, structuré et conçu pour le reporting fiscal suisse. Votre rapport téléchargeable inclut un journal complet des transactions, un résumé des résultats réalisés et une valorisation de fin d'année basée sur les données importées.",
       report_cta: 'Générer mon rapport',
       starter_period: "Jusqu'à 50 transactions", starter_cta: 'Commencer gratuitement',
       pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Obtenir Pro',
       biz_period: 'Par entité / an · vraiment illimité', biz_cta: 'Obtenir Business',
-      footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Rapide, conforme et privée.',
+      footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Structurée, rapide et privée.',
       footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
       modal_body: "Vous recevrez votre code d'activation par email immédiatement après le paiement. Entrez-le sur cette page pour activer votre plan.",
       modal_cta: 'Continuer vers Stripe',
-      modal_terms: "En continuant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.<br>Paiement sécurisé via Stripe · Chiffrement SSL",
+      modal_terms: "En continuant, vous acceptez nos <a href=\"terms.html\">Conditions d'utilisation</a> et notre <a href=\"privacy.html\">Notice de confidentialité</a>.<br>Paiement sécurisé via Stripe · Chiffrement SSL",
     },
     de: {
       nav_how: 'So funktioniert\'s', nav_features: 'Funktionen', nav_pricing: 'Preise',
       nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_team: 'Team', nav_start: 'Jetzt starten',
       hero_eyebrow: 'Schweizer Krypto-Steuerreporting',
-      hero_headline: 'Ihr Krypto.<br><em>Steuerbereit</em> in<br>Minuten.',
-      hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen den Bericht, und Sie erhalten einen klaren Schweizer Steuerbericht für Ihre kantonale Steuererklärung.',
+      hero_headline: 'Ihr Krypto.<br><em>Vorbereitet</em> in<br>Minuten.',
+      hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen den Bericht, und Sie erhalten eine klare Schweizer Steuerbeilage zur Prüfung für Ihre kantonale Steuererklärung.',
       hero_cta1: 'Jetzt deklarieren — kostenlos',
       hero_cta2: 'So funktioniert\'s',
       upload_title: 'Dateien hier ablegen',
@@ -2959,19 +3009,19 @@
       trial_used: 'Kostenlose Testversion verwendet — auf Pro upgraden für weitere Berichte',
       info_need_label: 'Was wir benötigen', info_need_title: 'Ein Standard-Transaktionsexport',
       info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und jedes generische CSV mit Datum, Vermögenswert, Betrag und Preis.',
-      info_get_label: 'Was Sie erhalten', info_get_title: 'Einen steuerbereiten Schweizer Bericht',
-      info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF anhand von ESTV-Referenzkursen und transaktionsdatumsbezogenen Marktpreisen, sofern verfügbar, und erstellt einen strukturierten Bericht für Ihre Deklaration.',
+      info_get_label: 'Was Sie erhalten', info_get_title: 'Eine Schweizer Steuerbeilage',
+      info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF anhand von ESTV-Referenzkursen und transaktionsdatumsbezogenen Marktpreisen, sofern verfügbar, und erstellt eine strukturierte Beilage auf Basis der von Ihnen importierten Daten.',
       info_priv_label: 'Datenschutz', info_priv_title: 'Nur in Ihrer Sitzung verarbeitet',
       info_priv_body: 'Ihre Daten werden nie auf unseren Servern gespeichert. Die gesamte Verarbeitung erfolgt sicher und ephemer — sobald Ihre Sitzung endet, werden keine Daten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
       btn_download: '⬇ PDF herunterladen',
       btn_upgrade: 'Auf Pro upgraden',
       disclaimer_title: 'Haftungsausschluss',
-      disclaimer_text: 'Dieser Bericht wurde nach der Schweizer FIFO-Buchführungsmethode erstellt und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, NFTs, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
+      disclaimer_text: 'Dieser Bericht wurde nach der Schweizer FIFO-Buchführungsmethode erstellt und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
       how_label: '01 — Prozess', how_title: 'Drei Schritte zu einer<br><em>sauberen Deklaration</em>',
       step1_title: 'Transaktionen importieren', step1_body: 'Laden Sie eine CSV-Datei von unterstützten Plattformen wie Kraken, Binance, Coinbase, Swissquote oder SwissBorg hoch — oder verwenden Sie unser generisches CSV-Format für andere Exporte.',
       step2_title: 'Wir berechnen', step2_body: 'Unser System wendet die Schweizer FIFO-Methode an, rechnet Werte mit ESTV-Referenzkursen und transaktionsdatumsbezogenen Marktpreisen in CHF um, sofern verfügbar, und identifiziert steuerpflichtige Ereignisse.',
-      step3_title: 'Bericht herunterladen', step3_body: 'Erhalten Sie einen PDF-Bericht für die Schweizer Steuererklärung. Prüfen Sie ihn und legen Sie ihn Ihrer Steuererklärung als Beilage bei.',
+      step3_title: 'Bericht herunterladen', step3_body: 'Erhalten Sie einen herunterladbaren Bericht für das Schweizer Steuerreporting. Prüfen Sie ihn und legen Sie ihn Ihrer Steuererklärung als Beilage bei.',
       features_label: '02 — Funktionen', features_title: 'Entwickelt für<br><em>Schweizer Einwohner</em>',
       pricing_label: '04 — Preise', pricing_title: 'Einfache,<br><em>transparente</em> Preise',
       faq_label: '06 — FAQ', faq_title: 'Häufige<br><em>Fragen</em>',
@@ -2990,8 +3040,8 @@
       feat2_title: 'FIFO-Methode (ESTV-Standard)',
       feat2_body: 'Wir wenden die von der ESTV vorgeschriebene FIFO-Methode an — der offizielle Schweizer Standard für die Bewertung von Krypto-Assets.',
       feat3_label: 'Mehrjährig',
-      feat3_title: 'Mehrjahresberichte',
-      feat3_body: 'Importieren Sie vollständige Historien aus Vorjahren und erstellen Sie automatisch einen separaten Bericht für jedes Steuerjahr.',
+      feat3_title: 'Vollständige Steuerhistorie',
+      feat3_body: 'Importieren Sie vollständige Historien aus Vorjahren und erstellen Sie einen Bericht für den Steuerzeitraum, der von Ihren hochgeladenen Daten abgedeckt wird.',
       feat4_label: 'Datenschutz',
       feat4_title: 'Ihre Daten bleiben Ihre',
       feat4_body: 'Wir verkaufen Ihre Daten nie. Transaktionsdaten werden ephemer verarbeitet.',
@@ -3053,17 +3103,17 @@
       exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import oder kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
-      report_badge: 'ESTV-konform',
-      report_body: 'Sauber, strukturiert und konform. Ihr herunterladbarer Bericht enthält ein vollständiges Transaktionsprotokoll, eine Zusammenfassung der realisierten Resultate und eine Jahresendbewertung.',
+      report_badge: 'An ESTV-Leitlinien ausgerichtet',
+      report_body: 'Sauber, strukturiert und für das Schweizer Steuerreporting aufgebaut. Ihr herunterladbarer Bericht enthält ein vollständiges Transaktionsprotokoll, eine Zusammenfassung der realisierten Resultate und eine Jahresendbewertung auf Basis der importierten Daten.',
       report_cta: 'Bericht erstellen',
       starter_period: 'Bis 50 Transaktionen', starter_cta: 'Kostenlos starten',
       pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Pro kaufen',
       biz_period: 'Pro Unternehmen / Jahr · wirklich unbegrenzt', biz_cta: 'Business kaufen',
-      footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Schnell, konform und privat.',
+      footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Strukturiert, schnell und privat.',
       footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
       modal_body: 'Sie erhalten Ihren Freischaltcode sofort nach der Zahlung per E-Mail. Geben Sie ihn auf dieser Seite ein, um Ihren Plan zu aktivieren.',
       modal_cta: 'Weiter zu Stripe',
-      modal_terms: 'Mit dem Fortfahren akzeptieren Sie unsere Nutzungsbedingungen und unsere Datenschutzerklärung.<br>Sichere Zahlung via Stripe · SSL-verschlüsselt',
+      modal_terms: 'Mit dem Fortfahren akzeptieren Sie unsere <a href="terms.html">Nutzungsbedingungen</a> und unseren <a href="privacy.html">Datenschutzhinweis</a>.<br>Sichere Zahlung via Stripe · SSL-verschlüsselt',
     }
   };
 
@@ -5550,6 +5600,9 @@
 
   function displayReport(data) {
     document.getElementById('processing-indicator').classList.remove('visible');
+    const exportAck = document.getElementById('export-ack');
+    if (exportAck) exportAck.checked = false;
+    syncExportActions();
 
     if (data.parseError) {
       document.getElementById('report-content').textContent = data.rawText;
@@ -5604,7 +5657,7 @@
     }).join('');
 
     const reportHTML = `
-<div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.4);margin-bottom:6px">Report generated ${new Date().toLocaleDateString('de-CH')} · ESTV Compliant · ${data.complianceMethod || 'FIFO'}</div>
+<div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.4);margin-bottom:6px">Report generated ${new Date().toLocaleDateString('de-CH')} · Aligned with ESTV guidance · ${data.complianceMethod || 'FIFO'}</div>
 <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--paper);margin-bottom:4px">Crypto Tax Report ${data.taxYear || ''}</div>
 <div style="font-size:13px;color:rgba(245,242,235,0.45);margin-bottom:28px">${data.dateRange || ''} · ${data.totalTransactions} Transactions</div>
 
@@ -5655,7 +5708,30 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     output.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  function syncExportActions() {
+    const ack = document.getElementById('export-ack');
+    const ready = !!(ack && ack.checked);
+    const buttons = [
+      document.getElementById('report-download-btn'),
+      document.getElementById('ledger-download-btn')
+    ];
+    buttons.forEach(btn => {
+      if (!btn) return;
+      btn.disabled = !ready;
+      btn.setAttribute('aria-disabled', ready ? 'false' : 'true');
+    });
+  }
+
+  function isExportAcknowledged() {
+    const ack = document.getElementById('export-ack');
+    if (!ack || ack.checked) return true;
+    showToast('Please confirm the export acknowledgment before downloading.');
+    ack.focus();
+    return false;
+  }
+
   function downloadReport() {
+    if (!isExportAcknowledged()) return;
     const data = window._reportData;
     if (!data) return;
 
@@ -5910,7 +5986,7 @@ onmouseout="this.style.color='#8A909E'">
         <div class="doc-brand">Crypto<span>Declare</span></div>
       </div>
       <div class="doc-subtitle">Swiss Crypto Tax Declaration · cryptodeclare.ch</div>
-      <div style="margin-top:5px;"><span class="estv-badge">ESTV-Compatible</span></div>
+      <div style="margin-top:5px;"><span class="estv-badge">Aligned with ESTV guidance</span></div>
       ${taxpayerHtml}
       `;
       })()}
@@ -6072,9 +6148,9 @@ onmouseout="this.style.color='#8A909E'">
   </div>
 
   <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Legal Notice &amp; Disclaimer</div>
-  <div style="background:#F5F2EB;border-left:3px solid #2D7A56;padding:10px 12px 10px 9px;margin-bottom:12px;border-radius:0;font-size:9.5pt;">
-    <strong style="color:#0D1117;">Supporting document — not an official tax filing.</strong>
-    Attach this annex to your standard cantonal tax return. For private individuals, realised crypto gains are generally tax-free; staking income is taxable. Consult a certified Swiss tax advisor for your situation.
+  <div style="background:#F5F2EB;border-left:3px solid #2D7A56;padding:10px 12px 10px 9px;margin-bottom:12px;border-radius:0;font-size:9.5pt;line-height:1.65;">
+    <strong style="color:#0D1117;">Supporting document — not an official tax filing, tax advice, or legal advice.</strong>
+    This annex is generated automatically from imported transaction data only. No guarantee of accuracy or completeness is given. Missing exchanges, wallets, opening balances, or prior-period history may materially affect results. Review all figures carefully. You remain responsible for your tax declaration.
   </div>
   <div class="compliance-box">
     <strong>🇬🇧 EN</strong><br/>
@@ -6096,11 +6172,12 @@ onmouseout="this.style.color='#8A909E'">
 
   <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss ESTV standard for private individuals. ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss tax reporting standard. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). USD-denominated values use the ESTV annual reference rate of 0.906250 CHF/USD for 31.12.${data.taxYear}. Non-CHF fiat countervalues such as EUR and GBP are converted using historical FX references where available; otherwise annual reference rates are applied. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Exchange-specific tickers are normalised to standard asset symbols (for example Kraken XBT → BTC). All assets identified by base currency. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
+    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Data completeness:</strong> Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
   </div>
   <div class="doc-footer">
@@ -6173,6 +6250,7 @@ onmouseout="this.style.color='#8A909E'">
   }
 
   function downloadLedgerCSV() {
+    if (!isExportAcknowledged()) return;
     const data = window._reportData;
     if (!data || !data.transactions || !data.transactions.length) {
       showToast('No transaction data available — please re-upload your file.');
@@ -6296,6 +6374,8 @@ onmouseout="this.style.color='#8A909E'">
     toast.style.opacity = '1';
     setTimeout(() => { toast.style.opacity = '0'; }, 4000);
   }
+
+  syncExportActions();
 
   // ── Contact form (Formspree) ──
   document.getElementById('contact-form').addEventListener('submit', async function(e) {
