@@ -3746,6 +3746,19 @@
     document.getElementById('processing-text').textContent = text;
   }
 
+  function getNormalizationStatusText(format, fileName='') {
+    const label = fileName ? ` ${fileName}` : '';
+    if (format === 'kraken') return `Processing Kraken history${label} and fetching historical CHF prices...`;
+    if (format === 'swissborg') return `Parsing SwissBorg statement${label}...`;
+    if (format === 'bitstamp') return `Processing Bitstamp history${label}...`;
+    if (format === 'binance_ledger') return `Processing Binance account history${label}...`;
+    return fileName ? `Normalising ${fileName}...` : 'Normalising transactions...';
+  }
+
+  async function waitForUiPaint() {
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+
   async function processFiles(files) {
     if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     if (files.length === 1) return processFile(files[0]);
@@ -3775,6 +3788,8 @@
         const headers = Object.keys(rows[0]);
         const format = detectFormat(headers);
         formats.push(format);
+        setProcessingText(getNormalizationStatusText(format, file.name));
+        await waitForUiPaint();
         const txs = await normaliseRows(rows, format);
         allTransactions = allTransactions.concat(txs);
         totalTxCount += txs.length;
@@ -3852,6 +3867,8 @@
       if (!quickRows.length) throw new Error('No transactions found in file');
       const headers = Object.keys(quickRows[0] || {});
       const format = detectFormat(headers);
+      setProcessingText(getNormalizationStatusText(format, file.name));
+      await waitForUiPaint();
       const transactions = await normaliseRows(quickRows, format);
 
       if (!transactions.length) {
@@ -3882,14 +3899,6 @@
       const lowParseWarning = (parseRate < 0.10 && quickRows.length > 20)
         ? ` Note: only ${transactions.length} of ${quickRows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
         : '';
-
-      // Update status text based on format
-      const firstLines = csvText.slice(0, 300).toLowerCase();
-      if (firstLines.includes('txid') && firstLines.includes('aclass')) {
-        setProcessingText('Fetching historical CHF prices for Kraken transactions...');
-      } else if (firstLines.includes('local time') && firstLines.includes('net amount (chf)')) {
-        setProcessingText('Parsing SwissBorg account statement...');
-      }
       const [result] = await Promise.all([
         buildSingleExchangeReport(transactions, format, lowParseWarning),
         new Promise(resolve => {
@@ -4495,9 +4504,23 @@
     const year = parseInt(dateStr.slice(0,4), 10) || 2024;
     const dec31 = `${year}-12-31`;
     const yearEndPrices = getYearEndPrices(year);
+    const sym = String(asset || '').toUpperCase().trim();
+    if (isFeeCurrencyAsset(sym)) {
+      const ref = getReferenceFiatToChfRate(sym, dateStr);
+      _krakenPriceCache[key] = ref;
+      return ref;
+    }
     if (dateStr === dec31 && yearEndPrices[asset]) {
       _krakenPriceCache[key] = yearEndPrices[asset];
       return yearEndPrices[asset];
+    }
+    const cgId = COINGECKO_ID[asset];
+    if (cgId) {
+      const yearlySeries = await getHistoricalPriceSeriesCHF(asset, year);
+      if (yearlySeries && yearlySeries[dateStr]) {
+        _krakenPriceCache[key] = yearlySeries[dateStr];
+        return yearlySeries[dateStr];
+      }
     }
     const coinbasePrice = await getCoinbaseHistoricalPriceCHF(asset, dateStr);
     if (coinbasePrice && coinbasePrice > 0) {
@@ -4509,16 +4532,10 @@
       _krakenPriceCache[key] = binancePrice;
       return binancePrice;
     }
-    const cgId = COINGECKO_ID[asset];
     if (!cgId) {
       const fallback = yearEndPrices[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
-    }
-    const yearlySeries = await getHistoricalPriceSeriesCHF(asset, year);
-    if (yearlySeries && yearlySeries[dateStr]) {
-      _krakenPriceCache[key] = yearlySeries[dateStr];
-      return yearlySeries[dateStr];
     }
     _krakenPricePromises[key] = (async () => {
       try {
