@@ -4719,6 +4719,7 @@
     const USD_CHF = 0.90625;
     const out = [];
     const krakenTradeValues = {};
+    const krakenYearEndBalances = {};
 
     if (format === 'kraken') {
       for (const r of rows) {
@@ -4933,10 +4934,25 @@
           const subtype = (r['subtype']||'').toLowerCase();
           const rawAmount = parseFloat(r['amount'])||0;
           const mappedAsset = normalizeKrakenAsset(r['asset']);
+          const rawBalance = parseFloat(r['balance'])||0;
           const isBalanceMove = ['deposit','withdrawal','transfer','adjustment'].includes(t) || (t === 'margin' && rawAmount !== 0);
           const isSettlementMove = t === 'settled' && !KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset);
 
           if (!mappedAsset || mappedAsset === 'FEE') continue;
+
+          if (date && !KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset)) {
+            const yearKey = String(date).slice(0,4);
+            if (yearKey) {
+              if (!krakenYearEndBalances[yearKey]) krakenYearEndBalances[yearKey] = {};
+              const existing = krakenYearEndBalances[yearKey][mappedAsset];
+              if (!existing || String(date) >= existing.date) {
+                krakenYearEndBalances[yearKey][mappedAsset] = {
+                  date: String(date),
+                  balance: rawBalance
+                };
+              }
+            }
+          }
 
           // Determine type: real Kraken exports use 'trade' + amount sign; some use 'buy'/'sell'
           if (t === 'trade') {
@@ -5788,11 +5804,27 @@
         out.push({date, type, asset, qty, priceCHF, totalCHF});
       } catch(e) {}
     }
+    if (format === 'kraken' && Object.keys(krakenYearEndBalances).length) {
+      out._authoritativeYearEndBalances = Object.fromEntries(
+        Object.entries(krakenYearEndBalances).map(([year, assets]) => [
+          year,
+          Object.fromEntries(
+            Object.entries(assets).map(([sym, info]) => [
+              sym,
+              Math.round(Math.max(0, Number(info.balance || 0)) * 1e8) / 1e8
+            ])
+          )
+        ])
+      );
+    }
     return out;
   }
 
   async function computeFIFO(transactions, taxYear) {
     const assets = {};
+    const authoritativeYearEndBalances = transactions && transactions._authoritativeYearEndBalances
+      ? (transactions._authoritativeYearEndBalances[String(taxYear)] || null)
+      : null;
     for (const tx of transactions) {
       if (!assets[tx.asset]) assets[tx.asset] = {
         lots:[], buyCount:0, sellCount:0, stakingCount:0,
@@ -5902,9 +5934,12 @@
 
     for (const [sym,a] of Object.entries(assets)) {
       // End holding = sum of remaining lot quantities (most accurate)
-      const endHolding = Math.round(
+      let endHolding = Math.round(
         a.lots.reduce((s,l) => s + (l.qty > 0.000001 ? l.qty : 0), 0) * 1e8
       ) / 1e8;
+      if (authoritativeYearEndBalances && Object.prototype.hasOwnProperty.call(authoritativeYearEndBalances, sym)) {
+        endHolding = Math.round(Math.max(0, Number(authoritativeYearEndBalances[sym] || 0)) * 1e8) / 1e8;
+      }
       // Use a real Dec 31 year-end price where possible, including a historical
       // lookup for assets not covered by the static ESTV/CM reference tables.
       let yearEndPrice = dec31Prices[sym] || 0;
