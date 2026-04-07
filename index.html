@@ -3944,7 +3944,15 @@
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
           // Read all rows as array-of-arrays to find the real header row
-          const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+          const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true });
+          const rowsToCsv = (rows) => rows.map(row =>
+            row.map(cell => {
+              const s = String(cell === null || cell === undefined ? '' : cell);
+              return (s.includes(',') || s.includes('"') || s.includes('\n'))
+                ? '"' + s.replace(/"/g, '""') + '"'
+                : s;
+            }).join(',')
+          ).join('\n');
           // Look for SwissBorg: real headers start after metadata rows
           // Signature: a row where first cell is 'Local time' and contains 'Net amount (CHF)'
           let headerRowIdx = -1;
@@ -3958,17 +3966,13 @@
           if (headerRowIdx >= 0) {
             // Build clean CSV from the real header row onwards
             const dataRows = allRows.slice(headerRowIdx);
-            const csv = dataRows.map(row =>
-              row.map(cell => {
-                const s = String(cell === null || cell === undefined ? '' : cell);
-                return (s.includes(',') || s.includes('"') || s.includes('\n'))
-                  ? '"' + s.replace(/"/g, '""') + '"'
-                  : s;
-              }).join(',')
-            ).join('\n');
+            const csv = rowsToCsv(dataRows);
             resolve(csv);
           } else {
-            const csv = XLSX.utils.sheet_to_csv(sheet);
+            // Serialize the raw worksheet values ourselves instead of relying on
+            // sheet_to_csv formatting, which can introduce locale grouping and
+            // date display quirks in exchange exports (notably Kraken Excel files).
+            const csv = rowsToCsv(allRows);
             if (!csv || csv.trim().length < 10) {
               reject(new Error('Excel file appears to be empty or unreadable'));
             } else {
