@@ -4304,9 +4304,8 @@
   const KRAKEN_QUOTE_VALUE_ASSETS = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
 
   function normalizeKrakenAsset(rawAsset) {
-    const raw = String(rawAsset || '').toUpperCase().trim();
-    const mapped = KRAKEN_ASSET_MAP[raw] || raw.replace(/\.S$/, '').replace(/^[XZ]{1,2}(?=[A-Z]{2,}$)/,'');
-    return mapped.replace(/\.S$/, '');
+    const raw = String(rawAsset || '').toUpperCase().trim().replace(/\.S$/, '');
+    return KRAKEN_ASSET_MAP[raw] || raw;
   }
 
   // ── Historical price cache for Kraken (no prices in ledger export) ──────
@@ -4894,12 +4893,18 @@
           const subtype = (r['subtype']||'').toLowerCase();
           const rawAmount = parseFloat(r['amount'])||0;
           const mappedAsset = normalizeKrakenAsset(r['asset']);
+          const isBalanceMove = ['deposit','withdrawal','transfer','adjustment'].includes(t);
+          const isSettlementMove = t === 'settled' && !KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset);
+
+          if (!mappedAsset || mappedAsset === 'FEE') continue;
 
           // Determine type: real Kraken exports use 'trade' + amount sign; some use 'buy'/'sell'
           if (t === 'trade') {
             // Kraken ledger writes two rows per trade; use only the crypto leg
             if (KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset)) continue;
             type = rawAmount >= 0 ? 'buy' : 'sell';
+          } else if ((isBalanceMove || isSettlementMove) && !KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset) && rawAmount !== 0) {
+            type = rawAmount > 0 ? 'deposit' : 'withdrawal';
           } else if (
             t === 'staking' ||
             (t === 'earn' && rawAmount > 0 && !['allocation','autoallocate','autoallocation'].includes(subtype)) ||
@@ -4930,9 +4935,15 @@
               totalCHF = qty * priceCHF;
             }
           } else {
-            // Reward income rows have no paired fiat leg — use historical spot reference
-            priceCHF = await getHistoricalPriceCHF(asset, dateKey);
-            totalCHF = qty * priceCHF;
+            // Reward income rows have no paired fiat leg — use historical spot reference.
+            // Balance-transfer rows preserve quantity only and should not fabricate a taxable value.
+            if (type === 'staking') {
+              priceCHF = await getHistoricalPriceCHF(asset, dateKey);
+              totalCHF = qty * priceCHF;
+            } else {
+              priceCHF = 0;
+              totalCHF = 0;
+            }
           }
         }
         else if (format === 'swissborg') {
