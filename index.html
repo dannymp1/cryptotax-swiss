@@ -4922,35 +4922,47 @@
           }
 
           asset = (r['amount currency'] || '').toUpperCase().trim();
-          if (!asset || ['USD','EUR','GBP','CHF','USDT','USDC','BUSD','FDUSD'].includes(asset)) continue;
+          if (!asset || ['USD','EUR','GBP','CHF'].includes(asset)) continue;
 
           qty = Math.abs(parseFloat(r['amount'] || 0) || 0);
           if (qty <= 0) continue;
 
-          const valueCur = (r['value currency'] || r['rate currency'] || '').toUpperCase().trim();
-          const fxRate = await getFiatToChfRate(valueCur || 'USD', String(date || '').slice(0,10));
+          const quoteCur = (r['value currency'] || r['rate currency'] || '').toUpperCase().trim();
+          const dateKey = String(date || '').slice(0,10);
+          let quoteRate = 1;
+          if (quoteCur) {
+            if (['USD','EUR','GBP','CHF'].includes(quoteCur) || USD_LINKED_FIAT.includes(quoteCur)) {
+              quoteRate = await getFiatToChfRate(quoteCur, dateKey);
+            } else {
+              quoteRate = await getHistoricalPriceCHF(quoteCur, dateKey);
+            }
+          }
           const rawRate = parseFloat(r['rate'] || 0) || 0;
           const rawValue = Math.abs(parseFloat(r['value'] || 0) || 0);
           const feeQty = Math.abs(parseFloat(r['fee'] || 0) || 0);
-          const feeCoin = (r['fee currency'] || valueCur || 'USD').toUpperCase().trim();
+          const feeCoin = (r['fee currency'] || quoteCur || 'USD').toUpperCase().trim();
 
           if (type === 'staking') {
-            if (rawValue > 0) {
-              totalCHF = rawValue * fxRate;
+            if (rawValue > 0 && quoteRate > 0) {
+              totalCHF = rawValue * quoteRate;
               priceCHF = qty > 0 ? totalCHF / qty : 0;
             } else {
-              priceCHF = await getHistoricalPriceCHF(asset, String(date || '').slice(0,10));
+              priceCHF = await getHistoricalPriceCHF(asset, dateKey);
               totalCHF = qty * priceCHF;
             }
           } else if (type === 'deposit' || type === 'withdrawal') {
             priceCHF = 0;
             totalCHF = 0;
           } else {
-            priceCHF = rawRate * fxRate;
-            totalCHF = rawValue > 0 ? rawValue * fxRate : qty * priceCHF;
+            if (rawRate > 0 && quoteRate > 0) {
+              priceCHF = rawRate * quoteRate;
+            } else {
+              priceCHF = await getHistoricalPriceCHF(asset, dateKey);
+            }
+            totalCHF = rawValue > 0 && quoteRate > 0 ? rawValue * quoteRate : qty * priceCHF;
             ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
               date, type, asset, qty, priceCHF, totalCHF,
-              feeQty, feeCoin, quoteAsset: valueCur || feeCoin || 'USD', quoteRate: fxRate
+              feeQty, feeCoin, quoteAsset: quoteCur || feeCoin || 'USD', quoteRate
             }));
           }
         }
