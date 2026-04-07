@@ -4291,7 +4291,8 @@
     'XXDG':'DOGE','XDG':'DOGE',
     'ZUSD':'USD','ZEUR':'EUR','ZCHF':'CHF','ZGBP':'GBP',
   };
-  const KRAKEN_FIAT_ASSETS = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
+  const KRAKEN_TRUE_FIAT_ASSETS = ['USD','EUR','CHF','GBP'];
+  const KRAKEN_QUOTE_VALUE_ASSETS = ['USD','EUR','CHF','GBP','USDT','USDC','BUSD','DAI'];
 
   function normalizeKrakenAsset(rawAsset) {
     const raw = String(rawAsset || '').toUpperCase().trim();
@@ -4670,10 +4671,14 @@
         const refid = String(r['refid'] || '').trim();
         if (!refid) continue;
         const assetCode = normalizeKrakenAsset(r['asset']);
-        if (!KRAKEN_FIAT_ASSETS.includes(assetCode)) continue;
+        if (!KRAKEN_QUOTE_VALUE_ASSETS.includes(assetCode)) continue;
         const amount = Math.abs(parseFloat(r['amount']) || 0);
         if (amount <= 0) continue;
-        krakenTradeValues[refid] = { quoteAsset: assetCode, quoteAmount: amount };
+        const candidatePriority = KRAKEN_TRUE_FIAT_ASSETS.includes(assetCode) ? 2 : 1;
+        const existing = krakenTradeValues[refid];
+        if (!existing || candidatePriority > (existing.priority || 0)) {
+          krakenTradeValues[refid] = { quoteAsset: assetCode, quoteAmount: amount, priority: candidatePriority };
+        }
       }
     }
 
@@ -4876,11 +4881,11 @@
           // Determine type: real Kraken exports use 'trade' + amount sign; some use 'buy'/'sell'
           if (t === 'trade') {
             // Kraken ledger writes two rows per trade; use only the crypto leg
-            if (KRAKEN_FIAT_ASSETS.includes(mappedAsset)) continue;
+            if (KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset)) continue;
             type = rawAmount >= 0 ? 'buy' : 'sell';
           } else if (
             t === 'staking' ||
-            (t === 'earn' && rawAmount > 0 && !['allocation','autoallocate'].includes(subtype)) ||
+            (t === 'earn' && rawAmount > 0 && !['allocation','autoallocate','autoallocation'].includes(subtype)) ||
             subtype.includes('reward') || subtype.includes('interest') || subtype.includes('cashback')
           ) {
             type = 'staking';
