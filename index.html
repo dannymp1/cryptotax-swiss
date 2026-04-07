@@ -4295,6 +4295,8 @@
   const _krakenPricePromises = {};
   const _krakenRangeCache = {};
   const _krakenRangePromises = {};
+  const _binanceHistCache = {};
+  const _binanceHistPromises = {};
   const COINGECKO_ID = {
     BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin',
     ADA:'cardano', XRP:'ripple', DOT:'polkadot', AVAX:'avalanche-2',
@@ -4423,6 +4425,56 @@
     return _krakenRangePromises[seriesKey];
   }
 
+  async function getBinanceHistoricalPriceCHF(asset, dateStr) {
+    const sym = String(asset || '').toUpperCase().trim();
+    const safeDate = String(dateStr || '').slice(0,10);
+    if (!sym || !/^\d{4}-\d{2}-\d{2}$/.test(safeDate)) return null;
+    const key = sym + '_' + safeDate;
+    if (_binanceHistCache[key] !== undefined) return _binanceHistCache[key];
+    if (_binanceHistPromises[key]) return _binanceHistPromises[key];
+
+    _binanceHistPromises[key] = (async () => {
+      try {
+        const start = Date.parse(`${safeDate}T00:00:00Z`);
+        const end = Date.parse(`${safeDate}T23:59:59Z`);
+        const candidateQuotes = ['USDT','BUSD','USDC','BTC','ETH','BNB'];
+
+        for (const quote of candidateQuotes) {
+          if (quote === sym) continue;
+          const pair = `${sym}${quote}`;
+          const url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=1&startTime=${start}&endTime=${end}`;
+          try {
+            const data = await fetchJsonWithTimeout(url, 8000);
+            const row = Array.isArray(data) ? data[0] : null;
+            const closePrice = row ? Number(row[4] || 0) : 0;
+            if (!closePrice) continue;
+
+            let quotePriceCHF = 0;
+            if (isFeeCurrencyAsset(quote)) {
+              quotePriceCHF = await getFiatToChfRate(quote, safeDate);
+            } else {
+              quotePriceCHF = await getHistoricalPriceCHF(quote, safeDate);
+            }
+            if (!quotePriceCHF) continue;
+
+            const chfPrice = closePrice * quotePriceCHF;
+            _binanceHistCache[key] = chfPrice;
+            return chfPrice;
+          } catch (e) {
+            continue;
+          }
+        }
+
+        _binanceHistCache[key] = null;
+        return null;
+      } finally {
+        delete _binanceHistPromises[key];
+      }
+    })();
+
+    return _binanceHistPromises[key];
+  }
+
   // Rate-limit historical fetches to avoid burning CoinGecko quota needed by the live ticker
   let _lastCgHistFetch = 0;
   async function getHistoricalPriceCHF(asset, dateStr) {
@@ -4441,6 +4493,11 @@
     if (coinbasePrice && coinbasePrice > 0) {
       _krakenPriceCache[key] = coinbasePrice;
       return coinbasePrice;
+    }
+    const binancePrice = await getBinanceHistoricalPriceCHF(asset, dateStr);
+    if (binancePrice && binancePrice > 0) {
+      _krakenPriceCache[key] = binancePrice;
+      return binancePrice;
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
