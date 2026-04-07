@@ -4201,6 +4201,7 @@
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
     if (h.includes('utc_time') && h.includes('base_asset') && h.includes('quote_asset')) return 'binance'; // transaction history
+    if (h.includes('user_id') && h.includes('utc_time') && h.includes('account') && h.includes('operation') && h.includes('coin') && h.includes('change')) return 'binance_ledger';
     // ── Bybit ────────────────────────────────────────────────────────────────
     if ((h.includes('time') || h.includes('trade time') || h.includes('date(utc)') || h.includes('date')) && h.includes('symbol') && (h.includes('qty') || h.includes('executed qty') || h.includes('filled qty')) && h.includes('side') && !h.includes('transaction type')) return 'bybit';
     // ── Coinbase ─────────────────────────────────────────────────────────────
@@ -4243,7 +4244,7 @@
   }
 
   const EXCHANGE_DISPLAY_NAMES = {
-    binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
+    binance:'Binance', binance_ledger:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
     bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
     bitstamp:'Bitstamp',
     bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
@@ -4607,6 +4608,192 @@
         if (amount <= 0) continue;
         krakenTradeValues[refid] = { quoteAsset: assetCode, quoteAmount: amount };
       }
+    }
+
+    if (format === 'binance_ledger') {
+      const TRUE_FIAT = ['USD','EUR','GBP','CHF'];
+      const groups = new Map();
+
+      const isTrueFiat = (sym) => TRUE_FIAT.includes(String(sym || '').toUpperCase().trim());
+      const cleanAsset = (sym) => String(sym || '').toUpperCase().trim();
+      const parseAbs = (value) => Math.abs(parseFloat(value || 0) || 0);
+      const parseSigned = (value) => parseFloat(value || 0) || 0;
+      const groupSum = (items) => items.reduce((sum, row) => sum + parseAbs(row['change']), 0);
+      const uniqueCoins = (items) => [...new Set(items.map(row => cleanAsset(row['coin'])).filter(Boolean))];
+
+      const getLedgerAssetPriceCHF = async (asset, dateKey) => {
+        const sym = cleanAsset(asset);
+        if (!sym) return 0;
+        if (isFeeCurrencyAsset(sym)) return await getFiatToChfRate(sym, dateKey);
+        return await getHistoricalPriceCHF(sym, dateKey);
+      };
+
+      const pushLedgerTradePair = async ({ date, soldAsset, soldQty, buyAsset, buyQty }) => {
+        const dateKey = String(date || '').slice(0,10);
+        const sellSym = cleanAsset(soldAsset);
+        const buySym = cleanAsset(buyAsset);
+        const sellQty = Number(soldQty || 0);
+        const recvQty = Number(buyQty || 0);
+
+        let totalCHF = 0;
+        if (sellSym && sellQty > 0 && isTrueFiat(sellSym)) {
+          totalCHF = sellQty * await getFiatToChfRate(sellSym, dateKey);
+        } else if (buySym && recvQty > 0 && isTrueFiat(buySym)) {
+          totalCHF = recvQty * await getFiatToChfRate(buySym, dateKey);
+        } else if (buySym && recvQty > 0 && isFeeCurrencyAsset(buySym)) {
+          totalCHF = recvQty * await getFiatToChfRate(buySym, dateKey);
+        } else if (sellSym && sellQty > 0 && isFeeCurrencyAsset(sellSym)) {
+          totalCHF = sellQty * await getFiatToChfRate(sellSym, dateKey);
+        } else if (buySym && recvQty > 0) {
+          totalCHF = recvQty * await getLedgerAssetPriceCHF(buySym, dateKey);
+        } else if (sellSym && sellQty > 0) {
+          totalCHF = sellQty * await getLedgerAssetPriceCHF(sellSym, dateKey);
+        }
+
+        if (sellSym && sellQty > 0 && !isTrueFiat(sellSym) && totalCHF > 0) {
+          out.push({
+            date,
+            type: 'sell',
+            asset: sellSym,
+            qty: sellQty,
+            priceCHF: totalCHF / sellQty,
+            totalCHF
+          });
+        }
+
+        if (buySym && recvQty > 0 && !isTrueFiat(buySym) && totalCHF > 0) {
+          out.push({
+            date,
+            type: 'buy',
+            asset: buySym,
+            qty: recvQty,
+            priceCHF: totalCHF / recvQty,
+            totalCHF
+          });
+        }
+      };
+
+      for (const r of rows) {
+        const date = normalizeImportedDate(r['utc_time'] || r['date'] || '');
+        const key = `${date}|${r['account'] || ''}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(r);
+      }
+
+      for (const [, group] of groups) {
+        if (!group.length) continue;
+        const date = normalizeImportedDate(group[0]['utc_time'] || group[0]['date'] || '');
+        const dateKey = String(date || '').slice(0,10);
+
+        const deposits = group.filter(r => (r['operation'] || '').toLowerCase() === 'deposit');
+        const withdrawals = group.filter(r => (r['operation'] || '').toLowerCase() === 'withdraw');
+        const fees = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction fee');
+        const soldRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction sold');
+        const revenueRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction revenue');
+        const buyRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction buy');
+        const spendRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction spend');
+        const convertRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'binance convert');
+        const smallAssetRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'small assets exchange bnb');
+        const stakingRows = group.filter(r => {
+          const op = (r['operation'] || '').toLowerCase();
+          return op.includes('reward') || op.includes('interest') || op.includes('staking') || op.includes('distribution');
+        });
+
+        for (const r of deposits) {
+          const asset = cleanAsset(r['coin']);
+          const qty = parseAbs(r['change']);
+          if (!asset || isTrueFiat(asset) || qty <= 0) continue;
+          out.push({ date, type: 'deposit', asset, qty, priceCHF: 0, totalCHF: 0 });
+        }
+
+        for (const r of withdrawals) {
+          const asset = cleanAsset(r['coin']);
+          const qty = parseAbs(r['change']);
+          if (!asset || isTrueFiat(asset) || qty <= 0) continue;
+          out.push({ date, type: 'withdrawal', asset, qty, priceCHF: 0, totalCHF: 0 });
+        }
+
+        if (soldRows.length && revenueRows.length) {
+          const soldAsset = uniqueCoins(soldRows)[0];
+          const revenueAsset = uniqueCoins(revenueRows)[0];
+          const soldQty = groupSum(soldRows);
+          const revenueQty = groupSum(revenueRows);
+          await pushLedgerTradePair({
+            date,
+            soldAsset,
+            soldQty,
+            buyAsset: revenueAsset,
+            buyQty: revenueQty
+          });
+        }
+
+        if (buyRows.length && spendRows.length) {
+          const buyAsset = uniqueCoins(buyRows)[0];
+          const spendAsset = uniqueCoins(spendRows)[0];
+          const buyQty = groupSum(buyRows);
+          const spendQty = groupSum(spendRows);
+          await pushLedgerTradePair({
+            date,
+            soldAsset: spendAsset,
+            soldQty: spendQty,
+            buyAsset,
+            buyQty
+          });
+        }
+
+        if (convertRows.length) {
+          const negatives = convertRows.filter(r => parseSigned(r['change']) < 0);
+          const positives = convertRows.filter(r => parseSigned(r['change']) > 0);
+          if (negatives.length && positives.length) {
+            await pushLedgerTradePair({
+              date,
+              soldAsset: cleanAsset(negatives[0]['coin']),
+              soldQty: groupSum(negatives),
+              buyAsset: cleanAsset(positives[0]['coin']),
+              buyQty: groupSum(positives)
+            });
+          }
+        }
+
+        if (smallAssetRows.length) {
+          const byRemark = {};
+          for (const r of smallAssetRows) {
+            const remark = String(r['remark'] || '').trim() || '__default__';
+            if (!byRemark[remark]) byRemark[remark] = [];
+            byRemark[remark].push(r);
+          }
+          for (const rowsForRemark of Object.values(byRemark)) {
+            const negatives = rowsForRemark.filter(r => parseSigned(r['change']) < 0);
+            const positives = rowsForRemark.filter(r => parseSigned(r['change']) > 0);
+            if (!negatives.length || !positives.length) continue;
+            await pushLedgerTradePair({
+              date,
+              soldAsset: cleanAsset(negatives[0]['coin']),
+              soldQty: groupSum(negatives),
+              buyAsset: cleanAsset(positives[0]['coin']),
+              buyQty: groupSum(positives)
+            });
+          }
+        }
+
+        for (const r of stakingRows) {
+          const asset = cleanAsset(r['coin']);
+          const qty = parseAbs(r['change']);
+          if (!asset || isTrueFiat(asset) || qty <= 0) continue;
+          const priceCHF = await getLedgerAssetPriceCHF(asset, dateKey);
+          out.push({ date, type: 'staking', asset, qty, priceCHF, totalCHF: qty * priceCHF });
+        }
+
+        for (const r of fees) {
+          const asset = cleanAsset(r['coin']);
+          const qty = parseAbs(r['change']);
+          if (!asset || isTrueFiat(asset) || qty <= 0) continue;
+          const priceCHF = await getLedgerAssetPriceCHF(asset, dateKey);
+          out.push({ date, type: 'withdrawal', asset, qty, priceCHF, totalCHF: qty * priceCHF, _isFee: true });
+        }
+      }
+
+      return out.filter(tx => tx.qty > 0 && tx.asset);
     }
 
     for (const r of rows) {
@@ -5662,6 +5849,7 @@
       kraken_trades: `Exchange format detected: Kraken (trades). Quote-currency values converted to CHF using exchange quote currency and historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. CHF values used directly where exported; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       binance: `Exchange format detected: Binance. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance_ledger: `Exchange format detected: Binance. Trade values derived from matched account-history debit/credit entries. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat and crypto countervalues converted using historical market and FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitstamp: `Exchange format detected: Bitstamp. Fiat quote currencies converted to CHF using historical FX references where available; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bybit: `Exchange format detected: Bybit. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
