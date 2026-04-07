@@ -4893,7 +4893,7 @@
           const subtype = (r['subtype']||'').toLowerCase();
           const rawAmount = parseFloat(r['amount'])||0;
           const mappedAsset = normalizeKrakenAsset(r['asset']);
-          const isBalanceMove = ['deposit','withdrawal','transfer','adjustment'].includes(t);
+          const isBalanceMove = ['deposit','withdrawal','transfer','adjustment'].includes(t) || (t === 'margin' && rawAmount !== 0);
           const isSettlementMove = t === 'settled' && !KRAKEN_TRUE_FIAT_ASSETS.includes(mappedAsset);
 
           if (!mappedAsset || mappedAsset === 'FEE') continue;
