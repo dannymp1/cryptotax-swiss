@@ -4095,6 +4095,7 @@
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
     if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     // ── Binance ──────────────────────────────────────────────────────────────
+    if (h.includes('date(utc)') && h.includes('pair') && h.includes('base asset') && h.includes('quote asset') && h.includes('fee coin')) return 'binance';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
     if (h.includes('utc_time') && h.includes('base_asset') && h.includes('quote_asset')) return 'binance'; // transaction history
@@ -4104,6 +4105,8 @@
     if (h.includes('transaction type') && (h.includes('quantity transacted') || h.includes('quantity'))) return 'coinbase';
     // ── Swissquote ───────────────────────────────────────────────────────────
     if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
+    // ── Bitstamp ─────────────────────────────────────────────────────────────
+    if (h.includes('amount currency') && h.includes('value currency') && h.includes('rate currency') && h.includes('order id') && h.includes('subtype')) return 'bitstamp';
     // ── Bitpanda ─────────────────────────────────────────────────────────────
     if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
     // ── OKX ──────────────────────────────────────────────────────────────────
@@ -4140,6 +4143,7 @@
   const EXCHANGE_DISPLAY_NAMES = {
     binance:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
     bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
+    bitstamp:'Bitstamp',
     bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
     bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
     crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', revolut:'Revolut',
@@ -4456,6 +4460,34 @@
     }
 
     return { qty, priceCHF, totalCHF };
+  }
+
+  function normalizeImportedDate(raw) {
+    const v = String(raw == null ? '' : raw).trim();
+    if (!v) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v;
+    if (/^\d{2}\.\d{2}\.\d{4}/.test(v)) {
+      const [d, m, y] = v.split(' ')[0].split('.');
+      const timePart = v.includes(' ') ? v.slice(v.indexOf(' ') + 1).trim() : '';
+      return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}` + (timePart ? ` ${timePart}` : '');
+    }
+    if (/^\d+(\.\d+)?$/.test(v)) {
+      const serial = Number(v);
+      if (Number.isFinite(serial) && serial > 20000 && serial < 80000) {
+        const ms = Math.round((serial - 25569) * 86400 * 1000);
+        const dt = new Date(ms);
+        if (!Number.isNaN(dt.getTime())) {
+          const pad = n => String(n).padStart(2,'0');
+          return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth()+1)}-${pad(dt.getUTCDate())} ${pad(dt.getUTCHours())}:${pad(dt.getUTCMinutes())}:${pad(dt.getUTCSeconds())}`;
+        }
+      }
+    }
+    const dt = new Date(v);
+    if (!Number.isNaN(dt.getTime())) {
+      const pad = n => String(n).padStart(2,'0');
+      return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth()+1)}-${pad(dt.getUTCDate())} ${pad(dt.getUTCHours())}:${pad(dt.getUTCMinutes())}:${pad(dt.getUTCSeconds())}`;
+    }
+    return v;
   }
 
   async function normaliseRows(rows, format) {
@@ -4778,7 +4810,7 @@
           // Supports two Binance export formats:
           // A) Trade History:  Date(UTC), Pair, Side, Price, Executed, Amount, Fee
           // B) Transaction History: UTC_Time, Account, Type, Base_Asset, Pair, Side, Executed_Qty, Quote_Qty
-          date = r['date(utc)']||r['utc_time']||r['date']||'';
+          date = normalizeImportedDate(r['date(utc)']||r['utc_time']||r['date']||'');
           const txType = (r['type']||'').toLowerCase().trim();
           const side   = (r['side']||'').toLowerCase().trim();
 
@@ -4787,6 +4819,8 @@
             if (side === 'buy') type = 'buy';
             else if (side === 'sell') type = 'sell';
             else continue;
+          } else if ((txType === 'buy' || txType === 'sell') && !side) {
+            type = txType;
           } else if (txType === 'convert') {
             type = 'sell'; // always selling the base asset
           } else if (txType === 'deposit') {
@@ -4829,7 +4863,7 @@
           const quoteAsset = (pair.match(/(CHF|USDT|BUSD|USDC|FDUSD|USD|EUR|GBP)$/) || [])[1] || 'USD';
           const quoteRate = await getFiatToChfRate(quoteAsset, date.slice(0,10));
           // Prefer Base_Asset column (new format); fall back to pair string parsing
-          const baseAsset = (r['base_asset']||'').toUpperCase().trim();
+          const baseAsset = (r['base_asset']||r['base asset']||'').toUpperCase().trim();
           if (baseAsset && !['USDT','BUSD','USDC','FDUSD'].includes(baseAsset)) {
             asset = baseAsset;
           } else if (baseAsset) {
@@ -4865,6 +4899,58 @@
             ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
               date, type, asset, qty, priceCHF, totalCHF,
               feeQty, feeCoin, quoteAsset, quoteRate
+            }));
+          }
+        }
+        else if (format === 'bitstamp') {
+          date = normalizeImportedDate(r['datetime'] || r['date'] || '');
+          const txType = (r['type'] || '').toLowerCase().trim();
+          const subtype = (r['subtype'] || '').toLowerCase().trim();
+
+          if (txType === 'market') {
+            if (subtype === 'buy') type = 'buy';
+            else if (subtype === 'sell') type = 'sell';
+            else continue;
+          } else if (txType.includes('deposit')) {
+            type = 'deposit';
+          } else if (txType.includes('withdraw')) {
+            type = 'withdrawal';
+          } else if (txType.includes('interest') || txType.includes('reward') || txType.includes('staking') || subtype.includes('interest') || subtype.includes('reward') || subtype.includes('staking')) {
+            type = 'staking';
+          } else {
+            continue;
+          }
+
+          asset = (r['amount currency'] || '').toUpperCase().trim();
+          if (!asset || ['USD','EUR','GBP','CHF','USDT','USDC','BUSD','FDUSD'].includes(asset)) continue;
+
+          qty = Math.abs(parseFloat(r['amount'] || 0) || 0);
+          if (qty <= 0) continue;
+
+          const valueCur = (r['value currency'] || r['rate currency'] || '').toUpperCase().trim();
+          const fxRate = await getFiatToChfRate(valueCur || 'USD', String(date || '').slice(0,10));
+          const rawRate = parseFloat(r['rate'] || 0) || 0;
+          const rawValue = Math.abs(parseFloat(r['value'] || 0) || 0);
+          const feeQty = Math.abs(parseFloat(r['fee'] || 0) || 0);
+          const feeCoin = (r['fee currency'] || valueCur || 'USD').toUpperCase().trim();
+
+          if (type === 'staking') {
+            if (rawValue > 0) {
+              totalCHF = rawValue * fxRate;
+              priceCHF = qty > 0 ? totalCHF / qty : 0;
+            } else {
+              priceCHF = await getHistoricalPriceCHF(asset, String(date || '').slice(0,10));
+              totalCHF = qty * priceCHF;
+            }
+          } else if (type === 'deposit' || type === 'withdrawal') {
+            priceCHF = 0;
+            totalCHF = 0;
+          } else {
+            priceCHF = rawRate * fxRate;
+            totalCHF = rawValue > 0 ? rawValue * fxRate : qty * priceCHF;
+            ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+              date, type, asset, qty, priceCHF, totalCHF,
+              feeQty, feeCoin, quoteAsset: valueCur || feeCoin || 'USD', quoteRate: fxRate
             }));
           }
         }
@@ -5271,10 +5357,13 @@
       };
       const a = assets[tx.asset];
       if (tx.priceCHF>0) a.lastPriceCHF = tx.priceCHF;
+      const inReportYear = tx.date && tx.date.slice(0,4) === String(taxYear);
 
       if (tx.type==='buy') {
-        a.buyCount++;
-        a.totalBought = Math.round((a.totalBought+tx.qty)*1e8)/1e8;
+        if (inReportYear) {
+          a.buyCount++;
+          a.totalBought = Math.round((a.totalBought+tx.qty)*1e8)/1e8;
+        }
         a.lots.push({qty:tx.qty, priceCHF:tx.priceCHF||0});
       }
       else if (tx.type==='deposit') {
@@ -5282,17 +5371,21 @@
         a.lots.push({qty:tx.qty, priceCHF:0, unknownBasis:true});
       }
       else if (tx.type==='sell') {
-        a.sellCount++;
-        a.totalSold = Math.round((a.totalSold+tx.qty)*1e8)/1e8;
+        if (inReportYear) {
+          a.sellCount++;
+          a.totalSold = Math.round((a.totalSold+tx.qty)*1e8)/1e8;
+        }
         const proceeds = tx.totalCHF>0 ? tx.totalCHF : tx.qty*(tx.priceCHF||0);
-        a.saleProceeds += proceeds;
+        if (inReportYear) a.saleProceeds += proceeds;
         const lotsBeforeSell = a.lots.reduce((s,l)=>s+l.qty,0);
 
         if (lotsBeforeSell < 0.000001 && proceeds > 0) {
           // Fully missing cost basis — exclude entirely
-          a.missingCostBasis = true;
-          a.unresolvedProceeds = (a.unresolvedProceeds||0) + proceeds;
-          a.unresolvedQty = (a.unresolvedQty||0) + tx.qty;
+          if (inReportYear) {
+            a.missingCostBasis = true;
+            a.unresolvedProceeds = (a.unresolvedProceeds||0) + proceeds;
+            a.unresolvedQty = (a.unresolvedQty||0) + tx.qty;
+          }
         } else {
           // Partial or full cost basis available
           let rem=tx.qty, cb=0, unresolvedMatchedQty=0;
@@ -5315,29 +5408,35 @@
             const coveredQty = tx.qty - unresolvedQty;
             const coveredProceeds = proceeds * (coveredQty / tx.qty);
             const uncoveredProceeds = proceeds * (unresolvedQty / tx.qty);
-            a.costBasisSold += cb;
-            a.gainLoss += coveredProceeds - cb;
-            // Exclude uncovered portion as unresolved proceeds
-            a.missingCostBasis = true;
-            a.unresolvedProceeds = (a.unresolvedProceeds||0) + uncoveredProceeds;
-            a.unresolvedQty = (a.unresolvedQty||0) + unresolvedQty;
+            if (inReportYear) {
+              a.costBasisSold += cb;
+              a.gainLoss += coveredProceeds - cb;
+              // Exclude uncovered portion as unresolved proceeds
+              a.missingCostBasis = true;
+              a.unresolvedProceeds = (a.unresolvedProceeds||0) + uncoveredProceeds;
+              a.unresolvedQty = (a.unresolvedQty||0) + unresolvedQty;
+            }
           } else {
-            a.costBasisSold += cb;
-            a.gainLoss += proceeds - cb;
+            if (inReportYear) {
+              a.costBasisSold += cb;
+              a.gainLoss += proceeds - cb;
+            }
           }
         }
       }
       else if (tx.type==='staking') {
-        a.stakingCount++;
+        if (inReportYear) a.stakingCount++;
         const income=tx.totalCHF>0?tx.totalCHF:tx.qty*(tx.priceCHF||0);
         // Only count staking income for the tax year being reported
-        if (tx.date && tx.date.slice(0,4) === String(taxYear)) {
+        if (inReportYear) {
           a.stakingIncome+=income;
         }
         // _noLot: true means this is derivative funding income — no real asset acquired,
         // so don't add to lots (prevents phantom holdings/wealth value)
         if (!tx._noLot) {
-          a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
+          if (inReportYear) {
+            a.totalBought=Math.round((a.totalBought+tx.qty)*1e8)/1e8;
+          }
           a.lots.push({qty:tx.qty,priceCHF:tx.priceCHF||0});
         }
       }
@@ -5437,6 +5536,7 @@
       kraken_trades: `Exchange format detected: Kraken (trades). Quote-currency values converted to CHF using exchange quote currency and historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. CHF values used directly where exported; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       binance: `Exchange format detected: Binance. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitstamp: `Exchange format detected: Bitstamp. Fiat quote currencies converted to CHF using historical FX references where available; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bybit: `Exchange format detected: Bybit. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx: `Exchange format detected: OKX. USD/CHF rate: 0.906250 (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
