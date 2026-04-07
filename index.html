@@ -4300,6 +4300,7 @@
     ADA:'cardano', XRP:'ripple', DOT:'polkadot', AVAX:'avalanche-2',
     MATIC:'matic-network', LINK:'chainlink', UNI:'uniswap', ATOM:'cosmos',
     LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
+    TLM:'alien-worlds',
   };
 
   async function fetchJsonWithTimeout(url, timeoutMs) {
@@ -5651,7 +5652,7 @@
     return out;
   }
 
-  function computeFIFO(transactions, taxYear) {
+  async function computeFIFO(transactions, taxYear) {
     const assets = {};
     for (const tx of transactions) {
       if (!assets[tx.asset]) assets[tx.asset] = {
@@ -5765,8 +5766,15 @@
       const endHolding = Math.round(
         a.lots.reduce((s,l) => s + (l.qty > 0.000001 ? l.qty : 0), 0) * 1e8
       ) / 1e8;
-      // Use real Dec 31 year-end price if available, else fall back to last seen price
-      const yearEndPrice = dec31Prices[sym] || a.lastPriceCHF;
+      // Use a real Dec 31 year-end price where possible, including a historical
+      // lookup for assets not covered by the static ESTV/CM reference tables.
+      let yearEndPrice = dec31Prices[sym] || 0;
+      if (!yearEndPrice && endHolding > 0) {
+        yearEndPrice = await getHistoricalPriceCHF(sym, `${taxYear}-12-31`);
+      }
+      if (!yearEndPrice) {
+        yearEndPrice = a.lastPriceCHF;
+      }
       const endValueCHF = Math.round(endHolding*yearEndPrice*100)/100;
       totalStaking+=a.stakingIncome;
       totalGain+=a.gainLoss;
@@ -5927,7 +5935,7 @@
     const taxYear = getReportTaxYear(transactions);
     const reportTransactions = getTransactionsForTaxYear(transactions, taxYear);
     const meta = buildReportMeta(reportTransactions, taxYear);
-    const computed = computeFIFO(transactions, meta.taxYear);
+    const computed = await computeFIFO(transactions, meta.taxYear);
     let assetNames = getDefaultAssetNames();
     let notes = buildExchangeNotes(format, meta.taxYear, lowParseWarning);
     ({ assetNames, notes } = await enrichAssetNamesAndNotes(format, meta.taxYear, computed, assetNames, notes));
@@ -5939,7 +5947,7 @@
     const taxYear = getReportTaxYear(transactions);
     const reportTransactions = getTransactionsForTaxYear(transactions, taxYear);
     const meta = buildReportMeta(reportTransactions, taxYear);
-    const computed = computeFIFO(transactions, meta.taxYear);
+    const computed = await computeFIFO(transactions, meta.taxYear);
     const assetNames = getDefaultAssetNames();
     const notes = buildMultiExchangeNotes(format, meta.taxYear);
     return buildFinalReport(meta, reportTransactions, computed, assetNames, notes);
