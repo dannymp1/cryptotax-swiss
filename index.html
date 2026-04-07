@@ -3992,6 +3992,101 @@
     'USDC': 0.9063, 'USDT': 0.9063, 'DAI': 0.9063, 'FDUSD': 0.9063,
   }
 
+  const YEAREND_PRICES_2023 = {
+    // ICTax / ESTV official year-end token values, 31.12.2023
+    'BTC': 35541.630896,
+    'ETH': 1948.008419,
+    'BCH': 219.587313,
+    'BNB': 263.007535,
+    'ADA': 0.508133,
+    'AVAX': 33.712637,
+    'CRO': 0.083588,
+    'DAI': 0.841564,
+    'DOGE': 0.076852,
+    'DOT': 7.013349,
+    'ETC': 19.087148,
+    'FIL': 4.962093,
+    'ICP': 7.826450,
+    'LINK': 13.087553,
+    'LTC': 63.513972,
+    'MATIC': 0.819431,
+    'NEAR': 3.116789,
+    'SOL': 89.191430,
+    'TRX': 0.089101,
+    'UNI': 6.290979,
+    'USDC': 0.841910,
+    'USDT': 0.842165,
+    'WBTC': 35499.695765,
+    'XRP': 0.524777,
+  }
+
+  const YEAREND_PRICES_2022 = {
+    // ICTax / ESTV official year-end token values, 31.12.2022
+    'BTC': 15345.739085,
+    'ETH': 1109.251223,
+    'ADA': 0.228390,
+    'AVAX': 10.084990,
+    'BCH': 89.511182,
+    'BNB': 227.828140,
+    'BUSD': 0.925228,
+    'CRO': 0.051655,
+    'DAI': 0.925228,
+    'DOGE': 0.064910,
+    'DOT': 3.987730,
+    'FIL': 2.784940,
+    'ICP': 3.673160,
+    'LINK': 5.142130,
+    'LTC': 62.841485,
+    'MATIC': 0.701320,
+    'NEAR': 1.158850,
+    'OKB': 24.106820,
+    'SHIB': 0.00000748,
+    'SOL': 9.208330,
+    'TRX': 0.050410,
+    'UNI': 4.773400,
+    'USDC': 0.925228,
+    'USDT': 0.924920,
+    'WBTC': 15273.090340,
+    'XRP': 0.316784,
+  }
+
+  const YEAREND_PRICES_2021 = {
+    // ICTax / ESTV official year-end token values, 31.12.2021
+    'AVAX': 99.894000,
+    'BNB': 466.205500,
+    'BUSD': 0.911141,
+    'BTC': 43071.028398,
+    'BCH': 394.352979,
+    'BSV': 110.408500,
+    'ADA': 1.194400,
+    'LINK': 17.964800,
+    'CRO': 0.508400,
+    'DASH': 121.910700,
+    'DOGE': 0.155600,
+    'EOS': 2.766900,
+    'ETH': 3389.950242,
+    'ETC': 31.053800,
+    'IOT': 1.244800,
+    'LTC': 135.282545,
+    'XMR': 208.640700,
+    'XEM': 0.111500,
+    'NEO': 23.422200,
+    'DOT': 24.359500,
+    'MATIC': 2.301500,
+    'QTUM': 7.958600,
+    'XRP': 0.766273,
+    'SHIB': 0.000030,
+    'SOL': 155.573600,
+    'XLM': 0.253600,
+    'LUNA': 77.859300,
+    'USDT': 0.911141,
+    'XTZ': 3.959200,
+    'TRX': 0.068700,
+    'UNI': 15.523200,
+    'USDC': 0.911141,
+    'WBTC': 42220.430000,
+  }
+
   const YEAREND_PRICES_2025 = {
     // ESTV officially published rates (ictax.admin.ch, 31.12.2025)
     'BTC': 69571.99,  // ESTV official
@@ -4014,12 +4109,19 @@
 
   function getYearEndPrices(year) {
     const y = parseInt(year);
+    if (y === 2021) return YEAREND_PRICES_2021;
+    if (y === 2022) return YEAREND_PRICES_2022;
+    if (y === 2023) return YEAREND_PRICES_2023;
+    if (y === 2024) return YEAREND_PRICES_2024;
     if (y === 2025) return YEAREND_PRICES_2025;
     if (y === 2026) return YEAREND_PRICES_2026;
     return YEAREND_PRICES_2024; // default for 2024 and earlier
   }
 
   const FIAT_REFERENCE_CHF = {
+    2021: { USD: 0.911141, EUR: 1.036150, GBP: 1.234099 },
+    2022: { USD: 0.925228, EUR: 0.987450, GBP: 1.112933 },
+    2023: { USD: 0.841624, EUR: 0.929700, GBP: 1.072875 },
     2024: { USD: 0.906250, EUR: 0.939470, GBP: 1.136060 },
     2025: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
     2026: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
@@ -4304,7 +4406,7 @@
           const usdPrice = Array.isArray(point) ? Number(point[1] || 0) : 0;
           if (!ts || !usdPrice) continue;
           const dateKey = new Date(ts).toISOString().slice(0,10);
-          daily[dateKey] = usdPrice * 0.906250;
+          daily[dateKey] = usdPrice * getReferenceFiatToChfRate('USD', dateKey);
         }
         _krakenRangeCache[seriesKey] = daily;
         return daily;
@@ -4326,10 +4428,12 @@
     const key = asset + '_' + dateStr;
     if (_krakenPriceCache[key] !== undefined) return _krakenPriceCache[key];
     if (_krakenPricePromises[key]) return _krakenPricePromises[key];
-    // Use YEAREND_PRICES_2024 as fallback if date is Dec 31 2024
-    if (dateStr === '2024-12-31' && YEAREND_PRICES_2024[asset]) {
-      _krakenPriceCache[key] = YEAREND_PRICES_2024[asset];
-      return YEAREND_PRICES_2024[asset];
+    const year = parseInt(dateStr.slice(0,4), 10) || 2024;
+    const dec31 = `${year}-12-31`;
+    const yearEndPrices = getYearEndPrices(year);
+    if (dateStr === dec31 && yearEndPrices[asset]) {
+      _krakenPriceCache[key] = yearEndPrices[asset];
+      return yearEndPrices[asset];
     }
     const coinbasePrice = await getCoinbaseHistoricalPriceCHF(asset, dateStr);
     if (coinbasePrice && coinbasePrice > 0) {
@@ -4338,13 +4442,10 @@
     }
     const cgId = COINGECKO_ID[asset];
     if (!cgId) {
-      // taxYear not in scope here — derive from date string or fall back to 2024 prices
-      const yr = parseInt(dateStr.slice(0,4)) || 2024;
-      const fallback = getYearEndPrices(yr)[asset] || YEAREND_PRICES_2024[asset] || 0;
+      const fallback = yearEndPrices[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
     }
-    const year = parseInt(dateStr.slice(0,4)) || 2024;
     const yearlySeries = await getHistoricalPriceSeriesCHF(asset, year);
     if (yearlySeries && yearlySeries[dateStr]) {
       _krakenPriceCache[key] = yearlySeries[dateStr];
@@ -4364,12 +4465,11 @@
       const data = await fetchJsonWithTimeout(url, 10000);
       const usdPrice = data?.market_data?.current_price?.usd || 0;
       if (!usdPrice) throw new Error('cg_hist_missing_price');
-      const chfPrice = usdPrice * 0.906250; // ESTV official USD/CHF rate 31.12.2024
+      const chfPrice = usdPrice * getReferenceFiatToChfRate('USD', dateStr);
       _krakenPriceCache[key] = chfPrice;
       return chfPrice;
       } catch (e) {
-      // Fallback to year-end prices — derive year from dateStr to avoid scope issues
-      const fallback = getYearEndPrices(year)[asset] || YEAREND_PRICES_2024[asset] || 0;
+      const fallback = yearEndPrices[asset] || YEAREND_PRICES_2024[asset] || 0;
       _krakenPriceCache[key] = fallback;
       return fallback;
       } finally {
