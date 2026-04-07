@@ -4888,7 +4888,7 @@
       try {
         let date='', type='', asset='', qty=0, priceCHF=0, totalCHF=0;
         if (format === 'kraken') {
-          date = r['time']||'';
+          date = normalizeImportedDate(r['time']||'');
           const t = (r['type']||'').toLowerCase();
           const subtype = (r['subtype']||'').toLowerCase();
           const rawAmount = parseFloat(r['amount'])||0;
@@ -4979,7 +4979,7 @@
         else if (format === 'kraken_trades') {
           // Kraken trades.csv: txid,ordertxid,pair,time,type,ordertype,price,cost,fee,vol
           // price and cost are in quote currency (CHF, EUR, USD)
-          date = r['time']||'';
+          date = normalizeImportedDate(r['time']||'');
           const t = (r['type']||'').toLowerCase();
           const misc = (r['misc']||'').toLowerCase();
           if (!['buy','sell'].includes(t)) continue;
