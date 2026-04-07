@@ -5147,8 +5147,13 @@
 
           // ── Asset resolution ────────────────────────────────────────────
           const pair = r['pair']||r['market']||'';
-          const quoteAsset = (pair.match(/(CHF|USDT|BUSD|USDC|FDUSD|USD|EUR|GBP)$/) || [])[1] || 'USD';
-          const quoteRate = await getFiatToChfRate(quoteAsset, date.slice(0,10));
+          const quoteAsset = (pair.match(/(CHF|USDT|BUSD|USDC|FDUSD|USD|EUR|GBP|BTC|ETH|BNB)$/) || [])[1] || 'USD';
+          let quoteRate = 1;
+          if (isFeeCurrencyAsset(quoteAsset)) {
+            quoteRate = await getFiatToChfRate(quoteAsset, date.slice(0,10));
+          } else {
+            quoteRate = await getHistoricalPriceCHF(quoteAsset, date.slice(0,10)) || await getFiatToChfRate('USD', date.slice(0,10));
+          }
           // Prefer Base_Asset column (new format); fall back to pair string parsing
           const baseAsset = (r['base_asset']||r['base asset']||'').toUpperCase().trim();
           if (baseAsset && !['USDT','BUSD','USDC','FDUSD'].includes(baseAsset)) {
