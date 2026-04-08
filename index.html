@@ -3,9 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app; frame-ancestors 'none';"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app https://www.google-analytics.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://www.googleadservices.com; frame-ancestors 'none';"/>
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <meta http-equiv="X-Frame-Options" content="DENY"/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18073153529"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18073153529');
+</script>
 
 <!-- ── Primary SEO ── -->
 <title>CryptoDeclare — Swiss Crypto Tax Report | Krypto Steuern Schweiz</title>
@@ -2420,7 +2429,7 @@
             <input class="taxpayer-input" type="text" id="taxpayer-id" placeholder="756.1234.5678.97" autocomplete="off"/>
           </div>
         </div>
-        <div class="taxpayer-note">Saved locally in your browser and added to the generated report header if provided.</div>
+      <div class="taxpayer-note">Saved locally in your browser and added to the generated report header if provided.</div>
       </div>
 
       <!-- UNLOCK CODE BANNER -->
@@ -3681,7 +3690,9 @@
   setPlanBadge(currentPlanTier);
 
   // ── Auto-unlock from Stripe redirect URL ──
-  // Stripe sends customer back to: cryptodeclare.ch/?code=UNLOCK_CODE
+  // If you set Stripe success URL to:
+  // cryptodeclare.ch/?code=UNLOCK_CODE
+  // the app will auto-unlock on arrival.
   (async () => {
     const params = new URLSearchParams(window.location.search);
     const urlCode = params.get('code');
@@ -3700,7 +3711,7 @@
         showToast('🎉 ' + label + ' unlocked! You can now upload your CSV.');
         // Clean URL so code doesn't stay visible
         window.history.replaceState({}, '', window.location.pathname);
-        // Scroll to upload section
+        // Optional: scroll to upload area
         setTimeout(() => navScrollTo('declare'), 600);
       }
     }
