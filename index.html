@@ -3,15 +3,45 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app https://www.google-analytics.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://www.googleadservices.com; frame-ancestors 'none';"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://www.googleadservices.com; frame-ancestors 'none';"/>
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <meta http-equiv="X-Frame-Options" content="DENY"/>
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18073153529"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+  const GOOGLE_CONSENT_KEY = 'cd_cookie_consent_v1';
+  const GOOGLE_CONSENT_GRANTED = {
+    ad_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+    analytics_storage: 'granted'
+  };
+  const GOOGLE_CONSENT_DENIED = {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  };
+
+  gtag('consent', 'default', {
+    ...GOOGLE_CONSENT_DENIED,
+    wait_for_update: 500
+  });
+
+  try {
+    const savedConsent = localStorage.getItem(GOOGLE_CONSENT_KEY);
+    if (savedConsent === 'accepted') {
+      gtag('consent', 'update', GOOGLE_CONSENT_GRANTED);
+    } else if (savedConsent === 'rejected') {
+      gtag('consent', 'update', GOOGLE_CONSENT_DENIED);
+    }
+  } catch (e) {}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18073153529"></script>
+<script>
   gtag('js', new Date());
   gtag('config', 'AW-18073153529');
 </script>
@@ -144,6 +174,70 @@
     line-height: 1.6;
     overflow-x: hidden;
   }
+
+  .cookie-banner {
+    position: fixed;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    z-index: 220;
+    display: none;
+    max-width: 980px;
+    margin: 0 auto;
+    background: rgba(245,242,235,0.98);
+    border: 1px solid rgba(13,17,23,0.12);
+    box-shadow: 0 18px 45px rgba(13,17,23,0.14);
+    backdrop-filter: blur(10px);
+    padding: 18px 20px;
+    border-radius: 10px;
+  }
+  .cookie-banner.visible { display: block; }
+  .cookie-banner-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .cookie-banner-body {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-muted);
+    max-width: 760px;
+  }
+  .cookie-banner-body a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .cookie-banner-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .cookie-btn {
+    border: 1px solid rgba(13,17,23,0.18);
+    background: transparent;
+    color: var(--ink);
+    padding: 10px 16px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cookie-btn:hover {
+    border-color: rgba(13,17,23,0.4);
+    background: rgba(13,17,23,0.04);
+  }
+  .cookie-btn.primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .cookie-btn.primary:hover { background: #20262d; }
 
   /* ── Grid overlay (very subtle) ── */
   body::before {
@@ -2106,10 +2200,28 @@
   @media (max-width: 768px) {
     .contact-section { padding: 60px 24px; }
     .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+    .cookie-banner {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      padding: 16px;
+    }
+    .cookie-banner-title { font-size: 18px; }
+    .cookie-banner-actions { flex-direction: column; align-items: stretch; }
+    .cookie-btn { width: 100%; justify-content: center; }
   }
 </style>
 </head>
 <body>
+
+<div class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie preferences">
+  <div class="cookie-banner-title" data-i18n="cookie_title">Cookie preferences</div>
+  <div class="cookie-banner-body" data-i18n-html="cookie_body">We use Google tags to measure visits and improve advertising performance. You can accept or reject non-essential tracking. See our <a href="privacy.html">Privacy policy</a>.</div>
+  <div class="cookie-banner-actions">
+    <button class="cookie-btn primary" type="button" onclick="acceptCookieConsent()" data-i18n="cookie_accept">Accept</button>
+    <button class="cookie-btn" type="button" onclick="rejectCookieConsent()" data-i18n="cookie_reject">Reject</button>
+  </div>
+</div>
 
 <!-- NAV -->
 <a href="#declare" class="skip-to-content">Skip to main content</a>
@@ -2849,6 +2961,11 @@
       contact_message_ph: 'How can we help?',
       contact_send: 'Send message',
       contact_email_label: 'Or email us directly:',
+      cookie_title: 'Cookie preferences',
+      cookie_body: 'We use Google tags to measure visits and improve advertising performance. You can accept or reject non-essential tracking. See our <a href="privacy.html">Privacy policy</a>.',
+      cookie_accept: 'Accept',
+      cookie_reject: 'Reject',
+      cookie_saved: 'Cookie preferences saved.',
       unlock_title: 'Enter your unlock code',
       unlock_sub: 'Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.',
       unlock_btn: 'Unlock',
@@ -2970,6 +3087,11 @@
       contact_message_ph: 'Comment pouvons-nous vous aider ?',
       contact_send: 'Envoyer',
       contact_email_label: 'Ou écrivez-nous directement :',
+      cookie_title: 'Préférences de cookies',
+      cookie_body: 'Nous utilisons des balises Google pour mesurer les visites et améliorer les performances publicitaires. Vous pouvez accepter ou refuser le suivi non essentiel. Consultez notre <a href="privacy.html">politique de confidentialité</a>.',
+      cookie_accept: 'Accepter',
+      cookie_reject: 'Refuser',
+      cookie_saved: 'Préférences de cookies enregistrées.',
       unlock_title: "Entrez votre code d'activation",
       unlock_sub: 'Votre fichier contient plus de 50 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
       unlock_btn: 'Activer',
@@ -3091,6 +3213,11 @@
       contact_message_ph: 'Wie können wir helfen?',
       contact_send: 'Nachricht senden',
       contact_email_label: 'Oder schreiben Sie uns direkt:',
+      cookie_title: 'Cookie-Einstellungen',
+      cookie_body: 'Wir verwenden Google-Tags, um Besuche zu messen und die Werbeleistung zu verbessern. Sie können nicht essenzielles Tracking akzeptieren oder ablehnen. Siehe unsere <a href="privacy.html">Datenschutzerklärung</a>.',
+      cookie_accept: 'Akzeptieren',
+      cookie_reject: 'Ablehnen',
+      cookie_saved: 'Cookie-Einstellungen gespeichert.',
       unlock_title: 'Ihren Freischaltcode eingeben',
       unlock_sub: 'Ihre Datei enthält mehr als 50 Transaktionen. Geben Sie einen Pro- oder Business-Code ein, um Ihren Bericht zu erstellen.',
       unlock_btn: 'Freischalten',
@@ -3126,6 +3253,59 @@
   };
 
   let currentLang = 'en';
+  const COOKIE_CONSENT_KEY = 'cd_cookie_consent_v1';
+  const GOOGLE_CONSENT_GRANTED_STATE = {
+    ad_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+    analytics_storage: 'granted'
+  };
+  const GOOGLE_CONSENT_DENIED_STATE = {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  };
+
+  function getCookieConsentChoice() {
+    try {
+      const saved = localStorage.getItem(COOKIE_CONSENT_KEY);
+      return saved === 'accepted' || saved === 'rejected' ? saved : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function persistCookieConsentChoice(choice) {
+    try { localStorage.setItem(COOKIE_CONSENT_KEY, choice); } catch (e) {}
+  }
+
+  function updateGoogleConsent(choice) {
+    if (typeof gtag !== 'function') return;
+    gtag('consent', 'update', choice === 'accepted' ? GOOGLE_CONSENT_GRANTED_STATE : GOOGLE_CONSENT_DENIED_STATE);
+  }
+
+  function syncCookieBanner() {
+    const banner = document.getElementById('cookie-banner');
+    if (!banner) return;
+    banner.classList.toggle('visible', !getCookieConsentChoice());
+  }
+
+  function acceptCookieConsent() {
+    persistCookieConsentChoice('accepted');
+    updateGoogleConsent('accepted');
+    syncCookieBanner();
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    if (typeof showToast === 'function') showToast(t.cookie_saved || 'Cookie preferences saved.');
+  }
+
+  function rejectCookieConsent() {
+    persistCookieConsentChoice('rejected');
+    updateGoogleConsent('rejected');
+    syncCookieBanner();
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    if (typeof showToast === 'function') showToast(t.cookie_saved || 'Cookie preferences saved.');
+  }
 
   function setLang(lang) {
     currentLang = lang;
@@ -3686,6 +3866,7 @@
   // Run on load
   currentPlanTier = getPlanFromStorage();
   hydrateTaxpayerDetails();
+  syncCookieBanner();
   updateTrialUI();
   setPlanBadge(currentPlanTier);
 
