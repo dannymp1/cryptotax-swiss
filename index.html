@@ -6727,6 +6727,17 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   /* Notes */
   .notes-box { background:#F5F2EB; border:none; border-left: 3px solid #5A6070; padding:12px 12px 12px 9px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
 
+  /* Technical pages */
+  .technical-flow { max-width: 94%; margin: 0 auto; }
+  .ledger-shell {
+    background:#FCFBF8;
+    border-top:1px solid #E8E4DC;
+    border-bottom:1px solid #E8E4DC;
+    padding:14px 12px 0 12px;
+    margin-top:10px;
+  }
+  .ledger-shell table { margin-bottom: 0; }
+
   /* ── FOOTER — finance document style ─────────────────────────────────── */
   .doc-footer { display:none; }
 
@@ -6924,6 +6935,7 @@ onmouseout="this.style.color='#8A909E'">
       +'</div>';
   })()}
 
+  <div class="technical-flow">
   <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
   <div class="summary-grid">
     <div class="summary-box">
@@ -7020,6 +7032,7 @@ onmouseout="this.style.color='#8A909E'">
     const secNum = hasMissingBasis ? '05' : '04';
     // Renumber Tax Summary and Legal Notice accordingly
     return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
+      + '<div class="ledger-shell">'
       + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
       + '<table style="font-size:8pt;"><thead><tr>'
       + '<th style="text-align:left;white-space:nowrap;">Date</th>'
@@ -7028,8 +7041,10 @@ onmouseout="this.style.color='#8A909E'">
       + '<th class="right">Quantity</th>'
       + '<th class="right">Price (CHF)</th>'
       + '<th class="right">Total (CHF)</th>'
-      + '</tr></thead><tbody>' + rows + '</tbody></table>';
+      + '</tr></thead><tbody>' + rows + '</tbody></table>'
+      + '</div>';
   })()}
+</div>
 </div>
 </body>
 </html>`;
