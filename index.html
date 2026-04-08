@@ -6604,15 +6604,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   @page { size: A4; margin: 0; }
   @media print {
     @page { margin: 0; }
-    body { margin: 14mm 12mm 16mm 12mm; }
+    body { margin: 18mm 16mm 20mm 16mm; }
     .no-print { display: none !important; }
     *[class*="no-print"] { display: none !important; }
     .sec-title { page-break-after: avoid; }
-    .info-bar, .validation-strip, .incomplete-box, .overview-table, .summary-shell, .content-shell, .legal-callout, .notes-box, .methodology-box {
-      page-break-inside: avoid;
-      break-inside: avoid-page;
-    }
-    .ledger-shell, .ledger-shell table { page-break-inside: auto; break-inside: auto; }
+    table { page-break-inside: avoid; }
     .summary-grid { page-break-inside: avoid; }
     .compliance-box { page-break-inside: avoid; }
     h2, h3 { page-break-after: avoid; }
@@ -6730,40 +6726,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
   /* Notes */
   .notes-box { background:#F5F2EB; border:none; border-left: 3px solid #5A6070; padding:12px 12px 12px 9px; font-size:9pt; line-height:1.7; color:#3D4451; margin-bottom:20px; }
-
-  /* Technical pages */
-  .technical-flow { max-width: 97%; margin: 0 auto; }
-  .technical-shell {
-    background:#FCFBF8;
-    border-top:1px solid #E8E4DC;
-    border-bottom:1px solid #E8E4DC;
-    margin-top:10px;
-  }
-  .technical-shell.summary-shell { padding:10px 0; }
-  .technical-shell.content-shell { padding:14px 12px; }
-  .technical-shell .summary-grid { margin:0; }
-  .technical-shell .summary-box { padding:26px 12px; }
-  .technical-shell .notes-box:last-child,
-  .technical-shell .compliance-box:last-child { margin-bottom:0; }
-  .technical-shell table { margin-bottom: 0; }
-  .legal-callout {
-    background:#F5F2EB;
-    border-left:3px solid #2D7A56;
-    padding:10px 12px 10px 9px;
-    margin-bottom:12px;
-    border-radius:0;
-    font-size:9.5pt;
-    line-height:1.65;
-  }
-  .methodology-box {
-    margin-top:18px;
-    padding-top:12px;
-    border-top:1px solid #E8E4DC;
-    font-size:8pt;
-    color:#3D4451;
-    line-height:1.75;
-    font-family:'Instrument Sans',Arial,sans-serif;
-  }
 
   /* ── FOOTER — finance document style ─────────────────────────────────── */
   .doc-footer { display:none; }
@@ -6962,9 +6924,7 @@ onmouseout="this.style.color='#8A909E'">
       +'</div>';
   })()}
 
-  <div class="technical-flow">
   <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
-  <div class="technical-shell summary-shell">
   <div class="summary-grid">
     <div class="summary-box">
       <div class="summary-label">Staking / Reward Income</div>
@@ -6979,11 +6939,9 @@ onmouseout="this.style.color='#8A909E'">
       <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
     </div>
   </div>
-  </div>
 
   <div class="sec-title" style="page-break-before:auto;break-before:auto;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "04" : "03"} — Legal Notice &amp; Disclaimer</div>
-  <div class="technical-shell content-shell">
-  <div class="legal-callout">
+  <div style="background:#F5F2EB;border-left:3px solid #2D7A56;padding:10px 12px 10px 9px;margin-bottom:12px;border-radius:0;font-size:9.5pt;line-height:1.65;">
     <strong style="color:#0D1117;">Supporting document — not an official tax filing, tax advice, or legal advice.</strong>
     This annex is generated automatically from imported transaction data only. No guarantee of accuracy or completeness is given. Missing exchanges, wallets, opening balances, or prior-period history may materially affect results. Review all figures carefully. You remain responsible for your tax declaration.
   </div>
@@ -7005,7 +6963,7 @@ onmouseout="this.style.color='#8A909E'">
 
   ${data.notes ? `<div class="notes-box"><strong>Notes:</strong> ${escHtml(data.notes)}</div>` : ''}
 
-  <div class="methodology-box">
+  <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
     <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — Swiss tax reporting standard. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings. ·
@@ -7014,7 +6972,6 @@ onmouseout="this.style.color='#8A909E'">
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Data completeness:</strong> Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome. ·
     <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
-  </div>
   </div>
   <div class="doc-footer">
     <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
@@ -7063,7 +7020,6 @@ onmouseout="this.style.color='#8A909E'">
     const secNum = hasMissingBasis ? '05' : '04';
     // Renumber Tax Summary and Legal Notice accordingly
     return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
-      + '<div class="technical-shell content-shell ledger-shell">'
       + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
       + '<table style="font-size:8pt;"><thead><tr>'
       + '<th style="text-align:left;white-space:nowrap;">Date</th>'
@@ -7073,9 +7029,8 @@ onmouseout="this.style.color='#8A909E'">
       + '<th class="right">Price (CHF)</th>'
       + '<th class="right">Total (CHF)</th>'
       + '</tr></thead><tbody>' + rows + '</tbody></table>'
-      + '</div>';
+      ;
   })()}
-</div>
 </div>
 </body>
 </html>`;
