@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en-CH">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exchange CSV Tax Report Switzerland | CryptoDeclare</title>
+  <meta name="description" content="How exchange CSV exports from Binance, Kraken, Coinbase, Swissquote, SwissBorg, and others can be transformed into a Swiss crypto tax annex."/>
+  <link rel="canonical" href="https://www.cryptodeclare.ch/guides/exchange-csv-tax-report-switzerland.html"/>
+  <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml"/>
+  <link rel="stylesheet" href="/guides/guide.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <nav class="site-nav"><a class="brand" href="/"><img class="brand-mark" src="/favicon.svg" alt="CryptoDeclare logo"/><span class="brand-text">Crypto<span>Declare</span></span></a><div class="nav-links"><a href="/guides/">Guides</a><a href="/#pricing">Pricing</a><a href="/#upload-area" class="nav-cta">Generate report</a></div></nav>
+  <header class="guide-hero"><div class="guide-hero-inner"><div class="eyebrow">CSV exports</div><h1>From exchange CSV to <em>Swiss tax annex</em>.</h1><p class="hero-copy">Why raw exports from exchanges need parsing, classification, CHF conversion, and completeness checks before they become useful tax documentation.</p><div class="hero-meta"><span>Updated 12 Apr 2026</span><span>Educational only - not tax advice</span></div></div></header>
+  <main class="guide-shell guide-layout">
+    <article class="article">
+      <p>Exchange exports are designed for account history, not Swiss tax reporting. A Binance ledger, Kraken trade log, Coinbase transaction file, or Swissquote export can each use different headers, date formats, fee logic, and asset labels.</p>
+      <h2 id="formats">Every exchange speaks differently</h2>
+      <p>One export may call BTC "XBT", another may split one trade into multiple rows, and another may include fiat values while a different platform exports only quantities. This is why direct spreadsheet work becomes fragile across multiple exchanges.</p>
+      <h2 id="normalise">Normalisation is the first step</h2>
+      <p>The report process should normalise tickers, dates, quantities, fees, and transaction types. Buys, sells, deposits, withdrawals, rewards, staking, and fees should be classified before any tax summary is produced.</p>
+      <h2 id="combine">Multiple files should be combined</h2>
+      <p>If you used more than one exchange, the calculation should combine all imported files into one timeline. This is especially important when assets are bought on one platform and sold on another.</p>
+      <h2 id="output">What the final annex should contain</h2>
+      <p>A good annex turns raw CSV rows into a readable summary: year-end wealth values, staking income, realised FIFO results, completeness warnings, source notes, and a transaction ledger.</p>
+      <div class="callout">CryptoDeclare supports 23 import formats, including major exchanges and generic CSV files for unusual exports.</div>
+      <section class="sources"><h2>Official sources</h2><ul><li><a href="https://www.estv.admin.ch/en/cryptocurrencies-taxation" target="_blank" rel="noopener">Swiss Federal Tax Administration - cryptocurrencies taxation</a></li><li><a href="https://www.ictax.admin.ch/extern/en.html" target="_blank" rel="noopener">ICTax - Swiss tax values</a></li></ul></section>
+      <section class="cta-panel"><h2>Upload your exchange exports</h2><p>Drop CSV or Excel exports from supported platforms and generate a Swiss-focused crypto tax report.</p><a class="button" href="/#upload-area">Generate my report</a></section>
+    </article>
+    <aside class="toc"><div class="toc-title">On this page</div><a href="#formats">Formats</a><a href="#normalise">Normalise</a><a href="#combine">Combine files</a><a href="#output">Output</a></aside>
+  </main>
+  <footer class="guide-footer"><div class="guide-footer-inner"><span>© 2026 CryptoDeclare</span><span><a href="/guides/">Back to guides</a></span></div></footer>
+</body>
+</html>

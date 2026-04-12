@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en-CH">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Missing Crypto Transaction History | CryptoDeclare</title>
+  <meta name="description" content="What missing acquisition history and unmatched FIFO disposals mean for Swiss crypto tax reporting, and how to fix incomplete exchange imports."/>
+  <link rel="canonical" href="https://www.cryptodeclare.ch/guides/missing-crypto-transaction-history.html"/>
+  <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml"/>
+  <link rel="stylesheet" href="/guides/guide.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <nav class="site-nav"><a class="brand" href="/"><img class="brand-mark" src="/favicon.svg" alt="CryptoDeclare logo"/><span class="brand-text">Crypto<span>Declare</span></span></a><div class="nav-links"><a href="/guides/">Guides</a><a href="/#pricing">Pricing</a><a href="/#upload-area" class="nav-cta">Generate report</a></div></nav>
+  <header class="guide-hero"><div class="guide-hero-inner"><div class="eyebrow">Data quality</div><h1>What missing crypto history means for <em>your tax report</em>.</h1><p class="hero-copy">Unmatched disposals are not just a software error. They usually mean the report is missing earlier purchases, transfers, wallets, or exchanges.</p><div class="hero-meta"><span>Updated 12 Apr 2026</span><span>Educational only - not tax advice</span></div></div></header>
+  <main class="guide-shell guide-layout">
+    <article class="article">
+      <p>A common crypto tax problem is selling an asset on one platform even though the original purchase happened somewhere else. If the report cannot see the purchase, it cannot reliably calculate cost basis for that disposal.</p>
+      <h2 id="unmatched">What is an unmatched disposal?</h2>
+      <p>An unmatched disposal happens when the report sees a sale, swap, or outgoing taxable event, but the FIFO lot history does not contain enough acquired quantity to match it. A responsible report should flag this instead of pretending the cost basis is zero or inventing a number.</p>
+      <h2 id="causes">Common causes</h2>
+      <ul><li>You imported only one exchange, but bought the asset on another exchange.</li><li>You transferred crypto from a wallet without uploading the wallet history.</li><li>You imported only the tax year, but acquired the asset in a prior year.</li><li>The exchange export omitted older rows, fees, or conversion legs.</li><li>The asset ticker changed or wrapped-token history is incomplete.</li></ul>
+      <h2 id="fix">How to fix it</h2>
+      <p>Export full history from every relevant platform. If an asset was moved from self-custody, include the wallet or prior exchange data where possible. If a manual reconstruction is needed, document the source, date, quantity, and CHF value clearly.</p>
+      <h2 id="report">How it should appear in a report</h2>
+      <p>The report should show which assets have missing acquisition history, how much quantity is unmatched, and which proceeds were excluded from realised gain calculations. That tells you exactly what needs attention before submitting.</p>
+      <div class="callout">CryptoDeclare flags missing acquisition history and unmatched FIFO disposals so you know whether the report is complete or needs more data.</div>
+      <section class="sources"><h2>Official sources</h2><ul><li><a href="https://www.estv.admin.ch/en/cryptocurrencies-taxation" target="_blank" rel="noopener">Swiss Federal Tax Administration - cryptocurrencies taxation</a></li></ul></section>
+      <section class="cta-panel"><h2>Check your imports before exporting</h2><p>Upload your files and CryptoDeclare highlights incomplete history before you rely on the final annex.</p><a class="button" href="/#upload-area">Generate my report</a></section>
+    </article>
+    <aside class="toc"><div class="toc-title">On this page</div><a href="#unmatched">Unmatched disposal</a><a href="#causes">Causes</a><a href="#fix">How to fix</a><a href="#report">Report warning</a></aside>
+  </main>
+  <footer class="guide-footer"><div class="guide-footer-inner"><span>© 2026 CryptoDeclare</span><span><a href="/guides/">Back to guides</a></span></div></footer>
+</body>
+</html>
