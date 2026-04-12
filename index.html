@@ -3885,26 +3885,14 @@
   let pendingFile = null; // store single file while waiting for unlock code
   let pendingFiles = null; // store multi-file uploads while waiting for unlock code
   const TAXPAYER_KEY = 'cd_taxpayer_details';
+  let taxpayerDetailsHydrated = false;
 
   async function sha256hex(str) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
   }
 
-  function getTaxpayerDetails() {
-    const readField = (id) => {
-      const el = document.getElementById(id);
-      return el ? el.value.trim() : '';
-    };
-
-    const current = {
-      name: readField('taxpayer-name'),
-      address: readField('taxpayer-address'),
-      taxId: readField('taxpayer-id'),
-    };
-
-    if (current.name || current.address || current.taxId) return current;
-
+  function getStoredTaxpayerDetails() {
     try {
       const stored = JSON.parse(localStorage.getItem(TAXPAYER_KEY) || '{}');
       return {
@@ -3917,13 +3905,49 @@
     }
   }
 
+  function getTaxpayerDetails() {
+    const current = {};
+    const fields = [
+      ['taxpayer-name', 'name'],
+      ['taxpayer-address', 'address'],
+      ['taxpayer-id', 'taxId'],
+    ];
+    let anyFieldExists = false;
+    fields.forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (el) {
+        anyFieldExists = true;
+        current[key] = el.value.trim();
+      } else {
+        current[key] = '';
+      }
+    });
+
+    if (taxpayerDetailsHydrated || anyFieldExists) return current;
+    return getStoredTaxpayerDetails();
+  }
+
   function saveTaxpayerDetails() {
-    const details = getTaxpayerDetails();
-    try { localStorage.setItem(TAXPAYER_KEY, JSON.stringify(details)); } catch(e) {}
+    const readField = (id) => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    };
+    const details = {
+      name: readField('taxpayer-name'),
+      address: readField('taxpayer-address'),
+      taxId: readField('taxpayer-id'),
+    };
+    try {
+      if (details.name || details.address || details.taxId) {
+        localStorage.setItem(TAXPAYER_KEY, JSON.stringify(details));
+      } else {
+        localStorage.removeItem(TAXPAYER_KEY);
+      }
+    } catch(e) {}
   }
 
   function hydrateTaxpayerDetails() {
-    const details = getTaxpayerDetails();
+    const details = getStoredTaxpayerDetails();
     const mapping = [
       ['taxpayer-name', details.name],
       ['taxpayer-address', details.address],
@@ -3936,6 +3960,7 @@
       el.addEventListener('input', saveTaxpayerDetails);
       el.addEventListener('change', saveTaxpayerDetails);
     });
+    taxpayerDetailsHydrated = true;
   }
 
   function getPlanFromStorage() {
