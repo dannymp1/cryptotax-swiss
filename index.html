@@ -824,106 +824,12 @@
 
   .report-right { position: relative; z-index: 2; }
 
-  .report-sample-frame {
-    position: relative;
-    max-width: 460px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 4px;
-    padding: 12px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.42);
-    border: 1px solid rgba(245,242,235,0.18);
-    overflow: hidden;
-  }
-
-  .report-sample-frame::after {
-    content: 'SAMPLE';
-    position: absolute;
-    left: 50%;
-    top: 43%;
-    transform: translate(-50%, -50%) rotate(-18deg);
-    font-family: 'DM Mono', monospace;
-    font-size: 44px;
-    letter-spacing: 0.18em;
-    color: rgba(184,150,12,0.12);
-    border: 2px solid rgba(184,150,12,0.10);
-    padding: 8px 16px;
-    pointer-events: none;
-  }
-
-  .sample-report-label {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 2;
-    background: rgba(13,17,23,0.88);
-    color: var(--gold-light);
-    border: 1px solid rgba(184,150,12,0.28);
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .sample-report-viewport {
-    height: 390px;
-    overflow: hidden;
-    border-radius: 2px;
-    background: #fff;
-    border: 1px solid rgba(13,17,23,0.08);
-  }
-
-  .sample-report-img {
-    display: block;
-    width: 100%;
-    height: auto;
-    transform: translateY(-18px);
-  }
-
-  .sample-report-metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .sample-report-metric {
-    background: var(--paper);
-    border: 1px solid rgba(13,17,23,0.08);
-    border-radius: 2px;
-    padding: 10px;
-  }
-
-  .sample-report-metric-label {
-    display: block;
-    margin-bottom: 5px;
-    font-family: 'DM Mono', monospace;
-    font-size: 8px;
-    line-height: 1.35;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-
-  .sample-report-metric-value {
-    display: block;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-
-  .sample-report-metric-value.gain {
-    color: #1a7a4a;
-  }
-
   .report-doc {
     background: var(--paper);
     border-radius: 4px;
-    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 24px;
     box-shadow: 0 24px 64px rgba(0,0,0,0.4);
     border: 1px solid rgba(13,17,23,0.08);
   }
@@ -932,8 +838,8 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 13px;
     border-bottom: 2px solid var(--ink);
   }
 
@@ -950,6 +856,20 @@
     letter-spacing: 0.1em;
     color: var(--ink-faint);
     text-transform: uppercase;
+  }
+
+  .doc-sample-badge {
+    display: inline-flex;
+    margin-top: 9px;
+    padding: 5px 7px;
+    background: rgba(184,150,12,0.10);
+    border: 1px solid rgba(184,150,12,0.22);
+    border-radius: 999px;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
   }
 
   .doc-status {
@@ -994,6 +914,61 @@
     width: 6px; height: 1.5px;
     background: white;
     box-shadow: 0 -2.5px 0 white, 0 2.5px 0 white, -2.5px 0 0 white, 2.5px 0 0 white;
+  }
+
+  .doc-mini-label {
+    margin: 18px 0 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .doc-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(13,17,23,0.08);
+  }
+
+  .doc-mini-table th,
+  .doc-mini-table td {
+    padding: 8px 9px;
+    border-bottom: 1px solid rgba(13,17,23,0.08);
+    font-size: 10px;
+    text-align: right;
+  }
+
+  .doc-mini-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: rgba(13,17,23,0.035);
+    font-weight: 500;
+  }
+
+  .doc-mini-table th:first-child,
+  .doc-mini-table td:first-child {
+    text-align: left;
+  }
+
+  .doc-mini-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .doc-mini-table td {
+    font-family: 'DM Mono', monospace;
+    color: var(--ink-muted);
+  }
+
+  .doc-mini-table .asset-name {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    color: var(--ink);
   }
 
   .doc-rows { display: flex; flex-direction: column; gap: 9px; }
@@ -2121,10 +2096,9 @@
     /* Section header — stack on mobile */
     .section-header { flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
     .section-header .section-title { width: 100%; margin-top: 4px; }
-    .report-sample-frame { max-width: 100%; margin: 0; }
-    .sample-report-viewport { height: min(390px, 92vw); }
-    .sample-report-label { top: 20px; right: 20px; }
-    .sample-report-metrics { grid-template-columns: 1fr; }
+    .report-doc { max-width: 100%; padding: 20px; }
+    .doc-mini-table th:nth-child(3),
+    .doc-mini-table td:nth-child(3) { display: none; }
     /* App / declare section */
     .app-section { padding: 60px 0 80px; }
     .app-layout { grid-template-columns: 1fr; gap: 32px; }
@@ -2611,25 +2585,70 @@
       </a>
     </div>
     <div class="report-right">
-      <div class="report-sample-frame" aria-label="Sample CryptoDeclare tax annex preview">
-        <div class="sample-report-label" data-i18n="sample_preview">Sample report preview</div>
-        <div class="sample-report-viewport">
-          <img class="sample-report-img" src="/sample-report-preview.png" loading="lazy" alt="Preview of a CryptoDeclare tax declaration annex sample report"/>
-        </div>
-        <div class="sample-report-metrics" aria-label="Sample report figures">
-          <div class="sample-report-metric">
-            <span class="sample-report-metric-label" data-i18n="report_mock_wealth">31.12 portfolio value</span>
-            <span class="sample-report-metric-value">CHF 2'799.14</span>
+      <div class="report-doc" aria-label="Sample CryptoDeclare tax annex preview">
+        <div class="doc-header">
+          <div>
+            <div class="doc-title">Tax Declaration Annex 2024</div>
+            <div class="doc-sub">Sample · Zurich · Tax Year 2024</div>
+            <div class="doc-sample-badge" data-i18n="sample_preview">Sample report preview</div>
           </div>
-          <div class="sample-report-metric">
-            <span class="sample-report-metric-label" data-i18n="report_mock_fifo">FIFO realised result</span>
-            <span class="sample-report-metric-value gain">+CHF 865.20</span>
-          </div>
-          <div class="sample-report-metric">
-            <span class="sample-report-metric-label" data-i18n="report_mock_staking">Staking income</span>
-            <span class="sample-report-metric-value">CHF 0.00</span>
+          <div class="doc-logo">
+            <div class="doc-flag"></div>
           </div>
         </div>
+
+        <div class="doc-mini-label" data-i18n="report_table_label">01 — Transaction overview</div>
+        <table class="doc-mini-table" aria-label="Sample transaction overview by asset">
+          <thead>
+            <tr>
+              <th data-i18n="report_table_asset">Asset</th>
+              <th data-i18n="report_table_holdings">Holdings</th>
+              <th data-i18n="report_table_value">Value CHF</th>
+              <th data-i18n="report_table_gain_loss">Gain / loss</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="asset-name">ETH</span></td>
+              <td>0.5000</td>
+              <td>CHF 1'599.50</td>
+              <td class="doc-row-val gain">+CHF 644.00</td>
+            </tr>
+            <tr>
+              <td><span class="asset-name">AVAX</span></td>
+              <td>5.0000</td>
+              <td>CHF 161.70</td>
+              <td class="doc-row-val gain">+CHF 53.60</td>
+            </tr>
+            <tr>
+              <td><span class="asset-name">SOL</span></td>
+              <td>2.4900</td>
+              <td>CHF 45.77</td>
+              <td class="doc-row-val gain">+CHF 0.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="doc-mini-label" data-i18n="report_summary_label">02 — Tax declaration summary</div>
+        <div class="doc-rows">
+          <div class="doc-row">
+            <span class="doc-row-label">31.12 portfolio value</span>
+            <span class="doc-row-val">CHF 2'799.14</span>
+          </div>
+          <div class="doc-row">
+            <span class="doc-row-label">FIFO realised result</span>
+            <span class="doc-row-val gain">+CHF 865.20</span>
+          </div>
+          <div class="doc-row">
+            <span class="doc-row-label">Staking income</span>
+            <span class="doc-row-val">CHF 0.00</span>
+          </div>
+          <div class="doc-row">
+            <span class="doc-row-label">Transaction ledger</span>
+            <span class="doc-row-val">Included</span>
+          </div>
+        </div>
+        <div class="doc-footnote">FIFO method · CHF conversion · Wealth values</div>
       </div>
     </div>
   </div>
@@ -3202,6 +3221,12 @@
       report_mock_output: 'Report output',
       report_mock_footnote: 'FIFO method · CHF conversion · Wealth values',
       sample_preview: 'Sample report preview',
+      report_table_label: '01 — Transaction overview',
+      report_summary_label: '02 — Tax declaration summary',
+      report_table_asset: 'Asset',
+      report_table_holdings: 'Holdings',
+      report_table_value: 'Value CHF',
+      report_table_gain_loss: 'Gain / loss',
       exchange_note: "Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
@@ -3342,6 +3367,12 @@
       report_mock_output: 'Résultat du rapport',
       report_mock_footnote: 'Méthode FIFO · Conversion CHF · Valeurs de fortune',
       sample_preview: 'Exemple de rapport',
+      report_table_label: '01 — Aperçu des transactions',
+      report_summary_label: '02 — Résumé fiscal',
+      report_table_asset: 'Actif',
+      report_table_holdings: 'Avoirs',
+      report_table_value: 'Valeur CHF',
+      report_table_gain_loss: 'Gain / perte',
       exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel ou contactez-nous — nous pouvons aider à mapper les exports inhabituels.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
@@ -3482,6 +3513,12 @@
       report_mock_output: 'Berichtsergebnis',
       report_mock_footnote: 'FIFO-Methode · CHF-Umrechnung · Vermögenswerte',
       sample_preview: 'Beispielbericht',
+      report_table_label: '01 — Transaktionsübersicht',
+      report_summary_label: '02 — Steuerzusammenfassung',
+      report_table_asset: 'Asset',
+      report_table_holdings: 'Bestand',
+      report_table_value: 'Wert CHF',
+      report_table_gain_loss: 'Gewinn / Verlust',
       exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import oder kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
