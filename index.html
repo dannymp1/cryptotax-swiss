@@ -826,15 +826,14 @@
 
   .report-sample-frame {
     position: relative;
-    max-width: 520px;
-    margin-left: auto;
+    max-width: 460px;
+    margin: 0 auto;
     background: #ffffff;
     border-radius: 4px;
-    padding: 14px;
+    padding: 12px;
     box-shadow: 0 24px 64px rgba(0,0,0,0.42);
     border: 1px solid rgba(245,242,235,0.18);
     overflow: hidden;
-    transform: rotate(0.4deg);
   }
 
   .report-sample-frame::after {
@@ -854,8 +853,8 @@
 
   .sample-report-label {
     position: absolute;
-    top: 24px;
-    right: 24px;
+    top: 20px;
+    right: 20px;
     z-index: 2;
     background: rgba(13,17,23,0.88);
     color: var(--gold-light);
@@ -869,16 +868,56 @@
   }
 
   .sample-report-viewport {
-    height: 560px;
+    height: 390px;
     overflow: hidden;
     border-radius: 2px;
     background: #fff;
+    border: 1px solid rgba(13,17,23,0.08);
   }
 
   .sample-report-img {
     display: block;
     width: 100%;
     height: auto;
+    transform: translateY(-18px);
+  }
+
+  .sample-report-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .sample-report-metric {
+    background: var(--paper);
+    border: 1px solid rgba(13,17,23,0.08);
+    border-radius: 2px;
+    padding: 10px;
+  }
+
+  .sample-report-metric-label {
+    display: block;
+    margin-bottom: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    line-height: 1.35;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sample-report-metric-value {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .sample-report-metric-value.gain {
+    color: #1a7a4a;
   }
 
   .report-doc {
@@ -2082,9 +2121,10 @@
     /* Section header — stack on mobile */
     .section-header { flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
     .section-header .section-title { width: 100%; margin-top: 4px; }
-    .report-sample-frame { max-width: 100%; margin: 0; transform: none; }
-    .sample-report-viewport { height: min(520px, 118vw); }
+    .report-sample-frame { max-width: 100%; margin: 0; }
+    .sample-report-viewport { height: min(390px, 92vw); }
     .sample-report-label { top: 20px; right: 20px; }
+    .sample-report-metrics { grid-template-columns: 1fr; }
     /* App / declare section */
     .app-section { padding: 60px 0 80px; }
     .app-layout { grid-template-columns: 1fr; gap: 32px; }
@@ -2575,6 +2615,20 @@
         <div class="sample-report-label" data-i18n="sample_preview">Sample report preview</div>
         <div class="sample-report-viewport">
           <img class="sample-report-img" src="/sample-report-preview.png" loading="lazy" alt="Preview of a CryptoDeclare tax declaration annex sample report"/>
+        </div>
+        <div class="sample-report-metrics" aria-label="Sample report figures">
+          <div class="sample-report-metric">
+            <span class="sample-report-metric-label" data-i18n="report_mock_wealth">31.12 portfolio value</span>
+            <span class="sample-report-metric-value">CHF 2'799.14</span>
+          </div>
+          <div class="sample-report-metric">
+            <span class="sample-report-metric-label" data-i18n="report_mock_fifo">FIFO realised result</span>
+            <span class="sample-report-metric-value gain">+CHF 865.20</span>
+          </div>
+          <div class="sample-report-metric">
+            <span class="sample-report-metric-label" data-i18n="report_mock_staking">Staking income</span>
+            <span class="sample-report-metric-value">CHF 0.00</span>
+          </div>
         </div>
       </div>
     </div>
