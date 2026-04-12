@@ -824,6 +824,63 @@
 
   .report-right { position: relative; z-index: 2; }
 
+  .report-sample-frame {
+    position: relative;
+    max-width: 520px;
+    margin-left: auto;
+    background: #ffffff;
+    border-radius: 4px;
+    padding: 14px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.42);
+    border: 1px solid rgba(245,242,235,0.18);
+    overflow: hidden;
+    transform: rotate(0.4deg);
+  }
+
+  .report-sample-frame::after {
+    content: 'SAMPLE';
+    position: absolute;
+    left: 50%;
+    top: 43%;
+    transform: translate(-50%, -50%) rotate(-18deg);
+    font-family: 'DM Mono', monospace;
+    font-size: 44px;
+    letter-spacing: 0.18em;
+    color: rgba(184,150,12,0.12);
+    border: 2px solid rgba(184,150,12,0.10);
+    padding: 8px 16px;
+    pointer-events: none;
+  }
+
+  .sample-report-label {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 2;
+    background: rgba(13,17,23,0.88);
+    color: var(--gold-light);
+    border: 1px solid rgba(184,150,12,0.28);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sample-report-viewport {
+    height: 560px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #fff;
+  }
+
+  .sample-report-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   .report-doc {
     background: var(--paper);
     border-radius: 4px;
@@ -2025,6 +2082,9 @@
     /* Section header — stack on mobile */
     .section-header { flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
     .section-header .section-title { width: 100%; margin-top: 4px; }
+    .report-sample-frame { max-width: 100%; margin: 0; transform: none; }
+    .sample-report-viewport { height: min(520px, 118vw); }
+    .sample-report-label { top: 20px; right: 20px; }
     /* App / declare section */
     .app-section { padding: 60px 0 80px; }
     .app-layout { grid-template-columns: 1fr; gap: 32px; }
@@ -2511,40 +2571,11 @@
       </a>
     </div>
     <div class="report-right">
-      <div class="report-doc">
-        <div class="doc-header">
-          <div>
-            <div class="doc-title">Tax Declaration Annex 2024</div>
-            <div class="doc-sub">Sample · Zurich · Tax Year 2024</div>
-            <div class="doc-status">Ready for review</div>
-          </div>
-          <div class="doc-logo">
-            <div class="doc-flag"></div>
-          </div>
+      <div class="report-sample-frame" aria-label="Sample CryptoDeclare tax annex preview">
+        <div class="sample-report-label" data-i18n="sample_preview">Sample report preview</div>
+        <div class="sample-report-viewport">
+          <img class="sample-report-img" src="/sample-report-preview.png" loading="lazy" alt="Preview of a CryptoDeclare tax declaration annex sample report"/>
         </div>
-        <div class="doc-rows">
-          <div class="doc-row">
-            <span class="doc-row-label">31.12 portfolio value</span>
-            <span class="doc-row-val">CHF 84,620</span>
-          </div>
-          <div class="doc-row">
-            <span class="doc-row-label">FIFO realised result</span>
-            <span class="doc-row-val gain">+CHF 23,946</span>
-          </div>
-          <div class="doc-row">
-            <span class="doc-row-label">Staking income</span>
-            <span class="doc-row-val gain">CHF 312</span>
-          </div>
-          <div class="doc-row">
-            <span class="doc-row-label">Transaction ledger</span>
-            <span class="doc-row-val">Included</span>
-          </div>
-        </div>
-        <div class="doc-total">
-          <span class="doc-total-label">Report output</span>
-          <span class="doc-total-val">CHF 23,946</span>
-        </div>
-        <div class="doc-footnote">FIFO method · CHF conversion · Wealth values</div>
       </div>
     </div>
   </div>
@@ -3116,6 +3147,7 @@
       report_mock_ledger_value: 'Included',
       report_mock_output: 'Report output',
       report_mock_footnote: 'FIFO method · CHF conversion · Wealth values',
+      sample_preview: 'Sample report preview',
       exchange_note: "Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
@@ -3255,6 +3287,7 @@
       report_mock_ledger_value: 'Inclus',
       report_mock_output: 'Résultat du rapport',
       report_mock_footnote: 'Méthode FIFO · Conversion CHF · Valeurs de fortune',
+      sample_preview: 'Exemple de rapport',
       exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel ou contactez-nous — nous pouvons aider à mapper les exports inhabituels.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
@@ -3394,6 +3427,7 @@
       report_mock_ledger_value: 'Enthalten',
       report_mock_output: 'Berichtsergebnis',
       report_mock_footnote: 'FIFO-Methode · CHF-Umrechnung · Vermögenswerte',
+      sample_preview: 'Beispielbericht',
       exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import oder kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
