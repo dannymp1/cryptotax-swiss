@@ -690,7 +690,7 @@
   }
 
   .report-card::before {
-    content: 'STEUER';
+    content: 'CHF';
     position: absolute;
     right: -60px;
     top: 50%;
@@ -758,8 +758,9 @@
   .report-doc {
     background: var(--paper);
     border-radius: 4px;
-    padding: 32px;
+    padding: 30px;
     box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    border: 1px solid rgba(13,17,23,0.08);
   }
 
   .doc-header {
@@ -773,7 +774,7 @@
 
   .doc-title {
     font-family: 'DM Serif Display', serif;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--ink);
     margin-bottom: 2px;
   }
@@ -784,6 +785,30 @@
     letter-spacing: 0.1em;
     color: var(--ink-faint);
     text-transform: uppercase;
+  }
+
+  .doc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 6px 8px;
+    background: rgba(26,122,74,0.08);
+    border: 1px solid rgba(26,122,74,0.16);
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1a7a4a;
+  }
+
+  .doc-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1a7a4a;
   }
 
   .doc-logo {
@@ -806,16 +831,17 @@
     box-shadow: 0 -2.5px 0 white, 0 2.5px 0 white, -2.5px 0 0 white, 2.5px 0 0 white;
   }
 
-  .doc-rows { display: flex; flex-direction: column; gap: 10px; }
+  .doc-rows { display: flex; flex-direction: column; gap: 9px; }
 
   .doc-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 12px;
-    padding: 8px 10px;
+    padding: 10px 12px;
     background: var(--paper-warm);
     border-radius: 2px;
+    border-left: 2px solid rgba(184,150,12,0.28);
   }
 
   .doc-row-label { color: var(--ink-muted); font-weight: 500; }
@@ -831,8 +857,8 @@
   .doc-row-val.loss { color: var(--red); }
 
   .doc-total {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
     border-top: 1px solid var(--rule);
     display: flex;
     justify-content: space-between;
@@ -850,6 +876,17 @@
     font-size: 16px;
     font-weight: 500;
     color: var(--ink);
+  }
+
+  .doc-footnote {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(13,17,23,0.08);
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
   }
 
   /* ── EXCHANGES ── */
@@ -2399,8 +2436,9 @@
       <div class="report-doc">
         <div class="doc-header">
           <div>
-            <div class="doc-title">Krypto-Steuerbericht 2024</div>
-            <div class="doc-sub">Muster AG · Zürich · Steuerjahr 2024</div>
+            <div class="doc-title">Tax Declaration Annex 2024</div>
+            <div class="doc-sub">Sample · Zurich · Tax Year 2024</div>
+            <div class="doc-status">Ready for review</div>
           </div>
           <div class="doc-logo">
             <div class="doc-flag"></div>
@@ -2408,26 +2446,27 @@
         </div>
         <div class="doc-rows">
           <div class="doc-row">
-            <span class="doc-row-label">BTC — 0.842 BTC</span>
-            <span class="doc-row-val gain">+CHF 18,420</span>
+            <span class="doc-row-label">31.12 portfolio value</span>
+            <span class="doc-row-val">CHF 84,620</span>
           </div>
           <div class="doc-row">
-            <span class="doc-row-label">ETH — 4.2 ETH</span>
-            <span class="doc-row-val gain">+CHF 6,104</span>
+            <span class="doc-row-label">FIFO realised result</span>
+            <span class="doc-row-val gain">+CHF 23,946</span>
           </div>
           <div class="doc-row">
-            <span class="doc-row-label">SOL — 22 SOL</span>
-            <span class="doc-row-val loss">–CHF 890</span>
+            <span class="doc-row-label">Staking income</span>
+            <span class="doc-row-val gain">CHF 312</span>
           </div>
           <div class="doc-row">
-            <span class="doc-row-label">Staking rewards</span>
-            <span class="doc-row-val gain">+CHF 312</span>
+            <span class="doc-row-label">Transaction ledger</span>
+            <span class="doc-row-val">Included</span>
           </div>
         </div>
         <div class="doc-total">
-          <span class="doc-total-label">Netto-Gewinn</span>
+          <span class="doc-total-label">Report output</span>
           <span class="doc-total-val">CHF 23,946</span>
         </div>
+        <div class="doc-footnote">FIFO method · CHF conversion · Wealth values</div>
       </div>
     </div>
   </div>
@@ -2655,7 +2694,7 @@
 
     <div class="report-generated">
       <div class="report-generated-header">
-        <span class="report-generated-title">Krypto-Steuerbericht — Generated Report</span>
+        <span class="report-generated-title">Tax Declaration Annex — Generated Report</span>
         <span class="report-generated-badge">Aligned with ESTV guidance</span>
       </div>
       <div class="report-generated-body" id="report-content">
@@ -2896,6 +2935,7 @@
       report_ready: 'Your <em>tax report</em> is ready',
       btn_download: '⬇ Download PDF',
       btn_upgrade: 'Upgrade to Pro',
+      report_generated_title: 'Tax Declaration Annex — Generated Report',
       disclaimer_title: 'Document Disclaimer',
       disclaimer_text: 'This report has been prepared using Swiss FIFO accounting methodology and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, professional trading), please consult a certified Swiss tax advisor.',
       how_label: '01 — Process', how_title: 'Three steps to a<br><em>clean declaration</em>',
@@ -2985,6 +3025,14 @@
       integrations_title: 'Supported exchanges <em>&amp; wallets</em>',
       report_mock_title: 'Tax Declaration Annex 2024',
       report_mock_meta: 'Sample · Zurich · Tax Year 2024',
+      report_mock_status: 'Ready for review',
+      report_mock_wealth: '31.12 portfolio value',
+      report_mock_fifo: 'FIFO realised result',
+      report_mock_staking: 'Staking income',
+      report_mock_ledger: 'Transaction ledger',
+      report_mock_ledger_value: 'Included',
+      report_mock_output: 'Report output',
+      report_mock_footnote: 'FIFO method · CHF conversion · Wealth values',
       exchange_note: "Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
@@ -3022,6 +3070,7 @@
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
       btn_download: '⬇ Télécharger PDF',
       btn_upgrade: 'Passer à Pro',
+      report_generated_title: 'Annexe fiscale crypto — Rapport généré',
       disclaimer_title: 'Avis de non-responsabilité',
       disclaimer_text: 'Ce rapport a été préparé selon la méthode comptable FIFO suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
       how_label: '01 — Processus', how_title: 'Trois étapes pour une<br><em>déclaration impeccable</em>',
@@ -3111,6 +3160,14 @@
       integrations_title: 'Plateformes <em>&amp; wallets</em>',
       report_mock_title: 'Rapport Fiscal Crypto 2024',
       report_mock_meta: 'Exemple · Zurich · Année fiscale 2024',
+      report_mock_status: 'Prêt pour relecture',
+      report_mock_wealth: 'Valeur du portefeuille au 31.12',
+      report_mock_fifo: 'Résultat réalisé FIFO',
+      report_mock_staking: 'Revenus de staking',
+      report_mock_ledger: 'Journal des transactions',
+      report_mock_ledger_value: 'Inclus',
+      report_mock_output: 'Résultat du rapport',
+      report_mock_footnote: 'Méthode FIFO · Conversion CHF · Valeurs de fortune',
       exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel ou contactez-nous — nous pouvons aider à mapper les exports inhabituels.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
@@ -3148,6 +3205,7 @@
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
       btn_download: '⬇ PDF herunterladen',
       btn_upgrade: 'Auf Pro upgraden',
+      report_generated_title: 'Krypto-Steuerbeilage — Generierter Bericht',
       disclaimer_title: 'Haftungsausschluss',
       disclaimer_text: 'Dieser Bericht wurde nach der Schweizer FIFO-Buchführungsmethode erstellt und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
       how_label: '01 — Prozess', how_title: 'Drei Schritte zu einer<br><em>sauberen Deklaration</em>',
@@ -3237,6 +3295,14 @@
       integrations_title: 'Börsen <em>&amp; Wallets</em>',
       report_mock_title: 'Krypto-Steuerbericht 2024',
       report_mock_meta: 'Muster · Zürich · Steuerjahr 2024',
+      report_mock_status: 'Bereit zur Prüfung',
+      report_mock_wealth: 'Portfoliowert per 31.12',
+      report_mock_fifo: 'Realisierter FIFO-Erfolg',
+      report_mock_staking: 'Staking-Erträge',
+      report_mock_ledger: 'Transaktionsjournal',
+      report_mock_ledger_value: 'Enthalten',
+      report_mock_output: 'Berichtsergebnis',
+      report_mock_footnote: 'FIFO-Methode · CHF-Umrechnung · Vermögenswerte',
       exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import oder kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
@@ -3425,6 +3491,8 @@
     }
     const reportBadge = document.querySelector('.report-generated-badge');
     if (reportBadge && t.report_badge) reportBadge.textContent = t.report_badge;
+    const generatedTitle = document.querySelector('.report-generated-title');
+    if (generatedTitle && t.report_generated_title) generatedTitle.textContent = t.report_generated_title;
     const upBtn = document.getElementById('report-upgrade-btn');
     if (upBtn && t.btn_upgrade) upBtn.textContent = t.btn_upgrade;
 
@@ -3449,6 +3517,24 @@
     if (rpBody && t.report_body) rpBody.textContent = t.report_body;
     const rpCta = document.querySelector('.btn-gold');
     if (rpCta && t.report_cta) rpCta.childNodes[0].textContent = t.report_cta + ' ';
+    const mockTitle = document.querySelector('.report-doc .doc-title');
+    if (mockTitle && t.report_mock_title) mockTitle.textContent = t.report_mock_title;
+    const mockMeta = document.querySelector('.report-doc .doc-sub');
+    if (mockMeta && t.report_mock_meta) mockMeta.textContent = t.report_mock_meta;
+    const mockStatus = document.querySelector('.report-doc .doc-status');
+    if (mockStatus && t.report_mock_status) mockStatus.textContent = t.report_mock_status;
+    const mockLabels = document.querySelectorAll('.report-doc .doc-row-label');
+    const mockLabelKeys = ['report_mock_wealth', 'report_mock_fifo', 'report_mock_staking', 'report_mock_ledger'];
+    mockLabels.forEach((label, idx) => {
+      const key = mockLabelKeys[idx];
+      if (key && t[key]) label.textContent = t[key];
+    });
+    const mockLedgerValue = document.querySelector('.report-doc .doc-row:last-child .doc-row-val');
+    if (mockLedgerValue && t.report_mock_ledger_value) mockLedgerValue.textContent = t.report_mock_ledger_value;
+    const mockTotalLabel = document.querySelector('.report-doc .doc-total-label');
+    if (mockTotalLabel && t.report_mock_output) mockTotalLabel.textContent = t.report_mock_output;
+    const mockFootnote = document.querySelector('.report-doc .doc-footnote');
+    if (mockFootnote && t.report_mock_footnote) mockFootnote.textContent = t.report_mock_footnote;
 
     // Pricing cards
     const pricingCards = document.querySelectorAll('.pricing-card');
