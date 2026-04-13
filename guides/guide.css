@@ -97,6 +97,39 @@ a { color: inherit; }
   border-radius: 3px;
 }
 
+.guide-lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  padding-left: 18px;
+  border-left: 1px solid var(--rule);
+}
+
+.guide-lang-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-faint);
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.guide-lang-btn:hover {
+  color: var(--ink);
+  border-color: var(--rule);
+}
+
+.guide-lang-btn.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
 .guide-hero {
   position: relative;
   z-index: 1;
@@ -352,8 +385,16 @@ h1 em, h2 em { color: var(--gold); font-style: italic; }
 
 @media (max-width: 860px) {
   .site-nav { padding: 0 20px; }
-  .nav-links { gap: 14px; }
+  .nav-links { gap: 10px; }
   .nav-links a:not(.nav-cta) { display: none; }
+  .guide-lang-switcher {
+    padding-left: 8px;
+    border-left: 0;
+  }
+  .guide-lang-btn {
+    padding: 4px 5px;
+    font-size: 9px;
+  }
   .guide-hero { padding: 72px 24px 44px; }
   .guide-shell { padding: 0 24px 72px; }
   .guide-layout { grid-template-columns: 1fr; gap: 32px; }
