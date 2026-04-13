@@ -1673,6 +1673,138 @@
     line-height: 1.5;
   }
 
+  .manual-card {
+    background: rgba(245,242,235,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+
+  .manual-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .manual-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+
+  .manual-card-sub {
+    font-size: 12px;
+    line-height: 1.55;
+    color: rgba(245,242,235,0.46);
+  }
+
+  .manual-count {
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245,242,235,0.58);
+    border: 1px solid rgba(184,150,12,0.24);
+    border-radius: 999px;
+    padding: 5px 9px;
+  }
+
+  .manual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .manual-field-wide { grid-column: 1 / -1; }
+
+  .manual-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .manual-btn {
+    border: 1px solid rgba(184,150,12,0.36);
+    background: rgba(184,150,12,0.10);
+    color: var(--gold-light);
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .manual-btn:hover {
+    background: rgba(184,150,12,0.18);
+    border-color: rgba(184,150,12,0.56);
+  }
+
+  .manual-btn.primary {
+    background: var(--gold-light);
+    border-color: var(--gold-light);
+    color: var(--ink);
+  }
+
+  .manual-btn.ghost {
+    background: transparent;
+    color: rgba(245,242,235,0.52);
+    border-color: rgba(245,242,235,0.12);
+  }
+
+  .manual-list {
+    display: none;
+    margin-top: 14px;
+    border-top: 1px solid rgba(245,242,235,0.08);
+    padding-top: 12px;
+  }
+
+  .manual-list.visible { display: block; }
+
+  .manual-row {
+    display: grid;
+    grid-template-columns: 76px 78px 1fr auto 28px;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(245,242,235,0.06);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245,242,235,0.62);
+  }
+
+  .manual-row:last-child { border-bottom: 0; }
+
+  .manual-row-asset {
+    color: var(--paper);
+    font-weight: 600;
+  }
+
+  .manual-remove {
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(245,242,235,0.12);
+    background: transparent;
+    color: rgba(245,242,235,0.46);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .manual-remove:hover {
+    color: var(--paper);
+    border-color: rgba(245,242,235,0.28);
+  }
+
   .app-right {
     display: flex;
     flex-direction: column;
@@ -2106,6 +2238,14 @@
     .app-left { padding: 0 24px; }
     .app-right { padding: 0 24px; overflow: hidden; }
     .app-info-box { padding: 20px; }
+    .manual-grid { grid-template-columns: 1fr; }
+    .manual-row { grid-template-columns: 1fr auto; gap: 6px 10px; }
+    .manual-row span:nth-child(1),
+    .manual-row span:nth-child(2),
+    .manual-row span:nth-child(3) { grid-column: 1 / 2; }
+    .manual-row span:nth-child(4),
+    .manual-row button { grid-column: 2 / 3; }
+    .manual-row button { grid-row: 1 / 3; justify-self: end; }
     /* Contact */
     .contact-layout { grid-template-columns: 1fr; gap: 40px; }
     .contact-section { padding: 60px 24px; }
@@ -2767,6 +2907,55 @@
       <div class="taxpayer-note">Saved locally in your browser and added to the generated report header if provided.</div>
       </div>
 
+      <div class="manual-card">
+        <div class="manual-card-head">
+          <div>
+            <div class="manual-card-title" data-i18n="manual_title">Add missing transactions</div>
+            <div class="manual-card-sub" data-i18n="manual_sub">Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.</div>
+          </div>
+          <div class="manual-count" id="manual-count">0 manual</div>
+        </div>
+        <div class="manual-grid">
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="manual-date" data-i18n="manual_date">Date</label>
+            <input class="taxpayer-input" type="date" id="manual-date"/>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="manual-type" data-i18n="manual_type">Type</label>
+            <select class="taxpayer-input" id="manual-type">
+              <option value="buy" data-i18n="manual_type_buy">Buy / acquisition</option>
+              <option value="sell" data-i18n="manual_type_sell">Sell / disposal</option>
+              <option value="staking" data-i18n="manual_type_staking">Staking income</option>
+              <option value="deposit" data-i18n="manual_type_deposit">Transfer in</option>
+              <option value="withdrawal" data-i18n="manual_type_withdrawal">Transfer out</option>
+            </select>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="manual-asset" data-i18n="manual_asset">Asset</label>
+            <input class="taxpayer-input" type="text" id="manual-asset" placeholder="ETH" autocomplete="off"/>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="manual-qty" data-i18n="manual_qty">Quantity</label>
+            <input class="taxpayer-input" type="number" id="manual-qty" min="0" step="any" placeholder="0.50" inputmode="decimal"/>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="manual-total" data-i18n="manual_total">Total value CHF</label>
+            <input class="taxpayer-input" type="number" id="manual-total" min="0" step="any" placeholder="1599.50" inputmode="decimal"/>
+          </div>
+          <div class="taxpayer-field">
+            <label class="taxpayer-label" for="manual-source" data-i18n="manual_source">Source / note</label>
+            <input class="taxpayer-input" type="text" id="manual-source" placeholder="Ledger correction" autocomplete="off"/>
+          </div>
+        </div>
+        <div class="taxpayer-note" data-i18n="manual_hint">For known opening/acquisition history, use Buy with the original CHF cost basis. Use Transfer in only when the cost basis is unknown.</div>
+        <div class="manual-actions">
+          <button class="manual-btn primary" type="button" onclick="addManualTransaction()" data-i18n="manual_add">Add row</button>
+          <button class="manual-btn" type="button" onclick="processManualTransactionsOnly()" data-i18n="manual_generate">Generate from manual rows</button>
+          <button class="manual-btn ghost" type="button" onclick="clearManualTransactions()" data-i18n="manual_clear">Clear manual rows</button>
+        </div>
+        <div class="manual-list" id="manual-list" aria-live="polite"></div>
+      </div>
+
       <!-- UNLOCK CODE BANNER -->
   <div class="unlock-banner" id="unlock-banner">
     <div class="unlock-title">Enter your unlock code</div>
@@ -3198,6 +3387,24 @@
       unlock_sub: 'Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.',
       unlock_btn: 'Unlock',
       unlock_error: 'Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch',
+      manual_title: 'Add missing transactions',
+      manual_sub: 'Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.',
+      manual_date: 'Date',
+      manual_type: 'Type',
+      manual_asset: 'Asset',
+      manual_qty: 'Quantity',
+      manual_total: 'Total value CHF',
+      manual_source: 'Source / note',
+      manual_type_buy: 'Buy / acquisition',
+      manual_type_sell: 'Sell / disposal',
+      manual_type_staking: 'Staking income',
+      manual_type_deposit: 'Transfer in',
+      manual_type_withdrawal: 'Transfer out',
+      manual_hint: 'For known opening/acquisition history, use Buy with the original CHF cost basis. Use Transfer in only when the cost basis is unknown.',
+      manual_add: 'Add row',
+      manual_generate: 'Generate from manual rows',
+      manual_clear: 'Clear manual rows',
+      manual_count_label: 'manual',
       footer_how: 'How it works',
       footer_features: 'Features',
       footer_pricing: 'Pricing',
@@ -3344,6 +3551,24 @@
       unlock_sub: 'Votre fichier contient plus de 50 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
       unlock_btn: 'Activer',
       unlock_error: 'Code invalide. Vérifiez votre e-mail de CryptoDeclare ou contactez hello@cryptodeclare.ch',
+      manual_title: 'Ajouter des transactions manquantes',
+      manual_sub: "Utilisez ceci pour un historique d'acquisition manquant, des récompenses de staking ou des mouvements de wallet ponctuels. Les lignes manuelles sont enregistrées localement et incluses dans le FIFO.",
+      manual_date: 'Date',
+      manual_type: 'Type',
+      manual_asset: 'Actif',
+      manual_qty: 'Quantité',
+      manual_total: 'Valeur totale CHF',
+      manual_source: 'Source / note',
+      manual_type_buy: 'Achat / acquisition',
+      manual_type_sell: 'Vente / cession',
+      manual_type_staking: 'Revenu de staking',
+      manual_type_deposit: 'Transfert entrant',
+      manual_type_withdrawal: 'Transfert sortant',
+      manual_hint: "Pour un historique d'acquisition connu, utilisez Achat avec le coût d'acquisition original en CHF. Utilisez Transfert entrant uniquement si le coût d'acquisition est inconnu.",
+      manual_add: 'Ajouter',
+      manual_generate: 'Générer avec les lignes manuelles',
+      manual_clear: 'Effacer les lignes manuelles',
+      manual_count_label: 'manuel',
       footer_how: 'Comment ça marche',
       footer_features: 'Fonctionnalités',
       footer_pricing: 'Tarifs',
@@ -3490,6 +3715,24 @@
       unlock_sub: 'Ihre Datei enthält mehr als 50 Transaktionen. Geben Sie einen Pro- oder Business-Code ein, um Ihren Bericht zu erstellen.',
       unlock_btn: 'Freischalten',
       unlock_error: 'Ungültiger Code. Prüfen Sie Ihre E-Mail von CryptoDeclare oder kontaktieren Sie hello@cryptodeclare.ch',
+      manual_title: 'Fehlende Transaktionen hinzufügen',
+      manual_sub: 'Für fehlende Anschaffungshistorie, Staking-Erträge oder einzelne Wallet-Bewegungen. Manuelle Zeilen werden lokal gespeichert und in FIFO einbezogen.',
+      manual_date: 'Datum',
+      manual_type: 'Typ',
+      manual_asset: 'Asset',
+      manual_qty: 'Menge',
+      manual_total: 'Gesamtwert CHF',
+      manual_source: 'Quelle / Notiz',
+      manual_type_buy: 'Kauf / Anschaffung',
+      manual_type_sell: 'Verkauf / Veräusserung',
+      manual_type_staking: 'Staking-Ertrag',
+      manual_type_deposit: 'Transfer Eingang',
+      manual_type_withdrawal: 'Transfer Ausgang',
+      manual_hint: 'Für bekannte Anschaffungshistorie nutzen Sie Kauf mit ursprünglicher CHF-Kostenbasis. Transfer Eingang nur verwenden, wenn die Kostenbasis unbekannt ist.',
+      manual_add: 'Zeile hinzufügen',
+      manual_generate: 'Aus manuellen Zeilen erstellen',
+      manual_clear: 'Manuelle Zeilen löschen',
+      manual_count_label: 'manuell',
       footer_how: "So funktioniert's",
       footer_features: 'Funktionen',
       footer_pricing: 'Preise',
@@ -3871,6 +4114,7 @@
       const key = el.getAttribute('data-i18n-html');
       if (t[key]) el.innerHTML = t[key];
     });
+    renderManualTransactions();
 
     // Footer links
     const fLinks = document.querySelectorAll('.footer-links');
@@ -4009,7 +4253,9 @@
   let currentPlanTier = 'free'; // 'free' | 'pro' | 'business'
   let pendingFile = null; // store single file while waiting for unlock code
   let pendingFiles = null; // store multi-file uploads while waiting for unlock code
+  let pendingManualOnly = false; // generate manual-only report after unlock
   const TAXPAYER_KEY = 'cd_taxpayer_details';
+  const MANUAL_TX_KEY = 'cd_manual_transactions_v1';
   let taxpayerDetailsHydrated = false;
 
   async function sha256hex(str) {
@@ -4088,6 +4334,144 @@
     taxpayerDetailsHydrated = true;
   }
 
+  function getManualTransactions() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(MANUAL_TX_KEY) || '[]');
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .map((tx, idx) => ({
+          id: String(tx.id || '').replace(/[^a-z0-9]/gi, '') || `manual${idx}`,
+          date: String(tx.date || '').slice(0, 10),
+          type: String(tx.type || '').trim(),
+          asset: String(tx.asset || '').toUpperCase().replace(/[^A-Z0-9]/g, ''),
+          qty: Math.abs(Number(tx.qty || 0)),
+          priceCHF: Math.max(0, Number(tx.priceCHF || 0)),
+          totalCHF: Math.max(0, Number(tx.totalCHF || 0)),
+          source: String(tx.source || '').trim(),
+          manual: true,
+        }))
+        .filter(tx => tx.date && tx.type && tx.asset && tx.qty > 0);
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveManualTransactions(transactions) {
+    try {
+      localStorage.setItem(MANUAL_TX_KEY, JSON.stringify(transactions || []));
+    } catch(e) {}
+  }
+
+  function getManualTypeLabel(type) {
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    const labels = {
+      buy: t.manual_type_buy || 'Buy',
+      sell: t.manual_type_sell || 'Sell',
+      staking: t.manual_type_staking || 'Staking',
+      deposit: t.manual_type_deposit || 'Transfer in',
+      withdrawal: t.manual_type_withdrawal || 'Transfer out',
+    };
+    return labels[type] || type || '—';
+  }
+
+  function renderManualTransactions() {
+    const list = document.getElementById('manual-list');
+    const count = document.getElementById('manual-count');
+    if (!list || !count) return;
+    const txs = getManualTransactions().sort((a,b) => (a.date || '').localeCompare(b.date || ''));
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    count.textContent = `${txs.length} ${t.manual_count_label || 'manual'}`;
+    list.classList.toggle('visible', txs.length > 0);
+    if (!txs.length) {
+      list.innerHTML = '';
+      return;
+    }
+    list.innerHTML = txs.map(tx => `
+      <div class="manual-row">
+        <span>${escHtml(tx.date)}</span>
+        <span>${escHtml(getManualTypeLabel(tx.type))}</span>
+        <span class="manual-row-asset">${escHtml(tx.asset)} · ${Number(tx.qty).toLocaleString('de-CH', { maximumFractionDigits: 8 })}${tx.source ? ' · ' + escHtml(tx.source) : ''}</span>
+        <span>${tx.totalCHF ? 'CHF ' + Number(tx.totalCHF).toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'No CHF value'}</span>
+        <button class="manual-remove" type="button" aria-label="Remove manual transaction" onclick="removeManualTransaction('${escHtml(tx.id)}')">&times;</button>
+      </div>
+    `).join('');
+  }
+
+  function getManualFormTransaction() {
+    const date = (document.getElementById('manual-date')?.value || '').trim();
+    const type = (document.getElementById('manual-type')?.value || '').trim();
+    const asset = (document.getElementById('manual-asset')?.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const qty = Math.abs(Number(document.getElementById('manual-qty')?.value || 0));
+    const totalCHF = Math.abs(Number(document.getElementById('manual-total')?.value || 0));
+    const source = (document.getElementById('manual-source')?.value || '').trim();
+    const validTypes = ['buy','sell','staking','deposit','withdrawal'];
+
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Enter a valid transaction date.');
+    if (!validTypes.includes(type)) throw new Error('Choose a valid transaction type.');
+    if (!asset) throw new Error('Enter the crypto asset symbol, for example ETH.');
+    if (!(qty > 0)) throw new Error('Enter a quantity greater than zero.');
+    if (['buy','sell','staking'].includes(type) && !(totalCHF > 0)) {
+      throw new Error('Enter the CHF total value for buys, sells, and staking income.');
+    }
+
+    return {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+      date,
+      type,
+      asset,
+      qty,
+      totalCHF,
+      priceCHF: totalCHF > 0 ? totalCHF / qty : 0,
+      source,
+      manual: true,
+    };
+  }
+
+  function addManualTransaction() {
+    try {
+      const tx = getManualFormTransaction();
+      const txs = getManualTransactions();
+      txs.push(tx);
+      txs.sort((a,b) => (a.date || '').localeCompare(b.date || ''));
+      saveManualTransactions(txs);
+      ['manual-asset','manual-qty','manual-total','manual-source'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      renderManualTransactions();
+      showToast('Manual transaction added.');
+    } catch (err) {
+      showToast(err.message || 'Check the manual transaction fields.');
+    }
+  }
+
+  function removeManualTransaction(id) {
+    const txs = getManualTransactions().filter(tx => tx.id !== id);
+    saveManualTransactions(txs);
+    renderManualTransactions();
+  }
+
+  function clearManualTransactions() {
+    saveManualTransactions([]);
+    renderManualTransactions();
+    showToast('Manual transaction rows cleared.');
+  }
+
+  function mergeManualTransactions(transactions, manualTxs = getManualTransactions()) {
+    const merged = [...(transactions || []), ...(manualTxs || [])]
+      .sort((a,b) => (a.date || '').localeCompare(b.date || ''));
+    if (transactions && transactions._authoritativeYearEndBalances) {
+      merged._authoritativeYearEndBalances = transactions._authoritativeYearEndBalances;
+    }
+    return merged;
+  }
+
+  function getManualEntryNote(count) {
+    return count > 0
+      ? ` Manual entries included: ${count} row${count === 1 ? '' : 's'} entered by the user and merged into the FIFO calculation.`
+      : '';
+  }
+
   function getPlanFromStorage() {
     try {
       const stored = localStorage.getItem('cd_plan');
@@ -4149,6 +4533,9 @@
         const f = pendingFile;
         pendingFile = null;
         processFile(f);
+      } else if (pendingManualOnly) {
+        pendingManualOnly = false;
+        processManualTransactionsOnly();
       }
     }, 1200);
   }
@@ -4203,6 +4590,7 @@
   // Run on load
   currentPlanTier = getPlanFromStorage();
   hydrateTaxpayerDetails();
+  renderManualTransactions();
   syncCookieBanner();
   updateTrialUI();
   setPlanBadge(currentPlanTier);
@@ -4316,12 +4704,18 @@
         totalTxCount += txs.length;
       }
 
+      const manualTxs = getManualTransactions();
+      if (manualTxs.length) formats.push('manual');
+      allTransactions = mergeManualTransactions(allTransactions, manualTxs);
+      totalTxCount = allTransactions.length;
+
       // ── Step 2: Check transaction limit ──
       const limit = getTxLimit();
       if (totalTxCount > limit) {
         indicator.classList.remove('visible');
         pendingFiles = files.slice();
         pendingFile = null;
+        pendingManualOnly = false;
         showUnlockBanner(totalTxCount);
         return;
       }
@@ -4335,7 +4729,7 @@
 
       // ── Step 4: Run FIFO on merged transactions ──
       const [result] = await Promise.all([
-        generateTaxReportFromTransactions(allTransactions, fileNames, formats.join(', ')),
+        generateTaxReportFromTransactions(allTransactions, fileNames, formats.join(', ') || 'manual'),
         new Promise(resolve => {
           const msgs = [
             'Merging exchange data...',
@@ -4351,6 +4745,54 @@
             if (i < msgs.length) setProcessingText(msgs[i]);
           }, 900);
           setTimeout(() => { clearInterval(interval); resolve(); }, 7000);
+        })
+      ]);
+      markTrialUsed();
+      updateTrialUI();
+      displayReport(result);
+    } catch (err) {
+      setProcessingText('Error: ' + err.message);
+      setTimeout(() => indicator.classList.remove('visible'), 4000);
+    }
+  }
+
+  async function processManualTransactionsOnly() {
+    if (hasUsedTrial()) { updateTrialUI(); return; }
+    const manualTxs = getManualTransactions();
+    if (!manualTxs.length) {
+      showToast('Add at least one manual transaction first.');
+      return;
+    }
+
+    const limit = getTxLimit();
+    if (manualTxs.length > limit) {
+      pendingFile = null;
+      pendingFiles = null;
+      pendingManualOnly = true;
+      showUnlockBanner(manualTxs.length);
+      return;
+    }
+
+    const indicator = document.getElementById('processing-indicator');
+    indicator.classList.add('visible');
+    setProcessingText('Generating report from manual transactions...');
+
+    try {
+      const [result] = await Promise.all([
+        buildSingleExchangeReport(manualTxs, 'manual', getManualEntryNote(manualTxs.length)),
+        new Promise(resolve => {
+          const msgs = [
+            'Reading manual transactions...',
+            'Applying Swiss FIFO method...',
+            'Converting to CHF...',
+            'Preparing your report...'
+          ];
+          let i = 0;
+          const interval = setInterval(() => {
+            i++;
+            if (i < msgs.length) setProcessingText(msgs[i]);
+          }, 800);
+          setTimeout(() => { clearInterval(interval); resolve(); }, 3500);
         })
       ]);
       markTrialUsed();
@@ -4399,13 +4841,16 @@
         throw new Error(detectedMsg);
       }
 
-      const txCount = transactions.length;
+      const manualTxs = getManualTransactions();
+      const combinedTransactions = mergeManualTransactions(transactions, manualTxs);
+      const txCount = combinedTransactions.length;
       const limit = getTxLimit();
 
       if (txCount > limit) {
         indicator.classList.remove('visible');
         pendingFile = file;
         pendingFiles = null;
+        pendingManualOnly = false;
         showUnlockBanner(txCount);
         return;
       }
@@ -4420,8 +4865,9 @@
       const lowParseWarning = (parseRate < 0.10 && quickRows.length > 20)
         ? ` Note: only ${transactions.length} of ${quickRows.length} rows were recognised as taxable transactions — the remainder were deposits, transfers, fees or other non-taxable events.`
         : '';
+      const manualEntryNote = getManualEntryNote(manualTxs.length);
       const [result] = await Promise.all([
-        buildSingleExchangeReport(transactions, format, lowParseWarning),
+        buildSingleExchangeReport(combinedTransactions, format, lowParseWarning + manualEntryNote),
         new Promise(resolve => {
           const msgs = [
             'Reading your transactions...',
@@ -4830,7 +5276,7 @@
     bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
     crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', revolut:'Revolut',
     ledger:'Ledger Live', kucoin:'KuCoin', gemini:'Gemini', bitfinex:'Bitfinex',
-    gate:'Gate.io', mexc:'MEXC', generic:'Generic CSV', unknown:'Unknown',
+    gate:'Gate.io', mexc:'MEXC', generic:'Generic CSV', manual:'Manual entries', unknown:'Unknown',
   };
 
   function formatExchangeName(exchangeId) {
@@ -6576,12 +7022,14 @@
       swissquote: `Exchange format detected: Swissquote. CHF values used directly where exported; non-CHF countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitpanda: `Exchange format detected: Bitpanda. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      manual: `Exchange format detected: Manual entries. Values entered by the user are treated as source data and included in FIFO, staking income, and year-end wealth calculations. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
   }
 
   function buildExchangeNotes(format, taxYear, lowParseWarning='') {
     const notesMap = getReportNotesMap(taxYear);
     const base = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: ${getUsdReferenceRateText(taxYear)} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    if (format === 'manual') return base + lowParseWarning;
     return base + ` Transaction fees included where explicitly exported by the source file.` + lowParseWarning;
   }
 
