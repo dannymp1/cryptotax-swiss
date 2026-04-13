@@ -229,6 +229,14 @@ h1 em, h2 em { color: var(--gold); font-style: italic; }
   background: var(--gold-pale);
 }
 
+.guide-card-wide {
+  grid-column: 1 / -1;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .guide-card-label {
   font-family: "DM Mono", monospace;
   font-size: 10px;
@@ -246,6 +254,39 @@ h1 em, h2 em { color: var(--gold); font-style: italic; }
 .guide-card p {
   color: var(--ink-muted);
   font-size: 15px;
+}
+
+.glossary-intro {
+  max-width: 760px;
+  color: var(--ink-muted);
+  font-size: 18px;
+  margin-bottom: 34px;
+}
+
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.glossary-term {
+  background: rgba(245,242,235,0.96);
+  padding: 26px 28px;
+}
+
+.glossary-term h2 {
+  font-size: 27px;
+  margin: 0 0 10px;
+}
+
+.glossary-term p {
+  color: var(--ink-muted);
+  font-size: 15px;
+  line-height: 1.65;
 }
 
 .article {
@@ -399,6 +440,8 @@ h1 em, h2 em { color: var(--gold); font-style: italic; }
   .guide-shell { padding: 0 24px 72px; }
   .guide-layout { grid-template-columns: 1fr; gap: 32px; }
   .guide-card-grid { grid-template-columns: 1fr; }
+  .guide-card-wide { grid-column: auto; }
+  .glossary-grid { grid-template-columns: 1fr; }
   .toc { position: static; }
   h1 { font-size: 48px; }
 }

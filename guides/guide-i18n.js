@@ -72,6 +72,17 @@
     return `<section class="sources"><h2>${s.title}</h2><ul>${items.join('')}</ul></section>`;
   }
 
+  function glossaryArticle(terms, intro, ctaTitle, ctaBody, ctaButton) {
+    const cards = terms.map(([term, definition]) =>
+      `<section class="glossary-term"><h2>${term}</h2><p>${definition}</p></section>`
+    ).join('');
+    return `
+      <p class="glossary-intro">${intro}</p>
+      <div class="glossary-grid">${cards}</div>
+      <section class="cta-panel"><h2>${ctaTitle}</h2><p>${ctaBody}</p><a class="button" href="/#upload-area">${ctaButton}</a></section>
+    `;
+  }
+
   const pages = {
     index: {
       fr: {
@@ -88,7 +99,8 @@
           ['Cout d acquisition', 'FIFO crypto en Suisse', 'Pourquoi l historique d acquisition compte pour calculer les cessions et rapprocher les lots.'],
           ['Qualite des donnees', 'Historique de transactions manquant', 'Ce que signifient les cessions non rapprochees et comment corriger les imports incomplets.'],
           ['Exports CSV', 'Rapports fiscaux depuis CSV d exchange', 'Comment Coinbase, Binance, Kraken, Swissquote, SwissBorg et autres exports deviennent une annexe fiscale.'],
-          ['Statut', 'Investisseur prive ou trader professionnel', 'La distinction qui peut changer le traitement des gains comme gains prives ou revenu imposable.']
+          ['Statut', 'Investisseur prive ou trader professionnel', 'La distinction qui peut changer le traitement des gains comme gains prives ou revenu imposable.'],
+          ['Glossaire', 'Glossaire fiscal crypto suisse', 'Definitions courtes des termes crypto et fiscaux suisses vus dans les exports, rapports et avertissements.']
         ],
         ctaTitle: 'Pret a transformer vos exports en annexe fiscale suisse ?',
         ctaBody: 'CryptoDeclare aide a organiser les transactions importees dans un rapport structure avec resultats FIFO, revenus de staking, valeurs de fortune et avertissements de completude.',
@@ -108,7 +120,8 @@
           ['Kostenbasis', 'FIFO-Krypto-Steuer Schweiz', 'Warum Anschaffungshistorie fuer Verkaeufe und Lot-Abgleich wichtig ist.'],
           ['Datenqualitaet', 'Fehlende Krypto-Transaktionshistorie', 'Was nicht zugeordnete Verkaeufe bedeuten und wie unvollstaendige Importe korrigiert werden.'],
           ['CSV-Exporte', 'Steuerberichte aus Exchange-CSV', 'Wie Coinbase, Binance, Kraken, Swissquote, SwissBorg und andere Exporte zu einer Steuerbeilage werden.'],
-          ['Status', 'Privatanleger oder professioneller Trader', 'Die Unterscheidung, die beeinflussen kann, ob Gewinne privat oder als Einkommen behandelt werden.']
+          ['Status', 'Privatanleger oder professioneller Trader', 'Die Unterscheidung, die beeinflussen kann, ob Gewinne privat oder als Einkommen behandelt werden.'],
+          ['Glossar', 'Schweizer Krypto-Steuerglossar', 'Kurze Erklaerungen der Krypto- und Schweizer Steuerbegriffe in Exporten, Berichten und Warnungen.']
         ],
         ctaTitle: 'Bereit, Ihre Exporte in eine Schweizer Steuerbeilage zu verwandeln?',
         ctaBody: 'CryptoDeclare hilft, importierte Krypto-Transaktionen in einem strukturierten Bericht mit FIFO-Resultaten, Staking-Ertraegen, Jahresendwerten und Vollstaendigkeitswarnungen zu organisieren.',
@@ -503,6 +516,133 @@
           <section class="cta-panel"><h2>Klarere Beilage fuer die Pruefung vorbereiten</h2><p>CryptoDeclare organisiert Transaktionsdaten in einem Bericht, den Sie selbst pruefen oder mit einem Schweizer Steuerberater teilen koennen.</p><a class="button" href="/#upload-area">Bericht erstellen</a></section>
         `,
         toc: [['private', 'Privatanleger'], ['professional', 'Professioneller Trader'], ['why', 'Warum wichtig'], ['advisor', 'Berater']]
+      }
+    },
+
+    glossary: {
+      fr: {
+        title: 'Glossaire fiscal crypto suisse | CryptoDeclare',
+        description: 'Glossaire fiscal crypto suisse expliquant FIFO, cout d acquisition, staking, fortune, derives crypto, CSV, cessions non rapprochees et autres termes.',
+        eyebrow: 'Glossaire',
+        h1: 'Glossaire fiscal crypto <em>suisse</em>.',
+        copy: 'Definitions simples des termes crypto et fiscaux suisses que vous verrez en preparant un rapport CryptoDeclare.',
+        article: glossaryArticle([
+          ['Acquisition', 'Transaction qui augmente votre quantite d un actif: achat, reward, airdrop ou position d ouverture reconstruite manuellement. L historique d acquisition est necessaire pour le cout FIFO.'],
+          ['Adresse', 'Destination publique sur une blockchain pour envoyer ou recevoir des cryptos. Les adresses aident a suivre les transferts, mais elles ne disent pas toujours si le wallet vous appartient.'],
+          ['Airdrop', 'Crypto recue sans achat classique. Selon les faits, un airdrop peut devoir etre analyse comme revenu plutot que comme simple achat prive.'],
+          ['Actif', 'Coin ou token crypto comme BTC, ETH, SOL ou USDC. Dans une annexe fiscale, chaque actif a normalement une quantite et une valeur CHF de fin d annee.'],
+          ['Blockchain', 'Base de transactions partagee et maintenue par un reseau. Pour le reporting fiscal, elle peut montrer mouvements de wallet, swaps, frais et rewards absents d un CSV d exchange.'],
+          ['Bridge', 'Transaction qui deplace de la valeur entre blockchains. Les bridges apparaissent souvent comme sorties et entrees de wallet et doivent etre revus pour eviter de les traiter comme ventes.'],
+          ['Gain en capital', 'Resultat obtenu lorsqu un actif est cede pour plus que son cout d acquisition. Pour beaucoup de particuliers suisses, les gains prives sont traites differemment du revenu imposable.'],
+          ['Exchange centralise', 'Plateforme comme Coinbase, Kraken, Binance, Bitstamp, Swissquote ou SwissBorg qui detient des comptes utilisateurs et exporte historiques de trades ou ledgers.'],
+          ['Cout d acquisition', 'Valeur d acquisition d un actif, generalement en CHF. Elle est comparee au produit de cession pour calculer le gain ou la perte realisee.'],
+          ['Derive crypto', 'Contrat financier dont la valeur depend d un cryptoactif, comme futures, options ou perpetuals. Les derives peuvent etre fiscalement complexes et meritent souvent une revue professionnelle.'],
+          ['Exchange decentralise', 'Protocole permettant de swapper des cryptos directement depuis un wallet. L activite DEX peut etre plus difficile a reconstruire qu un compte exchange classique.'],
+          ['Export CSV', 'Fichier de type tableur telecharge depuis une plateforme. CryptoDeclare lit les exports CSV et Excel pour creer une chronologie normalisee.'],
+          ['DeFi', 'Finance decentralisee: pools de liquidite, lending, swaps, bridges ou yield farming. Les donnees DeFi sont souvent plus difficiles a classer que les trades d exchange.'],
+          ['Cession', 'Transaction qui reduit votre position: vente, swap crypto-crypto, paiement ou sortie taxable. Les cessions ont besoin d historique de cout.'],
+          ['ESTV / AFC', 'Administration federale des contributions. CryptoDeclare structure ses rapports autour des concepts fiscaux suisses et des references officielles lorsque pertinent.'],
+          ['FIFO', 'Premier entre, premier sorti. Methode qui rapproche les cessions avec les premiers lots d acquisition disponibles.'],
+          ['Monnaie fiat', 'Monnaie emise par un Etat, comme CHF, EUR ou USD. Le reporting suisse demande generalement des valeurs en CHF.'],
+          ['Fork', 'Evenement ou une blockchain se separe et peut creer un nouvel actif pour les detenteurs. Les forks demandent souvent une revue manuelle.'],
+          ['Contrat future', 'Derive qui suit le prix futur d un actif. Les futures sortent souvent d un reporting spot simple et peuvent necessiter une revue par un conseiller.'],
+          ['Frais de gas', 'Frais de transaction blockchain, par exemple sur Ethereum. Les frais peuvent influencer le produit net, le cout d acquisition ou le ledger.'],
+          ['ICTax', 'Base de reference suisse pour certaines valeurs fiscales. Les valeurs de fin d annee peuvent etre utiles pour la declaration de fortune.'],
+          ['Ledger CSV', 'Export detaille des transactions de CryptoDeclare. Il aide le contribuable ou le conseiller a revoir le calcul.'],
+          ['Revenu de lending', 'Rewards recus via lending ou produits earn. Ils doivent generalement etre separes des gains prives.'],
+          ['Marge / leverage', 'Exposition empruntee pour augmenter une position. Le leverage peut indiquer une activite plus complexe qu un portefeuille prive simple.'],
+          ['Transaction manuelle', 'Ligne ajoutee manuellement lorsque l export est incomplet, par exemple pour un solde d ouverture, achat manquant, reward ou mouvement de wallet.'],
+          ['Revenu de mining', 'Crypto recue via mining ou activite similaire. Peut necessiter un traitement en revenu distinct d une vente privee.'],
+          ['Historique d acquisition manquant', 'Avertissement indiquant que le rapport voit une cession mais pas assez d achats anterieurs pour calculer le cout FIFO complet.'],
+          ['NFT', 'Token non fongible representant un actif ou droit numerique unique. L activite NFT peut inclure achats, ventes, frais de mint, royalties ou transferts de wallet.'],
+          ['Option', 'Derive donnant le droit, mais pas l obligation, d acheter ou vendre un actif a un prix defini. Les options crypto doivent generalement etre revues attentivement.'],
+          ['Contrat perpetual', 'Derive crypto similaire a un future mais sans date d expiration fixe. Les perpetuals peuvent creer gains, pertes, funding payments et exposition avec leverage.'],
+          ['Investisseur prive', 'Contribuable qui detient la crypto comme fortune privee, et non comme activite professionnelle ou commerciale.'],
+          ['Cle privee', 'Credential secret qui controle l acces a un wallet. Elle ne doit jamais etre importee ou partagee pour un rapport fiscal; utilisez plutot exports ou adresses publiques.'],
+          ['Trader professionnel', 'Contribuable dont l activite peut etre consideree comme professionnelle, par exemple en raison de frequence, leverage, derives ou dependance au revenu de trading.'],
+          ['Proof-of-stake', 'Mode de consensus ou des validateurs securisent le reseau en stakant des cryptos. Les rewards doivent normalement etre separes des gains en capital.'],
+          ['Proof-of-work', 'Mode de consensus ou des mineurs utilisent de la puissance de calcul pour securiser le reseau. Les rewards de mining peuvent poser des questions de revenu.'],
+          ['Cle publique', 'Identifiant cryptographique lie a un wallet. En pratique, le reporting fiscal utilise surtout exports de transactions et adresses plutot que secrets de wallet.'],
+          ['Gain / perte realise', 'Resultat calcule lors d une cession. Il compare la valeur de cession au cout d acquisition.'],
+          ['Staking', 'Deleguer ou verrouiller des cryptos pour soutenir un reseau proof-of-stake et recevoir des rewards. Les rewards doivent normalement etre separes des gains en capital.'],
+          ['Stablecoin', 'Cryptoactif concu pour suivre une monnaie comme USD ou EUR. Les stablecoins demandent tout de meme historique, conversion CHF et soldes de fin d annee.'],
+          ['Swap', 'Echange crypto-crypto, par exemple ETH contre SOL. Un swap peut etre a la fois une cession et une acquisition.'],
+          ['Annexe fiscale', 'Document justificatif joint a une declaration fiscale. CryptoDeclare genere une annexe avec resumes, notes et ledger.'],
+          ['Token', 'Actif crypto emis sur une blockchain, representant souvent utilite, gouvernance, valeur stablecoin ou droit lie a un protocole.'],
+          ['Trading', 'Acheter, vendre ou swapper des cryptoactifs. Pour le reporting suisse, cela cree un historique necessaire aux resultats FIFO meme si les gains prives ne sont pas imposes comme revenu.'],
+          ['Paire de trading', 'Les deux actifs d un marche, par exemple BTC/CHF ou ETH/USDT. La paire aide a identifier l actif cede et l actif acquis.'],
+          ['Ledger de transactions', 'Liste detaillee des transactions importees et normalisees. Il rend le calcul verifiable.'],
+          ['Transfert', 'Mouvement de crypto entre comptes ou wallets. Les transferts entre vos propres wallets ne sont normalement pas des ventes, mais ils aident a tracer l historique.'],
+          ['Cession non rapprochee', 'Cession qui ne peut pas etre reliee completement a des lots d acquisition anterieurs. C est un avertissement de completude.'],
+          ['Gain / perte non realise', 'Mouvement de prix sur une crypto que vous detenez encore. Il differe d un resultat realise car l actif n a pas ete cede.'],
+          ['Validateur', 'Participant qui aide a securiser un reseau proof-of-stake. Deleguer a des validateurs peut generer des rewards de staking a identifier separement.'],
+          ['Wallet', 'Outil ou adresse utilise pour detenir des cryptos, soit custodial via une plateforme, soit self-custody avec vos propres cles.'],
+          ['Valeur de fortune', 'Valeur CHF des actifs detenus en fin d annee, typiquement au 31 decembre. Les avoirs crypto doivent normalement etre inclus comme fortune.'],
+          ['Yield farming', 'Utilisation de protocoles DeFi pour gagner rewards, frais ou incentives. Cela peut creer beaucoup de petites transactions et demande une classification prudente.'],
+          ['Valeur de portefeuille de fin d annee', 'Valeur totale en CHF de vos avoirs crypto a la fin de l annee fiscale. C est une sortie cle de l annexe crypto suisse.']
+        ], 'Ce glossaire se concentre sur les termes pratiques du reporting fiscal crypto suisse, des exports CSV, du FIFO, du staking, des valeurs de fortune et des controles de completude.', 'Transformer ces termes en rapport', 'Importez vos CSV ou Excel et CryptoDeclare organise resultats FIFO, revenus de staking, valeurs de fortune et avertissements dans une annexe structuree.', 'Generer mon rapport')
+      },
+      de: {
+        title: 'Schweizer Krypto-Steuerglossar | CryptoDeclare',
+        description: 'Schweizer Krypto-Steuerglossar zu FIFO, Kostenbasis, Staking-Ertraegen, Vermoegenssteuer, Derivaten, CSV-Exporten und nicht zugeordneten Verkaeufen.',
+        eyebrow: 'Glossar',
+        h1: 'Schweizer Krypto-Steuer<em>glossar</em>.',
+        copy: 'Einfache Definitionen der Krypto- und Schweizer Steuerbegriffe, die Sie beim Erstellen eines CryptoDeclare-Berichts sehen.',
+        article: glossaryArticle([
+          ['Anschaffung', 'Transaktion, die Ihren Bestand eines Assets erhoeht, zum Beispiel Kauf, Reward, Airdrop oder manuell rekonstruierte Anfangsposition. Anschaffungshistorie wird fuer FIFO benoetigt.'],
+          ['Adresse', 'Oeffentliches Blockchain-Ziel zum Senden oder Empfangen von Krypto. Adressen helfen beim Nachverfolgen von Transfers, zeigen aber nicht immer, ob ein Wallet Ihnen gehoert.'],
+          ['Airdrop', 'Krypto, die ohne normalen Kauf erhalten wird. Je nach Fakten kann ein Airdrop als Einkommen statt als einfacher privater Kauf zu pruefen sein.'],
+          ['Asset', 'Krypto-Coin oder Token wie BTC, ETH, SOL oder USDC. In einer Steuerbeilage braucht jedes Asset normalerweise eine Jahresendmenge und einen CHF-Wert.'],
+          ['Blockchain', 'Geteilte Transaktionsdatenbank, die von einem Netzwerk betrieben wird. Fuer Steuerberichte kann sie Wallet-Bewegungen, Swaps, Gebuehren und Rewards zeigen, die in einer Exchange-CSV fehlen.'],
+          ['Bridge', 'Transaktion, die Wert zwischen Blockchains bewegt. Bridges erscheinen oft als ausgehende und eingehende Wallet-Bewegungen und sollten nicht vorschnell als Verkauf behandelt werden.'],
+          ['Kapitalgewinn', 'Resultat aus dem Verkauf oder der Veraeusserung eines Assets ueber seiner Kostenbasis. Fuer viele Schweizer Privatpersonen werden private Kapitalgewinne anders behandelt als steuerbares Einkommen.'],
+          ['Zentrale Boerse', 'Plattform wie Coinbase, Kraken, Binance, Bitstamp, Swissquote oder SwissBorg mit Nutzerkonten und Exporten fuer Trades oder Ledger.'],
+          ['Kostenbasis', 'Anschaffungswert eines Assets, meist in CHF. Er wird mit dem Veraeusserungserloes verglichen, um realisierte Gewinne oder Verluste zu berechnen.'],
+          ['Krypto-Derivat', 'Finanzvertrag, dessen Wert von einem Krypto-Asset abhaengt, zum Beispiel Futures, Optionen oder Perpetuals. Derivate koennen steuerlich komplex sein und sollten oft geprueft werden.'],
+          ['Dezentrale Boerse', 'Protokoll, mit dem Nutzer Krypto direkt aus einem Wallet tauschen. DEX-Aktivitaet ist oft schwerer zu rekonstruieren als ein normaler Exchange-Account.'],
+          ['CSV-Export', 'Tabellenartige Datei von einer Boerse oder Wallet-Plattform. CryptoDeclare liest CSV- und Excel-Exporte und erstellt daraus eine normalisierte Timeline.'],
+          ['DeFi', 'Dezentrale Finanzaktivitaet wie Liquidity Pools, Lending, Swaps, Bridges oder Yield Farming. DeFi-Daten sind oft schwerer zu klassifizieren als Exchange-Trades.'],
+          ['Veraeusserung', 'Transaktion, die Ihren Bestand reduziert, zum Beispiel Verkauf, Krypto-zu-Krypto-Swap, Zahlung oder steuerrelevanter Ausgang. Veraeusserungen brauchen Kostenhistorie.'],
+          ['ESTV', 'Eidgenoessische Steuerverwaltung. CryptoDeclare strukturiert Berichte um Schweizer Steuerkonzepte und relevante offizielle Referenzen.'],
+          ['FIFO', 'First in, first out. Methode, bei der Veraeusserungen zuerst mit den fruehesten verfuegbaren Anschaffungslots abgeglichen werden.'],
+          ['Fiat-Waehrung', 'Staatliche Waehrung wie CHF, EUR oder USD. Schweizer Steuerreporting benoetigt normalerweise Werte in CHF.'],
+          ['Fork', 'Ereignis, bei dem sich eine Blockchain aufspaltet und Halter ein neues Asset erhalten koennen. Forks benoetigen oft manuelle Pruefung.'],
+          ['Futures-Kontrakt', 'Derivat, das den zukuenftigen Preis eines Assets abbildet. Futures liegen oft ausserhalb eines einfachen Spot-Trading-Workflows und sollten geprueft werden.'],
+          ['Gas Fee', 'Blockchain-Transaktionsgebuehr, etwa auf Ethereum. Gebuehren koennen Nettoerloes, Kostenbasis oder Ledger beeinflussen.'],
+          ['ICTax', 'Schweizer Referenzdatenbank fuer bestimmte Steuerwerte. Jahresendwerte koennen fuer die Vermoegensdeklaration relevant sein.'],
+          ['Ledger-CSV', 'Detaillierter Transaktionsexport aus CryptoDeclare. Er hilft Steuerpflichtigen oder Beratern, die Berechnung zu pruefen.'],
+          ['Lending-Ertrag', 'Rewards aus Lending- oder Earn-Produkten. Sie sollten grundsaetzlich von privaten Kapitalgewinnen getrennt werden.'],
+          ['Margin / Leverage', 'Geliehene Exponierung zur Vergroesserung einer Position. Leverage kann ein Hinweis sein, dass die Aktivitaet komplexer ist als ein einfaches Privatportfolio.'],
+          ['Manuelle Transaktion', 'Manuell erfasste Zeile, wenn ein Export unvollstaendig ist, zum Beispiel Anfangsbestand, fehlender Kauf, Reward oder Wallet-Bewegung.'],
+          ['Mining-Einkommen', 'Krypto aus Mining oder aehnlicher Aktivitaet. Es kann eine Einkommensbehandlung brauchen und unterscheidet sich vom privaten Verkauf gehaltener Krypto.'],
+          ['Fehlende Anschaffungshistorie', 'Warnung, dass der Bericht eine Veraeusserung sieht, aber nicht genug fruehere Kaeufe oder Anschaffungen fuer die volle FIFO-Kostenbasis.'],
+          ['NFT', 'Nicht-fungibler Token fuer ein einzigartiges digitales Asset oder Recht. NFT-Aktivitaet kann Kaeufe, Verkaeufe, Minting-Kosten, Royalties oder Wallet-Transfers enthalten.'],
+          ['Option', 'Derivat mit dem Recht, aber nicht der Pflicht, ein Asset zu einem bestimmten Preis zu kaufen oder zu verkaufen. Krypto-Optionen sollten sorgfaeltig geprueft werden.'],
+          ['Perpetual-Kontrakt', 'Krypto-Derivat aehnlich einem Future, aber ohne festes Ablaufdatum. Perpetuals koennen komplexe Gewinne, Verluste, Funding Payments und Leverage erzeugen.'],
+          ['Privatanleger', 'Steuerpflichtige Person, die Krypto als Privatvermoegen haelt und nicht als professionelle Handels- oder Geschaeftstaetigkeit.'],
+          ['Privater Schluessel', 'Geheimes Zugangsmittel, das ein Wallet kontrolliert. Es sollte nie fuer einen Steuerbericht hochgeladen oder geteilt werden; Exporte oder oeffentliche Adressen sind sicherer.'],
+          ['Professioneller Trader', 'Steuerpflichtige Person, deren Aktivitaet professionell wirken kann, etwa durch hohe Handelsintensitaet, Leverage, Derivate oder Abhaengigkeit vom Trading-Einkommen.'],
+          ['Proof-of-stake', 'Konsensmodell, bei dem Validatoren das Netzwerk durch gestakte Krypto sichern. Rewards sollten normalerweise von Kapitalgewinnen getrennt werden.'],
+          ['Proof-of-work', 'Konsensmodell, bei dem Miner Rechenleistung nutzen, um das Netzwerk zu sichern. Mining-Rewards koennen einkommensbezogene Fragen ausloesen.'],
+          ['Oeffentlicher Schluessel', 'Kryptografischer Identifikator eines Wallets. Praktisch nutzt Steuerreporting meistens Transaktionsexporte und Adressen statt Wallet-Geheimnisse.'],
+          ['Realisierter Gewinn / Verlust', 'Resultat bei einer Veraeusserung. Es vergleicht Veraeusserungswert und Kostenbasis.'],
+          ['Staking', 'Delegieren oder Sperren von Krypto, um ein Proof-of-Stake-Netzwerk zu unterstuetzen und Rewards zu erhalten. Rewards sollten normalerweise von Kapitalgewinnen getrennt werden.'],
+          ['Stablecoin', 'Krypto-Asset, das eine andere Waehrung wie USD oder EUR abbilden soll. Auch Stablecoins brauchen Historie, CHF-Umrechnung und Jahresendbestaende.'],
+          ['Swap', 'Krypto-zu-Krypto-Tausch, zum Beispiel ETH gegen SOL. Ein Swap kann gleichzeitig Veraeusserung eines Assets und Anschaffung eines anderen sein.'],
+          ['Steuerbeilage', 'Unterstuetzendes Dokument zur Steuererklaerung. CryptoDeclare erstellt eine Beilage mit Zusammenfassungen, Notizen und Ledger.'],
+          ['Token', 'Krypto-Asset, das auf einer Blockchain ausgegeben wird und zum Beispiel Utility, Governance, Stablecoin-Wert oder ein protokollspezifisches Recht darstellen kann.'],
+          ['Trading', 'Kaufen, Verkaufen oder Tauschen von Krypto-Assets. Fuer Schweizer Reporting entsteht dadurch Historie fuer FIFO-Resultate, auch wenn private Gewinne nicht als Einkommen besteuert werden.'],
+          ['Trading-Paar', 'Die zwei Assets eines Marktes, zum Beispiel BTC/CHF oder ETH/USDT. Das Paar hilft zu erkennen, welches Asset veraeussert und welches angeschafft wurde.'],
+          ['Transaktionsledger', 'Detaillierte Liste importierter und normalisierter Transaktionen. Er macht die Berechnung nachvollziehbar.'],
+          ['Transfer', 'Bewegung von Krypto zwischen Konten oder Wallets. Transfers zwischen eigenen Wallets sind normalerweise keine Verkaeufe, helfen aber beim Nachverfolgen der Historie.'],
+          ['Nicht zugeordnete Veraeusserung', 'Veraeusserung, die nicht vollstaendig mit frueheren Anschaffungslots abgeglichen werden kann. Das ist eine Vollstaendigkeitswarnung.'],
+          ['Unrealisierter Gewinn / Verlust', 'Preisbewegung auf Krypto, die Sie noch halten. Anders als ein realisiertes Resultat, weil das Asset nicht veraeussert wurde.'],
+          ['Validator', 'Teilnehmer, der ein Proof-of-Stake-Netzwerk sichert. Delegation an Validatoren kann Staking-Rewards erzeugen, die separat zu identifizieren sind.'],
+          ['Wallet', 'Tool oder Adresse zum Halten von Krypto. Wallets koennen custodial ueber eine Plattform oder self-custody mit eigenen Schluesseln sein.'],
+          ['Vermoegenssteuerwert', 'CHF-Wert der Assets am Jahresende, typischerweise per 31. Dezember. Krypto-Bestaende muessen normalerweise als Vermoegen enthalten sein.'],
+          ['Yield Farming', 'Nutzung von DeFi-Protokollen, um Rewards, Gebuehren oder Incentives zu verdienen. Das kann viele kleine Transaktionen erzeugen und braucht vorsichtige Klassifikation.'],
+          ['Jahresend-Portfoliowert', 'Gesamter CHF-Wert Ihrer Krypto-Bestaende am Ende des Steuerjahres. Ein wichtiger Output einer Schweizer Krypto-Steuerbeilage.']
+        ], 'Dieses Glossar fokussiert auf praktische Begriffe aus Schweizer Krypto-Steuerreporting, CSV-Exporten, FIFO-Berechnungen, Staking-Ertraegen, Jahresendwerten und Vollstaendigkeitspruefungen.', 'Diese Begriffe in einen Bericht verwandeln', 'Laden Sie CSV- oder Excel-Exporte hoch und CryptoDeclare organisiert FIFO-Resultate, Staking-Ertraege, Jahresendwerte und Warnungen in einer strukturierten Beilage.', 'Bericht erstellen')
       }
     }
   };

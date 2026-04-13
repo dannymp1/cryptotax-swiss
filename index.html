@@ -2797,6 +2797,7 @@
       <button type="button" class="nav-dropdown-toggle" aria-haspopup="true" data-i18n="nav_resources">Resources</button>
       <div class="nav-dropdown" role="menu" aria-label="Resources">
         <a href="/guides/" role="menuitem" data-i18n="nav_guides">Swiss crypto tax guides</a>
+        <a href="/guides/glossary.html" role="menuitem" data-i18n="nav_glossary">Swiss crypto tax glossary</a>
         <a href="#" onclick="navScrollTo('faq');return false;" role="menuitem" data-i18n="nav_faq">FAQ</a>
         <a href="#" onclick="navScrollTo('team');return false;" role="menuitem" data-i18n="nav_founder">About the founder</a>
       </div>
@@ -3535,6 +3536,7 @@
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#exchanges">Exchanges</a></li>
         <li><a href="/guides/">Swiss crypto tax guides</a></li>
+        <li><a href="/guides/glossary.html">Glossary</a></li>
       </ul>
     </div>
     <div>
@@ -3568,7 +3570,7 @@
   const TRANSLATIONS = {
     en: {
       nav_how: 'How it works', nav_features: 'Features', nav_pricing: 'Pricing',
-      nav_declare: 'Declare', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Resources', nav_guides: 'Swiss crypto tax guides', nav_founder: 'About the founder', nav_start: 'Start free report',
+      nav_declare: 'Declare', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Resources', nav_guides: 'Swiss crypto tax guides', nav_glossary: 'Swiss crypto tax glossary', nav_founder: 'About the founder', nav_start: 'Start free report',
       hero_eyebrow: 'Swiss crypto tax reporting',
       hero_headline: 'Swiss crypto<br><em>tax report</em><br>in minutes.',
       hero_sub: 'Upload your exchange transactions, we calculate the report, and you receive a clean Swiss tax annex to review for your cantonal declaration.',
@@ -3718,6 +3720,7 @@
       footer_pricing: 'Pricing',
       footer_exchanges: 'Exchanges',
       footer_guides: 'Swiss crypto tax guides',
+      footer_glossary: 'Glossary',
       footer_privacy: 'Privacy policy',
       footer_terms: 'Terms of service',
       footer_impressum: 'Impressum',
@@ -3759,7 +3762,7 @@
     },
     fr: {
       nav_how: 'Comment ça marche', nav_features: 'Fonctionnalités', nav_pricing: 'Tarifs',
-      nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_team: 'Équipe', nav_resources: 'Ressources', nav_guides: 'Guides fiscaux crypto suisses', nav_founder: 'À propos du fondateur', nav_start: 'Commencer gratuitement',
+      nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_team: 'Équipe', nav_resources: 'Ressources', nav_guides: 'Guides fiscaux crypto suisses', nav_glossary: 'Glossaire fiscal crypto suisse', nav_founder: 'À propos du fondateur', nav_start: 'Commencer gratuitement',
       hero_eyebrow: 'Déclaration fiscale crypto suisse',
       hero_headline: 'Rapport fiscal<br><em>crypto suisse</em><br>en minutes.',
       hero_sub: 'Importez vos transactions, nous calculons le rapport, et vous recevez une annexe fiscale suisse claire à relire pour votre déclaration cantonale.',
@@ -3909,6 +3912,7 @@
       footer_pricing: 'Tarifs',
       footer_exchanges: 'Plateformes',
       footer_guides: 'Guides fiscaux crypto suisses',
+      footer_glossary: 'Glossaire',
       footer_privacy: 'Politique de confidentialité',
       footer_terms: "Conditions d'utilisation",
       footer_impressum: 'Mentions légales',
@@ -3950,7 +3954,7 @@
     },
     de: {
       nav_how: 'So funktioniert\'s', nav_features: 'Funktionen', nav_pricing: 'Preise',
-      nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Ressourcen', nav_guides: 'Schweizer Krypto-Steuerguides', nav_founder: 'Über den Gründer', nav_start: 'Kostenlos starten',
+      nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Ressourcen', nav_guides: 'Schweizer Krypto-Steuerguides', nav_glossary: 'Schweizer Krypto-Steuerglossar', nav_founder: 'Über den Gründer', nav_start: 'Kostenlos starten',
       hero_eyebrow: 'Schweizer Krypto-Steuerreporting',
       hero_headline: 'Schweizer Krypto-<br><em>Steuerbericht</em><br>in Minuten.',
       hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen den Bericht, und Sie erhalten eine klare Schweizer Steuerbeilage zur Prüfung für Ihre kantonale Steuererklärung.',
@@ -4100,6 +4104,7 @@
       footer_pricing: 'Preise',
       footer_exchanges: 'Börsen',
       footer_guides: 'Schweizer Krypto-Steuerguides',
+      footer_glossary: 'Glossar',
       footer_privacy: 'Datenschutzerklärung',
       footer_terms: 'Nutzungsbedingungen',
       footer_impressum: 'Impressum',
@@ -4494,6 +4499,7 @@
       if (fl0[2] && t.footer_pricing) fl0[2].textContent = t.footer_pricing;
       if (fl0[3] && t.footer_exchanges) fl0[3].textContent = t.footer_exchanges;
       if (fl0[4] && t.footer_guides) fl0[4].textContent = t.footer_guides;
+      if (fl0[5] && t.footer_glossary) fl0[5].textContent = t.footer_glossary;
     }
     if (fLinks[1]) {
       const fl1 = fLinks[1].querySelectorAll('a');
