@@ -1549,6 +1549,10 @@
     background: rgba(212,175,55,0.06);
   }
 
+  .processing-indicator + .trial-banner {
+    margin-top: 20px;
+  }
+
   .upload-area input[type="file"] {
     position: absolute;
     inset: 0;
@@ -1611,12 +1615,98 @@
 
   .app-left {}
 
+  .optional-card,
   .taxpayer-card {
     background: rgba(245,242,235,0.04);
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 4px;
     padding: 20px 24px;
     margin-bottom: 20px;
+  }
+
+  .optional-card[open] {
+    border-color: rgba(212,175,55,0.24);
+    background: rgba(245,242,235,0.055);
+  }
+
+  .optional-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .optional-summary::-webkit-details-marker { display: none; }
+
+  .optional-copy {
+    min-width: 0;
+  }
+
+  .optional-kicker {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(212,175,55,0.72);
+    margin-bottom: 5px;
+  }
+
+  .optional-title {
+    display: block;
+    font-family: 'DM Serif Display', serif;
+    font-size: 19px;
+    line-height: 1.15;
+    color: var(--paper);
+    letter-spacing: -0.02em;
+    margin-bottom: 5px;
+  }
+
+  .optional-sub {
+    display: block;
+    font-size: 12px;
+    line-height: 1.55;
+    color: rgba(245,242,235,0.46);
+  }
+
+  .optional-toggle {
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(212,175,55,0.24);
+    border-radius: 50%;
+    color: var(--gold-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .optional-toggle::before {
+    content: '+';
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .optional-card[open] .optional-toggle {
+    transform: rotate(45deg);
+    background: rgba(212,175,55,0.08);
+  }
+
+  .optional-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .optional-content {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(245,242,235,0.08);
   }
 
   .taxpayer-card-title {
@@ -1687,6 +1777,10 @@
     align-items: flex-start;
     gap: 14px;
     margin-bottom: 14px;
+  }
+
+  .optional-summary.manual-card-head {
+    margin-bottom: 0;
   }
 
   .manual-card-title {
@@ -1838,6 +1932,27 @@
     font-size: 13px;
     line-height: 1.7;
     color: rgba(245,242,235,0.45);
+  }
+
+  .app-compact-note {
+    padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-left: 2px solid rgba(212,175,55,0.4);
+    border-radius: 4px;
+    color: rgba(245,242,235,0.43);
+    font-size: 12px;
+    line-height: 1.65;
+    background: rgba(245,242,235,0.025);
+  }
+
+  .app-compact-note strong {
+    color: rgba(245,242,235,0.75);
+    font-weight: 600;
+  }
+
+  .app-compact-note a {
+    color: var(--gold-light);
+    text-decoration: none;
   }
 
   /* ── PROCESSING STATE ── */
@@ -2888,103 +3003,6 @@
 
   <div class="app-layout">
     <div class="app-left">
-      <div class="taxpayer-card">
-        <div class="taxpayer-card-title">Taxpayer details for the report</div>
-        <div class="taxpayer-grid">
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="taxpayer-name">Full name</label>
-            <input class="taxpayer-input" type="text" id="taxpayer-name" placeholder="Max Muster" autocomplete="name"/>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="taxpayer-address">Address</label>
-            <input class="taxpayer-input" type="text" id="taxpayer-address" placeholder="Bahnhofstrasse 10, 8001 Zurich" autocomplete="street-address"/>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="taxpayer-id">AHV / Tax ID (optional)</label>
-            <input class="taxpayer-input" type="text" id="taxpayer-id" placeholder="756.1234.5678.97" autocomplete="off"/>
-          </div>
-        </div>
-      <div class="taxpayer-note">Saved locally in your browser and added to the generated report header if provided.</div>
-      </div>
-
-      <div class="manual-card">
-        <div class="manual-card-head">
-          <div>
-            <div class="manual-card-title" data-i18n="manual_title">Add missing transactions</div>
-            <div class="manual-card-sub" data-i18n="manual_sub">Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.</div>
-          </div>
-          <div class="manual-count" id="manual-count">0 manual</div>
-        </div>
-        <div class="manual-grid">
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="manual-date" data-i18n="manual_date">Date</label>
-            <input class="taxpayer-input" type="date" id="manual-date"/>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="manual-type" data-i18n="manual_type">Type</label>
-            <select class="taxpayer-input" id="manual-type">
-              <option value="buy" data-i18n="manual_type_buy">Buy / acquisition</option>
-              <option value="sell" data-i18n="manual_type_sell">Sell / disposal</option>
-              <option value="staking" data-i18n="manual_type_staking">Staking income</option>
-              <option value="deposit" data-i18n="manual_type_deposit">Transfer in</option>
-              <option value="withdrawal" data-i18n="manual_type_withdrawal">Transfer out</option>
-            </select>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="manual-asset" data-i18n="manual_asset">Asset</label>
-            <input class="taxpayer-input" type="text" id="manual-asset" placeholder="ETH" autocomplete="off"/>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="manual-qty" data-i18n="manual_qty">Quantity</label>
-            <input class="taxpayer-input" type="number" id="manual-qty" min="0" step="any" placeholder="0.50" inputmode="decimal"/>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="manual-total" data-i18n="manual_total">Total value CHF</label>
-            <input class="taxpayer-input" type="number" id="manual-total" min="0" step="any" placeholder="1599.50" inputmode="decimal"/>
-          </div>
-          <div class="taxpayer-field">
-            <label class="taxpayer-label" for="manual-source" data-i18n="manual_source">Source / note</label>
-            <input class="taxpayer-input" type="text" id="manual-source" placeholder="Ledger correction" autocomplete="off"/>
-          </div>
-        </div>
-        <div class="taxpayer-note" data-i18n="manual_hint">For known opening/acquisition history, use Buy with the original CHF cost basis. Use Transfer in only when the cost basis is unknown.</div>
-        <div class="manual-actions">
-          <button class="manual-btn primary" type="button" onclick="addManualTransaction()" data-i18n="manual_add">Add row</button>
-          <button class="manual-btn" type="button" onclick="processManualTransactionsOnly()" data-i18n="manual_generate">Generate from manual rows</button>
-          <button class="manual-btn ghost" type="button" onclick="clearManualTransactions()" data-i18n="manual_clear">Clear manual rows</button>
-        </div>
-        <div class="manual-list" id="manual-list" aria-live="polite"></div>
-      </div>
-
-      <!-- UNLOCK CODE BANNER -->
-  <div class="unlock-banner" id="unlock-banner">
-    <div class="unlock-title">Enter your unlock code</div>
-    <div class="unlock-sub" id="unlock-sub">Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.</div>
-    <div class="unlock-row">
-      <label for="unlock-input" class="sr-only">Unlock code</label>
-      <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
-      <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
-    </div>
-    <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
-    <div class="unlock-success" id="unlock-success"></div>
-    <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">🔒 Codes are personal and non-transferable.</div>
-  </div>
-
-  <!-- FREE TRIAL BANNER -->
-      <div class="trial-banner" id="trial-banner">
-        <div class="trial-banner-left">
-          <div class="trial-badge">FREE TRIAL</div>
-          <div class="trial-text">
-            <strong>Try your first report at no cost.</strong>
-            <span>Upload any transaction file — we'll generate a full Swiss tax report instantly.</span>
-          </div>
-        </div>
-        <div class="trial-used-msg" id="trial-used-msg" style="display:none;">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a6 6 0 100 12A6 6 0 007 1z" stroke="#B8960C" stroke-width="1.2"/><path d="M7 6v3M7 4.5v.5" stroke="#B8960C" stroke-width="1.2" stroke-linecap="round"/></svg>
-          Free trial used — upgrade to Pro to generate more reports
-        </div>
-      </div>
-
       <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Upload your transaction file">
         <input type="file" id="csv-input" accept=".csv,.xlsx,.xls,.xlsm" multiple />
         <div class="upload-icon">
@@ -3009,6 +3027,117 @@
         <div class="processing-spinner"></div>
         <span class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Reading your transactions...</span>
       </div>
+
+      <div class="trial-banner" id="trial-banner">
+        <div class="trial-banner-left">
+          <div class="trial-badge">FREE TRIAL</div>
+          <div class="trial-text">
+            <strong>Try your first report at no cost.</strong>
+            <span>Upload any transaction file — we'll generate a full Swiss tax report instantly.</span>
+          </div>
+        </div>
+        <div class="trial-used-msg" id="trial-used-msg" style="display:none;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a6 6 0 100 12A6 6 0 007 1z" stroke="#B8960C" stroke-width="1.2"/><path d="M7 6v3M7 4.5v.5" stroke="#B8960C" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Free trial used — upgrade to Pro to generate more reports
+        </div>
+      </div>
+
+      <!-- UNLOCK CODE BANNER -->
+      <div class="unlock-banner" id="unlock-banner">
+        <div class="unlock-title">Enter your unlock code</div>
+        <div class="unlock-sub" id="unlock-sub">Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.</div>
+        <div class="unlock-row">
+          <label for="unlock-input" class="sr-only">Unlock code</label>
+          <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
+          <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
+        </div>
+        <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
+        <div class="unlock-success" id="unlock-success"></div>
+        <div style="font-size:10px;color:var(--ink-faint);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:0.05em;">Codes are personal and non-transferable.</div>
+      </div>
+
+      <details class="optional-card taxpayer-card">
+        <summary class="optional-summary">
+          <span class="optional-copy">
+            <span class="optional-kicker" data-i18n="taxpayer_optional_label">Optional</span>
+            <span class="optional-title" data-i18n="taxpayer_optional_title">Add taxpayer details</span>
+            <span class="optional-sub" data-i18n="taxpayer_optional_sub">Add your name, address, and tax ID if you want them printed in the report header.</span>
+          </span>
+          <span class="optional-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="optional-content">
+          <div class="taxpayer-grid">
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="taxpayer-name" data-i18n="taxpayer_name">Full name</label>
+              <input class="taxpayer-input" type="text" id="taxpayer-name" placeholder="Max Muster" autocomplete="name"/>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="taxpayer-address" data-i18n="taxpayer_address">Address</label>
+              <input class="taxpayer-input" type="text" id="taxpayer-address" placeholder="Bahnhofstrasse 10, 8001 Zurich" autocomplete="street-address"/>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="taxpayer-id" data-i18n="taxpayer_id">AHV / Tax ID (optional)</label>
+              <input class="taxpayer-input" type="text" id="taxpayer-id" placeholder="756.1234.5678.97" autocomplete="off"/>
+            </div>
+          </div>
+          <div class="taxpayer-note" data-i18n="taxpayer_note">Saved locally in your browser and added to the generated report header if provided.</div>
+        </div>
+      </details>
+
+      <details class="manual-card optional-card">
+        <summary class="optional-summary manual-card-head">
+          <span class="optional-copy">
+            <span class="optional-kicker" data-i18n="manual_optional_label">Advanced</span>
+            <span class="optional-title" data-i18n="manual_title">Add missing transactions</span>
+            <span class="optional-sub" data-i18n="manual_sub">Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.</span>
+          </span>
+          <span class="optional-controls">
+            <span class="manual-count" id="manual-count">0 manual</span>
+            <span class="optional-toggle" aria-hidden="true"></span>
+          </span>
+        </summary>
+        <div class="optional-content">
+          <div class="manual-grid">
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="manual-date" data-i18n="manual_date">Date</label>
+              <input class="taxpayer-input" type="date" id="manual-date"/>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="manual-type" data-i18n="manual_type">Type</label>
+              <select class="taxpayer-input" id="manual-type">
+                <option value="buy" data-i18n="manual_type_buy">Buy / acquisition</option>
+                <option value="sell" data-i18n="manual_type_sell">Sell / disposal</option>
+                <option value="staking" data-i18n="manual_type_staking">Staking income</option>
+                <option value="deposit" data-i18n="manual_type_deposit">Transfer in</option>
+                <option value="withdrawal" data-i18n="manual_type_withdrawal">Transfer out</option>
+              </select>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="manual-asset" data-i18n="manual_asset">Asset</label>
+              <input class="taxpayer-input" type="text" id="manual-asset" placeholder="ETH" autocomplete="off"/>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="manual-qty" data-i18n="manual_qty">Quantity</label>
+              <input class="taxpayer-input" type="number" id="manual-qty" min="0" step="any" placeholder="0.50" inputmode="decimal"/>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="manual-total" data-i18n="manual_total">Total value CHF</label>
+              <input class="taxpayer-input" type="number" id="manual-total" min="0" step="any" placeholder="1599.50" inputmode="decimal"/>
+            </div>
+            <div class="taxpayer-field">
+              <label class="taxpayer-label" for="manual-source" data-i18n="manual_source">Source / note</label>
+              <input class="taxpayer-input" type="text" id="manual-source" placeholder="Ledger correction" autocomplete="off"/>
+            </div>
+          </div>
+          <div class="taxpayer-note" data-i18n="manual_hint">For known opening/acquisition history, use Buy with the original CHF cost basis. Use Transfer in only when the cost basis is unknown.</div>
+          <div class="manual-actions">
+            <button class="manual-btn primary" type="button" onclick="addManualTransaction()" data-i18n="manual_add">Add row</button>
+            <button class="manual-btn" type="button" onclick="processManualTransactionsOnly()" data-i18n="manual_generate">Generate from manual rows</button>
+            <button class="manual-btn ghost" type="button" onclick="clearManualTransactions()" data-i18n="manual_clear">Clear manual rows</button>
+          </div>
+          <div class="manual-list" id="manual-list" aria-live="polite"></div>
+        </div>
+      </details>
     </div>
 
     <div class="app-right">
@@ -3022,15 +3151,8 @@
         <div class="app-info-title" data-i18n="info_get_title">A Swiss tax reporting annex</div>
         <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured annex based on the data you import.</div>
       </div>
-      <div class="app-info-box">
-        <div class="app-info-label" data-i18n="info_priv_label">Privacy</div>
-        <div class="app-info-title" data-i18n="info_priv_title">Processed in your session only</div>
-        <div class="app-info-body" data-i18n="info_priv_body">Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.</div>
-      </div>
-      <div class="app-info-box">
-        <div class="app-info-label">Important</div>
-        <div class="app-info-title">Review data completeness</div>
-        <div class="app-info-body">Results reflect imported files only. Missing wallets, exchanges, opening balances, or prior-period history can materially change the outcome. Review all figures before export and see our <a href="terms.html" style="color:var(--gold-light);text-decoration:none;">Terms of Service</a>.</div>
+      <div class="app-compact-note" data-i18n-html="info_side_note">
+        <strong>Privacy:</strong> processed in your session only. <strong>Completeness:</strong> results reflect imported files, so missing wallets, exchanges, or prior-period history should be reviewed before export. See our <a href="terms.html">Terms of Service</a>.
       </div>
     </div>
   </div>
@@ -3298,10 +3420,18 @@
       trial_strong: 'Try your first report at no cost.',
       trial_span: 'Upload any transaction file — we\'ll generate a full Swiss tax report instantly.',
       trial_used: 'Free trial used — upgrade to Pro to generate more reports',
+      taxpayer_optional_label: 'Optional',
+      taxpayer_optional_title: 'Add taxpayer details',
+      taxpayer_optional_sub: 'Add your name, address, and tax ID if you want them printed in the report header.',
+      taxpayer_name: 'Full name',
+      taxpayer_address: 'Address',
+      taxpayer_id: 'AHV / Tax ID (optional)',
+      taxpayer_note: 'Saved locally in your browser and added to the generated report header if provided.',
       info_need_label: 'What we need', info_need_title: 'A standard transaction export',
       info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.',
       info_get_label: 'What you get', info_get_title: 'A Swiss tax reporting annex',
       info_get_body: 'Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured annex based on the data you import.',
+      info_side_note: '<strong>Privacy:</strong> processed in your session only. <strong>Completeness:</strong> results reflect imported files, so missing wallets, exchanges, or prior-period history should be reviewed before export. See our <a href="terms.html">Terms of Service</a>.',
       info_priv_label: 'Privacy', info_priv_title: 'Processed in your session only',
       info_priv_body: 'Your data is never stored on our servers. All processing happens securely and ephemerally — once your session ends, nothing is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
@@ -3387,6 +3517,7 @@
       unlock_sub: 'Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.',
       unlock_btn: 'Unlock',
       unlock_error: 'Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch',
+      manual_optional_label: 'Advanced',
       manual_title: 'Add missing transactions',
       manual_sub: 'Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.',
       manual_date: 'Date',
@@ -3462,10 +3593,18 @@
       trial_strong: 'Essayez votre premier rapport gratuitement.',
       trial_span: 'Importez n\'importe quel fichier de transactions — nous générons un rapport fiscal complet instantanément.',
       trial_used: 'Essai gratuit utilisé — passez à Pro pour générer plus de rapports',
+      taxpayer_optional_label: 'Optionnel',
+      taxpayer_optional_title: 'Ajouter les détails du contribuable',
+      taxpayer_optional_sub: 'Ajoutez votre nom, adresse et identifiant fiscal si vous souhaitez les afficher dans l\'en-tête du rapport.',
+      taxpayer_name: 'Nom complet',
+      taxpayer_address: 'Adresse',
+      taxpayer_id: 'AVS / identifiant fiscal (optionnel)',
+      taxpayer_note: 'Enregistré localement dans votre navigateur et ajouté à l\'en-tête du rapport si renseigné.',
       info_need_label: 'Ce dont nous avons besoin', info_need_title: 'Un export de transactions standard',
       info_need_body: 'Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et tout CSV générique avec date, actif, montant et prix.',
       info_get_label: 'Ce que vous obtenez', info_get_title: 'Une annexe de reporting fiscal suisse',
       info_get_body: 'Notre moteur applique la méthode FIFO suisse à vos transactions, convertit tout en CHF à l’aide des taux de référence ESTV et des références de marché à la date des transactions lorsque disponibles, puis génère une annexe structurée à partir des données importées.',
+      info_side_note: '<strong>Confidentialité :</strong> traitement dans votre session uniquement. <strong>Complétude :</strong> les résultats reflètent les fichiers importés ; les wallets, plateformes ou historiques antérieurs manquants doivent être vérifiés avant l\'export. Consultez nos <a href="terms.html">conditions d\'utilisation</a>.',
       info_priv_label: 'Confidentialité', info_priv_title: 'Traité dans votre session uniquement',
       info_priv_body: 'Vos données ne sont jamais stockées sur nos serveurs. Tout le traitement s\'effectue de manière sécurisée et éphémère — une fois votre session terminée, rien n\'est conservé.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
@@ -3551,6 +3690,7 @@
       unlock_sub: 'Votre fichier contient plus de 50 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
       unlock_btn: 'Activer',
       unlock_error: 'Code invalide. Vérifiez votre e-mail de CryptoDeclare ou contactez hello@cryptodeclare.ch',
+      manual_optional_label: 'Avancé',
       manual_title: 'Ajouter des transactions manquantes',
       manual_sub: "Utilisez ceci pour un historique d'acquisition manquant, des récompenses de staking ou des mouvements de wallet ponctuels. Les lignes manuelles sont enregistrées localement et incluses dans le FIFO.",
       manual_date: 'Date',
@@ -3626,10 +3766,18 @@
       trial_strong: 'Ersten Bericht kostenlos testen.',
       trial_span: 'Laden Sie eine beliebige Transaktionsdatei hoch — wir erstellen sofort einen vollständigen Steuerbericht.',
       trial_used: 'Kostenlose Testversion verwendet — auf Pro upgraden für weitere Berichte',
+      taxpayer_optional_label: 'Optional',
+      taxpayer_optional_title: 'Steuerpflichtigenangaben hinzufügen',
+      taxpayer_optional_sub: 'Fügen Sie Name, Adresse und Steuer-ID hinzu, wenn diese im Berichtskopf erscheinen sollen.',
+      taxpayer_name: 'Vollständiger Name',
+      taxpayer_address: 'Adresse',
+      taxpayer_id: 'AHV / Steuer-ID (optional)',
+      taxpayer_note: 'Lokal in Ihrem Browser gespeichert und dem Berichtskopf hinzugefügt, wenn angegeben.',
       info_need_label: 'Was wir benötigen', info_need_title: 'Ein Standard-Transaktionsexport',
       info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und jedes generische CSV mit Datum, Vermögenswert, Betrag und Preis.',
       info_get_label: 'Was Sie erhalten', info_get_title: 'Eine Schweizer Steuerbeilage',
       info_get_body: 'Unser automatisiertes Berechnungssystem wendet die Schweizer FIFO-Methode auf Ihre Transaktionen an, konvertiert alles in CHF anhand von ESTV-Referenzkursen und transaktionsdatumsbezogenen Marktpreisen, sofern verfügbar, und erstellt eine strukturierte Beilage auf Basis der von Ihnen importierten Daten.',
+      info_side_note: '<strong>Datenschutz:</strong> Verarbeitung nur in Ihrer Sitzung. <strong>Vollständigkeit:</strong> Ergebnisse basieren auf importierten Dateien; fehlende Wallets, Börsen oder frühere Historien sollten vor dem Export geprüft werden. Siehe unsere <a href="terms.html">Nutzungsbedingungen</a>.',
       info_priv_label: 'Datenschutz', info_priv_title: 'Nur in Ihrer Sitzung verarbeitet',
       info_priv_body: 'Ihre Daten werden nie auf unseren Servern gespeichert. Die gesamte Verarbeitung erfolgt sicher und ephemer — sobald Ihre Sitzung endet, werden keine Daten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
@@ -3715,6 +3863,7 @@
       unlock_sub: 'Ihre Datei enthält mehr als 50 Transaktionen. Geben Sie einen Pro- oder Business-Code ein, um Ihren Bericht zu erstellen.',
       unlock_btn: 'Freischalten',
       unlock_error: 'Ungültiger Code. Prüfen Sie Ihre E-Mail von CryptoDeclare oder kontaktieren Sie hello@cryptodeclare.ch',
+      manual_optional_label: 'Erweitert',
       manual_title: 'Fehlende Transaktionen hinzufügen',
       manual_sub: 'Für fehlende Anschaffungshistorie, Staking-Erträge oder einzelne Wallet-Bewegungen. Manuelle Zeilen werden lokal gespeichert und in FIFO einbezogen.',
       manual_date: 'Datum',
