@@ -3496,7 +3496,8 @@
     </div>
     <div class="contact-right">
       <div id="contact-error" style="display:none;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:#e05c5c;padding:12px 16px;border-radius:3px;font-size:13px;margin-bottom:16px;">Something went wrong — please try again or email us directly at <a href="mailto:hello@cryptodeclare.ch" style="color:#e05c5c;">hello@cryptodeclare.ch</a></div>
-      <form class="contact-form" id="contact-form">
+      <form class="contact-form" id="contact-form" action="https://formspree.io/f/xkopjbbl" method="POST">
+        <input type="hidden" name="_subject" value="New CryptoDeclare contact form message"/>
         <div class="contact-field">
           <label class="contact-label" for="contact-name">Name</label>
           <input class="contact-input" type="text" id="contact-name" name="name" placeholder="Your name" required/>
@@ -8393,17 +8394,19 @@ onmouseout="this.style.color='#8A909E'">
     e.preventDefault();
     const btn = document.getElementById('contact-btn');
     const success = document.getElementById('contact-success');
+    const error = document.getElementById('contact-error');
+    const originalLabel = btn.textContent;
+    if (error) error.style.display = 'none';
+    success.classList.remove('visible');
     btn.disabled = true;
     btn.textContent = 'Sending...';
     try {
-      const res = await fetch('https://formspree.io/f/xkopjbbl', { signal: AbortSignal.timeout(10000),
+      const formData = new FormData(this);
+      formData.set('_replyto', document.getElementById('contact-email').value);
+      const res = await fetch(this.action, { signal: AbortSignal.timeout(10000),
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          name: document.getElementById('contact-name').value,
-          email: document.getElementById('contact-email').value,
-          message: document.getElementById('contact-message').value,
-        })
+        headers: { 'Accept': 'application/json' },
+        body: formData
       });
       if (res.ok) {
         success.classList.add('visible');
@@ -8414,7 +8417,8 @@ onmouseout="this.style.color='#8A909E'">
       }
     } catch(e) {
       btn.disabled = false;
-      btn.textContent = 'Send message';
+      btn.textContent = originalLabel.trim() || 'Send message';
+      if (error) error.style.display = 'block';
     }
   });
 
