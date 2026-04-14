@@ -2985,6 +2985,7 @@
     <span class="exchange-pill"><span class="exchange-dot"></span>Trezor</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Exodus</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Uniswap</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Hyperliquid</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Manual CSV</span>
     <span class="exchange-pill" style="border-style:dashed;opacity:0.6">+ more coming</span>
   </div>
@@ -4977,6 +4978,8 @@
   function getNormalizationStatusText(format, fileName='') {
     const label = fileName ? ` ${fileName}` : '';
     if (format === 'kraken') return `Processing Kraken history${label} and fetching historical CHF prices...`;
+    if (format === 'kraken_trades') return `Processing Kraken trades${label} and fetching historical CHF prices...`;
+    if (format === 'hyperliquid') return `Processing Hyperliquid derivatives${label}...`;
     if (format === 'swissborg') return `Parsing SwissBorg statement${label}...`;
     if (format === 'bitstamp') return `Processing Bitstamp history${label}...`;
     if (format === 'binance_ledger') return `Processing Binance account history${label}...`;
@@ -5522,8 +5525,24 @@
 
     if (inQuotes || rows.length < 2) return [];
 
-    const headers = rows[0].map(h => String(h || '').replace(/['"]/g,'').trim().toLowerCase());
-    return rows.slice(1).map(values => {
+    const looksLikeHeader = (row) => {
+      const h = row.map(x => String(x || '').replace(/['"]/g,'').trim().toLowerCase());
+      const joined = h.join(',');
+      const score = [
+        h.includes('datetime') && h.includes('amount currency') && h.includes('value currency'),
+        h.includes('utc_time') && h.includes('operation') && h.includes('coin') && h.includes('change'),
+        h.includes('time') && h.includes('coin') && h.includes('closedpnl'),
+        h.includes('ordertxid') && h.includes('pair') && h.includes('vol') && h.includes('cost'),
+        joined.includes('local time') && joined.includes('net amount (chf)')
+      ].filter(Boolean).length;
+      return score > 0 || (h.includes('date') && h.includes('asset') && h.includes('amount'));
+    };
+
+    const headerIndex = rows.findIndex(looksLikeHeader);
+    const headerRow = headerIndex >= 0 ? rows[headerIndex] : rows[0];
+    const dataRows = rows.slice((headerIndex >= 0 ? headerIndex : 0) + 1);
+    const headers = headerRow.map(h => String(h || '').replace(/['"]/g,'').trim().toLowerCase());
+    return dataRows.map(values => {
       const parsedRow = {};
       headers.forEach((h, i) => {
         const rawValue = String(values[i] || '').replace(/^"|"$/g,'').trim();
@@ -5538,8 +5557,8 @@
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
     // ── Kraken ───────────────────────────────────────────────────────────────
+    if (h.includes('ordertxid') && h.includes('pair') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     if (h.includes('txid') && h.includes('aclass')) return 'kraken';
-    if (h.includes('ordertxid') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
     // ── Binance ──────────────────────────────────────────────────────────────
     if (h.includes('date(utc)') && h.includes('pair') && h.includes('base asset') && h.includes('quote asset') && h.includes('fee coin')) return 'binance';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
@@ -5558,6 +5577,8 @@
     if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
     // ── OKX ──────────────────────────────────────────────────────────────────
     if (h.includes('realized p&l') || (h.includes('pos side') && h.includes('trade qty'))) return 'okx_derivatives';
+    // ── Hyperliquid ──────────────────────────────────────────────────────────
+    if (h.includes('time') && h.includes('coin') && h.includes('dir') && h.includes('px') && h.includes('sz') && h.includes('ntl') && h.includes('closedpnl')) return 'hyperliquid';
     if ((h.includes('instrument id') || h.includes('inst id')) && h.includes('filled qty') && h.includes('filled price')) return 'okx';
     if ((h.includes('order time') || h.includes('trade time')) && h.includes('instrument') && h.includes('side') && h.includes('filled')) return 'okx';
     // ── Crypto.com App ───────────────────────────────────────────────────────
@@ -5592,6 +5613,7 @@
     bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
     bitstamp:'Bitstamp',
     bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
+    hyperliquid:'Hyperliquid',
     bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
     crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', revolut:'Revolut',
     ledger:'Ledger Live', kucoin:'KuCoin', gemini:'Gemini', bitfinex:'Bitfinex',
@@ -6364,7 +6386,9 @@
           qty = Math.abs(parseFloat(r['vol'])||0);
           const costRaw = Math.abs(parseFloat(r['cost'])||0);
           const feeRaw = Math.abs(parseFloat(r['fee'])||0);
-          const quoteRate = await getFiatToChfRate(krQuote, date.slice(0,10));
+          const quoteRate = isFeeCurrencyAsset(krQuote)
+            ? await getFiatToChfRate(krQuote, date.slice(0,10))
+            : await getHistoricalPriceCHF(krQuote, date.slice(0,10));
           totalCHF = costRaw * quoteRate;
           priceCHF = qty > 0 ? totalCHF / qty : 0;
           ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
@@ -6501,6 +6525,36 @@
               priceCHF = 0;
               totalCHF = 0;
             }
+          }
+        }
+        else if (format === 'hyperliquid') {
+          // Hyperliquid trade history: time, coin, dir, px, sz, ntl, fee, closedPnl.
+          // Treat as derivatives/perps activity: realised P&L is reported directly
+          // rather than as spot coin inventory. We create synthetic FIFO pairs so
+          // gains/losses flow through the existing report engine without adding
+          // phantom year-end crypto holdings.
+          const rawTime = String(r['time'] || '').replace(/\s+-\s+/, ' ');
+          date = normalizeImportedDate(rawTime);
+          const market = String(r['coin'] || '').toUpperCase().trim();
+          asset = ((market.split('/')[0] || 'HYPER').replace(/[^A-Z0-9]/g, '') || 'HYPER') + ':PERP';
+
+          const pnlRaw = parseFloat(r['closedpnl'] || r['closed pnl'] || 0) || 0;
+          const feeRaw = parseFloat(r['fee'] || 0) || 0;
+          const netPnlCHF = (pnlRaw - feeRaw) * await getFiatToChfRate('USDC', String(date || '').slice(0,10));
+
+          if (!date || !asset || Math.abs(netPnlCHF) < 0.000001) continue;
+
+          qty = 1;
+          if (netPnlCHF >= 0) {
+            out.push({ date, type: 'buy', asset, qty: 1, priceCHF: 0, totalCHF: 0 });
+            type = 'sell';
+            priceCHF = netPnlCHF;
+            totalCHF = netPnlCHF;
+          } else {
+            out.push({ date, type: 'buy', asset, qty: 1, priceCHF: Math.abs(netPnlCHF), totalCHF: Math.abs(netPnlCHF) });
+            type = 'sell';
+            priceCHF = 0;
+            totalCHF = 0;
           }
         }
         else if (format === 'okx') {
@@ -7328,6 +7382,7 @@
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx: `Exchange format detected: OKX. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
+      hyperliquid: `Exchange format detected: Hyperliquid derivatives. Gains and losses derived from closed P&L net of exported fees. USDC-denominated values converted using the USD/CHF reference rate of ${usdRef}. Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
       crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       crypto_com_ex: `Exchange format detected: Crypto.com Exchange. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at ${usdRef} (ESTV reference rate, 31.12.${taxYear}); inbound deposits preserved as transfer-ins with unresolved basis. Interest and dividend income treated as taxable staking income.`,
