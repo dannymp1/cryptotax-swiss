@@ -1639,7 +1639,7 @@
   .upload-area {
     border: 1.5px dashed rgba(212,175,55,0.4);
     border-radius: 6px;
-    padding: 64px 40px;
+    padding: 82px 56px;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s;
@@ -1711,9 +1711,11 @@
 
   .app-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
     align-items: start;
+    max-width: 1120px;
+    margin: 0 auto;
   }
 
   .app-left {}
@@ -2002,41 +2004,6 @@
     border-color: rgba(245,242,235,0.28);
   }
 
-  .app-right {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .app-info-box {
-    background: rgba(245,242,235,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 4px;
-    padding: 28px;
-  }
-
-  .app-info-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold-light);
-    margin-bottom: 10px;
-  }
-
-  .app-info-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px;
-    color: var(--paper);
-    margin-bottom: 8px;
-  }
-
-  .app-info-body {
-    font-size: 13px;
-    line-height: 1.7;
-    color: rgba(245,242,235,0.45);
-  }
-
   .app-compact-note {
     padding: 18px 20px;
     border: 1px solid rgba(255,255,255,0.06);
@@ -2046,6 +2013,7 @@
     font-size: 12px;
     line-height: 1.65;
     background: rgba(245,242,235,0.025);
+    margin-top: 4px;
   }
 
   .app-compact-note strong {
@@ -2457,8 +2425,6 @@
     .app-layout { grid-template-columns: 1fr; gap: 32px; }
     .app-section .section-header { padding: 0 24px 24px; }
     .app-left { padding: 0 24px; }
-    .app-right { padding: 0 24px; overflow: hidden; }
-    .app-info-box { padding: 20px; }
     .manual-grid { grid-template-columns: 1fr; }
     .manual-row { grid-template-columns: 1fr auto; gap: 6px 10px; }
     .manual-row span:nth-child(1),
@@ -2486,7 +2452,7 @@
     .hero-actions .btn-primary, .hero-actions .btn-secondary { text-align: center; justify-content: center; }
     .exchange-pills { gap: 8px; }
     .exchange-pill { font-size: 10px; padding: 6px 12px; }
-    .upload-area { margin: 0 16px; }
+    .upload-area { margin: 0; padding: 64px 24px; }
     /* Report output on mobile */
     .report-output-title { font-size: 24px; }
     .report-output-header { flex-direction: column; align-items: flex-start; }
@@ -3014,19 +2980,25 @@
     <span class="exchange-pill"><span class="exchange-dot"></span>Kraken</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Binance</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Coinbase</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>SwissBorg</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Swissquote</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Bitstamp</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Bitcoin Suisse</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Bitpanda</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Bybit</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>OKX</span>
-    <span class="exchange-pill"><span class="exchange-dot"></span>Ledger</span>
-    <span class="exchange-pill"><span class="exchange-dot"></span>MetaMask (ETH)</span>
-    <span class="exchange-pill"><span class="exchange-dot"></span>Trezor</span>
-    <span class="exchange-pill"><span class="exchange-dot"></span>Exodus</span>
-    <span class="exchange-pill"><span class="exchange-dot"></span>Uniswap</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Crypto.com</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Nexo</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Revolut</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Ledger Live</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>KuCoin</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Gemini</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Bitfinex</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>Gate.io</span>
+    <span class="exchange-pill"><span class="exchange-dot"></span>MEXC</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Hyperliquid</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Manual CSV</span>
-    <span class="exchange-pill" style="border-style:dashed;opacity:0.6">+ more coming</span>
+    <span class="exchange-pill" style="border-style:dashed;opacity:0.6">+ custom CSV</span>
   </div>
   <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--ink-faint);text-align:center;" data-i18n="exchange_note">Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.</p>
 </div>
@@ -3279,19 +3251,6 @@
           <div class="manual-list" id="manual-list" aria-live="polite"></div>
         </div>
       </details>
-    </div>
-
-    <div class="app-right">
-      <div class="app-info-box">
-        <div class="app-info-label" data-i18n="info_need_label">What we need</div>
-        <div class="app-info-title" data-i18n="info_need_title">A standard transaction export</div>
-        <div class="app-info-body" data-i18n="info_need_body">Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.</div>
-      </div>
-      <div class="app-info-box">
-        <div class="app-info-label" data-i18n="info_get_label">What you get</div>
-        <div class="app-info-title" data-i18n="info_get_title">A Swiss tax reporting annex</div>
-        <div class="app-info-body" data-i18n="info_get_body">Our automated calculation engine applies Swiss FIFO accounting to your transactions, converts everything to CHF using ESTV reference rates and transaction-date market data where available, and produces a structured annex based on the data you import.</div>
-      </div>
       <div class="app-compact-note" data-i18n-html="info_side_note">
         <strong>Privacy:</strong> processed in your session only. <strong>Completeness:</strong> results reflect imported files, so missing wallets, exchanges, or prior-period history should be reviewed before export. See our <a href="terms.html">Terms of Service</a>.
       </div>
@@ -7889,7 +7848,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   }
 
   .page { max-width: 210mm; margin: 0 auto; padding: 12mm 12mm; }
-  .report-top-stack { margin-left: -4mm; width: calc(100% + 4mm); }
+  .report-top-stack { margin-left: -5.5mm; width: calc(100% + 5.5mm); }
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
