@@ -3,49 +3,52 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Impressum — CryptoDeclare</title>
+<title>Impressum - CryptoDeclare</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  :root { --ink:#0D1117; --ink-muted:#3D4451; --ink-faint:#8A909E; --paper:#F5F2EB; --gold:#B8960C; --gold-light:#D4AF37; --rule:rgba(13,17,23,0.12); }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.7; color: var(--ink); background: var(--paper); }
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 64px; background: rgba(245,242,235,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
-  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .nav-logo-mark { width: 36px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
-  .nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); letter-spacing: -0.02em; }
-  .nav-logo-text span { color: var(--gold); }
-  .nav-back { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-faint); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
-  .nav-back:hover { color: var(--ink); }
-  .lang-btns { display: flex; gap: 8px; }
-  .lang-btn { background: none; border: 1px solid var(--rule); padding: 4px 10px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; border-radius: 2px; color: var(--ink-faint); transition: all 0.2s; }
-  .lang-btn.active, .lang-btn:hover { border-color: var(--gold); color: var(--ink); }
-  .page { max-width: 720px; margin: 0 auto; padding: 120px 48px 80px; }
-  .doc-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
-  .doc-title { font-family: 'DM Serif Display', serif; font-size: 48px; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; margin-bottom: 12px; }
-  .doc-meta { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
-  h2 { font-family: 'DM Serif Display', serif; font-size: 24px; letter-spacing: -0.02em; color: var(--ink); margin: 40px 0 16px; }
-  p { color: var(--ink-muted); margin-bottom: 12px; }
-  .detail-block { background: rgba(13,17,23,0.04); border: 1px solid var(--rule); border-radius: 4px; padding: 24px 28px; margin-bottom: 24px; }
-  .detail-row { display: flex; gap: 16px; margin-bottom: 10px; font-size: 15px; }
-  .detail-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); min-width: 110px; padding-top: 2px; }
-  .detail-value { color: var(--ink-muted); }
-  a { color: var(--gold); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .address-note { font-size: 13px; color: var(--ink-faint); font-style: italic; margin-top: 16px; }
-  .lang-section { display: none; }
-  .lang-section.active { display: block; }
-  footer { background: var(--ink); color: rgba(245,242,235,0.4); text-align: center; padding: 32px 48px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: 80px; }
-  footer a { color: var(--gold); text-decoration: none; }
-
-  @media (max-width: 900px) {
-    nav { padding: 0 16px; }
-    .nav-back { font-size: 10px; letter-spacing: 0.04em; }
-    nav > div { gap: 12px; }
-    .lang-btns { gap: 4px; }
-    .lang-btn { padding: 3px 7px; font-size: 10px; }
-  }
+:root { --ink:#0D1117; --ink-muted:#3D4451; --ink-faint:#8A909E; --paper:#F5F2EB; --gold:#B8960C; --rule:rgba(13,17,23,0.12); }
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Instrument Sans', sans-serif; font-size:16px; line-height:1.7; color:var(--ink); background:var(--paper); }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 48px; height:64px; background:rgba(245,242,235,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--rule); }
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo-mark { width:36px; height:36px; border-radius:6px; overflow:hidden; flex-shrink:0; }
+.nav-logo-text { font-family:'DM Serif Display', serif; font-size:18px; color:var(--ink); letter-spacing:-0.02em; }
+.nav-logo-text span { color:var(--gold); }
+.nav-back { font-family:'DM Mono', monospace; font-size:12px; letter-spacing:0.08em; color:var(--ink-faint); text-decoration:none; text-transform:uppercase; }
+.nav-back:hover, a:hover { text-decoration:underline; }
+.lang-btns { display:flex; gap:8px; }
+.lang-btn { background:none; border:1px solid var(--rule); padding:4px 10px; font-family:'DM Mono', monospace; font-size:11px; letter-spacing:0.08em; cursor:pointer; border-radius:2px; color:var(--ink-faint); }
+.lang-btn.active, .lang-btn:hover { border-color:var(--gold); color:var(--ink); }
+.page { max-width:760px; margin:0 auto; padding:120px 48px 80px; }
+.doc-eyebrow { font-family:'DM Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+.doc-title { font-family:'DM Serif Display', serif; font-size:48px; letter-spacing:-0.03em; color:var(--ink); line-height:1.1; margin-bottom:12px; }
+.doc-meta { font-family:'DM Mono', monospace; font-size:12px; letter-spacing:0.06em; color:var(--ink-faint); margin-bottom:48px; padding-bottom:48px; border-bottom:1px solid var(--rule); }
+h2 { font-family:'DM Serif Display', serif; font-size:24px; letter-spacing:-0.02em; margin:40px 0 14px; }
+p { color:var(--ink-muted); margin-bottom:16px; }
+ul { color:var(--ink-muted); padding-left:24px; margin-bottom:16px; }
+li { margin-bottom:8px; }
+a { color:var(--gold); text-decoration:none; }
+.detail-block { background:rgba(13,17,23,0.04); border:1px solid var(--rule); border-radius:4px; padding:24px 28px; margin-bottom:24px; }
+.detail-row { display:flex; gap:16px; margin-bottom:10px; font-size:15px; }
+.detail-label { font-family:'DM Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); min-width:112px; padding-top:2px; }
+.detail-value { color:var(--ink-muted); }
+.lang-section { display:none; }
+.lang-section.active { display:block; }
+footer { background:var(--ink); color:rgba(245,242,235,0.4); text-align:center; padding:32px 48px; font-family:'DM Mono', monospace; font-size:11px; letter-spacing:0.08em; margin-top:80px; }
+footer a { color:var(--gold); }
+@media (max-width:900px) {
+  nav { padding:0 16px; }
+  .nav-back { font-size:10px; letter-spacing:0.04em; }
+  nav > div { gap:12px !important; }
+  .lang-btns { gap:4px; }
+  .lang-btn { padding:3px 7px; font-size:10px; }
+  .page { padding:104px 24px 64px; }
+  .doc-title { font-size:40px; }
+  .detail-row { display:block; }
+  .detail-label { display:block; margin-bottom:2px; }
+}
 </style>
 </head>
 <body>
@@ -69,133 +72,118 @@
       <button class="lang-btn" onclick="setLang('fr')">FR</button>
       <button class="lang-btn" onclick="setLang('de')">DE</button>
     </div>
-    <a href="index.html" class="nav-back">← Back to site</a>
+    <a href="index.html" class="nav-back">Back to site</a>
   </div>
 </nav>
 
-<div class="page">
-
-  <!-- ENGLISH -->
-  <div class="lang-section active" id="lang-en">
-    <div class="doc-eyebrow">Legal · Imprint</div>
+<main class="page">
+  <section class="lang-section active" id="lang-en">
+    <div class="doc-eyebrow">Legal - Imprint</div>
     <h1 class="doc-title">Impressum</h1>
-    <p class="doc-meta">Mandatory disclosure under Swiss law · cryptodeclare.ch</p>
+    <p class="doc-meta">Mandatory disclosure under Swiss law - cryptodeclare.ch</p>
 
     <h2>Responsible person</h2>
     <div class="detail-block">
       <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">Daniel Michaud-Payet</span></div>
-      <div class="detail-row"><span class="detail-label">Activity</span><span class="detail-value">Sole trader — digital services</span></div>
+      <div class="detail-row"><span class="detail-label">Activity</span><span class="detail-value">Sole trader - digital services</span></div>
       <div class="detail-row"><span class="detail-label">Address</span><span class="detail-value">Route de Saint-Cergue 24Bis, Unit 20<br/>1260 Nyon, Switzerland</span></div>
-      <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="/cdn-cgi/l/email-protection#1b737e7777745b7869626b6f747f7e78777a697e357873"><span class="__cf_email__" data-cfemail="640c0108080b2407161d14100b000107080516014a070c">[email&#160;protected]</span></a></span></div>
+      <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><!--email_off--><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a><!--/email_off--></span></div>
       <div class="detail-row"><span class="detail-label">Website</span><span class="detail-value"><a href="https://www.cryptodeclare.ch">www.cryptodeclare.ch</a></span></div>
       <div class="detail-row"><span class="detail-label">Canton</span><span class="detail-value">Vaud (VD)</span></div>
       <div class="detail-row"><span class="detail-label">Country</span><span class="detail-value">Switzerland</span></div>
     </div>
 
     <h2>Contact</h2>
-    <p>Email: <a href="/cdn-cgi/l/email-protection#19717c757576597a6b60696d767d7c7a75786b7c377a71"><span class="__cf_email__" data-cfemail="d3bbb6bfbfbc93b0a1aaa3a7bcb7b6b0bfb2a1b6fdb0bb">[email&#160;protected]</span></a><br/>
-    Website: <a href="https://www.cryptodeclare.ch">https://www.cryptodeclare.ch</a></p>
+    <p>Email: <!--email_off--><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a><!--/email_off--><br/>Website: <a href="https://www.cryptodeclare.ch">https://www.cryptodeclare.ch</a></p>
 
     <h2>Disclaimer</h2>
-    <p>The reports generated by CryptoDeclare are provided for informational purposes only and do not constitute official tax filings, financial advice, or legal advice. While we strive for accuracy, no guarantee is made regarding completeness or correctness. Users are responsible for verifying all outputs with a qualified Swiss tax advisor (Treuhänder).</p>
+    <p>The reports generated by CryptoDeclare are provided for informational purposes only and do not constitute official tax filings, financial advice, tax advice, or legal advice. Users remain responsible for verifying all outputs with a qualified Swiss tax advisor or fiduciary where necessary.</p>
 
     <h2>Third-party services</h2>
-    <p>This website uses the following third-party services:</p>
-    <ul>
-      <li>Stripe — payment processing (stripe.com)</li>
-      <li>Formspree — contact form handling (formspree.io)</li>
-      <li>CoinGecko API — cryptocurrency price data (coingecko.com)</li>
-      <li>Google Fonts — typography, loaded from Google servers (fonts.google.com)</li>
-    </ul>
+    <p>This website may use third-party services including Stripe for payments, Formspree for contact form handling, CoinGecko for cryptocurrency price data, and Google Fonts for typography.</p>
 
     <h2>Liability for external links</h2>
-    <p>This website may contain links to external websites. We have no control over the content of these sites and accept no liability for them. The respective provider or operator is always responsible for the content of linked pages.</p>
+    <p>This website may contain links to external websites. We have no control over the content of those websites and accept no liability for them. The respective provider or operator is responsible for linked content.</p>
 
     <h2>Copyright</h2>
     <p>All content on this website is the property of CryptoDeclare unless otherwise stated. Unauthorised reproduction is prohibited.</p>
-  </div>
+  </section>
 
-  <!-- FRENCH -->
-  <div class="lang-section" id="lang-fr">
-    <div class="doc-eyebrow">Légal · Mentions légales</div>
+  <section class="lang-section" id="lang-fr">
+    <div class="doc-eyebrow">Legal - Mentions légales</div>
     <h1 class="doc-title">Mentions légales</h1>
-    <p class="doc-meta">Mentions obligatoires selon le droit suisse · cryptodeclare.ch</p>
+    <p class="doc-meta">Mentions obligatoires selon le droit suisse - cryptodeclare.ch</p>
 
     <h2>Personne responsable</h2>
     <div class="detail-block">
       <div class="detail-row"><span class="detail-label">Nom</span><span class="detail-value">Daniel Michaud-Payet</span></div>
-      <div class="detail-row"><span class="detail-label">Activité</span><span class="detail-value">Indépendant — services numériques</span></div>
+      <div class="detail-row"><span class="detail-label">Activité</span><span class="detail-value">Indépendant - services numériques</span></div>
       <div class="detail-row"><span class="detail-label">Adresse</span><span class="detail-value">Route de Saint-Cergue 24Bis, Unit 20<br/>1260 Nyon, Suisse</span></div>
-      <div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-value"><a href="/cdn-cgi/l/email-protection#3e565b5252517e5d4c474e4a515a5b5d525f4c5b105d56"><span class="__cf_email__" data-cfemail="3159545d5d5e7152434841455e5554525d5043541f5259">[email&#160;protected]</span></a></span></div>
+      <div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-value"><!--email_off--><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a><!--/email_off--></span></div>
       <div class="detail-row"><span class="detail-label">Site web</span><span class="detail-value"><a href="https://www.cryptodeclare.ch">www.cryptodeclare.ch</a></span></div>
       <div class="detail-row"><span class="detail-label">Canton</span><span class="detail-value">Vaud (VD)</span></div>
       <div class="detail-row"><span class="detail-label">Pays</span><span class="detail-value">Suisse</span></div>
     </div>
 
     <h2>Contact</h2>
-    <p>E-mail : <a href="/cdn-cgi/l/email-protection#dfb7bab3b3b09fbcada6afabb0bbbabcb3beadbaf1bcb7"><span class="__cf_email__" data-cfemail="ee868b828281ae8d9c979e9a818a8b8d828f9c8bc08d86">[email&#160;protected]</span></a><br/>
-    Site web : <a href="https://www.cryptodeclare.ch">https://www.cryptodeclare.ch</a></p>
+    <p>E-mail : <!--email_off--><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a><!--/email_off--><br/>Site web : <a href="https://www.cryptodeclare.ch">https://www.cryptodeclare.ch</a></p>
 
     <h2>Avertissement</h2>
-    <p>Les rapports générés par CryptoDeclare sont fournis à titre informatif uniquement et ne constituent pas des déclarations fiscales officielles, des conseils financiers ou juridiques. Bien que nous nous efforcions d'être précis, aucune garantie n'est donnée quant à l'exhaustivité ou l'exactitude. Les utilisateurs sont responsables de vérifier les résultats avec un conseiller fiscal suisse qualifié (Treuhänder).</p>
+    <p>Les rapports générés par CryptoDeclare sont fournis à titre informatif uniquement et ne constituent pas des déclarations fiscales officielles, des conseils financiers, fiscaux ou juridiques. Les utilisateurs restent responsables de vérifier les résultats avec un conseiller fiscal suisse qualifié ou une fiduciaire si nécessaire.</p>
 
     <h2>Services tiers</h2>
-    <p>Ce site utilise les services tiers suivants :</p>
-    <ul>
-      <li>Stripe — traitement des paiements (stripe.com)</li>
-      <li>Formspree — gestion du formulaire de contact (formspree.io)</li>
-      <li>API CoinGecko — données de prix des cryptomonnaies (coingecko.com)</li>
-      <li>Google Fonts — typographie, chargée depuis les serveurs Google (fonts.google.com)</li>
-    </ul>
+    <p>Ce site peut utiliser des services tiers, notamment Stripe pour les paiements, Formspree pour le formulaire de contact, CoinGecko pour les données de prix crypto et Google Fonts pour la typographie.</p>
 
-    <h2>Responsabilité pour les liens externes</h2>
-    <p>Ce site peut contenir des liens vers des sites externes. Nous n'avons aucun contrôle sur leur contenu et déclinons toute responsabilité à leur égard. Le fournisseur ou opérateur respectif est toujours responsable du contenu des pages liées.</p>
+    <h2>Liens externes</h2>
+    <p>Ce site peut contenir des liens vers des sites externes. Nous n'avons aucun contrôle sur leur contenu et déclinons toute responsabilité à leur égard.</p>
 
     <h2>Droits d'auteur</h2>
-    <p>Tout le contenu de ce site est la propriété de CryptoDeclare, sauf indication contraire. La reproduction non autorisée est interdite.</p>
-  </div>
+    <p>Tout le contenu de ce site est la propriété de CryptoDeclare, sauf indication contraire. Toute reproduction non autorisée est interdite.</p>
+  </section>
 
-  <!-- GERMAN -->
-  <div class="lang-section" id="lang-de">
-    <div class="doc-eyebrow">Rechtliches · Impressum</div>
+  <section class="lang-section" id="lang-de">
+    <div class="doc-eyebrow">Rechtliches - Impressum</div>
     <h1 class="doc-title">Impressum</h1>
-    <p class="doc-meta">Pflichtangaben gemäß Schweizer Recht · cryptodeclare.ch</p>
+    <p class="doc-meta">Pflichtangaben gemäß Schweizer Recht - cryptodeclare.ch</p>
 
     <h2>Verantwortliche Person</h2>
     <div class="detail-block">
       <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">Daniel Michaud-Payet</span></div>
-      <div class="detail-row"><span class="detail-label">Tätigkeit</span><span class="detail-value">Einzelunternehmer — digitale Dienstleistungen</span></div>
+      <div class="detail-row"><span class="detail-label">Tätigkeit</span><span class="detail-value">Einzelunternehmer - digitale Dienstleistungen</span></div>
       <div class="detail-row"><span class="detail-label">Adresse</span><span class="detail-value">Route de Saint-Cergue 24Bis, Unit 20<br/>1260 Nyon, Schweiz</span></div>
-      <div class="detail-row"><span class="detail-label">E-Mail</span><span class="detail-value"><a href="/cdn-cgi/l/email-protection#f29a979e9e9db291808b82869d9697919e938097dc919a"><span class="__cf_email__" data-cfemail="29414c454546694a5b50595d464d4c4a45485b4c074a41">[email&#160;protected]</span></a></span></div>
+      <div class="detail-row"><span class="detail-label">E-Mail</span><span class="detail-value"><!--email_off--><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a><!--/email_off--></span></div>
       <div class="detail-row"><span class="detail-label">Website</span><span class="detail-value"><a href="https://www.cryptodeclare.ch">www.cryptodeclare.ch</a></span></div>
-      <div class="detail-row"><span class="detail-label">Kanton</span><span class="detail-value">Nyon, Waadt (VD)</span></div>
+      <div class="detail-row"><span class="detail-label">Kanton</span><span class="detail-value">Waadt (VD)</span></div>
       <div class="detail-row"><span class="detail-label">Land</span><span class="detail-value">Schweiz</span></div>
     </div>
 
     <h2>Kontakt</h2>
-    <p>E-Mail: <a href="/cdn-cgi/l/email-protection#5a323f3636351a3928232a2e353e3f39363b283f743932"><span class="__cf_email__" data-cfemail="244c4148484b6447565d54504b404147484556410a474c">[email&#160;protected]</span></a><br/>
-    Website: <a href="https://www.cryptodeclare.ch">https://www.cryptodeclare.ch</a></p>
+    <p>E-Mail: <!--email_off--><a href="mailto:hello@cryptodeclare.ch">hello@cryptodeclare.ch</a><!--/email_off--><br/>Website: <a href="https://www.cryptodeclare.ch">https://www.cryptodeclare.ch</a></p>
 
     <h2>Haftungsausschluss</h2>
-    <p>Die von CryptoDeclare generierten Berichte dienen ausschließlich Informationszwecken und stellen keine offizielle Steuererklärung, Finanz- oder Rechtsberatung dar. Obwohl wir uns um Genauigkeit bemühen, wird keine Garantie für Vollständigkeit oder Richtigkeit übernommen. Nutzer sind verantwortlich, alle Ergebnisse mit einem qualifizierten Schweizer Steuerberater (Treuhänder) zu überprüfen.</p>
+    <p>Die von CryptoDeclare generierten Berichte dienen ausschließlich Informationszwecken und stellen keine offizielle Steuererklärung, Finanzberatung, Steuerberatung oder Rechtsberatung dar. Nutzer bleiben verantwortlich, alle Ergebnisse mit einem qualifizierten Schweizer Steuerberater oder Treuhänder zu prüfen, falls erforderlich.</p>
 
     <h2>Drittanbieter-Dienste</h2>
-    <p>Diese Website verwendet folgende Drittanbieter-Dienste:</p>
-    <ul>
-      <li>Stripe — Zahlungsabwicklung (stripe.com)</li>
-      <li>Formspre
-</div>
+    <p>Diese Website kann Drittanbieter-Dienste verwenden, darunter Stripe für Zahlungen, Formspree für Kontaktformulare, CoinGecko für Krypto-Preisdaten und Google Fonts für Typografie.</p>
+
+    <h2>Haftung für externe Links</h2>
+    <p>Diese Website kann Links zu externen Websites enthalten. Wir haben keinen Einfluss auf deren Inhalte und übernehmen keine Haftung für diese Inhalte.</p>
+
+    <h2>Urheberrecht</h2>
+    <p>Alle Inhalte dieser Website sind Eigentum von CryptoDeclare, sofern nicht anders angegeben. Eine unerlaubte Vervielfältigung ist untersagt.</p>
+  </section>
+</main>
 
 <footer>
   <p>© 2026 CryptoDeclare · <a href="index.html">Home</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></p>
 </footer>
 <script>
-  function setLang(lang) {
-    document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('lang-' + lang).classList.add('active');
-    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
-  }
+function setLang(lang) {
+  document.querySelectorAll('.lang-section').forEach(section => section.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(button => button.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+}
 </script>
 </body>
 </html>
