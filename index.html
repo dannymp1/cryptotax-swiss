@@ -7796,16 +7796,19 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Instrument Sans', sans-serif; font-size: 11pt; color: #0D1117; background: white; padding: 0; font-variant-numeric: tabular-nums; }
-  @page { size: A4; margin: 0; }
+  @page { size: A4; margin: 9mm 8mm 10mm 8mm; }
   @media print {
-    @page { margin: 0; }
-    body { margin: 18mm 16mm 20mm 16mm; }
+    @page { margin: 9mm 8mm 10mm 8mm; }
+    body { margin: 0; }
+    .page { width: auto; max-width: none; margin: 0; padding: 0; }
     .no-print { display: none !important; }
     *[class*="no-print"] { display: none !important; }
     .sec-title { page-break-after: avoid; }
-    table { page-break-inside: avoid; }
-    .summary-grid { page-break-inside: avoid; }
-    .compliance-box { page-break-inside: avoid; }
+    table { page-break-inside: auto; break-inside: auto; }
+    thead { display: table-header-group; }
+    tfoot { display: table-footer-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    .info-bar, .summary-grid, .compliance-box, .incomplete-box { page-break-inside: avoid; break-inside: avoid; }
     h2, h3 { page-break-after: avoid; }
     @page { counter-increment: page; }
     body { counter-reset: page 0; }
@@ -7838,7 +7841,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     }
   }
 
-  .page { max-width: 210mm; margin: 0 auto; padding: 16mm 18mm; }
+  .page { max-width: 210mm; margin: 0 auto; padding: 12mm 12mm; }
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
