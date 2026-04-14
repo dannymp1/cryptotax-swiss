@@ -152,6 +152,7 @@
     --gold-light: #B8960C;
     --gold-pale: #F7F0D4;
     --red: #C0392B;
+    --swiss-red: #DA291C;
     --rule: rgba(13,17,23,0.12);
     --radius: 3px;
   }
@@ -540,19 +541,37 @@
   }
 
   .ch-flag {
-    width: 20px; height: 20px;
-    background: var(--red);
-    border-radius: 1px;
-    display: flex; align-items: center; justify-content: center;
+    --flag-size: 20px;
+    --cross-long: 12px;
+    --cross-short: 4px;
+    position: relative;
+    width: var(--flag-size); height: var(--flag-size);
+    background: var(--swiss-red);
+    border-radius: 2px;
+    display: inline-flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(13,17,23,0.08);
+  }
+
+  .ch-flag::before,
+  .ch-flag::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: white;
+    border-radius: 0.4px;
+    transform: translate(-50%, -50%);
   }
 
   .ch-flag::before {
-    content: '';
-    width: 8px; height: 2px;
-    background: white;
-    box-shadow: 0 -3px 0 white, 0 3px 0 white, -3px 0 0 white, 3px 0 0 white;
-    border-radius: 0.5px;
+    width: var(--cross-long);
+    height: var(--cross-short);
+  }
+
+  .ch-flag::after {
+    width: var(--cross-short);
+    height: var(--cross-long);
   }
 
   /* ── HOW IT WORKS ── */
@@ -856,17 +875,37 @@
   }
 
   .doc-flag {
-    width: 16px; height: 16px;
-    background: var(--red);
-    border-radius: 1px;
-    display: flex; align-items: center; justify-content: center;
+    --flag-size: 16px;
+    --cross-long: 9.5px;
+    --cross-short: 3px;
+    position: relative;
+    width: var(--flag-size); height: var(--flag-size);
+    background: var(--swiss-red);
+    border-radius: 2px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(13,17,23,0.08);
+  }
+
+  .doc-flag::before,
+  .doc-flag::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: white;
+    border-radius: 0.35px;
+    transform: translate(-50%, -50%);
   }
 
   .doc-flag::before {
-    content: '';
-    width: 6px; height: 1.5px;
-    background: white;
-    box-shadow: 0 -2.5px 0 white, 0 2.5px 0 white, -2.5px 0 0 white, 2.5px 0 0 white;
+    width: var(--cross-long);
+    height: var(--cross-short);
+  }
+
+  .doc-flag::after {
+    width: var(--cross-short);
+    height: var(--cross-long);
   }
 
   .doc-mini-label {
@@ -7680,7 +7719,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     return /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || (touchDevice && window.innerWidth <= 900);
   }
 
-  function openPrintableReportForMobile(reportHTML, filename, existingWindow) {
+  function openPrintableReportWindow(reportHTML, filename, existingWindow, autoPrint = true) {
     const reportWindow = existingWindow || window.open('', '_blank');
     if (!reportWindow) return false;
 
@@ -7689,23 +7728,31 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     reportWindow.document.close();
 
     try {
-      reportWindow.document.title = filename.replace(/\.html$/i, '');
+      reportWindow.document.title = filename.replace(/\.(html|pdf)$/i, '');
     } catch (e) {}
 
-    showToast('Report opened in a new tab. Tap "Print / Save as PDF" to save it on your phone.');
+    if (autoPrint) {
+      const triggerPrint = () => {
+        try {
+          reportWindow.focus();
+          reportWindow.print();
+        } catch (e) {
+          showToast('Report opened in a new tab. Use Print / Save as PDF to export it.');
+        }
+      };
+      const fontsReady = reportWindow.document.fonts && reportWindow.document.fonts.ready
+        ? reportWindow.document.fonts.ready
+        : Promise.resolve();
+      fontsReady.then(() => setTimeout(triggerPrint, 350)).catch(() => setTimeout(triggerPrint, 600));
+      showToast('PDF print dialog opened. Choose "Save as PDF" and turn off browser headers/footers.');
+    } else {
+      showToast('Report opened in a new tab. Tap "Print / Save as PDF" to save it on your phone.');
+    }
     return true;
   }
 
-  function downloadHtmlFile(reportHTML, filename) {
-    const blob = new Blob([reportHTML], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  function openPrintableReportForMobile(reportHTML, filename, existingWindow) {
+    return openPrintableReportWindow(reportHTML, filename, existingWindow, false);
   }
 
   function downloadReport() {
@@ -7713,11 +7760,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const data = window._reportData;
     if (!data) return;
     const mobileExport = isMobileExportDevice();
-    const mobileReportWindow = mobileExport ? window.open('', '_blank') : null;
-    if (mobileReportWindow) {
-      mobileReportWindow.document.open();
-      mobileReportWindow.document.write('<!doctype html><title>Preparing CryptoDeclare report</title><body style="font-family:Arial,sans-serif;padding:24px;color:#0D1117;background:#F5F2EB;">Preparing your CryptoDeclare report...</body>');
-      mobileReportWindow.document.close();
+    const reportWindow = window.open('', '_blank');
+    if (reportWindow) {
+      reportWindow.document.open();
+      reportWindow.document.write('<!doctype html><title>Preparing CryptoDeclare PDF</title><body style="font-family:Arial,sans-serif;padding:24px;color:#0D1117;background:#F5F2EB;">Preparing your CryptoDeclare PDF...</body>');
+      reportWindow.document.close();
     }
 
     // Build a clean printable HTML page styled as a Swiss official document
@@ -7852,8 +7899,10 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   }
   .doc-header-left {}
   .doc-logo-line { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .ch-flag { width: 22px; height: 22px; background: #C0392B; display: flex; align-items: center; justify-content: center; border-radius: 1px; flex-shrink:0; }
-  .ch-flag::before { content:''; width:9px; height:2px; background:white; box-shadow: 0 -3.5px 0 white,0 3.5px 0 white,-3.5px 0 0 white,3.5px 0 0 white; }
+  .ch-flag { position:relative; width:22px; height:22px; background:#DA291C; display:inline-flex; align-items:center; justify-content:center; border-radius:2px; flex-shrink:0; box-shadow:inset 0 0 0 1px rgba(13,17,23,0.08); }
+  .ch-flag::before, .ch-flag::after { content:''; position:absolute; left:50%; top:50%; background:white; border-radius:0.4px; transform:translate(-50%,-50%); }
+  .ch-flag::before { width:13px; height:4px; }
+  .ch-flag::after { width:4px; height:13px; }
   /* Point 1: Brand bigger, bolder */
   .doc-brand { font-family: 'DM Serif Display', serif; font-size: 26pt; letter-spacing: -0.02em; color: #0D1117; }
   .doc-brand span { color: #B8960C; }
@@ -8253,9 +8302,10 @@ onmouseout="this.style.color='#8A909E'">
 </body>
 </html>`;
 
-    const filename = `CryptoDeclare-${data.taxYear}-TaxReport.html`;
-    if (mobileExport && openPrintableReportForMobile(pdfHTML, filename, mobileReportWindow)) return;
-    downloadHtmlFile(pdfHTML, filename);
+    const filename = `CryptoDeclare-${data.taxYear}-TaxReport.pdf`;
+    if (mobileExport && openPrintableReportForMobile(pdfHTML, filename, reportWindow)) return;
+    if (openPrintableReportWindow(pdfHTML, filename, reportWindow, true)) return;
+    showToast('Please allow pop-ups so CryptoDeclare can open the PDF export dialog.');
   }
 
   function downloadLedgerCSV() {
