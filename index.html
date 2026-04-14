@@ -1710,6 +1710,57 @@
     color: rgba(212,175,55,0.7);
   }
 
+  .upload-preflight {
+    margin: 18px 0 20px;
+    padding: 20px 24px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    background: rgba(245,242,235,0.035);
+  }
+
+  .upload-preflight-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+  }
+
+  .upload-preflight-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+    margin-bottom: 12px;
+  }
+
+  .upload-preflight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 18px;
+  }
+
+  .upload-preflight-item {
+    position: relative;
+    padding-left: 18px;
+    color: rgba(245,242,235,0.54);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .upload-preflight-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.64em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-light);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.09);
+  }
+
   .app-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -2434,6 +2485,7 @@
     .manual-row span:nth-child(4),
     .manual-row button { grid-column: 2 / 3; }
     .manual-row button { grid-row: 1 / 3; justify-self: end; }
+    .upload-preflight-grid { grid-template-columns: 1fr; }
     /* Contact */
     .contact-layout { grid-template-columns: 1fr; gap: 40px; }
     .contact-section { padding: 60px 24px; }
@@ -2454,6 +2506,7 @@
     .exchange-pills { gap: 8px; }
     .exchange-pill { font-size: 10px; padding: 6px 12px; }
     .upload-area { margin: 0; padding: 64px 24px; }
+    .upload-preflight { margin-left: 0; margin-right: 0; padding: 18px 20px; }
     /* Report output on mobile */
     .report-output-title { font-size: 24px; }
     .report-output-header { flex-direction: column; align-items: flex-start; }
@@ -3135,9 +3188,19 @@
           <span class="upload-format-pill">Excel .xlsx</span>
           <span class="upload-format-pill">Generic CSV</span>
         </div>
-      </div>
+        </div>
+        <div class="upload-preflight">
+          <div class="upload-preflight-label" data-i18n="upload_check_label">Before you upload</div>
+          <div class="upload-preflight-title" data-i18n="upload_check_title">For the cleanest report, include the full story.</div>
+          <div class="upload-preflight-grid">
+            <div class="upload-preflight-item" data-i18n="upload_check_1">All exchange and wallet exports for the tax year.</div>
+            <div class="upload-preflight-item" data-i18n="upload_check_2">Earlier acquisition history before the first sale, where available.</div>
+            <div class="upload-preflight-item" data-i18n="upload_check_3">Staking, earn, rewards, and lending exports if you received income.</div>
+            <div class="upload-preflight-item" data-i18n="upload_check_4">Manual opening balances if the report flags unmatched disposals.</div>
+          </div>
+        </div>
 
-      <div class="processing-indicator" id="processing-indicator">
+        <div class="processing-indicator" id="processing-indicator">
         <div class="processing-spinner"></div>
         <span class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Reading your transactions...</span>
       </div>
@@ -3520,6 +3583,12 @@
       hero_cta2: 'View sample report',
       upload_title: 'Drop your files here',
       upload_sub: 'CSV or Excel (.xlsx) · upload multiple exchanges — your first report is <span style="color:var(--gold-light);font-weight:600;">free</span>',
+      upload_check_label: 'Before you upload',
+      upload_check_title: 'For the cleanest report, include the full story.',
+      upload_check_1: 'All exchange and wallet exports for the tax year.',
+      upload_check_2: 'Earlier acquisition history before the first sale, where available.',
+      upload_check_3: 'Staking, earn, rewards, and lending exports if you received income.',
+      upload_check_4: 'Manual opening balances if the report flags unmatched disposals.',
       trial_strong: 'Try your first report at no cost.',
       trial_span: 'Upload any transaction file — we\'ll generate a full Swiss tax report instantly.',
       trial_used: 'Free trial used — upgrade to Pro to generate more reports',
@@ -3712,6 +3781,12 @@
       hero_cta2: 'Voir un exemple de rapport',
       upload_title: 'Déposez vos fichiers ici',
       upload_sub: 'CSV ou Excel (.xlsx) · importez plusieurs plateformes — votre premier rapport est <span style="color:var(--gold-light);font-weight:600;">gratuit</span>',
+      upload_check_label: 'Avant l’import',
+      upload_check_title: 'Pour un rapport plus propre, ajoutez l’historique complet.',
+      upload_check_1: 'Tous les exports d’exchanges et de wallets pour l’année fiscale.',
+      upload_check_2: 'L’historique d’acquisition antérieur à la première vente, si disponible.',
+      upload_check_3: 'Les exports de staking, earn, rewards ou lending si vous avez reçu des revenus.',
+      upload_check_4: 'Les soldes d’ouverture manuels si le rapport signale des ventes non appariées.',
       trial_strong: 'Essayez votre premier rapport gratuitement.',
       trial_span: 'Importez n\'importe quel fichier de transactions — nous générons un rapport fiscal complet instantanément.',
       trial_used: 'Essai gratuit utilisé — passez à Pro pour générer plus de rapports',
@@ -3904,6 +3979,12 @@
       hero_cta2: 'Beispielbericht ansehen',
       upload_title: 'Dateien hier ablegen',
       upload_sub: 'CSV oder Excel (.xlsx) · mehrere Börsen hochladen — Ihr erster Bericht ist <span style="color:var(--gold-light);font-weight:600;">kostenlos</span>',
+      upload_check_label: 'Vor dem Upload',
+      upload_check_title: 'Für einen sauberen Bericht bitte die vollständige Historie einbeziehen.',
+      upload_check_1: 'Alle Exchange- und Wallet-Exporte für das Steuerjahr.',
+      upload_check_2: 'Frühere Anschaffungshistorie vor dem ersten Verkauf, sofern vorhanden.',
+      upload_check_3: 'Staking-, Earn-, Reward- und Lending-Exporte, falls Einkommen erzielt wurde.',
+      upload_check_4: 'Manuelle Anfangsbestände, wenn der Bericht nicht zugeordnete Verkäufe meldet.',
       trial_strong: 'Ersten Bericht kostenlos testen.',
       trial_span: 'Laden Sie eine beliebige Transaktionsdatei hoch — wir erstellen sofort einen vollständigen Steuerbericht.',
       trial_used: 'Kostenlose Testversion verwendet — auf Pro upgraden für weitere Berichte',
