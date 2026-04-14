@@ -7842,6 +7842,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   }
 
   .page { max-width: 210mm; margin: 0 auto; padding: 12mm 12mm; }
+  .report-top-stack { margin-left: -2.5mm; width: calc(100% + 2.5mm); }
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
@@ -7970,6 +7971,7 @@ onmouseout="this.style.color='#8A909E'">
 </button>
 
 <div class="page">
+<div class="report-top-stack">
 
   <!-- Classic two-column header — brand left, title right -->
   <div class="doc-header">
@@ -8139,6 +8141,7 @@ onmouseout="this.style.color='#8A909E'">
       +'</div>';
   })()}
 
+</div>
   <div class="sec-title" style="margin-top:32px;">${(data.assets||[]).some(a=>a.missingCostBasis) ? "03" : "02"} — Tax Declaration Summary</div>
   <div class="summary-grid">
     <div class="summary-box">
