@@ -6141,8 +6141,14 @@
       const cleanAsset = (sym) => String(sym || '').toUpperCase().trim();
       const parseAbs = (value) => Math.abs(parseFloat(value || 0) || 0);
       const parseSigned = (value) => parseFloat(value || 0) || 0;
+      const opOf = (row) => String(row?.['operation'] || '').toLowerCase().trim();
       const groupSum = (items) => items.reduce((sum, row) => sum + parseAbs(row['change']), 0);
       const uniqueCoins = (items) => [...new Set(items.map(row => cleanAsset(row['coin'])).filter(Boolean))];
+      const parseLedgerTime = (value) => {
+        const raw = String(value || '').trim();
+        const parsed = Date.parse(raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z');
+        return Number.isFinite(parsed) ? parsed : 0;
+      };
 
       const getLedgerAssetPriceCHF = async (asset, dateKey) => {
         const sym = cleanAsset(asset);
@@ -6196,6 +6202,51 @@
         }
       };
 
+      const pairedConvertRows = new Set();
+      const convertEntries = rows
+        .filter(r => opOf(r) === 'binance convert')
+        .map((row, index) => ({
+          row,
+          index,
+          account: row['account'] || '',
+          time: parseLedgerTime(row['utc_time'] || row['date'] || ''),
+          sign: Math.sign(parseSigned(row['change'])),
+          asset: cleanAsset(row['coin'])
+        }));
+
+      for (let i = 0; i < convertEntries.length; i++) {
+        const current = convertEntries[i];
+        if (pairedConvertRows.has(current.row) || !current.sign || !current.asset) continue;
+
+        let match = null;
+        for (let j = 0; j < convertEntries.length; j++) {
+          if (i === j) continue;
+          const candidate = convertEntries[j];
+          if (pairedConvertRows.has(candidate.row) || !candidate.sign || !candidate.asset) continue;
+          if (candidate.account !== current.account) continue;
+          if (candidate.sign === current.sign || candidate.asset === current.asset) continue;
+          const timeDistance = Math.abs((candidate.time || 0) - (current.time || 0));
+          if (timeDistance > 10000) continue;
+          if (!match || timeDistance < Math.abs((match.time || 0) - (current.time || 0))) {
+            match = candidate;
+          }
+        }
+
+        if (!match) continue;
+        const debit = current.sign < 0 ? current : match;
+        const credit = current.sign > 0 ? current : match;
+        const date = normalizeImportedDate(debit.row['utc_time'] || debit.row['date'] || credit.row['utc_time'] || credit.row['date'] || '');
+        await pushLedgerTradePair({
+          date,
+          soldAsset: debit.asset,
+          soldQty: parseAbs(debit.row['change']),
+          buyAsset: credit.asset,
+          buyQty: parseAbs(credit.row['change'])
+        });
+        pairedConvertRows.add(current.row);
+        pairedConvertRows.add(match.row);
+      }
+
       for (const r of rows) {
         const date = normalizeImportedDate(r['utc_time'] || r['date'] || '');
         const key = `${date}|${r['account'] || ''}`;
@@ -6208,18 +6259,21 @@
         const date = normalizeImportedDate(group[0]['utc_time'] || group[0]['date'] || '');
         const dateKey = String(date || '').slice(0,10);
 
-        const deposits = group.filter(r => (r['operation'] || '').toLowerCase() === 'deposit');
-        const withdrawals = group.filter(r => (r['operation'] || '').toLowerCase() === 'withdraw');
-        const fees = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction fee');
-        const soldRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction sold');
-        const revenueRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction revenue');
-        const buyRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction buy');
-        const spendRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'transaction spend');
-        const convertRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'binance convert');
-        const smallAssetRows = group.filter(r => (r['operation'] || '').toLowerCase() === 'small assets exchange bnb');
+        const deposits = group.filter(r => opOf(r) === 'deposit');
+        const withdrawals = group.filter(r => opOf(r) === 'withdraw');
+        const fees = group.filter(r => opOf(r) === 'transaction fee');
+        const plainFees = group.filter(r => opOf(r) === 'fee');
+        const soldRows = group.filter(r => opOf(r) === 'transaction sold');
+        const revenueRows = group.filter(r => opOf(r) === 'transaction revenue');
+        const buyRows = group.filter(r => opOf(r) === 'transaction buy');
+        const spendRows = group.filter(r => opOf(r) === 'transaction spend');
+        const plainSellRows = group.filter(r => opOf(r) === 'sell');
+        const plainBuyRows = group.filter(r => opOf(r) === 'buy');
+        const convertRows = group.filter(r => opOf(r) === 'binance convert' && !pairedConvertRows.has(r));
+        const smallAssetRows = group.filter(r => opOf(r) === 'small assets exchange bnb');
         const stakingRows = group.filter(r => {
-          const op = (r['operation'] || '').toLowerCase();
-          return op.includes('reward') || op.includes('interest') || op.includes('staking') || op.includes('distribution');
+          const op = opOf(r);
+          return op.includes('reward') || op.includes('interest') || op.includes('staking') || op.includes('distribution') || op.includes('airdrop');
         });
 
         for (const r of deposits) {
@@ -6262,6 +6316,20 @@
             buyAsset,
             buyQty
           });
+        }
+
+        if (plainSellRows.length && plainBuyRows.length) {
+          const soldAssets = uniqueCoins(plainSellRows);
+          const buyAssets = uniqueCoins(plainBuyRows);
+          if (soldAssets.length === 1 && buyAssets.length === 1) {
+            await pushLedgerTradePair({
+              date,
+              soldAsset: soldAssets[0],
+              soldQty: groupSum(plainSellRows),
+              buyAsset: buyAssets[0],
+              buyQty: groupSum(plainBuyRows)
+            });
+          }
         }
 
         if (convertRows.length) {
@@ -6307,7 +6375,7 @@
           out.push({ date, type: 'staking', asset, qty, priceCHF, totalCHF: qty * priceCHF });
         }
 
-        for (const r of fees) {
+        for (const r of fees.concat(plainFees)) {
           const asset = cleanAsset(r['coin']);
           const qty = parseAbs(r['change']);
           if (!asset || isTrueFiat(asset) || qty <= 0) continue;
@@ -7518,7 +7586,7 @@
       kraken_trades: `Exchange format detected: Kraken (trades). Quote-currency values converted to CHF using exchange quote currency and historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. CHF values used directly where exported; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       binance: `Exchange format detected: Binance. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      binance_ledger: `Exchange format detected: Binance. Trade values derived from matched account-history debit/credit entries. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat and crypto countervalues converted using historical market and FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance_ledger: `Exchange format detected: Binance. Trade values derived from matched account-history debit/credit entries, including Buy/Sell/Fee rows paired by timestamp and Binance Convert debit/credit rows paired where possible. Airdrops are classified under reward income for review. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat and crypto countervalues converted using historical market and FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitstamp: `Exchange format detected: Bitstamp. Fiat quote currencies converted to CHF using historical FX references where available; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bybit: `Exchange format detected: Bybit. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
