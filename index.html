@@ -3183,6 +3183,10 @@
           <span class="upload-format-pill">Generic CSV</span>
         </div>
         </div>
+        <div class="processing-indicator" id="processing-indicator">
+          <div class="processing-spinner"></div>
+          <span class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Reading your transactions...</span>
+        </div>
         <div class="tax-year-card">
           <div class="tax-year-copy">
             <label class="tax-year-label" for="tax-year-select" data-i18n="tax_year_label">Tax year to report</label>
@@ -3202,11 +3206,6 @@
             <div class="upload-preflight-item" data-i18n="upload_check_4">Manual opening balances if the report flags unmatched disposals.</div>
           </div>
         </div>
-
-        <div class="processing-indicator" id="processing-indicator">
-        <div class="processing-spinner"></div>
-        <span class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Reading your transactions...</span>
-      </div>
 
       <!-- UNLOCK CODE BANNER -->
       <div class="unlock-banner" id="unlock-banner">
@@ -7726,8 +7725,8 @@
         <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.stakingCount || 0}</td>
         <td style="text-align:right">${fmtNum(a.endHolding)}</td>
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
-        <td style="text-align:right;font-weight:600;${a.missingCostBasis ? 'color:rgba(245,242,235,0.3)' : glClass}">
-          ${a.missingCostBasis ? '—' : glStr}
+        <td style="text-align:right;font-weight:600;${glClass}">
+          ${glStr}
         </td>
         ${hasUnmatched ? `<td style="text-align:right;font-weight:600;color:#B8960C;font-size:11px;padding:10px 8px;">
           ${a.missingCostBasis ? 'CHF '+Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2}) : '<span style="color:rgba(245,242,235,0.2);">—</span>'}
@@ -7750,7 +7749,7 @@
       <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
-      <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Gain' : 'Gain / Loss'}</th>
+      <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
       ${(data.assets||[]).some(a=>a.missingCostBasis) ? `<th style="padding:10px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Excluded Proceeds</th>` : ''}
     </tr>
   </thead>
@@ -7769,7 +7768,7 @@
     <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--paper)">${fmtCHF(data.totalPortfolioValueCHF)}</div>
   </div>
   <div style="background:rgba(245,242,235,0.03);padding:16px 18px">
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">Net Taxable Gain</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Net Gain' : 'Net Taxable Gain'}</div>
     <div style="font-family:'DM Serif Display',serif;font-size:20px;${gain>=0?'color:#4caf82':'color:#e05c5c'}">${gainStr}</div>
   </div>
 </div>
@@ -7887,8 +7886,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         <td class="center mono" style="color:#5A6070;">${a.stakingCount||0}</td>
         <td class="right mono" style="font-weight:600;">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="font-weight:700;color:${a.missingCostBasis ? '#9AA0AC' : glColor};">
-          ${a.missingCostBasis ? '—' : glStr}
+        <td class="right mono" style="font-weight:700;color:${glColor};">
+          ${glStr}
         </td>
         ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:8px;font-size:7.8pt;">
           ${unmatchedStr === '—' ? '<span style="color:#9AA0AC;font-weight:400;">—</span>' : unmatchedStr}
@@ -8234,7 +8233,7 @@ onmouseout="this.style.color='#8A909E'">
         <th class="center">Buys</th><th class="center">Sells</th><th class="center">Staking</th>
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
-        <th class="right">${_hasUnmatched ? 'Gain' : 'Gain / Loss'}</th>
+        <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
         ${_hasUnmatched ? '<th class="right">Excluded Proceeds</th>' : ''}
       </tr>
     </thead>
@@ -8298,7 +8297,7 @@ onmouseout="this.style.color='#8A909E'">
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box highlight">
-      <div class="summary-label">Realised Gain / Loss</div>
+      <div class="summary-label">${_hasUnmatched ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss'}</div>
       <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
     </div>
   </div>
