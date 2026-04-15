@@ -100,7 +100,7 @@
       "name": "Starter",
       "price": "0",
       "priceCurrency": "CHF",
-      "description": "Up to 50 transactions, free forever"
+      "description": "Up to 250 transactions, free forever"
     },
     {
       "@type": "Offer",
@@ -1563,60 +1563,6 @@
   .tx-counter.warning { color: #E8A020; }
   .tx-counter.blocked { color: var(--red); }
 
-  /* ── TRIAL BANNER ── */
-  .trial-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 24px;
-    background: rgba(212,175,55,0.08);
-    border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 4px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-
-  .trial-banner-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .trial-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    font-weight: 500;
-    color: var(--ink);
-    background: var(--gold-light);
-    padding: 4px 10px;
-    border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  .trial-text {
-    font-size: 13px;
-    color: rgba(245,242,235,0.6);
-    line-height: 1.5;
-  }
-
-  .trial-text strong {
-    color: rgba(245,242,235,0.9);
-    display: block;
-    margin-bottom: 1px;
-  }
-
-  .trial-used-msg {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    color: var(--gold-light);
-  }
-
   .upload-area.locked {
     opacity: 0.4;
     pointer-events: none;
@@ -1651,10 +1597,6 @@
   .upload-area:hover, .upload-area.drag-over {
     border-color: var(--gold-light);
     background: rgba(212,175,55,0.06);
-  }
-
-  .processing-indicator + .trial-banner {
-    margin-top: 20px;
   }
 
   .upload-area input[type="file"] {
@@ -3119,9 +3061,9 @@
     <div class="pricing-card">
       <div class="pricing-name">Starter</div>
       <div class="pricing-price" id="starter-price">Free</div>
-      <div class="pricing-period">Per tax year · up to 50 transactions</div>
+      <div class="pricing-period">Per tax year · up to 250 transactions</div>
       <ul class="pricing-features">
-        <li>Up to 50 transactions</li>
+        <li>Up to 250 transactions</li>
         <li>CSV import (1 exchange)</li>
         <li>CHF conversion</li>
         <li>Basic PDF report</li>
@@ -3216,7 +3158,7 @@
 <section class="app-section" id="declare" role="main">
   <div class="section-header">
     <span class="section-number">05 — Declare</span>
-    <span class="plan-badge free" id="plan-badge">Free · 50 tx</span>
+    <span class="plan-badge free" id="plan-badge">Free · 250 tx</span>
     <h2 class="section-title">Upload your<br><em>transactions</em></h2>
   </div>
 
@@ -3266,24 +3208,10 @@
         <span class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Reading your transactions...</span>
       </div>
 
-      <div class="trial-banner" id="trial-banner">
-        <div class="trial-banner-left">
-          <div class="trial-badge">FREE TRIAL</div>
-          <div class="trial-text">
-            <strong>Try your first report at no cost.</strong>
-            <span>Upload any transaction file — we'll generate a full Swiss tax report instantly.</span>
-          </div>
-        </div>
-        <div class="trial-used-msg" id="trial-used-msg" style="display:none;">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a6 6 0 100 12A6 6 0 007 1z" stroke="#B8960C" stroke-width="1.2"/><path d="M7 6v3M7 4.5v.5" stroke="#B8960C" stroke-width="1.2" stroke-linecap="round"/></svg>
-          Free trial used — upgrade to Pro to generate more reports
-        </div>
-      </div>
-
       <!-- UNLOCK CODE BANNER -->
       <div class="unlock-banner" id="unlock-banner">
         <div class="unlock-title">Enter your unlock code</div>
-        <div class="unlock-sub" id="unlock-sub">Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.</div>
+        <div class="unlock-sub" id="unlock-sub">Your file has more than 250 transactions. Enter a Pro or Business unlock code to generate your report.</div>
         <div class="unlock-row">
           <label for="unlock-input" class="sr-only">Unlock code</label>
           <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
@@ -3653,9 +3581,6 @@
       upload_check_2: 'Earlier acquisition history before the first sale, where available.',
       upload_check_3: 'Staking, earn, rewards, and lending exports if you received income.',
       upload_check_4: 'Manual opening balances if the report flags unmatched disposals.',
-      trial_strong: 'Try your first report at no cost.',
-      trial_span: 'Upload any transaction file — we\'ll generate a full Swiss tax report instantly.',
-      trial_used: 'Free trial used — upgrade to Pro to generate more reports',
       taxpayer_optional_label: 'Optional',
       taxpayer_optional_title: 'Add taxpayer details',
       taxpayer_optional_sub: 'Add your name, address, and tax ID if you want them printed in the report header.',
@@ -3730,7 +3655,7 @@
       starter_name: 'Starter', starter_price: 'Free',
       pro_name: 'Professional',
       biz_name: 'Business',
-      starter_f1: 'Up to 50 transactions',
+      starter_f1: 'Up to 250 transactions',
       starter_f2: 'CSV import (1 exchange)',
       starter_f3: 'CHF conversion',
       starter_f4: 'Basic PDF report',
@@ -3768,7 +3693,7 @@
       cookie_reject: 'Reject',
       cookie_saved: 'Cookie preferences saved.',
       unlock_title: 'Enter your unlock code',
-      unlock_sub: 'Your file has more than 50 transactions. Enter a Pro or Business unlock code to generate your report.',
+      unlock_sub: 'Your file has more than 250 transactions. Enter a Pro or Business unlock code to generate your report.',
       unlock_btn: 'Unlock',
       unlock_error: 'Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch',
       manual_optional_label: 'Advanced',
@@ -3826,7 +3751,7 @@
       report_badge: 'Aligned with ESTV guidance',
       report_body: 'Clean, structured, and built for Swiss tax reporting. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation based on imported data.',
       report_cta: 'Generate my report',
-      starter_period: 'Up to 50 transactions', starter_cta: 'Get started free',
+      starter_period: 'Up to 250 transactions', starter_cta: 'Get started free',
       pro_period: 'Per tax year · up to 1,000 transactions', pro_cta: 'Get Pro',
       biz_period: 'Per entity / year · unlimited transactions', biz_cta: 'Get Business',
       footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Structured, fast, and private.',
@@ -3854,9 +3779,6 @@
       upload_check_2: 'L’historique d’acquisition antérieur à la première vente, si disponible.',
       upload_check_3: 'Les exports de staking, earn, rewards ou lending si vous avez reçu des revenus.',
       upload_check_4: 'Les soldes d’ouverture manuels si le rapport signale des ventes non appariées.',
-      trial_strong: 'Essayez votre premier rapport gratuitement.',
-      trial_span: 'Importez n\'importe quel fichier de transactions — nous générons un rapport fiscal complet instantanément.',
-      trial_used: 'Essai gratuit utilisé — passez à Pro pour générer plus de rapports',
       taxpayer_optional_label: 'Optionnel',
       taxpayer_optional_title: 'Ajouter les détails du contribuable',
       taxpayer_optional_sub: 'Ajoutez votre nom, adresse et identifiant fiscal si vous souhaitez les afficher dans l\'en-tête du rapport.',
@@ -3931,7 +3853,7 @@
       starter_name: 'Starter', starter_price: 'Gratuit',
       pro_name: 'Professionnel',
       biz_name: 'Business',
-      starter_f1: "Jusqu'à 50 transactions",
+      starter_f1: "Jusqu'à 250 transactions",
       starter_f2: 'Import CSV (1 bourse)',
       starter_f3: 'Conversion CHF',
       starter_f4: 'Rapport PDF basique',
@@ -3969,7 +3891,7 @@
       cookie_reject: 'Refuser',
       cookie_saved: 'Préférences de cookies enregistrées.',
       unlock_title: "Entrez votre code d'activation",
-      unlock_sub: 'Votre fichier contient plus de 50 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
+      unlock_sub: 'Votre fichier contient plus de 250 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
       unlock_btn: 'Activer',
       unlock_error: 'Code invalide. Vérifiez votre e-mail de CryptoDeclare ou contactez hello@cryptodeclare.ch',
       manual_optional_label: 'Avancé',
@@ -4027,7 +3949,7 @@
       report_badge: 'Aligné sur les directives ESTV',
       report_body: "Propre, structuré et conçu pour le reporting fiscal suisse. Votre rapport téléchargeable inclut un journal complet des transactions, un résumé des résultats réalisés et une valorisation de fin d'année basée sur les données importées.",
       report_cta: 'Générer mon rapport',
-      starter_period: "Jusqu'à 50 transactions", starter_cta: 'Commencer gratuitement',
+      starter_period: "Jusqu'à 250 transactions", starter_cta: 'Commencer gratuitement',
       pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Obtenir Pro',
       biz_period: 'Par entité / an · transactions illimitées', biz_cta: 'Obtenir Business',
       footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Structurée, rapide et privée.',
@@ -4055,9 +3977,6 @@
       upload_check_2: 'Frühere Anschaffungshistorie vor dem ersten Verkauf, sofern vorhanden.',
       upload_check_3: 'Staking-, Earn-, Reward- und Lending-Exporte, falls Einkommen erzielt wurde.',
       upload_check_4: 'Manuelle Anfangsbestände, wenn der Bericht nicht zugeordnete Verkäufe meldet.',
-      trial_strong: 'Ersten Bericht kostenlos testen.',
-      trial_span: 'Laden Sie eine beliebige Transaktionsdatei hoch — wir erstellen sofort einen vollständigen Steuerbericht.',
-      trial_used: 'Kostenlose Testversion verwendet — auf Pro upgraden für weitere Berichte',
       taxpayer_optional_label: 'Optional',
       taxpayer_optional_title: 'Steuerpflichtigenangaben hinzufügen',
       taxpayer_optional_sub: 'Fügen Sie Name, Adresse und Steuer-ID hinzu, wenn diese im Berichtskopf erscheinen sollen.',
@@ -4132,7 +4051,7 @@
       starter_name: 'Starter', starter_price: 'Kostenlos',
       pro_name: 'Professionell',
       biz_name: 'Business',
-      starter_f1: 'Bis 50 Transaktionen',
+      starter_f1: 'Bis 250 Transaktionen',
       starter_f2: 'CSV-Import (1 Börse)',
       starter_f3: 'CHF-Umrechnung',
       starter_f4: 'Einfacher PDF-Bericht',
@@ -4228,7 +4147,7 @@
       report_badge: 'An ESTV-Leitlinien ausgerichtet',
       report_body: 'Sauber, strukturiert und für das Schweizer Steuerreporting aufgebaut. Ihr herunterladbarer Bericht enthält ein vollständiges Transaktionsprotokoll, eine Zusammenfassung der realisierten Resultate und eine Jahresendbewertung auf Basis der importierten Daten.',
       report_cta: 'Bericht erstellen',
-      starter_period: 'Bis 50 Transaktionen', starter_cta: 'Kostenlos starten',
+      starter_period: 'Bis 250 Transaktionen', starter_cta: 'Kostenlos starten',
       pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Pro kaufen',
       biz_period: 'Pro Unternehmen / Jahr · unbegrenzte Transaktionen', biz_cta: 'Business kaufen',
       footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Strukturiert, schnell und privat.',
@@ -4393,14 +4312,6 @@
     if (uploadTitle) uploadTitle.textContent = t.upload_title;
     const uploadSub = document.querySelector('.upload-sub');
     if (uploadSub) uploadSub.innerHTML = t.upload_sub;
-
-    // Trial banner
-    const trialStrong = document.querySelector('.trial-text strong');
-    if (trialStrong) trialStrong.textContent = t.trial_strong;
-    const trialSpan = document.querySelector('.trial-text span');
-    if (trialSpan) trialSpan.textContent = t.trial_span;
-    const trialUsed = document.querySelector('.trial-used-msg');
-    if (trialUsed) trialUsed.childNodes[trialUsed.childNodes.length-1].textContent = ' ' + t.trial_used;
 
     // Report output
     const reportTitle = document.querySelector('.report-output-title');
@@ -4731,7 +4642,7 @@
   ];
 
   // Plan limits
-  const LIMITS = { free: 50, pro: 1000, business: Infinity };
+  const LIMITS = { free: 250, pro: 1000, business: Infinity };
   const WARN_AT = 900; // warn before hitting pro limit
 
   let currentPlanTier = 'free'; // 'free' | 'pro' | 'business'
@@ -4972,7 +4883,7 @@
     const badge = document.getElementById('plan-badge');
     if (!badge) return;
     badge.className = 'plan-badge ' + tier;
-    badge.textContent = tier === 'free' ? 'Free · 50 tx' : tier === 'pro' ? 'Pro · 1,000 tx' : 'Business · Unlimited';
+    badge.textContent = tier === 'free' ? 'Free · 250 tx' : tier === 'pro' ? 'Pro · 1,000 tx' : 'Business · Unlimited';
   }
 
   async function applyUnlockCode() {
@@ -5053,21 +4964,16 @@
 
   function updateTrialUI() {
     const area = document.getElementById('upload-area');
-    const trialUsedMsg = document.getElementById('trial-used-msg');
-    const trialBanner = document.getElementById('trial-banner');
     if (hasUsedTrial() && currentPlanTier === 'free') {
       // Lock the upload area and show upgrade prompt
       if (area) area.classList.add('locked');
-      if (trialUsedMsg) trialUsedMsg.style.display = 'flex';
-      if (trialBanner) {
-        // Show unlock banner immediately for returning free users
-        document.getElementById('unlock-banner').classList.add('visible');
-        const sub = document.getElementById('unlock-sub');
-        if (sub) sub.textContent = 'You\'ve used your free trial. Enter a Pro or Business unlock code to generate more reports.';
-      }
+      // Show unlock banner immediately for returning free users
+      const unlockBanner = document.getElementById('unlock-banner');
+      if (unlockBanner) unlockBanner.classList.add('visible');
+      const sub = document.getElementById('unlock-sub');
+      if (sub) sub.textContent = 'You\'ve used your free trial. Enter a Pro or Business unlock code to generate more reports.';
     } else {
       if (area) area.classList.remove('locked');
-      if (trialUsedMsg) trialUsedMsg.style.display = 'none';
     }
   }
 
