@@ -5631,11 +5631,13 @@
     // ── Swiss-specific ───────────────────────────────────────────────────────
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
-    // ── Kraken ───────────────────────────────────────────────────────────────
-    if (h.includes('ordertxid') && h.includes('pair') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
-    if (h.includes('txid') && h.includes('aclass')) return 'kraken';
-    // ── Binance ──────────────────────────────────────────────────────────────
-    if (h.includes('date(utc)') && h.includes('pair') && h.includes('base asset') && h.includes('quote asset') && h.includes('fee coin')) return 'binance';
+      // ── Kraken ───────────────────────────────────────────────────────────────
+      if (h.includes('ordertxid') && h.includes('pair') && h.includes('vol') && h.includes('cost')) return 'kraken_trades';
+      if (h.includes('txid') && h.includes('aclass')) return 'kraken';
+      // ── Nexo Pro ─────────────────────────────────────────────────────────────
+      if (h.includes('timestamp') && h.includes('pair') && h.includes('side') && h.includes('executedprice') && h.includes('filledamount') && h.includes('tradingfee')) return 'nexo_pro';
+      // ── Binance ──────────────────────────────────────────────────────────────
+      if (h.includes('date(utc)') && h.includes('pair') && h.includes('base asset') && h.includes('quote asset') && h.includes('fee coin')) return 'binance';
     if (h.includes('pair') && h.includes('side') && h.includes('executed')) return 'binance';
     if (h.includes('market') && h.includes('type') && h.includes('amount') && h.includes('total') && h.includes('fee coin')) return 'binance';
     if (h.includes('utc_time') && h.includes('base_asset') && h.includes('quote_asset')) return 'binance'; // transaction history
@@ -5690,7 +5692,7 @@
     bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
     hyperliquid:'Hyperliquid',
     bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
-    crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', revolut:'Revolut',
+      crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', nexo_pro:'Nexo Pro', revolut:'Revolut',
     ledger:'Ledger Live', kucoin:'KuCoin', gemini:'Gemini', bitfinex:'Bitfinex',
     gate:'Gate.io', mexc:'MEXC', generic:'Generic CSV', manual:'Manual entries', unknown:'Unknown',
   };
@@ -5742,8 +5744,10 @@
     BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin',
     ADA:'cardano', XRP:'ripple', DOT:'polkadot', AVAX:'avalanche-2',
     MATIC:'matic-network', LINK:'chainlink', UNI:'uniswap', ATOM:'cosmos',
-    LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
-    TLM:'alien-worlds',
+      LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
+      TLM:'alien-worlds', OMG:'omg-network', GLM:'golem',
+      AGI:'singularitynet', AGIX:'singularitynet',
+      NEXO:'nexo',
   };
 
   async function fetchJsonWithTimeout(url, timeoutMs) {
@@ -7018,6 +7022,45 @@
             feeQty, feeCoin, quoteAsset: 'USD', quoteRate: USD_CHF
           }));
         }
+        // ── Nexo Pro Exchange ─────────────────────────────────────────────────
+        else if (format === 'nexo_pro') {
+          date = normalizeImportedDate(r['timestamp'] || '').slice(0,10);
+          const status = String(r['status'] || '').toLowerCase().trim();
+          if (status && !['completed','filled','closed','done'].includes(status)) continue;
+
+          const side = String(r['side'] || '').toLowerCase().trim();
+          if (!['buy','sell'].includes(side)) continue;
+
+          const [baseRaw, quoteRaw] = String(r['pair'] || '').toUpperCase().split('/');
+          const baseAsset = String(baseRaw || '').replace(/[^A-Z0-9]/g,'');
+          const quoteAsset = String(quoteRaw || '').replace(/[^A-Z0-9]/g,'');
+          if (!baseAsset || !quoteAsset) continue;
+
+          // Nexo Pro spot export uses filledAmount as the base-asset amount and
+          // executedPrice as quote units per one base unit.
+          asset = baseAsset;
+          if (isFeeCurrencyAsset(asset)) continue;
+          type = side;
+          qty = Math.abs(parseFloat(r['filledamount'] || r['filled amount'] || r['requestedamount'] || 0) || 0);
+          const rawPrice = Math.abs(parseFloat(r['executedprice'] || r['executed price'] || r['price'] || 0) || 0);
+
+          let quoteRate = 0;
+          if (isFeeCurrencyAsset(quoteAsset)) {
+            quoteRate = await getFiatToChfRate(quoteAsset, date);
+          } else {
+            quoteRate = await getHistoricalPriceCHF(quoteAsset, date);
+          }
+          if (!qty || !rawPrice || !quoteRate) continue;
+
+          priceCHF = rawPrice * quoteRate;
+          totalCHF = qty * priceCHF;
+          const feeQty = Math.abs(parseFloat(r['tradingfee'] || r['trading fee'] || 0) || 0);
+          const feeCoin = String(r['feecurrency'] || r['fee currency'] || quoteAsset).toUpperCase().trim();
+          ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
+            date, type, asset, qty, priceCHF, totalCHF,
+            feeQty, feeCoin, quoteAsset, quoteRate
+          }));
+        }
         // ── Revolut ───────────────────────────────────────────────────────────
         else if (format === 'revolut') {
           date = (r['completed date']||r['started date']||'').slice(0,10);
@@ -7461,6 +7504,7 @@
       crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       crypto_com_ex: `Exchange format detected: Crypto.com Exchange. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at ${usdRef} (ESTV reference rate, 31.12.${taxYear}); inbound deposits preserved as transfer-ins with unresolved basis. Interest and dividend income treated as taxable staking income.`,
+      nexo_pro: `Exchange format detected: Nexo Pro. Spot trades parsed from pair, side, executed price and filled amount. Fiat and stablecoin quote currencies converted to CHF using historical FX/reference rates where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       revolut: `Exchange format detected: Revolut. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as transfer-ins with unresolved basis; outgoing transactions without countervalue treated as withdrawals. Non-CHF countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kucoin: `Exchange format detected: KuCoin. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
