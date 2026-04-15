@@ -1478,13 +1478,27 @@
   /* ── UNLOCK CODE ── */
   .unlock-banner {
     display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    width: min(520px, calc(100vw - 32px));
     background: var(--ink);
     border-radius: var(--radius);
-    padding: 20px 24px;
-    margin-bottom: 16px;
+    padding: 26px 28px;
+    margin: 0;
     border: 1px solid rgba(212,175,55,0.3);
+    box-shadow: 0 28px 90px rgba(0,0,0,0.45), 0 0 0 100vmax rgba(0,0,0,0.62);
   }
-  .unlock-banner.visible { display: block; }
+  .unlock-banner.visible {
+    display: block;
+    animation: unlockPop 0.18s ease-out;
+  }
+  @keyframes unlockPop {
+    from { opacity: 0; transform: translate(-50%, -46%) scale(0.98); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
   .unlock-title {
     font-family: 'DM Serif Display', serif;
     font-size: 18px;
@@ -2499,6 +2513,9 @@
     .hero-actions .btn-primary, .hero-actions .btn-secondary { text-align: center; justify-content: center; }
     .exchange-pills { gap: 8px; }
     .exchange-pill { font-size: 10px; padding: 6px 12px; }
+    .unlock-banner { padding: 22px 18px; width: calc(100vw - 24px); }
+    .unlock-row { flex-direction: column; align-items: stretch; }
+    .unlock-btn { width: 100%; }
     .upload-area { margin: 0; padding: 64px 24px; }
     .upload-preflight { margin-left: 0; margin-right: 0; padding: 18px 20px; }
     /* Report output on mobile */
@@ -4945,7 +4962,7 @@
     if (txCount > LIMITS.free) {
       sub.textContent = `Your file has ${txCount.toLocaleString()} transactions. Pro unlocks up to 1,000 · Business unlocks unlimited.`;
     }
-    document.getElementById('unlock-banner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => document.getElementById('unlock-input')?.focus(), 80);
   }
 
   // ── Free Trial Logic ──
@@ -4971,6 +4988,7 @@
       if (unlockBanner) unlockBanner.classList.add('visible');
       const sub = document.getElementById('unlock-sub');
       if (sub) sub.textContent = 'You\'ve used your free trial. Enter a Pro or Business unlock code to generate more reports.';
+      setTimeout(() => document.getElementById('unlock-input')?.focus(), 80);
     } else {
       if (area) area.classList.remove('locked');
     }
@@ -7711,6 +7729,11 @@
 
     // Build HTML preview of the report
     const assets = data.assets || [];
+    const hasZeroHoldingBuys = assets.some(a =>
+      (a.buyCount || 0) > 0 &&
+      (a.sellCount || 0) === 0 &&
+      Math.abs(Number(a.endHolding || 0)) < 0.000001
+    );
     const assetRows = assets.map(a => {
       const displayAsset = getReportAssetDisplay(a.symbol, a.name);
       const gl = Number(a.gainLossCHF);
@@ -7757,6 +7780,7 @@
     ${assetRows}
   </tbody>
 </table>
+${hasZeroHoldingBuys ? `<div style="padding:12px 14px;background:rgba(245,242,235,0.04);border-left:3px solid rgba(212,175,55,0.75);font-size:12px;color:rgba(245,242,235,0.56);line-height:1.65;margin:-8px 0 22px 0;">Assets can show buys but no year-end holding when they were later transferred out or consumed as fees. Transfers reduce holdings but are not taxable sells; include the receiving wallet or exchange if those assets were still owned at year-end.</div>` : ''}
 
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:20px">
   <div style="background:rgba(245,242,235,0.03);padding:16px 18px">
@@ -7866,6 +7890,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const assets = data.assets || [];
     const _hasUnmatched = assets.some(a=>a.missingCostBasis);
     const _totalExcluded = assets.reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
+    const _hasZeroHoldingBuys = assets.some(a =>
+      (a.buyCount || 0) > 0 &&
+      (a.sellCount || 0) === 0 &&
+      Math.abs(Number(a.endHolding || 0)) < 0.000001
+    );
     const assetRows = assets.map(a => {
       const displayAsset = getReportAssetDisplay(a.symbol, a.name);
       const gl = Number(a.gainLossCHF);
@@ -8247,6 +8276,10 @@ onmouseout="this.style.color='#8A909E'">
       </tr>
     </tbody>
   </table>
+  ${_hasZeroHoldingBuys ? `
+  <div class="notes-box" style="margin-top:-8px;margin-bottom:22px;">
+    <strong>Transfer / fee note:</strong> Assets can show buys but no year-end holding when they were later transferred out or consumed as fees. Transfers reduce holdings but are not taxable sells. Include the receiving wallet or exchange if those assets were still owned at year-end.
+  </div>` : ''}
 
   ${(function(){
     const ma=(data.assets||[]).filter(a=>a.missingCostBasis);
