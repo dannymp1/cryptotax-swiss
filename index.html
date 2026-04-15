@@ -5069,6 +5069,7 @@
     if (format === 'hyperliquid') return `Processing Hyperliquid derivatives${label}...`;
     if (format === 'swissborg') return `Parsing SwissBorg statement${label}...`;
     if (format === 'bitstamp') return `Processing Bitstamp history${label}...`;
+    if (format === 'bitstamp_trades') return `Processing Bitstamp trades${label}...`;
     if (format === 'binance_ledger') return `Processing Binance account history${label}...`;
     return fileName ? `Normalising ${fileName}...` : 'Normalising transactions...';
   }
@@ -5656,6 +5657,7 @@
     // ── Swissquote ───────────────────────────────────────────────────────────
     if (h.includes('order #') || (h.includes('transaction') && h.includes('symbol') && h.includes('quantity') && h.includes('currency') && h.includes('price'))) return 'swissquote';
     // ── Bitstamp ─────────────────────────────────────────────────────────────
+    if (h.includes('order type') && h.includes('pair') && h.includes('price') && h.includes('amount') && h.includes('value') && h.includes('closed')) return 'bitstamp_trades';
     if (h.includes('amount currency') && h.includes('value currency') && h.includes('rate currency') && h.includes('order id') && h.includes('subtype')) return 'bitstamp';
     // ── Bitpanda ─────────────────────────────────────────────────────────────
     if (h.includes('transaction id') && h.includes('amount asset') && h.includes('asset class')) return 'bitpanda';
@@ -5695,7 +5697,7 @@
   const EXCHANGE_DISPLAY_NAMES = {
     binance:'Binance', binance_ledger:'Binance', kraken:'Kraken', kraken_trades:'Kraken', coinbase:'Coinbase',
     bybit:'Bybit', swissborg:'SwissBorg', swissquote:'Swissquote',
-    bitstamp:'Bitstamp',
+    bitstamp:'Bitstamp', bitstamp_trades:'Bitstamp',
     bitpanda:'Bitpanda', okx:'OKX', okx_derivatives:'OKX Derivatives',
     hyperliquid:'Hyperliquid',
     bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
@@ -6908,6 +6910,54 @@
             }));
           }
         }
+        else if (format === 'bitstamp_trades') {
+          date = normalizeImportedDate(r['closed'] || r['date'] || '');
+          const side = String(r['order type'] || r['type'] || '').toLowerCase().trim();
+          if (!['buy','sell'].includes(side)) continue;
+
+          const [baseRaw, quoteRaw] = String(r['pair'] || '').toUpperCase().split(/[/-]/);
+          const baseAsset = String(baseRaw || '').replace(/[^A-Z0-9]/g, '');
+          const quoteAsset = String(quoteRaw || '').replace(/[^A-Z0-9]/g, '');
+          const trueFiat = ['USD','EUR','GBP','CHF'];
+          if (!baseAsset || !quoteAsset) continue;
+
+          const baseQty = Math.abs(parseFloat(r['amount'] || 0) || 0);
+          const rawPrice = Math.abs(parseFloat(r['price'] || 0) || 0);
+          const quoteQty = Math.abs(parseFloat(r['value'] || 0) || 0) || baseQty * rawPrice;
+          if (baseQty <= 0 || quoteQty <= 0) continue;
+
+          const dateKey = String(date || '').slice(0,10);
+          const quoteRate = trueFiat.includes(quoteAsset) || USD_LINKED_FIAT.includes(quoteAsset)
+            ? await getFiatToChfRate(quoteAsset, dateKey)
+            : await getHistoricalPriceCHF(quoteAsset, dateKey);
+          if (!quoteRate) continue;
+
+          totalCHF = quoteQty * quoteRate;
+
+          if (!trueFiat.includes(baseAsset)) {
+            out.push({
+              date,
+              type: side,
+              asset: baseAsset,
+              qty: baseQty,
+              priceCHF: totalCHF / baseQty,
+              totalCHF
+            });
+          }
+
+          if (!trueFiat.includes(quoteAsset)) {
+            out.push({
+              date,
+              type: side === 'buy' ? 'sell' : 'buy',
+              asset: quoteAsset,
+              qty: quoteQty,
+              priceCHF: totalCHF / quoteQty,
+              totalCHF
+            });
+          }
+
+          continue;
+        }
         else if (format === 'coinbase') {
           date = r['timestamp']||'';
           const t = (r['transaction type']||'').toLowerCase();
@@ -7459,6 +7509,12 @@
           rem=Math.round((rem-take)*1e8)/1e8;
         }
         a.lots=a.lots.filter(l=>l.qty>0.000001);
+        if (rem > 0.000001) {
+          // Transfer-outs can exceed imported lots when the file starts after the
+          // original acquisition. Still reduce wealth holdings, but do not treat
+          // the excess as a taxable sell.
+          a.unmatchedTransferOut = Math.round(((a.unmatchedTransferOut || 0) + rem) * 1e8) / 1e8;
+        }
       }
     }
 
@@ -7470,6 +7526,9 @@
       let endHolding = Math.round(
         a.lots.reduce((s,l) => s + (l.qty > 0.000001 ? l.qty : 0), 0) * 1e8
       ) / 1e8;
+      if (a.unmatchedTransferOut > 0) {
+        endHolding = Math.round(Math.max(0, endHolding - a.unmatchedTransferOut) * 1e8) / 1e8;
+      }
       if (authoritativeYearEndBalances && Object.prototype.hasOwnProperty.call(authoritativeYearEndBalances, sym)) {
         endHolding = Math.round(Math.max(0, Number(authoritativeYearEndBalances[sym] || 0)) * 1e8) / 1e8;
       }
@@ -7491,6 +7550,7 @@
         missingCostBasis: a.missingCostBasis || false,
         unresolvedProceeds: Math.round((a.unresolvedProceeds||0)*100)/100,
         unresolvedQty: Math.round((a.unresolvedQty||0)*1e8)/1e8,
+        unmatchedTransferOut: Math.round((a.unmatchedTransferOut||0)*1e8)/1e8,
         totalBought: Math.round(a.totalBought*1e8)/1e8,
         totalSold: Math.round(a.totalSold*1e8)/1e8,
         buyCount:a.buyCount, sellCount:a.sellCount, stakingCount:a.stakingCount,
@@ -7588,6 +7648,7 @@
       binance: `Exchange format detected: Binance. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       binance_ledger: `Exchange format detected: Binance. Trade values derived from matched account-history debit/credit entries, including Buy/Sell/Fee rows paired by timestamp and Binance Convert debit/credit rows paired where possible. Airdrops are classified under reward income for review. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat and crypto countervalues converted using historical market and FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitstamp: `Exchange format detected: Bitstamp. Fiat quote currencies converted to CHF using historical FX references where available; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitstamp_trades: `Exchange format detected: Bitstamp trades. Fiat quote currencies converted to CHF using historical FX references where available; crypto-to-crypto pairs are recorded as both disposal and acquisition legs. This trade export does not include deposits, withdrawals, staking, or separate fee rows, so combine it with the full Bitstamp transaction export where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bybit: `Exchange format detected: Bybit. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       coinbase: `Exchange format detected: Coinbase. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       okx: `Exchange format detected: OKX. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
@@ -8298,6 +8359,7 @@ onmouseout="this.style.color='#8A909E'">
     const dateRange = data.dateRange || data.taxYear;
     const txCount = data.totalTransactions || 0;
     const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
+    const hasTransferGaps = (data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0);
     const totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
     const totalMatched = Number(data.totalGainLossCHF||0);
     const coverage = totalExcluded > 0
@@ -8305,13 +8367,15 @@ onmouseout="this.style.color='#8A909E'">
       : 100;
 
     // Report status
-    const statusColor = !hasUnmatched ? '#2D7A56' : coverage >= 80 ? '#B8960C' : '#C0392B';
-    const statusIcon  = !hasUnmatched ? '✓' : coverage >= 80 ? '⚠' : '🔴';
-    const statusLabel = !hasUnmatched
-      ? 'Complete — all positions matched'
-      : coverage >= 80
+    const statusColor = hasUnmatched ? (coverage >= 80 ? '#B8960C' : '#C0392B') : hasTransferGaps ? '#B8960C' : '#2D7A56';
+    const statusIcon  = hasUnmatched ? (coverage >= 80 ? '⚠' : '🔴') : hasTransferGaps ? '⚠' : '✓';
+    const statusLabel = hasUnmatched
+      ? (coverage >= 80
         ? 'Partial — minor gaps in acquisition history'
-        : 'Incomplete — additional data required for accurate tax reporting';
+        : 'Incomplete — additional data required for accurate tax reporting')
+      : hasTransferGaps
+        ? 'Review — transfer-outs exceed imported acquisition lots'
+        : 'Complete — all positions matched';
 
     return '<div style="margin-bottom:12px;font-family:\'DM Mono\',monospace;font-size:8pt;font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</div>';
   })()}
@@ -8320,6 +8384,11 @@ onmouseout="this.style.color='#8A909E'">
   <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
     <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
     <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'DM Mono',monospace;font-size:8pt;font-weight:600;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
+  </div>` : ''}
+  ${(data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0) ? `
+  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
+    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Transfer History Review</div>
+    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>Number(a.unmatchedTransferOut||0) > 0).map(a=>a.symbol).join(', ')}</strong> — transfer-outs exceeded the imported FIFO lots. These quantities reduce year-end holdings but are not treated as taxable sells. Add the original acquisition history if you want a fully matched audit trail.</div>
   </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
   <table class="overview-table${_hasUnmatched ? ' tight' : ''}">
