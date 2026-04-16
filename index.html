@@ -4884,15 +4884,53 @@
   }
 
   function getPlanFromStorage() {
-    try {
-      const stored = localStorage.getItem('cd_plan');
+    const readPlan = (storage) => {
+      const stored = storage.getItem('cd_plan');
       if (stored) {
         const { tier, hash } = JSON.parse(stored);
         if (tier === 'pro' && PRO_HASHES.includes(hash)) return 'pro';
         if (tier === 'business' && BIZ_HASHES.includes(hash)) return 'business';
       }
+      return '';
+    };
+    try {
+      const localPlan = readPlan(localStorage);
+      if (localPlan) return localPlan;
+    } catch(e) {}
+    try {
+      const sessionPlan = readPlan(sessionStorage);
+      if (sessionPlan) return sessionPlan;
     } catch(e) {}
     return 'free';
+  }
+
+  function rememberUnlockedPlan(tier, hash) {
+    const payload = JSON.stringify({ tier, hash, unlockedAt: new Date().toISOString() });
+    try { localStorage.setItem('cd_plan', payload); } catch(e) {}
+    try { sessionStorage.setItem('cd_plan', payload); } catch(e) {}
+  }
+
+  function hideUnlockBanner() {
+    const banner = document.getElementById('unlock-banner');
+    const input = document.getElementById('unlock-input');
+    const errorEl = document.getElementById('unlock-error');
+    const successEl = document.getElementById('unlock-success');
+    if (banner) banner.classList.remove('visible');
+    if (input) {
+      input.classList.remove('error');
+      input.value = '';
+    }
+    if (errorEl) errorEl.classList.remove('visible');
+    if (successEl) successEl.classList.remove('visible');
+  }
+
+  function activateUnlockedPlan(tier, hash, options = {}) {
+    const { hidePrompt = true } = options;
+    rememberUnlockedPlan(tier, hash);
+    currentPlanTier = tier;
+    setPlanBadge(tier);
+    if (hidePrompt) hideUnlockBanner();
+    updateTrialUI();
   }
 
   function setPlanBadge(tier) {
@@ -4924,10 +4962,7 @@
       return;
     }
 
-    // Save to localStorage
-    try { localStorage.setItem('cd_plan', JSON.stringify({ tier, hash })); } catch(e) {}
-    currentPlanTier = tier;
-    setPlanBadge(tier);
+    activateUnlockedPlan(tier, hash, { hidePrompt: false });
 
     const label = tier === 'pro' ? 'Pro — up to 1,000 transactions' : 'Business — unlimited transactions';
     successEl.textContent = '✓ ' + label + ' unlocked!';
@@ -4935,7 +4970,7 @@
 
     // If there's a pending file, process it now
     setTimeout(() => {
-      document.getElementById('unlock-banner').classList.remove('visible');
+      hideUnlockBanner();
       if (pendingFiles && pendingFiles.length) {
         const files = pendingFiles;
         pendingFiles = null;
@@ -5016,9 +5051,7 @@
       if (PRO_HASHES.includes(hash)) tier = 'pro';
       else if (BIZ_HASHES.includes(hash)) tier = 'business';
       if (tier) {
-        try { localStorage.setItem('cd_plan', JSON.stringify({ tier, hash })); } catch(e) {}
-        currentPlanTier = tier;
-        setPlanBadge(tier);
+        activateUnlockedPlan(tier, hash);
         // Show a welcome toast
         const label = tier === 'pro' ? 'Pro — up to 1,000 transactions' : 'Business — unlimited transactions';
         showToast('🎉 ' + label + ' unlocked! You can now upload your CSV.');
