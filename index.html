@@ -8174,7 +8174,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   }
 
   .page { max-width: 210mm; margin: 0 auto; padding: 12mm 12mm; }
-  .report-top-stack { margin-left: -8.8mm; width: calc(100% + 3mm); }
+  .report-top-stack { margin-left: -10mm; width: calc(100% + 4.2mm); }
 
   /* ── HEADER — Point 1: More prominent, finance-grade ─────────────────── */
   .doc-header {
@@ -8255,9 +8255,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .total-row { background:#FAFAF8 !important; border: none !important; border-top: 2px solid #B8960C !important; }
   .total-row td { color:#1A1D21; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(0,0,0,0.04) !important; }
   .total-row td:last-child { border-right: none !important; }
-  .overview-table.tight thead th { padding:9px 8px; font-size:6pt; letter-spacing:0.1em; }
-  .overview-table.tight tbody td { padding:10px 8px; }
-  .overview-table.tight .mono { font-size:7.8pt; }
+  .overview-table.tight thead th { padding:9px 6px; font-size:5.8pt; letter-spacing:0.08em; }
+  .overview-table.tight tbody td { padding:10px 6px; }
+  .overview-table.tight tbody td:last-child,
+  .overview-table.tight thead th:last-child { padding-right:4px; }
+  .overview-table.tight .mono { font-size:7.7pt; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
   .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
