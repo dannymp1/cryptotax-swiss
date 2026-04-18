@@ -806,6 +806,46 @@
     border: 1px solid rgba(13,17,23,0.08);
   }
 
+  .report-doc.sample-doc {
+    max-width: 460px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    background: #f8f7f1;
+  }
+
+  .sample-doc::before {
+    content: attr(data-sample-label);
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+    padding: 6px 8px;
+    border: 1px solid rgba(184,150,12,0.24);
+    border-radius: 999px;
+    background: rgba(248,247,241,0.88);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .sample-doc::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 90px;
+    background: linear-gradient(to bottom, rgba(248,247,241,0), #f8f7f1 82%);
+    pointer-events: none;
+  }
+
+  .sample-report-image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   .doc-header {
     display: flex;
     justify-content: space-between;
@@ -2966,70 +3006,13 @@
       </a>
     </div>
     <div class="report-right">
-      <div class="report-doc" aria-label="Sample CryptoDeclare tax annex preview">
-        <div class="doc-header">
-          <div>
-            <div class="doc-title">Tax Declaration Annex 2024</div>
-            <div class="doc-sub">Sample · Zurich · Tax Year 2024</div>
-            <div class="doc-sample-badge" data-i18n="sample_preview">Sample report preview</div>
-          </div>
-          <div class="doc-logo">
-            <div class="doc-flag"></div>
-          </div>
-        </div>
-
-        <div class="doc-mini-label" data-i18n="report_table_label">01 — Transaction overview</div>
-        <table class="doc-mini-table" aria-label="Sample transaction overview by asset">
-          <thead>
-            <tr>
-              <th data-i18n="report_table_asset">Asset</th>
-              <th data-i18n="report_table_holdings">Holdings</th>
-              <th data-i18n="report_table_value">Value CHF</th>
-              <th data-i18n="report_table_gain_loss">Gain / loss</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="asset-name">ETH</span></td>
-              <td>0.5000</td>
-              <td>CHF 1'599.50</td>
-              <td class="doc-row-val gain">+CHF 644.00</td>
-            </tr>
-            <tr>
-              <td><span class="asset-name">AVAX</span></td>
-              <td>5.0000</td>
-              <td>CHF 161.70</td>
-              <td class="doc-row-val gain">+CHF 53.60</td>
-            </tr>
-            <tr>
-              <td><span class="asset-name">SOL</span></td>
-              <td>2.4900</td>
-              <td>CHF 45.77</td>
-              <td class="doc-row-val gain">+CHF 0.00</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="doc-mini-label" data-i18n="report_summary_label">02 — Tax declaration summary</div>
-        <div class="doc-rows">
-          <div class="doc-row">
-            <span class="doc-row-label">31.12 portfolio value</span>
-            <span class="doc-row-val">CHF 2'799.14</span>
-          </div>
-          <div class="doc-row">
-            <span class="doc-row-label">FIFO realised result</span>
-            <span class="doc-row-val gain">+CHF 865.20</span>
-          </div>
-          <div class="doc-row">
-            <span class="doc-row-label">Staking income</span>
-            <span class="doc-row-val">CHF 0.00</span>
-          </div>
-          <div class="doc-row">
-            <span class="doc-row-label">Transaction ledger</span>
-            <span class="doc-row-val">Included</span>
-          </div>
-        </div>
-        <div class="doc-footnote">FIFO method · CHF conversion · Wealth values</div>
+      <div class="report-doc sample-doc" aria-label="Sample CryptoDeclare tax annex preview" data-sample-label="Sample">
+        <img
+          src="sample-report-preview.png"
+          alt="Sample CryptoDeclare tax declaration annex showing transaction overview, portfolio value and realised gain summary"
+          class="sample-report-image"
+          loading="lazy"
+        />
       </div>
     </div>
   </div>
