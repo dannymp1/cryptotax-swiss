@@ -1219,117 +1219,6 @@
   .featured .btn-outline { border-color: rgba(245,242,235,0.3); color: var(--paper); }
   .featured .btn-outline:hover { background: rgba(245,242,235,0.1); }
 
-  /* ── EARLY USER EXAMPLES ── */
-  .proof-section {
-    position: relative;
-    z-index: 1;
-    padding: 0 48px 100px;
-    background: var(--paper);
-  }
-
-  .proof-inner {
-    max-width: 1180px;
-    margin: 0 auto;
-    border-top: 1px solid var(--rule);
-    padding-top: 56px;
-  }
-
-  .proof-header {
-    display: grid;
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
-    gap: 48px;
-    align-items: end;
-    margin-bottom: 34px;
-  }
-
-  .proof-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
-  }
-
-  .proof-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(34px, 4vw, 54px);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    color: var(--ink);
-  }
-
-  .proof-title em {
-    color: var(--gold);
-    font-style: italic;
-  }
-
-  .proof-copy {
-    color: var(--ink-muted);
-    font-size: 15px;
-    line-height: 1.75;
-    max-width: 620px;
-  }
-
-  .proof-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .proof-card {
-    background: rgba(245,242,235,0.96);
-    padding: 28px;
-    min-height: 230px;
-  }
-
-  .proof-location {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-  }
-
-  .proof-metric {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-
-  .proof-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    border: 1px solid rgba(13,17,23,0.12);
-    border-radius: 999px;
-    padding: 5px 8px;
-    background: var(--paper-warm);
-  }
-
-  .proof-card h3 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 25px;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    margin-bottom: 12px;
-  }
-
-  .proof-card p {
-    color: var(--ink-muted);
-    font-size: 14px;
-    line-height: 1.65;
-  }
-
   /* ── FAQ ── */
   .faq-list {
     display: flex;
@@ -2469,9 +2358,6 @@
     .report-preview { padding: 0 24px 80px; }
     .report-card { grid-template-columns: 1fr; gap: 32px; padding: 32px; }
     .pricing-grid { grid-template-columns: 1fr; }
-    .proof-section { padding: 0 24px 72px; }
-    .proof-header { grid-template-columns: 1fr; gap: 18px; }
-    .proof-grid { grid-template-columns: 1fr; }
     .exchanges { padding: 0 24px 80px; }
     /* Section header — stack on mobile */
     .section-header { flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
@@ -3127,51 +3013,6 @@
   </div>
 </section>
 
-<!-- EARLY USER EXAMPLES -->
-<section class="proof-section" id="examples">
-  <div class="proof-inner">
-    <div class="proof-header">
-      <div>
-        <div class="proof-eyebrow" data-i18n="proof_label">Example Swiss use cases</div>
-        <h2 class="proof-title" data-i18n-html="proof_title">Built for messy<br><em>crypto tax files</em></h2>
-      </div>
-      <p class="proof-copy" data-i18n="proof_body">Illustrative examples of the portfolio types CryptoDeclare is designed to support. No names, no hype — just the kind of messy files Swiss crypto holders actually need to turn into a clean tax annex.</p>
-    </div>
-
-    <div class="proof-grid">
-      <article class="proof-card">
-        <div class="proof-location" data-i18n="proof_1_location">Zurich private investor</div>
-        <div class="proof-metric">
-          <span class="proof-pill" data-i18n="proof_1_pill_1">3 exchanges</span>
-          <span class="proof-pill" data-i18n="proof_1_pill_2">240 transactions</span>
-        </div>
-        <h3 data-i18n="proof_1_title">Multi-exchange history</h3>
-        <p data-i18n="proof_1_body">Combined exchange exports into one timeline and flagged missing acquisition history before the report was exported.</p>
-      </article>
-
-      <article class="proof-card">
-        <div class="proof-location" data-i18n="proof_2_location">Geneva freelancer</div>
-        <div class="proof-metric">
-          <span class="proof-pill" data-i18n="proof_2_pill_1">Staking rewards</span>
-          <span class="proof-pill" data-i18n="proof_2_pill_2">120 transactions</span>
-        </div>
-        <h3 data-i18n="proof_2_title">Income separated from gains</h3>
-        <p data-i18n="proof_2_body">Separated reward income from FIFO disposal results and year-end wealth values for a cleaner review.</p>
-      </article>
-
-      <article class="proof-card">
-        <div class="proof-location" data-i18n="proof_3_location">Zug crypto holder</div>
-        <div class="proof-metric">
-          <span class="proof-pill" data-i18n="proof_3_pill_1">5 platforms</span>
-          <span class="proof-pill" data-i18n="proof_3_pill_2">900+ transactions</span>
-        </div>
-        <h3 data-i18n="proof_3_title">PDF annex plus ledger CSV</h3>
-        <p data-i18n="proof_3_body">Generated a structured report for the tax return and a detailed CSV ledger for advisor review.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
 <!-- UPLOAD / APP SECTION -->
 <section class="app-section" id="declare" role="main">
   <div class="section-header">
@@ -3624,24 +3465,6 @@
       step3_title: 'Download your report', step3_body: 'Receive a downloadable report formatted for Swiss tax reporting. Review it and attach it as supporting documentation to your annual declaration.',
       features_label: '02 — Features', features_title: 'Built for<br><em>Swiss residents</em>',
       pricing_label: '04 — Pricing', pricing_title: 'Simple,<br><em>transparent</em> pricing',
-      proof_label: 'Example Swiss use cases',
-      proof_title: 'Built for messy<br><em>crypto tax files</em>',
-      proof_body: 'Illustrative examples of the portfolio types CryptoDeclare is designed to support. No names, no hype — just the kind of messy files Swiss crypto holders actually need to turn into a clean tax annex.',
-      proof_1_location: 'Zurich private investor',
-      proof_1_pill_1: '3 exchanges',
-      proof_1_pill_2: '240 transactions',
-      proof_1_title: 'Multi-exchange history',
-      proof_1_body: 'Combined exchange exports into one timeline and flagged missing acquisition history before the report was exported.',
-      proof_2_location: 'Geneva freelancer',
-      proof_2_pill_1: 'Staking rewards',
-      proof_2_pill_2: '120 transactions',
-      proof_2_title: 'Income separated from gains',
-      proof_2_body: 'Separated reward income from FIFO disposal results and year-end wealth values for a cleaner review.',
-      proof_3_location: 'Zug crypto holder',
-      proof_3_pill_1: '5 platforms',
-      proof_3_pill_2: '900+ transactions',
-      proof_3_title: 'PDF annex plus ledger CSV',
-      proof_3_body: 'Generated a structured report for the tax return and a detailed CSV ledger for advisor review.',
       faq_label: '06 — FAQ', faq_title: 'Common<br><em>questions</em>',
       faq_q1: 'Is crypto taxable in Switzerland?', faq_a1: 'Yes. Capital gains on crypto are generally tax-free for private individuals in Switzerland — but the holdings must be declared as assets, and income from staking, mining, or professional trading is taxable. We calculate all of this for you.',
       faq_q2: 'Which cantons does the report work for?', faq_a2: 'Our report is designed around federal ESTV guidance, which is commonly used across Swiss cantons. We include guidance notes for Zurich, Geneva, Zug, Vaud, and Bern where local variations are commonly raised.',
@@ -3822,24 +3645,6 @@
       step3_title: 'Téléchargez votre rapport', step3_body: 'Recevez un rapport téléchargeable formaté pour le reporting fiscal suisse. Relisez-le puis joignez-le comme pièce justificative à votre déclaration annuelle.',
       features_label: '02 — Fonctionnalités', features_title: 'Conçu pour<br><em>les résidents suisses</em>',
       pricing_label: '04 — Tarifs', pricing_title: 'Tarification<br><em>simple et transparente</em>',
-      proof_label: 'Exemples de cas d\'usage suisses',
-      proof_title: 'Conçu pour les fichiers<br><em>crypto désordonnés</em>',
-      proof_body: 'Exemples illustratifs des types de portefeuilles que CryptoDeclare est conçu pour gérer. Pas de noms, pas de promesses exagérées — seulement les fichiers désordonnés que les détenteurs suisses doivent transformer en annexe fiscale claire.',
-      proof_1_location: 'Investisseur privé à Zurich',
-      proof_1_pill_1: '3 plateformes',
-      proof_1_pill_2: '240 transactions',
-      proof_1_title: 'Historique multi-plateformes',
-      proof_1_body: 'Regroupement des exports dans une chronologie unique et signalement de l\'historique d\'acquisition manquant avant l\'export du rapport.',
-      proof_2_location: 'Freelance à Genève',
-      proof_2_pill_1: 'Récompenses de staking',
-      proof_2_pill_2: '120 transactions',
-      proof_2_title: 'Revenus séparés des gains',
-      proof_2_body: 'Séparation des revenus de récompenses, des résultats FIFO et des valeurs de fortune de fin d\'année pour une revue plus claire.',
-      proof_3_location: 'Détenteur crypto à Zoug',
-      proof_3_pill_1: '5 plateformes',
-      proof_3_pill_2: '900+ transactions',
-      proof_3_title: 'Annexe PDF plus ledger CSV',
-      proof_3_body: 'Génération d\'un rapport structuré pour la déclaration fiscale et d\'un ledger CSV détaillé pour la revue par un conseiller.',
       faq_label: '06 — FAQ', faq_title: 'Questions<br><em>fréquentes</em>',
       faq_q1: 'Les cryptos sont-elles imposables en Suisse ?', faq_a1: "Oui. Les gains en capital sont généralement exonérés pour les particuliers — mais les avoirs doivent être déclarés comme fortune, et les revenus du staking, minage ou trading professionnel sont imposables.",
       faq_q2: 'Pour quels cantons le rapport est-il valable ?', faq_a2: 'Notre rapport est conçu autour des directives fédérales ESTV, couramment utilisées dans les cantons suisses. Nous incluons des notes pour Zurich, Genève, Zoug, Vaud et Berne lorsque des variations locales sont fréquemment soulevées.',
@@ -4020,24 +3825,6 @@
       step3_title: 'Bericht herunterladen', step3_body: 'Erhalten Sie einen herunterladbaren Bericht für das Schweizer Steuerreporting. Prüfen Sie ihn und legen Sie ihn Ihrer Steuererklärung als Beilage bei.',
       features_label: '02 — Funktionen', features_title: 'Entwickelt für<br><em>Schweizer Einwohner</em>',
       pricing_label: '04 — Preise', pricing_title: 'Einfache,<br><em>transparente</em> Preise',
-      proof_label: 'Beispiele für Schweizer Anwendungsfälle',
-      proof_title: 'Gebaut für unordentliche<br><em>Krypto-Steuerdateien</em>',
-      proof_body: 'Illustrative Beispiele für Portfolio-Typen, die CryptoDeclare unterstützen soll. Keine Namen, kein Hype — nur die unordentlichen Dateien, die Schweizer Krypto-Inhaber in eine saubere Steuerbeilage verwandeln müssen.',
-      proof_1_location: 'Privatanleger in Zürich',
-      proof_1_pill_1: '3 Börsen',
-      proof_1_pill_2: '240 Transaktionen',
-      proof_1_title: 'Historie über mehrere Börsen',
-      proof_1_body: 'Börsenexporte wurden in einer Timeline kombiniert und fehlende Anschaffungshistorie vor dem Export markiert.',
-      proof_2_location: 'Freelancer in Genf',
-      proof_2_pill_1: 'Staking-Erträge',
-      proof_2_pill_2: '120 Transaktionen',
-      proof_2_title: 'Erträge getrennt von Gewinnen',
-      proof_2_body: 'Reward-Erträge wurden von FIFO-Veräusserungsergebnissen und Jahresend-Vermögenswerten getrennt dargestellt.',
-      proof_3_location: 'Krypto-Inhaber in Zug',
-      proof_3_pill_1: '5 Plattformen',
-      proof_3_pill_2: '900+ Transaktionen',
-      proof_3_title: 'PDF-Beilage plus Ledger-CSV',
-      proof_3_body: 'Ein strukturierter Bericht für die Steuererklärung und ein detaillierter CSV-Ledger für die Prüfung wurden erstellt.',
       faq_label: '06 — FAQ', faq_title: 'Häufige<br><em>Fragen</em>',
       faq_q1: 'Sind Kryptowährungen in der Schweiz steuerpflichtig?', faq_a1: 'Ja. Kursgewinne sind für Privatpersonen grundsätzlich steuerfrei — aber die Bestände müssen als Vermögen deklariert werden, und Erträge aus Staking, Mining oder professionellem Handel sind steuerpflichtig.',
       faq_q2: 'Für welche Kantone gilt der Bericht?', faq_a2: 'Unser Bericht orientiert sich an den bundesweiten ESTV-Leitlinien, die in den Schweizer Kantonen häufig verwendet werden. Wir fügen Hinweise für Zürich, Genf, Zug, Waadt und Bern hinzu, wo lokale Besonderheiten häufig auftreten.',
