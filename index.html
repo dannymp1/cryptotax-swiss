@@ -3416,7 +3416,9 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -7838,17 +7840,135 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     return openPrintableReportWindow(reportHTML, filename, existingWindow, false);
   }
 
-  function downloadReport() {
+  function waitForHtml2Pdf(timeoutMs = 7000) {
+    if (window.html2pdf) return Promise.resolve(window.html2pdf);
+
+    return new Promise((resolve, reject) => {
+      const startedAt = Date.now();
+      const timer = setInterval(() => {
+        if (window.html2pdf) {
+          clearInterval(timer);
+          resolve(window.html2pdf);
+          return;
+        }
+        if (Date.now() - startedAt > timeoutMs) {
+          clearInterval(timer);
+          reject(new Error('PDF export library did not load'));
+        }
+      }, 120);
+    });
+  }
+
+  function createPdfRenderFrame(reportHTML) {
+    const iframe = document.createElement('iframe');
+    iframe.title = 'CryptoDeclare PDF renderer';
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = [
+      'position:fixed',
+      'left:-10000px',
+      'top:0',
+      'width:210mm',
+      'height:297mm',
+      'border:0',
+      'background:#fff',
+      'pointer-events:none',
+      'z-index:-1'
+    ].join(';');
+    document.body.appendChild(iframe);
+
+    const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
+    frameDocument.open();
+    frameDocument.write(reportHTML);
+    frameDocument.close();
+    return iframe;
+  }
+
+  async function waitForPdfFrameReady(iframe) {
+    const frameWindow = iframe.contentWindow;
+    const frameDocument = iframe.contentDocument || frameWindow.document;
+
+    await new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      if (frameDocument.readyState === 'complete') {
+        finish();
+      } else {
+        frameWindow.addEventListener('load', finish, { once: true });
+        setTimeout(finish, 1500);
+      }
+    });
+
+    try {
+      if (frameDocument.fonts && frameDocument.fonts.ready) {
+        await frameDocument.fonts.ready;
+      }
+    } catch (e) {}
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+  }
+
+  async function exportReportHtmlToPdf(reportHTML, filename) {
+    const html2pdf = await waitForHtml2Pdf();
+    const iframe = createPdfRenderFrame(reportHTML);
+
+    try {
+      await waitForPdfFrameReady(iframe);
+      const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
+      frameDocument.querySelectorAll('.no-print').forEach(el => el.remove());
+
+      const reportPage = frameDocument.querySelector('.page') || frameDocument.body;
+      reportPage.style.boxShadow = 'none';
+
+      const renderWidth = Math.max(
+        reportPage.scrollWidth,
+        frameDocument.documentElement.scrollWidth,
+        frameDocument.body.scrollWidth
+      );
+      const renderHeight = Math.max(
+        reportPage.scrollHeight,
+        frameDocument.documentElement.scrollHeight,
+        frameDocument.body.scrollHeight
+      );
+
+      await html2pdf().set({
+        margin: [0, 0, 0, 0],
+        filename,
+        image: { type: 'jpeg', quality: 0.96 },
+        html2canvas: {
+          scale: Math.min(1.6, window.devicePixelRatio || 1.5),
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          windowWidth: renderWidth,
+          windowHeight: renderHeight
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait',
+          compress: true
+        },
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          avoid: ['tr', '.info-bar', '.summary-box', '.compliance-box', '.incomplete-box', '.notes-box']
+        }
+      }).from(reportPage).save();
+
+      return true;
+    } finally {
+      setTimeout(() => iframe.remove(), 1000);
+    }
+  }
+
+  async function downloadReport() {
     if (!isExportAcknowledged()) return;
     const data = window._reportData;
     if (!data) return;
     const mobileExport = isMobileExportDevice();
-    const reportWindow = window.open('', '_blank');
-    if (reportWindow) {
-      reportWindow.document.open();
-      reportWindow.document.write('<!doctype html><title>Preparing CryptoDeclare PDF</title><body style="font-family:Arial,sans-serif;padding:24px;color:#0D1117;background:#F5F2EB;">Preparing your CryptoDeclare PDF...</body>');
-      reportWindow.document.close();
-    }
 
     // Build a clean printable HTML page styled as a Swiss official document
     const assets = data.assets || [];
@@ -8400,9 +8520,31 @@ onmouseout="this.style.color='#8A909E'">
 </html>`;
 
     const filename = `CryptoDeclare-${data.taxYear}-TaxReport.pdf`;
-    if (mobileExport && openPrintableReportForMobile(pdfHTML, filename, reportWindow)) return;
-    if (openPrintableReportWindow(pdfHTML, filename, reportWindow, true)) return;
-    showToast('Please allow pop-ups so CryptoDeclare can open the PDF export dialog.');
+    const downloadButton = document.getElementById('report-download-btn');
+    if (downloadButton) {
+      downloadButton.disabled = true;
+      downloadButton.setAttribute('aria-busy', 'true');
+    }
+
+    showToast('Preparing a clean PDF download...');
+    try {
+      await exportReportHtmlToPdf(pdfHTML, filename);
+      showToast('PDF downloaded without browser headers or footers.');
+      return;
+    } catch (e) {
+      console.warn('Direct PDF export failed; falling back to browser print.', e);
+      showToast('Automatic PDF export failed. Opening the print fallback...');
+      const reportWindow = window.open('', '_blank');
+      if (mobileExport && openPrintableReportForMobile(pdfHTML, filename, reportWindow)) return;
+      if (openPrintableReportWindow(pdfHTML, filename, reportWindow, true)) return;
+      showToast('Please allow pop-ups so CryptoDeclare can open the PDF export dialog.');
+    } finally {
+      if (downloadButton) {
+        downloadButton.disabled = false;
+        downloadButton.removeAttribute('aria-busy');
+        syncExportActions();
+      }
+    }
   }
 
   function downloadLedgerCSV() {
