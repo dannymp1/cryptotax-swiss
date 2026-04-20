@@ -4340,12 +4340,16 @@
   if (currentLang !== 'en') setLang(currentLang);
 
   function navScrollTo(id) {
-    const el = document.getElementById(id);
+    const scrollAliases = {
+      'upload-area': 'declare'
+    };
+    const targetId = scrollAliases[id] || id;
+    const el = document.getElementById(targetId);
     if (!el) return;
     if (window._navScrollFrame) cancelAnimationFrame(window._navScrollFrame);
     const nav = document.querySelector('nav');
     const navH = nav ? nav.offsetHeight : 64;
-    const breathingRoom = window.innerWidth < 768 ? 18 : 32;
+    const breathingRoom = window.innerWidth < 768 ? 20 : 34;
     const elementTop = el.getBoundingClientRect().top + window.scrollY;
     const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const target = Math.min(maxScroll, Math.max(0, elementTop - navH - breathingRoom));
@@ -4369,6 +4373,17 @@
     }
     window._navScrollFrame = requestAnimationFrame(step);
   }
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    const id = href.slice(1);
+    if (!document.getElementById(id)) return;
+    event.preventDefault();
+    navScrollTo(id);
+  });
 
   // Nav scroll shadow
   const _nav = document.querySelector('nav');
