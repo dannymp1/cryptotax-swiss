@@ -3418,7 +3418,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   // ── i18n Language System ──
   const TRANSLATIONS = {
@@ -7840,15 +7840,15 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     return openPrintableReportWindow(reportHTML, filename, existingWindow, false);
   }
 
-  function waitForHtml2Pdf(timeoutMs = 7000) {
-    if (window.html2pdf) return Promise.resolve(window.html2pdf);
+  function waitForJsPdf(timeoutMs = 7000) {
+    if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
 
     return new Promise((resolve, reject) => {
       const startedAt = Date.now();
       const timer = setInterval(() => {
-        if (window.html2pdf) {
+        if (window.jspdf && window.jspdf.jsPDF) {
           clearInterval(timer);
-          resolve(window.html2pdf);
+          resolve(window.jspdf.jsPDF);
           return;
         }
         if (Date.now() - startedAt > timeoutMs) {
@@ -7859,109 +7859,381 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     });
   }
 
-  function createPdfRenderFrame(reportHTML) {
-    const iframe = document.createElement('iframe');
-    iframe.title = 'CryptoDeclare PDF renderer';
-    iframe.setAttribute('aria-hidden', 'true');
-    iframe.style.cssText = [
-      'position:fixed',
-      'left:-10000px',
-      'top:0',
-      'width:210mm',
-      'height:297mm',
-      'border:0',
-      'background:#fff',
-      'pointer-events:none',
-      'z-index:-1'
-    ].join(';');
-    document.body.appendChild(iframe);
-
-    const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
-    frameDocument.open();
-    frameDocument.write(reportHTML);
-    frameDocument.close();
-    return iframe;
+  function pdfSafeText(value, fallback = '—') {
+    const text = value == null ? '' : String(value);
+    return text.replace(/\s+/g, ' ').trim() || fallback;
   }
 
-  async function waitForPdfFrameReady(iframe) {
-    const frameWindow = iframe.contentWindow;
-    const frameDocument = iframe.contentDocument || frameWindow.document;
+  function pdfFormatCHF(value) {
+    return 'CHF ' + Number(value || 0).toLocaleString('de-CH', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
 
-    await new Promise((resolve) => {
-      let settled = false;
-      const finish = () => {
-        if (settled) return;
-        settled = true;
-        resolve();
-      };
-      if (frameDocument.readyState === 'complete') {
-        finish();
-      } else {
-        frameWindow.addEventListener('load', finish, { once: true });
-        setTimeout(finish, 1500);
+  function pdfFormatSignedCHF(value) {
+    const amount = Number(value || 0);
+    const sign = amount >= 0 ? '+' : '-';
+    return sign + 'CHF ' + Math.abs(amount).toLocaleString('de-CH', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function pdfFormatQty(value, maxDigits = 6) {
+    return Number(value || 0).toLocaleString('de-CH', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: maxDigits
+    });
+  }
+
+  async function exportReportDataToPdf(data, filename) {
+    const JsPDF = await waitForJsPdf();
+    const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 12;
+    const contentWidth = pageWidth - margin * 2;
+    const bottomLimit = 280;
+    const colors = {
+      ink: [13, 17, 23],
+      muted: [90, 96, 112],
+      faint: [232, 228, 220],
+      paper: [250, 250, 248],
+      soft: [245, 242, 235],
+      gold: [184, 150, 12],
+      green: [45, 122, 86],
+      red: [192, 57, 43]
+    };
+    let y = 16;
+
+    const setColor = (color) => doc.setTextColor(color[0], color[1], color[2]);
+    const setDraw = (color) => doc.setDrawColor(color[0], color[1], color[2]);
+    const setFill = (color) => doc.setFillColor(color[0], color[1], color[2]);
+
+    const addContinuationHeader = () => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      setColor(colors.muted);
+      doc.text(`CryptoDeclare · ${data.taxYear} Tax Declaration Annex`, margin, 10);
+      setDraw(colors.faint);
+      doc.line(margin, 13, pageWidth - margin, 13);
+      y = 20;
+    };
+
+    const addPage = () => {
+      doc.addPage();
+      addContinuationHeader();
+    };
+
+    const ensureSpace = (height) => {
+      if (y + height > bottomLimit) {
+        addPage();
+        return true;
       }
+      return false;
+    };
+
+    const fitText = (text, maxWidth) => {
+      let output = pdfSafeText(text);
+      if (doc.getTextWidth(output) <= maxWidth) return output;
+      while (output.length > 1 && doc.getTextWidth(output + '…') > maxWidth) {
+        output = output.slice(0, -1);
+      }
+      return output + '…';
+    };
+
+    const drawParagraph = (text, size = 8.3, color = colors.muted, lineHeight = 4.5) => {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(size);
+      setColor(color);
+      const lines = doc.splitTextToSize(pdfSafeText(text), contentWidth);
+      lines.forEach(line => {
+        ensureSpace(lineHeight + 1);
+        doc.text(line, margin, y);
+        y += lineHeight;
+      });
+      y += 2;
+    };
+
+    const drawSectionTitle = (number, title) => {
+      ensureSpace(14);
+      y += 3;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      setColor(colors.gold);
+      doc.text(String(number).padStart(2, '0'), margin, y);
+      doc.setFontSize(12);
+      setColor(colors.ink);
+      doc.text(title, margin + 14, y);
+      y += 4;
+      setDraw(colors.ink);
+      doc.setLineWidth(0.35);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 6;
+    };
+
+    const drawTable = (columns, rows, options = {}) => {
+      const headerHeight = options.headerHeight || 7;
+      const rowHeight = options.rowHeight || 6;
+      const fontSize = options.fontSize || 7.2;
+      const drawHeader = () => {
+        ensureSpace(headerHeight + rowHeight);
+        setFill(colors.soft);
+        doc.rect(margin, y, contentWidth, headerHeight, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(fontSize);
+        setColor(colors.ink);
+        let x = margin;
+        columns.forEach(col => {
+          const label = fitText(col.label, col.width - 2);
+          doc.text(label, x + (col.align === 'right' ? col.width - 1.5 : 1.5), y + 4.8, {
+            align: col.align === 'right' ? 'right' : 'left'
+          });
+          x += col.width;
+        });
+        y += headerHeight;
+      };
+
+      drawHeader();
+      rows.forEach((row, index) => {
+        if (y + rowHeight > bottomLimit) {
+          addPage();
+          drawHeader();
+        }
+        if (index % 2 === 0) {
+          setFill(colors.paper);
+          doc.rect(margin, y, contentWidth, rowHeight, 'F');
+        }
+        setDraw(colors.faint);
+        doc.setLineWidth(0.1);
+        doc.line(margin, y + rowHeight, pageWidth - margin, y + rowHeight);
+        doc.setFont('helvetica', row._bold ? 'bold' : 'normal');
+        doc.setFontSize(fontSize);
+        let x = margin;
+        columns.forEach(col => {
+          const cellColor = typeof col.color === 'function' ? col.color(row) : (col.color || colors.ink);
+          setColor(cellColor);
+          const text = fitText(row[col.key], col.width - 3);
+          doc.text(text, x + (col.align === 'right' ? col.width - 1.5 : 1.5), y + 4.2, {
+            align: col.align === 'right' ? 'right' : 'left'
+          });
+          x += col.width;
+        });
+        y += rowHeight;
+      });
+      y += 5;
+    };
+
+    const drawSummaryBoxes = () => {
+      ensureSpace(26);
+      const gap = 4;
+      const boxWidth = (contentWidth - gap * 2) / 3;
+      const boxHeight = 23;
+      const boxes = [
+        ['Staking / Reward Income', pdfFormatCHF(data.stakingIncomeCHF), colors.green],
+        [`Wealth Value 31.12.${data.taxYear}`, pdfFormatCHF(data.totalPortfolioValueCHF), colors.ink],
+        ['Realised Gain / Loss', pdfFormatSignedCHF(data.totalGainLossCHF), Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red]
+      ];
+      boxes.forEach((box, index) => {
+        const x = margin + index * (boxWidth + gap);
+        setFill(index === 2 ? colors.paper : colors.soft);
+        doc.rect(x, y, boxWidth, boxHeight, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6.7);
+        setColor(colors.muted);
+        doc.text(doc.splitTextToSize(box[0], boxWidth - 6), x + 3, y + 6);
+        doc.setFontSize(index === 2 ? 11 : 10);
+        setColor(box[2]);
+        doc.text(fitText(box[1], boxWidth - 6), x + 3, y + 17);
+      });
+      y += boxHeight + 7;
+    };
+
+    const assets = data.assets || [];
+    const hasUnmatched = assets.some(asset => asset.missingCostBasis);
+    const exchangeName = getReportExchangeLabel(data.notes).replace('—', 'Imported file');
+    const generated = new Date().toLocaleDateString('de-CH');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    setColor(colors.ink);
+    doc.text('Crypto', margin, y);
+    setColor(colors.gold);
+    doc.text('Declare', margin + doc.getTextWidth('Crypto'), y);
+    doc.setFontSize(8);
+    setColor(colors.muted);
+    doc.text(`Generated ${generated}`, pageWidth - margin, y, { align: 'right' });
+    y += 10;
+
+    doc.setFontSize(18);
+    setColor(colors.ink);
+    doc.text(`Tax Declaration Annex ${data.taxYear}`, margin, y);
+    y += 7;
+    drawParagraph('Supporting annex generated from imported transaction data. Review carefully before attaching to your cantonal tax return.', 8.5, colors.muted, 4.4);
+
+    const infoRows = [
+      ['Tax year', data.taxYear || '—', 'Period', data.dateRange || data.taxYear || '—'],
+      ['Source', exchangeName, 'Transactions', String((data.transactions || []).length)],
+      ['Assets', String(assets.length), 'Report ID', data.reportId || '—']
+    ];
+    ensureSpace(38);
+    infoRows.forEach(row => {
+      const cellWidth = contentWidth / 4;
+      setFill(colors.soft);
+      doc.rect(margin, y, contentWidth, 10, 'F');
+      for (let i = 0; i < 4; i += 2) {
+        const x = margin + i * cellWidth;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6.5);
+        setColor(colors.muted);
+        doc.text(String(row[i]).toUpperCase(), x + 2, y + 3.5);
+        doc.setFontSize(7.8);
+        setColor(colors.ink);
+        doc.text(fitText(row[i + 1], cellWidth * 2 - 6), x + 2, y + 7.8);
+      }
+      y += 11;
     });
 
-    try {
-      if (frameDocument.fonts && frameDocument.fonts.ready) {
-        await frameDocument.fonts.ready;
-      }
-    } catch (e) {}
+    drawSectionTitle(1, 'Asset Summary');
+    drawTable(
+      hasUnmatched
+        ? [
+            { key: 'symbol', label: 'Asset', width: 16 },
+            { key: 'name', label: 'Name', width: 28 },
+            { key: 'buys', label: 'Buys', width: 11, align: 'right' },
+            { key: 'sells', label: 'Sells', width: 11, align: 'right' },
+            { key: 'rewards', label: 'Rewards', width: 13, align: 'right' },
+            { key: 'holding', label: 'Holding', width: 30, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 25, align: 'right' },
+            { key: 'gain', label: 'Matched Gain', width: 25, align: 'right', color: row => row.gainColor },
+            { key: 'unmatched', label: 'Excluded', width: 27, align: 'right', color: colors.gold }
+          ]
+        : [
+            { key: 'symbol', label: 'Asset', width: 20 },
+            { key: 'name', label: 'Name', width: 42 },
+            { key: 'buys', label: 'Buys', width: 14, align: 'right' },
+            { key: 'sells', label: 'Sells', width: 14, align: 'right' },
+            { key: 'rewards', label: 'Rewards', width: 16, align: 'right' },
+            { key: 'holding', label: 'Holding', width: 30, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 25, align: 'right' },
+            { key: 'gain', label: 'Gain / Loss', width: 25, align: 'right', color: row => row.gainColor }
+          ],
+      assets.map(asset => {
+        const displayAsset = getReportAssetDisplay(asset.symbol, asset.name);
+        const gain = Number(asset.gainLossCHF || 0);
+        return {
+          symbol: displayAsset.symbol,
+          name: displayAsset.name,
+          buys: asset.buyCount || 0,
+          sells: asset.sellCount || 0,
+          rewards: asset.stakingCount || 0,
+          holding: pdfFormatQty(asset.endHolding, 8),
+          value: pdfFormatCHF(asset.endValueCHF),
+          gain: pdfFormatSignedCHF(gain),
+          gainColor: gain >= 0 ? colors.green : colors.red,
+          unmatched: asset.missingCostBasis ? pdfFormatCHF(asset.unresolvedProceeds) : '—'
+        };
+      }).concat([{
+        _bold: true,
+        symbol: 'Total',
+        name: '',
+        buys: '',
+        sells: '',
+        rewards: '',
+        holding: '',
+        value: pdfFormatCHF(data.totalPortfolioValueCHF),
+        gain: pdfFormatSignedCHF(data.totalGainLossCHF),
+        gainColor: Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red,
+        unmatched: hasUnmatched ? pdfFormatCHF(assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0)) : ''
+      }]),
+      { fontSize: hasUnmatched ? 6.1 : 6.8, rowHeight: 6.2 }
+    );
 
-    await new Promise(resolve => setTimeout(resolve, 250));
-  }
-
-  async function exportReportHtmlToPdf(reportHTML, filename) {
-    const html2pdf = await waitForHtml2Pdf();
-    const iframe = createPdfRenderFrame(reportHTML);
-
-    try {
-      await waitForPdfFrameReady(iframe);
-      const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
-      frameDocument.querySelectorAll('.no-print').forEach(el => el.remove());
-
-      const reportPage = frameDocument.querySelector('.page') || frameDocument.body;
-      reportPage.style.boxShadow = 'none';
-
-      const renderWidth = Math.max(
-        reportPage.scrollWidth,
-        frameDocument.documentElement.scrollWidth,
-        frameDocument.body.scrollWidth
-      );
-      const renderHeight = Math.max(
-        reportPage.scrollHeight,
-        frameDocument.documentElement.scrollHeight,
-        frameDocument.body.scrollHeight
-      );
-
-      await html2pdf().set({
-        margin: [0, 0, 0, 0],
-        filename,
-        image: { type: 'jpeg', quality: 0.96 },
-        html2canvas: {
-          scale: Math.min(1.6, window.devicePixelRatio || 1.5),
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          windowWidth: renderWidth,
-          windowHeight: renderHeight
-        },
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait',
-          compress: true
-        },
-        pagebreak: {
-          mode: ['css', 'legacy'],
-          avoid: ['tr', '.info-bar', '.summary-box', '.compliance-box', '.incomplete-box', '.notes-box']
-        }
-      }).from(reportPage).save();
-
-      return true;
-    } finally {
-      setTimeout(() => iframe.remove(), 1000);
+    if (hasUnmatched) {
+      const missingAssets = assets.filter(asset => asset.missingCostBasis);
+      drawSectionTitle(2, 'FIFO Reconciliation');
+      drawParagraph('Unmatched quantities indicate disposals with no corresponding purchase history in this file. These proceeds are flagged and excluded from realised gain until the missing acquisition history is provided.', 8.2, colors.muted);
+      drawTable([
+        { key: 'asset', label: 'Asset', width: 18 },
+        { key: 'opening', label: 'Opening', width: 26, align: 'right' },
+        { key: 'bought', label: '+ Buys', width: 26, align: 'right' },
+        { key: 'sold', label: '- Sells', width: 26, align: 'right' },
+        { key: 'closing', label: '= Closing', width: 26, align: 'right' },
+        { key: 'qty', label: 'Unmatched Qty', width: 28, align: 'right', color: colors.gold },
+        { key: 'proceeds', label: 'Proceeds', width: 36, align: 'right', color: colors.gold }
+      ], missingAssets.map(asset => {
+        const bought = Number(asset.totalBought || 0);
+        const sold = Number(asset.totalSold || 0);
+        const closing = Number(asset.endHolding || 0);
+        const opening = Math.max(0, closing + sold - bought);
+        return {
+          asset: getReportAssetDisplay(asset.symbol, asset.name).symbol,
+          opening: pdfFormatQty(opening),
+          bought: pdfFormatQty(bought),
+          sold: pdfFormatQty(sold),
+          closing: pdfFormatQty(closing),
+          qty: pdfFormatQty(asset.unresolvedQty),
+          proceeds: pdfFormatCHF(asset.unresolvedProceeds)
+        };
+      }), { fontSize: 6.8, rowHeight: 6.4 });
     }
+
+    drawSectionTitle(hasUnmatched ? 3 : 2, 'Tax Declaration Summary');
+    drawSummaryBoxes();
+
+    const transactions = data.transactions || [];
+    if (transactions.length) {
+      drawSectionTitle(hasUnmatched ? 4 : 3, 'Transaction Ledger');
+      drawParagraph('Complete record of imported transactions. Transfers are shown for completeness but are not treated as taxable disposals.', 8.2, colors.muted);
+      const formatLedgerType = (type) => {
+        if (type === 'deposit') return 'Transfer In';
+        if (type === 'withdrawal') return 'Transfer Out';
+        if (!type) return '';
+        return type.charAt(0).toUpperCase() + type.slice(1);
+      };
+      drawTable([
+        { key: 'date', label: 'Date', width: 22 },
+        { key: 'type', label: 'Type', width: 25 },
+        { key: 'asset', label: 'Asset', width: 21 },
+        { key: 'qty', label: 'Quantity', width: 36, align: 'right' },
+        { key: 'price', label: 'Price CHF', width: 38, align: 'right' },
+        { key: 'total', label: 'Total CHF', width: 44, align: 'right' }
+      ], transactions.map(tx => {
+        const date = (tx.date || '').slice(0, 10).replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$3.$2.$1');
+        const nonTransfer = tx.type !== 'deposit' && tx.type !== 'withdrawal';
+        return {
+          date,
+          type: formatLedgerType(tx.type),
+          asset: getReportAssetDisplay(tx.asset, tx.asset).ledger || tx.asset || '',
+          qty: pdfFormatQty(tx.qty, 8),
+          price: nonTransfer && tx.priceCHF != null ? pdfFormatCHF(tx.priceCHF) : '—',
+          total: nonTransfer && tx.totalCHF != null ? pdfFormatCHF(tx.totalCHF) : '—'
+        };
+      }), { fontSize: 6.6, rowHeight: 5.8 });
+    }
+
+    drawSectionTitle(hasUnmatched ? 5 : 4, 'Legal Notice & Disclaimer');
+    drawParagraph('Supporting document only. This annex is generated automatically from imported transaction data and is not an official tax filing, tax advice, or legal advice. Missing exchanges, wallets, opening balances, or prior-period history may materially affect results. Review all figures carefully before submission.', 8.3, colors.ink);
+    drawParagraph('Swiss private individuals: capital gains are generally tax-free, while holdings must be declared as wealth and staking or lending income is generally taxable. Professional traders and legal entities may be taxed differently.', 8.3, colors.muted);
+    if (data.notes) drawParagraph('Notes: ' + data.notes, 8.0, colors.muted);
+    drawParagraph(`Methodology: FIFO cost basis. CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)}.`, 8.0, colors.muted);
+
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let page = 1; page <= totalPages; page++) {
+      doc.setPage(page);
+      setDraw(colors.faint);
+      doc.setLineWidth(0.2);
+      doc.line(margin, 286, pageWidth - margin, 286);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      setColor(colors.muted);
+      doc.text('CryptoDeclare · cryptodeclare.ch · Supporting annex', margin, 291);
+      doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, 291, { align: 'right' });
+    }
+
+    doc.save(filename);
+    return true;
   }
 
   async function downloadReport() {
@@ -8528,7 +8800,7 @@ onmouseout="this.style.color='#8A909E'">
 
     showToast('Preparing a clean PDF download...');
     try {
-      await exportReportHtmlToPdf(pdfHTML, filename);
+      await exportReportDataToPdf(data, filename);
       showToast('PDF downloaded without browser headers or footers.');
       return;
     } catch (e) {
