@@ -8066,12 +8066,12 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
   .summary-box { background:#FAFAF8; padding:28px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
   .summary-box:last-child { border-right:none; }
-  .summary-box.highlight { background:#1A1D21; border-right:1px solid #2A2D31; }
+  .summary-box.highlight { background:#FAFAF8; border-right:none; }
   .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
 
-  .summary-box.highlight .summary-label { color:rgba(184,150,12,0.55); }
+  .summary-box.highlight .summary-label { color:#8A6B00; }
   .summary-val { font-family:'DM Serif Display',serif; font-size:24pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
-  .summary-box.highlight .summary-val { color:#F5F2EB; font-size:24pt; white-space:nowrap; }
+  .summary-box.highlight .summary-val { font-size:24pt; white-space:nowrap; }
 
   /* Compliance */
   .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 12px 14px 9px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
@@ -8299,7 +8299,7 @@ onmouseout="this.style.color='#8A909E'">
     </div>
     <div class="summary-box highlight">
       <div class="summary-label">${_hasUnmatched ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss'}</div>
-      <div class="summary-val" style="color:${totalColor === '#0D1117' ? '#F5F2EB' : totalColor}">${totalGainStr}</div>
+      <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
     </div>
   </div>
 
