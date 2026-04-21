@@ -8090,7 +8090,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         const x = margin + index * (boxWidth + gap);
         setFill(colors.soft);
         doc.rect(x, y, boxWidth, boxHeight, 'F');
-        doc.setFont('courier', 'bold');
+        doc.setFont('helvetica', 'bold');
         doc.setFontSize(15);
         setColor(cell[2]);
         doc.text(String(cell[1]), x + boxWidth / 2, y + 7, { align: 'center' });
@@ -8228,7 +8228,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       const segments = [];
       items.forEach(([label, body], index) => {
         if (index > 0) {
-          segments.push({ text: ' | ', font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
+          segments.push({ text: ' ', font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
         }
         segments.push({ text: `${pdfSafeText(label)}: `, font: 'helvetica', style: 'bold', size: 7.9, color: colors.ink });
         segments.push({ text: pdfSafeText(body), font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
@@ -8542,7 +8542,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       ['Cost basis method', 'FIFO (First In, First Out) — Swiss tax reporting standard.'],
       ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
       ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
-      ['Ticker normalisation', 'Exchange-specific tickers are normalised to standard asset symbols, for example Kraken XBT → BTC.'],
+      ['Ticker normalisation', 'Exchange-specific tickers are normalised to standard asset symbols, for example Kraken XBT to BTC.'],
       ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
       ['Data completeness', 'Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome.'],
       hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null
