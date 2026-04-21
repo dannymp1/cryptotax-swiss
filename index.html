@@ -7762,7 +7762,7 @@
       return {
         tone: 'review',
         title: 'REVIEW — transfer history exceeds imported acquisition lots',
-        body: 'Transfer-outs reduce holdings but are not treated as taxable sells. Check your imported history before submitting.',
+        body: 'Transfer-outs reduce holdings but are not treated as taxable sells. Review your imported history before submitting.',
         hasUnmatched,
         hasTransferGaps,
         totalExcluded,
@@ -7777,7 +7777,7 @@
     return {
       tone: 'ready',
       title: 'READY TO SUBMIT — all imported disposals matched',
-      body: 'Review any external wallets or exchanges before filing so your year-end wealth figure is complete.',
+      body: 'All imported disposals matched successfully under FIFO. Review the annex before attaching it to your tax return.',
       hasUnmatched,
       hasTransferGaps,
       totalExcluded,
@@ -7818,10 +7818,6 @@
       : reviewState.tone === 'review'
         ? 'rgba(184,150,12,0.12)'
         : 'rgba(45,122,86,0.12)';
-    const stablecoinSymbols = reviewState.stablecoinReviewAssets
-      .map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol)
-      .join(', ');
-
     document.getElementById('report-stats').innerHTML = `
       <div class="report-stat">
         <div class="report-stat-label">Tax Year</div>
@@ -7913,16 +7909,6 @@
     <div style="font-family:'DM Serif Display',serif;font-size:20px;${gain>=0?'color:#4caf82':'color:#e05c5c'}">${gainStr}</div>
   </div>
 </div>
-
-<div style="padding:12px 14px;background:rgba(245,242,235,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;font-size:12px;line-height:1.65;color:rgba(245,242,235,0.62);margin-bottom:12px;">
-  <strong style="color:var(--paper)">Wealth scope:</strong> Wealth reflects uploaded sources only. Add any self-custody wallets or other exchanges before submitting your tax return.
-</div>
-${reviewState.hasZeroStaking ? `<div style="padding:12px 14px;background:rgba(184,150,12,0.10);border-left:4px solid #B8960C;border-radius:4px;font-size:12px;line-height:1.65;color:rgba(245,242,235,0.75);margin-bottom:12px;">
-  <strong style="color:#F2D479">Review staking income:</strong> No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add it manually before submitting.
-</div>` : ''}
-${stablecoinSymbols ? `<div style="padding:12px 14px;background:rgba(184,150,12,0.08);border-left:4px solid #B8960C;border-radius:4px;font-size:12px;line-height:1.65;color:rgba(245,242,235,0.75);margin-bottom:12px;">
-  <strong style="color:#F2D479">Stablecoin review:</strong> ${escHtml(stablecoinSymbols)} show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain. Review separately if relevant.
-</div>` : ''}
 ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${escHtml(data.notes)}</div>` : ''}
     `;
 
@@ -8197,11 +8183,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         setFill(colors.paper);
         doc.rect(x, y, boxWidth, boxHeight, 'F');
         doc.setFont('courier', 'bold');
-        doc.setFontSize(7.1);
+        doc.setFontSize(6.7);
         setColor(colors.muted);
         doc.text(doc.splitTextToSize(box[0], boxWidth - 6), x + 3, y + 6);
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(index === 2 ? 11.5 : 10.5);
+        doc.setFontSize(9.8);
         setColor(box[2]);
         doc.text(fitText(box[1], boxWidth - 6), x + 3, y + 17);
       });
@@ -8222,8 +8208,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const sellMatched = assets.reduce((sum, asset) => sum + Number(asset.sellCount || 0), 0);
     const stakingEvents = reviewState.stakingEvents;
     const unmatchedDisposals = reviewState.unmatchedDisposals;
-    const stablecoinReviewAssets = reviewState.stablecoinReviewAssets;
-    const hasZeroStaking = reviewState.hasZeroStaking;
     const exchangeName = getReportExchangeLabel(data.notes).replace('—', 'Imported file');
     const generated = new Date(data.generatedAt || Date.now()).toLocaleDateString('de-CH');
     const bannerAccent = reviewState.tone === 'incomplete'
@@ -8563,24 +8547,24 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       hasUnmatched
         ? [
             { key: 'symbol', label: 'Asset', width: 16 },
-            { key: 'name', label: 'Name', width: 28 },
+            { key: 'name', label: 'Name', width: 27 },
             { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
             { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
-            { key: 'rewards', label: 'Reward Txns', width: 16, align: 'right' },
-            { key: 'holding', label: 'Holding', width: 30, align: 'right' },
-            { key: 'value', label: 'Value CHF', width: 22, align: 'right' },
-            { key: 'gain', label: 'Matched Gain', width: 25, align: 'right', color: row => row.gainColor },
+            { key: 'rewards', label: 'Reward Txns', width: 15, align: 'right' },
+            { key: 'holding', label: 'Holding', width: 28, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 24, align: 'right' },
+            { key: 'gain', label: 'Matched Gain', width: 27, align: 'right', color: row => row.gainColor },
             { key: 'unmatched', label: 'Excluded', width: 21, align: 'right', color: colors.gold }
           ]
         : [
             { key: 'symbol', label: 'Asset', width: 20 },
-            { key: 'name', label: 'Name', width: 42 },
+            { key: 'name', label: 'Name', width: 39 },
             { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
             { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
-            { key: 'rewards', label: 'Reward Txns', width: 16, align: 'right' },
-            { key: 'holding', label: 'Holding', width: 30, align: 'right' },
-            { key: 'value', label: 'Value CHF', width: 25, align: 'right' },
-            { key: 'gain', label: 'Gain / Loss', width: 25, align: 'right', color: row => row.gainColor }
+            { key: 'rewards', label: 'Reward Txns', width: 15, align: 'right' },
+            { key: 'holding', label: 'Holding', width: 28, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 28, align: 'right' },
+            { key: 'gain', label: 'Gain / Loss', width: 28, align: 'right', color: row => row.gainColor }
           ],
       assets.map(asset => {
         const displayAsset = getReportAssetDisplay(asset.symbol, asset.name);
@@ -8610,7 +8594,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         gainColor: Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red,
         unmatched: hasUnmatched ? pdfFormatCHF(assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0)) : ''
       }]),
-      { fontSize: 7.2, rowHeight: 6.6, headerHeight: 7.4 }
+      { fontSize: 6.9, rowHeight: 6.4, headerHeight: 7.2 }
     );
 
     if (hasUnmatched) {
@@ -8644,31 +8628,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
     drawSectionTitle(hasUnmatched ? 3 : 2, 'Tax Declaration Summary');
     drawSummaryBoxes();
-
-    drawCallout(
-      'Wealth scope',
-      'Wealth reflects uploaded sources only. Add any self-custody wallets or other exchanges held on 31.12 before submitting your tax return.',
-      colors.ink,
-      [247, 244, 238]
-    );
-
-    if (hasZeroStaking) {
-      drawCallout(
-        'Review staking income',
-        'No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.',
-        colors.gold,
-        [255, 252, 245]
-      );
-    }
-
-    if (stablecoinReviewAssets.length) {
-      drawCallout(
-        'Stablecoin FX variance review',
-        `${stablecoinReviewAssets.map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain. Review separately if relevant.`,
-        colors.gold,
-        [255, 252, 245]
-      );
-    }
 
     const ledgerDisplay = buildLedgerDisplayRows(data.transactions || []);
     const transactions = ledgerDisplay.rows;
@@ -8709,13 +8668,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     }
 
     const legalSectionNumber = hasUnmatched ? 5 : 4;
-    const closingNotes = [
-      data.notes || '',
-      hasTransferGaps
-        ? 'Assets can show buys but no year-end holding where later transfers out or fees reduced the balance. Transfers reduce holdings but are not treated as taxable disposals; include the receiving wallet or exchange if the assets were still owned at year-end.'
-        : ''
-    ].filter(Boolean).join(' ');
-
     if (transactions.length || y > 170) {
       addPage();
     }
@@ -8760,16 +8712,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
       ['Data scope', 'Realised results and wealth values reflect uploaded sources only. Add any self-custody wallets, other exchanges, opening balances, or prior-period history before filing.']
     ];
-    const limitationItems = [
-      closingNotes ? ['Source notes', closingNotes] : null,
-      hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null,
-      hasZeroStaking ? ['Staking detection', 'No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.'] : null,
-      stablecoinReviewAssets.length ? ['Stablecoin FX variance', `${stablecoinReviewAssets.map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} show matched gains or losses that may largely reflect CHF FX variance.`] : null
-    ].filter(Boolean);
-    drawMethodologyBox(methodologySummaryItems, 'Methodology Summary');
-    if (limitationItems.length) {
-      drawMethodologyBox(limitationItems, 'Limitations & Review Items');
-    }
+    drawMethodologyBox(methodologySummaryItems, 'Methodology');
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let page = 1; page <= totalPages; page++) {
@@ -8802,14 +8745,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const _reviewState = getReportReviewState(data);
     const _hasUnmatched = _reviewState.hasUnmatched;
     const _totalExcluded = assets.reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
-    const _hasZeroHoldingBuys = assets.some(a =>
-      (a.buyCount || 0) > 0 &&
-      (a.sellCount || 0) === 0 &&
-      Math.abs(Number(a.endHolding || 0)) < 0.000001
-    );
-    const _stablecoinReviewSymbols = _reviewState.stablecoinReviewAssets
-      .map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol)
-      .join(', ');
     const assetRows = assets.map(a => {
       const displayAsset = getReportAssetDisplay(a.symbol, a.name);
       const gainParts = getAssetGainDisplayParts(a.gainLossCHF, Number(a.sellCount || 0) > 0, fmtCHF);
@@ -9009,15 +8944,15 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
   .overview-table.tight .mono { font-size:7.8pt; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
-  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:36px 0 36px 0; align-items:stretch; }
-  .summary-box { background:#FAFAF8; padding:28px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:30px 0 28px 0; align-items:stretch; }
+  .summary-box { background:#FAFAF8; padding:24px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
   .summary-box:last-child { border-right:none; }
   .summary-box.highlight { background:#FAFAF8; border-right:none; }
   .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
 
   .summary-box.highlight .summary-label { color:#8A6B00; }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:24pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
-  .summary-box.highlight .summary-val { font-size:24pt; white-space:nowrap; }
+  .summary-val { font-family:'DM Serif Display',serif; font-size:20pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
+  .summary-box.highlight .summary-val { font-size:20pt; white-space:nowrap; }
 
   /* Compliance */
   .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 12px 14px 9px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
@@ -9234,24 +9169,6 @@ onmouseout="this.style.color='#8A909E'">
     </div>
   </div>
 
-  <div class="incomplete-box" style="border-left:3px solid #2D2D2D;padding:10px 12px 10px 9px;margin-bottom:12px;background:#F7F4EE;">
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3D4451;margin-bottom:5px;">Wealth Scope</div>
-    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;">Wealth reflects uploaded sources only. Add any self-custody wallets or other exchanges held on 31.12 before submitting your tax return.</div>
-  </div>
-  ${Math.abs(Number(data.stakingIncomeCHF||0)) < 0.005 ? `
-  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:12px;background:#FFFCF5;">
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Review Staking Income</div>
-    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;">No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.</div>
-  </div>` : ''}
-  ${_stablecoinReviewSymbols ? `
-  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:12px;background:#FFFCF5;">
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Stablecoin FX Variance Review</div>
-    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${_stablecoinReviewSymbols}</strong> show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain. Review separately if relevant.</div>
-  </div>` : ''}
-
-
-
-
   ${(function(){
     // ── TRANSACTION LEDGER ───────────────────────────────────────────────
     const ledgerDisplay = buildLedgerDisplayRows(data.transactions || []);
@@ -9340,27 +9257,11 @@ onmouseout="this.style.color='#8A909E'">
       `<li style="margin:0 0 8px 18px;padding-left:2px;"><strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.4pt;">${label}:</strong> ${text}</li>`
     ).join('');
     return `<div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8.4pt;color:#3D4451;line-height:1.72;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
-      <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:10px;">Methodology Summary</strong>
+      <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:10px;">Methodology</strong>
       <ul style="margin:0;padding:0;list-style:disc;">${itemsHtml}</ul>
     </div>`;
   })()}
 
-  ${(function(){
-    const limitationItems = [];
-    if (data.notes) limitationItems.push(['Source notes', escHtml(data.notes)]);
-    if (_hasZeroHoldingBuys) limitationItems.push(['Transfers and fees', 'Assets can show buys but no year-end holding when they were later transferred out or consumed as fees. Transfers reduce holdings but are not taxable sells; include the receiving wallet or exchange if those assets were still owned at year-end.']);
-    if (_hasUnmatched) limitationItems.push(['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.']);
-    if (Math.abs(Number(data.stakingIncomeCHF||0)) < 0.005) limitationItems.push(['Staking detection', 'No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.']);
-    if (_stablecoinReviewSymbols) limitationItems.push(['Stablecoin FX variance', _stablecoinReviewSymbols + ' show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain.']);
-    if (!limitationItems.length) return '';
-    const itemsHtml = limitationItems.map(([label, text]) =>
-      `<li style="margin:0 0 8px 18px;padding-left:2px;"><strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.4pt;">${label}:</strong> ${text}</li>`
-    ).join('');
-    return `<div style="margin-top:14px;padding:14px 12px;background:#FCF9F2;border-radius:0;font-size:8.4pt;color:#3D4451;line-height:1.72;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
-      <strong style="display:block;color:#8A6B00;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:10px;">Limitations &amp; Review Items</strong>
-      <ul style="margin:0;padding:0;list-style:disc;">${itemsHtml}</ul>
-    </div>`;
-  })()}
   <div class="doc-footer">
     <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
     <span>ID: ${data.reportId||'—'} · Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting annex — not an official tax filing</span>
