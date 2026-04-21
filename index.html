@@ -8037,11 +8037,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         setFill(index === 2 ? colors.paper : colors.soft);
         doc.rect(x, y, boxWidth, boxHeight, 'F');
         doc.setFont('courier', 'bold');
-        doc.setFontSize(6.7);
+        doc.setFontSize(7.1);
         setColor(colors.muted);
         doc.text(doc.splitTextToSize(box[0], boxWidth - 6), x + 3, y + 6);
         doc.setFont('times', 'bold');
-        doc.setFontSize(index === 2 ? 11 : 10);
+        doc.setFontSize(index === 2 ? 11.5 : 10.5);
         setColor(box[2]);
         doc.text(fitText(box[1], boxWidth - 6), x + 3, y + 17);
       });
@@ -8123,27 +8123,150 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.2);
       const bodyLines = doc.splitTextToSize(pdfSafeText(body), contentWidth - 10);
-      const height = 8 + titleLines.length * 3 + bodyLines.length * 4.2 + 4;
+      const height = 7 + titleLines.length * 2.8 + bodyLines.length * 4 + 2.5;
       ensureSpace(height + 2);
       setFill(fillColor);
       doc.rect(margin, y, contentWidth, height, 'F');
       setFill(accentColor);
       doc.rect(margin, y, 2, height, 'F');
-      let innerY = y + 5;
+      let innerY = y + 4.5;
       doc.setFont('courier', 'bold');
       doc.setFontSize(7);
       setColor(accentColor);
       titleLines.forEach(line => {
         doc.text(line, margin + 5, innerY);
-        innerY += 3;
+        innerY += 2.8;
       });
-      innerY += 1;
+      innerY += 0.6;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.2);
       setColor(colors.muted);
       bodyLines.forEach(line => {
         doc.text(line, margin + 5, innerY);
+        innerY += 4;
+      });
+      y += height + 5;
+    };
+
+    const drawComplianceBox = (blocks) => {
+      const innerWidth = contentWidth - 10;
+      let height = 8;
+      blocks.forEach(block => {
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(7);
+        const langLines = doc.splitTextToSize(pdfSafeText(block.lang), innerWidth);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7.6);
+        const privateLabelLines = doc.splitTextToSize(pdfSafeText(block.privateLabel).toUpperCase(), innerWidth);
+        const professionalLabelLines = doc.splitTextToSize(pdfSafeText(block.professionalLabel).toUpperCase(), innerWidth);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.9);
+        const privateBodyLines = doc.splitTextToSize(pdfSafeText(block.privateBody), innerWidth);
+        const professionalBodyLines = doc.splitTextToSize(pdfSafeText(block.professionalBody), innerWidth);
+        height += langLines.length * 3.2;
+        height += privateLabelLines.length * 3.3 + privateBodyLines.length * 3.9 + 2;
+        height += professionalLabelLines.length * 3.3 + professionalBodyLines.length * 3.9 + 4;
+      });
+      height += 2;
+      ensureSpace(height + 2);
+      setFill(colors.soft);
+      doc.rect(margin, y, contentWidth, height, 'F');
+      setFill(colors.gold);
+      doc.rect(margin, y, 2, height, 'F');
+      let innerY = y + 6;
+      blocks.forEach((block, index) => {
+        if (index > 0) {
+          setDraw(colors.faint);
+          doc.setLineWidth(0.15);
+          doc.line(margin + 5, innerY - 2, pageWidth - margin - 3, innerY - 2);
+          innerY += 3;
+        }
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(7);
+        setColor(colors.ink);
+        doc.text(pdfSafeText(block.lang), margin + 5, innerY);
         innerY += 4.2;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7.6);
+        setColor(colors.green);
+        doc.splitTextToSize(pdfSafeText(block.privateLabel).toUpperCase(), innerWidth).forEach(line => {
+          doc.text(line, margin + 5, innerY);
+          innerY += 3.3;
+        });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.9);
+        setColor(colors.muted);
+        doc.splitTextToSize(pdfSafeText(block.privateBody), innerWidth).forEach(line => {
+          doc.text(line, margin + 5, innerY);
+          innerY += 3.9;
+        });
+        innerY += 2;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7.6);
+        setColor(colors.gold);
+        doc.splitTextToSize(pdfSafeText(block.professionalLabel).toUpperCase(), innerWidth).forEach(line => {
+          doc.text(line, margin + 5, innerY);
+          innerY += 3.3;
+        });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.9);
+        setColor(colors.muted);
+        doc.splitTextToSize(pdfSafeText(block.professionalBody), innerWidth).forEach(line => {
+          doc.text(line, margin + 5, innerY);
+          innerY += 3.9;
+        });
+        innerY += 2;
+      });
+      y += height + 6;
+    };
+
+    const drawMethodologyBox = (items) => {
+      const innerWidth = contentWidth - 10;
+      let height = 11;
+      items.forEach(([label, body]) => {
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(6.8);
+        const labelLines = doc.splitTextToSize(pdfSafeText(label).toUpperCase(), innerWidth);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.9);
+        const bodyLines = doc.splitTextToSize(pdfSafeText(body), innerWidth);
+        height += labelLines.length * 3 + bodyLines.length * 3.9 + 4;
+      });
+      ensureSpace(height + 2);
+      setFill([247, 244, 238]);
+      doc.rect(margin, y, contentWidth, height, 'F');
+      setFill(colors.faint);
+      doc.rect(margin, y, 2, height, 'F');
+      let innerY = y + 6;
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(7);
+      setColor(colors.muted);
+      doc.text('REFERENCE METHODOLOGY', margin + 5, innerY);
+      innerY += 5;
+      items.forEach(([label, body], index) => {
+        if (index > 0) {
+          setDraw(colors.faint);
+          doc.setLineWidth(0.12);
+          doc.line(margin + 5, innerY - 1.8, pageWidth - margin - 3, innerY - 1.8);
+          innerY += 3;
+        }
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(6.8);
+        setColor(colors.muted);
+        doc.splitTextToSize(pdfSafeText(label).toUpperCase(), innerWidth).forEach(line => {
+          doc.text(line, margin + 5, innerY);
+          innerY += 3;
+        });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.9);
+        setColor(colors.ink);
+        doc.splitTextToSize(pdfSafeText(body), innerWidth).forEach(line => {
+          doc.text(line, margin + 5, innerY);
+          innerY += 3.9;
+        });
+        innerY += 1;
       });
       y += height + 6;
     };
@@ -8315,7 +8438,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           qty: pdfFormatQty(asset.unresolvedQty),
           proceeds: pdfFormatCHF(asset.unresolvedProceeds)
         };
-      }), { fontSize: 6.8, rowHeight: 6.4 });
+      }), { fontSize: 7.2, rowHeight: 6.6, headerHeight: 7.4 });
     }
 
     drawSectionTitle(hasUnmatched ? 3 : 2, 'Tax Declaration Summary');
@@ -8349,23 +8472,60 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           price: nonTransfer && tx.priceCHF != null ? pdfFormatCHF(tx.priceCHF) : '—',
           total: nonTransfer && tx.totalCHF != null ? pdfFormatCHF(tx.totalCHF) : '—'
         };
-      }), { fontSize: 6.6, rowHeight: 5.8 });
+      }), { fontSize: 7.0, rowHeight: 6.1, headerHeight: 7.3 });
     }
 
-    drawSectionTitle(hasUnmatched ? 5 : 4, 'Legal Notice & Disclaimer');
-    drawParagraph('Supporting document only. This annex is generated automatically from imported transaction data and is not an official tax filing, tax advice, or legal advice. Missing exchanges, wallets, opening balances, or prior-period history may materially affect results. Review all figures carefully before submission.', 8.3, colors.ink);
+    const legalSectionNumber = hasUnmatched ? 5 : 4;
+    const closingSectionNumber = legalSectionNumber + 1;
+    const closingNotes = [
+      data.notes || '',
+      hasTransferGaps
+        ? 'Assets can show buys but no year-end holding where later transfers out or fees reduced the balance. Transfers reduce holdings but are not treated as taxable disposals; include the receiving wallet or exchange if the assets were still owned at year-end.'
+        : ''
+    ].filter(Boolean).join(' ');
+
+    if (transactions.length || y > 170) {
+      addPage();
+    }
+
+    drawSectionTitle(legalSectionNumber, 'Legal Notice & Disclaimer');
+    drawCallout(
+      'Supporting document',
+      'This annex is generated automatically from imported transaction data and is not an official tax filing, tax advice, or legal advice. Missing exchanges, wallets, opening balances, or prior-period history may materially affect results. Review all figures carefully before submission.',
+      colors.green,
+      [246, 250, 247]
+    );
 
     const legalBlocks = [
-      ['EN', '✔ Swiss private individuals — capital gains generally tax-free; declare holdings as wealth. Staking and lending income is taxable.  ⚠ Professional traders and legal entities — capital gains may be taxable as income and the gain figures in this annex are directly relevant.'],
-      ['DE', '✔ Privatpersonen — Kursgewinne grundsätzlich steuerfrei; Bestände als Vermögen deklarieren. Staking-Erträge sind steuerpflichtig.  ⚠ Gewerbliche Händler und juristische Personen — Kursgewinne können als Einkommen steuerpflichtig sein.'],
-      ['FR', '✔ Particuliers suisses — gains en capital généralement exonérés; avoirs à déclarer comme fortune. Les revenus de staking sont imposables.  ⚠ Traders professionnels et personnes morales — les gains en capital peuvent être imposables comme revenu.']
+      {
+        lang: 'EN',
+        privateLabel: 'Swiss private individuals',
+        privateBody: 'Capital gains are generally tax-free; holdings remain declarable as wealth. Staking and lending income is taxable.',
+        professionalLabel: 'Professional traders and legal entities',
+        professionalBody: 'Capital gains may be taxable as income and the gain figures in this annex are directly relevant for declaration purposes.'
+      },
+      {
+        lang: 'DE',
+        privateLabel: 'Privatpersonen',
+        privateBody: 'Kursgewinne sind grundsaetzlich steuerfrei; Bestaende bleiben als Vermoegen zu deklarieren. Staking-Ertraege sind steuerpflichtig.',
+        professionalLabel: 'Gewerbliche Haendler und juristische Personen',
+        professionalBody: 'Kursgewinne koennen als Einkommen steuerpflichtig sein und die Gewinnzahlen in dieser Beilage sind direkt relevant.'
+      },
+      {
+        lang: 'FR',
+        privateLabel: 'Particuliers suisses',
+        privateBody: 'Les gains en capital sont generalement exoneres; les avoirs restent a declarer comme fortune. Les revenus de staking et de lending sont imposables.',
+        professionalLabel: 'Traders professionnels et personnes morales',
+        professionalBody: 'Les gains en capital peuvent etre imposables comme revenu et les chiffres de gain de cette annexe sont directement pertinents.'
+      }
     ];
-    legalBlocks.forEach(([lang, body]) => {
-      drawParagraph(`${lang} — ${body}`, 8.0, colors.muted, 4.3);
-    });
+    drawComplianceBox(legalBlocks);
 
-    if (data.notes) {
-      drawCallout('Notes', data.notes, colors.muted, colors.soft);
+    addPage();
+    drawSectionTitle(closingSectionNumber, 'Methodology & Notes');
+
+    if (closingNotes) {
+      drawCallout('Notes', closingNotes, colors.gold, colors.soft);
     }
 
     const methodologyItems = [
@@ -8375,19 +8535,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       ['Ticker normalisation', 'Exchange-specific tickers are normalised to standard asset symbols, for example Kraken XBT → BTC.'],
       ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
       ['Data completeness', 'Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome.'],
-      hasTransferGaps ? ['Transfers and fees', 'Assets can show buys but no year-end holding where later transfers out or fees reduced the balance. Transfers reduce holdings but are not treated as taxable disposals; include the receiving wallet or exchange if the assets were still owned at year-end.'] : null,
       hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null
     ].filter(Boolean);
-
-    methodologyItems.forEach(([label, body]) => {
-      doc.setFont('courier', 'bold');
-      doc.setFontSize(6.8);
-      setColor(colors.muted);
-      ensureSpace(5);
-      doc.text(label.toUpperCase(), margin, y);
-      y += 3.6;
-      drawParagraph(body, 7.9, colors.muted, 4.0);
-    });
+    drawMethodologyBox(methodologyItems);
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let page = 1; page <= totalPages; page++) {
