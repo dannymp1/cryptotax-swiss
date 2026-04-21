@@ -8224,49 +8224,66 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
     const drawMethodologyBox = (items, title = 'REFERENCE METHODOLOGY') => {
       const innerWidth = contentWidth - 10;
-      let height = 10;
-      items.forEach(([label, body]) => {
-        doc.setFont('courier', 'bold');
-        doc.setFontSize(6.5);
-        const labelLines = doc.splitTextToSize(pdfSafeText(label).toUpperCase(), innerWidth);
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.5);
-        const bodyLines = doc.splitTextToSize(pdfSafeText(body), innerWidth);
-        height += labelLines.length * 2.8 + bodyLines.length * 3.5 + 3.2;
+      const lineHeight = 4.15;
+      const segments = [];
+      items.forEach(([label, body], index) => {
+        if (index > 0) {
+          segments.push({ text: ' · ', font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
+        }
+        segments.push({ text: `${pdfSafeText(label)}: `, font: 'courier', style: 'bold', size: 7.1, color: colors.ink });
+        segments.push({ text: pdfSafeText(body), font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
       });
+
+      const lines = [];
+      let currentLine = [];
+      let currentWidth = 0;
+      const pushLine = () => {
+        while (currentLine.length && /^\s+$/.test(currentLine[currentLine.length - 1].text)) {
+          currentLine.pop();
+        }
+        if (currentLine.length) lines.push(currentLine);
+        currentLine = [];
+        currentWidth = 0;
+      };
+
+      segments.forEach(segment => {
+        const parts = segment.text.split(/(\s+)/).filter(Boolean);
+        parts.forEach(part => {
+          const isSpace = /^\s+$/.test(part);
+          if (isSpace && !currentLine.length) return;
+          doc.setFont(segment.font, segment.style);
+          doc.setFontSize(segment.size);
+          const partWidth = doc.getTextWidth(part);
+          if (!isSpace && currentWidth + partWidth > innerWidth && currentLine.length) {
+            pushLine();
+          }
+          if (isSpace && !currentLine.length) return;
+          currentLine.push({ ...segment, text: part });
+          currentWidth += partWidth;
+        });
+      });
+      pushLine();
+
+      let height = 11 + lines.length * lineHeight;
       ensureSpace(height + 2);
       setFill([247, 244, 238]);
       doc.rect(margin, y, contentWidth, height, 'F');
-      setFill(colors.faint);
-      doc.rect(margin, y, 2, height, 'F');
       let innerY = y + 5.5;
       doc.setFont('courier', 'bold');
       doc.setFontSize(7);
       setColor(colors.muted);
       doc.text(pdfSafeText(title).toUpperCase(), margin + 5, innerY);
       innerY += 4.5;
-      items.forEach(([label, body], index) => {
-        if (index > 0) {
-          setDraw(colors.faint);
-          doc.setLineWidth(0.12);
-          doc.line(margin + 5, innerY - 1.8, pageWidth - margin - 3, innerY - 1.8);
-          innerY += 2.5;
-        }
-        doc.setFont('courier', 'bold');
-        doc.setFontSize(6.5);
-        setColor(colors.muted);
-        doc.splitTextToSize(pdfSafeText(label).toUpperCase(), innerWidth).forEach(line => {
-          doc.text(line, margin + 5, innerY);
-          innerY += 2.8;
+      lines.forEach(line => {
+        let cursorX = margin + 5;
+        line.forEach(token => {
+          doc.setFont(token.font, token.style);
+          doc.setFontSize(token.size);
+          setColor(token.color);
+          doc.text(token.text, cursorX, innerY);
+          cursorX += doc.getTextWidth(token.text);
         });
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.5);
-        setColor(colors.ink);
-        doc.splitTextToSize(pdfSafeText(body), innerWidth).forEach(line => {
-          doc.text(line, margin + 5, innerY);
-          innerY += 3.5;
-        });
-        innerY += 0.8;
+        innerY += lineHeight;
       });
       y += height + 6;
     };
@@ -8530,7 +8547,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       ['Data completeness', 'Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome.'],
       hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null
     ].filter(Boolean);
-    drawMethodologyBox(methodologyItems, 'Notes & Methodology');
+    drawMethodologyBox(methodologyItems, 'Methodology');
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let page = 1; page <= totalPages; page++) {
