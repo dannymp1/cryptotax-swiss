@@ -7959,16 +7959,13 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const drawSectionTitle = (number, title) => {
       ensureSpace(14);
       y += 3;
-      doc.setFont('helvetica', 'bold');
+      doc.setFont('courier', 'bold');
       doc.setFontSize(8);
-      setColor(colors.gold);
-      doc.text(String(number).padStart(2, '0'), margin, y);
-      doc.setFontSize(12);
-      setColor(colors.ink);
-      doc.text(title, margin + 14, y);
+      setColor(colors.muted);
+      doc.text(`${String(number).padStart(2, '0')} — ${pdfSafeText(title).toUpperCase()}`, margin, y);
       y += 4;
-      setDraw(colors.ink);
-      doc.setLineWidth(0.35);
+      setDraw(colors.faint);
+      doc.setLineWidth(0.25);
       doc.line(margin, y, pageWidth - margin, y);
       y += 6;
     };
@@ -7981,9 +7978,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         ensureSpace(headerHeight + rowHeight);
         setFill(colors.soft);
         doc.rect(margin, y, contentWidth, headerHeight, 'F');
-        doc.setFont('helvetica', 'bold');
+        doc.setFont('courier', 'bold');
         doc.setFontSize(fontSize);
-        setColor(colors.ink);
+        setColor(colors.muted);
         let x = margin;
         columns.forEach(col => {
           const label = fitText(col.label, col.width - 2);
@@ -8039,10 +8036,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         const x = margin + index * (boxWidth + gap);
         setFill(index === 2 ? colors.paper : colors.soft);
         doc.rect(x, y, boxWidth, boxHeight, 'F');
-        doc.setFont('helvetica', 'bold');
+        doc.setFont('courier', 'bold');
         doc.setFontSize(6.7);
         setColor(colors.muted);
         doc.text(doc.splitTextToSize(box[0], boxWidth - 6), x + 3, y + 6);
+        doc.setFont('times', 'bold');
         doc.setFontSize(index === 2 ? 11 : 10);
         setColor(box[2]);
         doc.text(fitText(box[1], boxWidth - 6), x + 3, y + 17);
@@ -8051,51 +8049,192 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     };
 
     const assets = data.assets || [];
+    const taxpayer = {
+      name: pdfSafeText((data.taxpayer && data.taxpayer.name) || ''),
+      address: pdfSafeText((data.taxpayer && data.taxpayer.address) || ''),
+      taxId: pdfSafeText((data.taxpayer && data.taxpayer.taxId) || '')
+    };
     const hasUnmatched = assets.some(asset => asset.missingCostBasis);
+    const hasTransferGaps = assets.some(asset => Number(asset.unmatchedTransferOut || 0) > 0);
+    const totalExcluded = assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0);
+    const totalMatched = Math.abs(Number(data.totalGainLossCHF || 0));
+    const coverage = totalExcluded > 0 ? Math.round(totalMatched / (totalMatched + totalExcluded) * 100) : 100;
+    const buyMatched = assets.reduce((sum, asset) => sum + Number(asset.buyCount || 0), 0);
+    const sellMatched = assets.reduce((sum, asset) => sum + Number(asset.sellCount || 0), 0);
+    const stakingEvents = assets.reduce((sum, asset) => sum + Number(asset.stakingCount || 0), 0);
+    const unmatchedDisposals = assets.filter(asset => asset.missingCostBasis).length;
     const exchangeName = getReportExchangeLabel(data.notes).replace('—', 'Imported file');
-    const generated = new Date().toLocaleDateString('de-CH');
+    const generated = new Date(data.generatedAt || Date.now()).toLocaleDateString('de-CH');
+    const statusColor = hasUnmatched ? (coverage >= 80 ? colors.gold : colors.red) : hasTransferGaps ? colors.gold : colors.green;
+    const statusLabel = hasUnmatched
+      ? (coverage >= 80
+        ? 'Partial — minor gaps in acquisition history'
+        : 'Incomplete — additional data required for accurate tax reporting')
+      : hasTransferGaps
+        ? 'Review — transfer-outs exceed imported acquisition lots'
+        : 'Complete — all disposals matched';
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(15);
-    setColor(colors.ink);
-    doc.text('Crypto', margin, y);
-    setColor(colors.gold);
-    doc.text('Declare', margin + doc.getTextWidth('Crypto'), y);
-    doc.setFontSize(8);
-    setColor(colors.muted);
-    doc.text(`Generated ${generated}`, pageWidth - margin, y, { align: 'right' });
-    y += 10;
-
-    doc.setFontSize(18);
-    setColor(colors.ink);
-    doc.text(`Tax Declaration Annex ${data.taxYear}`, margin, y);
-    y += 7;
-    drawParagraph('Supporting annex generated from imported transaction data. Review carefully before attaching to your cantonal tax return.', 8.5, colors.muted, 4.4);
-
-    const infoRows = [
-      ['Tax year', data.taxYear || '—', 'Period', data.dateRange || data.taxYear || '—'],
-      ['Source', exchangeName, 'Transactions', String((data.transactions || []).length)],
-      ['Assets', String(assets.length), 'Report ID', data.reportId || '—']
-    ];
-    ensureSpace(38);
-    infoRows.forEach(row => {
-      const cellWidth = contentWidth / 4;
-      setFill(colors.soft);
-      doc.rect(margin, y, contentWidth, 10, 'F');
-      for (let i = 0; i < 4; i += 2) {
-        const x = margin + i * cellWidth;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(6.5);
+    const drawMetricBar = () => {
+      ensureSpace(20);
+      const cells = [
+        ['Transactions', data.totalTransactions || (data.transactions || []).length, colors.ink],
+        ['Buys Matched', buyMatched, colors.green],
+        ['Sells Matched', sellMatched, colors.green],
+        ['Unmatched Disposals', unmatchedDisposals, unmatchedDisposals ? colors.red : colors.green],
+        ['Staking Events', stakingEvents, stakingEvents ? colors.green : colors.ink]
+      ];
+      const gap = 1.4;
+      const boxWidth = (contentWidth - gap * (cells.length - 1)) / cells.length;
+      const boxHeight = 16;
+      cells.forEach((cell, index) => {
+        const x = margin + index * (boxWidth + gap);
+        setFill(colors.soft);
+        doc.rect(x, y, boxWidth, boxHeight, 'F');
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(15);
+        setColor(cell[2]);
+        doc.text(String(cell[1]), x + boxWidth / 2, y + 7, { align: 'center' });
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(5.8);
         setColor(colors.muted);
-        doc.text(String(row[i]).toUpperCase(), x + 2, y + 3.5);
-        doc.setFontSize(7.8);
-        setColor(colors.ink);
-        doc.text(fitText(row[i + 1], cellWidth * 2 - 6), x + 2, y + 7.8);
-      }
-      y += 11;
+        const label = doc.splitTextToSize(String(cell[0]).toUpperCase(), boxWidth - 4);
+        label.slice(0, 2).forEach((line, lineIndex) => {
+          doc.text(line, x + boxWidth / 2, y + 11.5 + lineIndex * 2.8, { align: 'center' });
+        });
+      });
+      y += boxHeight + 6;
+    };
+
+    const drawStatusLine = () => {
+      ensureSpace(8);
+      setFill(statusColor);
+      doc.circle(margin + 2, y - 1.1, 1.2, 'F');
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(8);
+      setColor(statusColor);
+      doc.text(statusLabel, margin + 6, y);
+      y += 6;
+    };
+
+    const drawCallout = (title, body, accentColor, fillColor) => {
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(7);
+      const titleLines = doc.splitTextToSize(pdfSafeText(title).toUpperCase(), contentWidth - 10);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.2);
+      const bodyLines = doc.splitTextToSize(pdfSafeText(body), contentWidth - 10);
+      const height = 8 + titleLines.length * 3 + bodyLines.length * 4.2 + 4;
+      ensureSpace(height + 2);
+      setFill(fillColor);
+      doc.rect(margin, y, contentWidth, height, 'F');
+      setFill(accentColor);
+      doc.rect(margin, y, 2, height, 'F');
+      let innerY = y + 5;
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(7);
+      setColor(accentColor);
+      titleLines.forEach(line => {
+        doc.text(line, margin + 5, innerY);
+        innerY += 3;
+      });
+      innerY += 1;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.2);
+      setColor(colors.muted);
+      bodyLines.forEach(line => {
+        doc.text(line, margin + 5, innerY);
+        innerY += 4.2;
+      });
+      y += height + 6;
+    };
+
+    const leftColWidth = 98;
+    const rightColWidth = contentWidth - leftColWidth - 8;
+    const rightColX = margin + contentWidth - rightColWidth;
+    let leftY = y;
+    let rightY = y;
+
+    doc.setFont('times', 'bold');
+    doc.setFontSize(16);
+    setColor(colors.ink);
+    doc.text('Crypto', margin, leftY);
+    setColor(colors.gold);
+    doc.text('Declare', margin + doc.getTextWidth('Crypto'), leftY);
+    leftY += 5;
+
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(6.8);
+    setColor(colors.muted);
+    ['SWISS CRYPTO TAX DECLARATION', 'CRYPTODECLARE.CH / ALIGNED WITH ESTV GUIDANCE'].forEach(line => {
+      doc.text(line, margin, leftY);
+      leftY += 3.6;
+    });
+    leftY += 2;
+
+    const taxpayerLines = [];
+    if (taxpayer.name !== '—') taxpayerLines.push(['Taxpayer', taxpayer.name]);
+    if (taxpayer.address !== '—') taxpayerLines.push(['Address', taxpayer.address]);
+    if (taxpayer.taxId !== '—') taxpayerLines.push(['AHV / Tax ID', taxpayer.taxId]);
+    taxpayerLines.forEach(([label, value]) => {
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(6.4);
+      setColor(colors.muted);
+      doc.text(label.toUpperCase(), margin, leftY);
+      const wrapped = doc.splitTextToSize(value, leftColWidth - 24);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.2);
+      setColor(colors.ink);
+      wrapped.forEach((line, index) => {
+        doc.text(line, margin + 24, leftY + index * 3.8);
+      });
+      leftY += Math.max(4.5, wrapped.length * 3.8 + 1);
     });
 
-    drawSectionTitle(1, 'Asset Summary');
+    doc.setFont('times', 'normal');
+    doc.setFontSize(23);
+    setColor(colors.ink);
+    doc.text(`Tax Declaration Annex ${data.taxYear}`, pageWidth - margin, rightY + 1, { align: 'right' });
+    rightY += 8;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(6.8);
+    setColor(colors.muted);
+    [
+      `GENERATED ${generated}`,
+      `METHOD ${data.complianceMethod || 'FIFO'}`,
+      `PERIOD ${data.dateRange || data.taxYear || '—'}`,
+      `SOURCE ${exchangeName}`,
+      `ID ${data.reportId || '—'} · v${data.reportVersion || '2.1'}`
+    ].forEach(line => {
+      doc.text(line, pageWidth - margin, rightY, { align: 'right' });
+      rightY += 3.7;
+    });
+
+    y = Math.max(leftY, rightY) + 2;
+    setDraw(colors.ink);
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 7;
+
+    drawMetricBar();
+    drawStatusLine();
+
+    if (hasUnmatched) {
+      drawCallout(
+        'Incomplete acquisition history',
+        `${assets.filter(asset => asset.missingCostBasis).map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} show disposals with no corresponding purchase history under FIFO. Unmatched proceeds of ${pdfFormatCHF(totalExcluded)} are excluded from realised gain until the missing acquisition history is added.`,
+        colors.gold,
+        [255, 252, 245]
+      );
+    } else if (hasTransferGaps) {
+      drawCallout(
+        'Transfer history review',
+        `${assets.filter(asset => Number(asset.unmatchedTransferOut || 0) > 0).map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} include transfer-outs that exceeded imported FIFO lots. These quantities reduce holdings but are not treated as taxable disposals.`,
+        colors.gold,
+        [255, 252, 245]
+      );
+    }
+
+    drawSectionTitle(1, 'Transaction Overview by Asset');
     drawTable(
       hasUnmatched
         ? [
@@ -8215,9 +8354,40 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
     drawSectionTitle(hasUnmatched ? 5 : 4, 'Legal Notice & Disclaimer');
     drawParagraph('Supporting document only. This annex is generated automatically from imported transaction data and is not an official tax filing, tax advice, or legal advice. Missing exchanges, wallets, opening balances, or prior-period history may materially affect results. Review all figures carefully before submission.', 8.3, colors.ink);
-    drawParagraph('Swiss private individuals: capital gains are generally tax-free, while holdings must be declared as wealth and staking or lending income is generally taxable. Professional traders and legal entities may be taxed differently.', 8.3, colors.muted);
-    if (data.notes) drawParagraph('Notes: ' + data.notes, 8.0, colors.muted);
-    drawParagraph(`Methodology: FIFO cost basis. CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)}.`, 8.0, colors.muted);
+
+    const legalBlocks = [
+      ['EN', '✔ Swiss private individuals — capital gains generally tax-free; declare holdings as wealth. Staking and lending income is taxable.  ⚠ Professional traders and legal entities — capital gains may be taxable as income and the gain figures in this annex are directly relevant.'],
+      ['DE', '✔ Privatpersonen — Kursgewinne grundsätzlich steuerfrei; Bestände als Vermögen deklarieren. Staking-Erträge sind steuerpflichtig.  ⚠ Gewerbliche Händler und juristische Personen — Kursgewinne können als Einkommen steuerpflichtig sein.'],
+      ['FR', '✔ Particuliers suisses — gains en capital généralement exonérés; avoirs à déclarer comme fortune. Les revenus de staking sont imposables.  ⚠ Traders professionnels et personnes morales — les gains en capital peuvent être imposables comme revenu.']
+    ];
+    legalBlocks.forEach(([lang, body]) => {
+      drawParagraph(`${lang} — ${body}`, 8.0, colors.muted, 4.3);
+    });
+
+    if (data.notes) {
+      drawCallout('Notes', data.notes, colors.muted, colors.soft);
+    }
+
+    const methodologyItems = [
+      ['Cost basis method', 'FIFO (First In, First Out) — Swiss tax reporting standard.'],
+      ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
+      ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
+      ['Ticker normalisation', 'Exchange-specific tickers are normalised to standard asset symbols, for example Kraken XBT → BTC.'],
+      ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
+      ['Data completeness', 'Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome.'],
+      hasTransferGaps ? ['Transfers and fees', 'Assets can show buys but no year-end holding where later transfers out or fees reduced the balance. Transfers reduce holdings but are not treated as taxable disposals; include the receiving wallet or exchange if the assets were still owned at year-end.'] : null,
+      hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null
+    ].filter(Boolean);
+
+    methodologyItems.forEach(([label, body]) => {
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(6.8);
+      setColor(colors.muted);
+      ensureSpace(5);
+      doc.text(label.toUpperCase(), margin, y);
+      y += 3.6;
+      drawParagraph(body, 7.9, colors.muted, 4.0);
+    });
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let page = 1; page <= totalPages; page++) {
@@ -8240,6 +8410,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     if (!isExportAcknowledged()) return;
     const data = window._reportData;
     if (!data) return;
+    saveTaxpayerDetails();
+    data.taxpayer = getTaxpayerDetails();
+    window._reportData = data;
     const mobileExport = isMobileExportDevice();
 
     // Build a clean printable HTML page styled as a Swiss official document
