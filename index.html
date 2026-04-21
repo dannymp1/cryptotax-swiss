@@ -8105,7 +8105,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const drawSectionTitle = (number, title) => {
       ensureSpace(14);
       y += 3;
-      doc.setFont('courier', 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       setColor(colors.muted);
       doc.text(`${String(number).padStart(2, '0')} — ${pdfSafeText(title).toUpperCase()}`, margin, y);
@@ -8120,11 +8120,14 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       const headerHeight = options.headerHeight || 7;
       const rowHeight = options.rowHeight || 6;
       const fontSize = options.fontSize || 7.2;
+      const headerFont = options.headerFont || 'helvetica';
+      const headerFontStyle = options.headerFontStyle || 'bold';
+      const bodyFont = options.bodyFont || 'helvetica';
       const drawHeader = () => {
         ensureSpace(headerHeight + rowHeight);
         setFill(colors.soft);
         doc.rect(margin, y, contentWidth, headerHeight, 'F');
-        doc.setFont('courier', 'bold');
+        doc.setFont(headerFont, headerFontStyle);
         doc.setFontSize(fontSize);
         setColor(colors.muted);
         let x = margin;
@@ -8151,7 +8154,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         setDraw(colors.faint);
         doc.setLineWidth(0.1);
         doc.line(margin, y + rowHeight, pageWidth - margin, y + rowHeight);
-        doc.setFont('helvetica', row._bold ? 'bold' : 'normal');
+        doc.setFont(bodyFont, row._bold ? 'bold' : 'normal');
         doc.setFontSize(fontSize);
         let x = margin;
         columns.forEach(col => {
@@ -8182,7 +8185,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         const x = margin + index * (boxWidth + gap);
         setFill(colors.paper);
         doc.rect(x, y, boxWidth, boxHeight, 'F');
-        doc.setFont('courier', 'bold');
+        doc.setFont('helvetica', 'bold');
         doc.setFontSize(6.7);
         setColor(colors.muted);
         doc.text(doc.splitTextToSize(box[0], boxWidth - 6), x + 3, y + 6);
@@ -8238,10 +8241,10 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         setFill(colors.soft);
         doc.rect(x, y, boxWidth, boxHeight, 'F');
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(15);
+        doc.setFontSize(14);
         setColor(cell[2]);
         doc.text(String(cell[1]), x + boxWidth / 2, y + 7, { align: 'center' });
-        doc.setFont('courier', 'normal');
+        doc.setFont('helvetica', 'normal');
         doc.setFontSize(5.8);
         setColor(colors.muted);
         const label = doc.splitTextToSize(String(cell[0]).toUpperCase(), boxWidth - 4);
@@ -8253,7 +8256,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     };
 
     const drawStatusBanner = () => {
-      doc.setFont('courier', 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       const titleLines = doc.splitTextToSize(pdfSafeText(reviewState.title), contentWidth - 10);
       doc.setFont('helvetica', 'normal');
@@ -8266,7 +8269,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       setFill(bannerAccent);
       doc.rect(margin, y, 2.4, height, 'F');
       let innerY = y + 5;
-      doc.setFont('courier', 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       setColor(bannerAccent);
       titleLines.forEach(line => {
@@ -8285,7 +8288,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     };
 
     const drawCallout = (title, body, accentColor, fillColor) => {
-      doc.setFont('courier', 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(7);
       const titleLines = doc.splitTextToSize(pdfSafeText(title).toUpperCase(), contentWidth - 10);
       doc.setFont('helvetica', 'normal');
@@ -8298,7 +8301,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       setFill(accentColor);
       doc.rect(margin, y, 2, height, 'F');
       let innerY = y + 4.5;
-      doc.setFont('courier', 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(7);
       setColor(accentColor);
       titleLines.forEach(line => {
@@ -8320,7 +8323,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       const innerWidth = contentWidth - 10;
       let height = 8;
       blocks.forEach(block => {
-        doc.setFont('courier', 'bold');
+        doc.setFont('helvetica', 'bold');
         doc.setFontSize(7);
         const langLines = doc.splitTextToSize(pdfSafeText(block.lang), innerWidth);
         doc.setFont('helvetica', 'bold');
@@ -8349,7 +8352,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           doc.line(margin + 5, innerY - 2, pageWidth - margin - 3, innerY - 2);
           innerY += 3;
         }
-        doc.setFont('courier', 'bold');
+        doc.setFont('helvetica', 'bold');
         doc.setFontSize(7);
         setColor(colors.ink);
         doc.text(pdfSafeText(block.lang), margin + 5, innerY);
@@ -8437,7 +8440,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       setFill([247, 244, 238]);
       doc.rect(margin, y, contentWidth, height, 'F');
       let innerY = y + 5.5;
-      doc.setFont('courier', 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(7);
       setColor(colors.muted);
       doc.text(pdfSafeText(title).toUpperCase(), margin + 5, innerY);
@@ -8547,24 +8550,24 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       hasUnmatched
         ? [
             { key: 'symbol', label: 'Asset', width: 16 },
-            { key: 'name', label: 'Name', width: 27 },
+            { key: 'name', label: 'Name', width: 23 },
             { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
             { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
             { key: 'rewards', label: 'Reward Txns', width: 15, align: 'right' },
-            { key: 'holding', label: 'Holding', width: 28, align: 'right' },
-            { key: 'value', label: 'Value CHF', width: 24, align: 'right' },
-            { key: 'gain', label: 'Matched Gain', width: 27, align: 'right', color: row => row.gainColor },
-            { key: 'unmatched', label: 'Excluded', width: 21, align: 'right', color: colors.gold }
+            { key: 'holding', label: 'Holding', width: 25, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 23, align: 'right' },
+            { key: 'gain', label: 'Matched Gain', width: 34, align: 'right', color: row => row.gainColor },
+            { key: 'unmatched', label: 'Excluded', width: 22, align: 'right', color: colors.gold }
           ]
         : [
             { key: 'symbol', label: 'Asset', width: 20 },
-            { key: 'name', label: 'Name', width: 39 },
+            { key: 'name', label: 'Name', width: 35 },
             { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
             { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
             { key: 'rewards', label: 'Reward Txns', width: 15, align: 'right' },
-            { key: 'holding', label: 'Holding', width: 28, align: 'right' },
-            { key: 'value', label: 'Value CHF', width: 28, align: 'right' },
-            { key: 'gain', label: 'Gain / Loss', width: 28, align: 'right', color: row => row.gainColor }
+            { key: 'holding', label: 'Holding', width: 26, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 26, align: 'right' },
+            { key: 'gain', label: 'Gain / Loss', width: 36, align: 'right', color: row => row.gainColor }
           ],
       assets.map(asset => {
         const displayAsset = getReportAssetDisplay(asset.symbol, asset.name);
@@ -8594,7 +8597,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         gainColor: Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red,
         unmatched: hasUnmatched ? pdfFormatCHF(assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0)) : ''
       }]),
-      { fontSize: 6.9, rowHeight: 6.4, headerHeight: 7.2 }
+      { fontSize: 6.7, rowHeight: 6.4, headerHeight: 7.1, headerFont: 'helvetica', bodyFont: 'helvetica' }
     );
 
     if (hasUnmatched) {
@@ -8623,7 +8626,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           qty: pdfFormatQty(asset.unresolvedQty),
           proceeds: pdfFormatCHF(asset.unresolvedProceeds)
         };
-      }), { fontSize: 7.2, rowHeight: 6.6, headerHeight: 7.4 });
+      }), { fontSize: 6.7, rowHeight: 6.4, headerHeight: 7.1, headerFont: 'helvetica', bodyFont: 'helvetica' });
     }
 
     drawSectionTitle(hasUnmatched ? 3 : 2, 'Tax Declaration Summary');
@@ -8664,7 +8667,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           price: nonTransfer && tx.priceCHF != null ? pdfFormatCHF(tx.priceCHF) : '—',
           total: (nonTransfer || tx.type === 'fee_summary') && tx.totalCHF != null ? pdfFormatCHF(tx.totalCHF) : '—'
         };
-      }), { fontSize: 7.0, rowHeight: 6.1, headerHeight: 7.3 });
+      }), { fontSize: 6.7, rowHeight: 6.4, headerHeight: 7.1, headerFont: 'helvetica', bodyFont: 'helvetica' });
     }
 
     const legalSectionNumber = hasUnmatched ? 5 : 4;
@@ -8764,7 +8767,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         <td class="center mono" style="color:#5A6070;">${a.stakingCount||0}</td>
         <td class="right mono" style="font-weight:600;">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="font-weight:${glWeight};color:${glColor};">
+        <td class="right mono" style="font-weight:${glWeight};color:${glColor};font-size:${_hasUnmatched ? '7.1pt' : '7.3pt'};">
           ${glStr}
         </td>
         ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:8px;font-size:7.8pt;">
@@ -8902,8 +8905,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
   /* ── SECTION TITLES — Point 1: More hierarchy, finance weight ─────────── */
   .sec-title {
-    font-family:'DM Mono',monospace; font-size:7pt; letter-spacing:0.2em;
-    text-transform:uppercase; color:#5A6070; margin-bottom:14px;
+    font-family:'Instrument Sans',Arial,sans-serif; font-size:7.2pt; letter-spacing:0.12em;
+    font-weight:700; text-transform:uppercase; color:#5A6070; margin-bottom:14px;
     padding:5px 0; margin-top:36px;
     background: transparent;
     border-bottom: 1.5px solid #E0DDD5;
@@ -8916,8 +8919,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           border: none; }
   thead tr { background:#FFFFFF; border-bottom: 2px solid #0D1117; }
   thead th {
-    padding:10px 12px; font-family:'DM Mono',monospace; font-size:6.5pt;
-    letter-spacing:0.12em; text-transform:uppercase; color:#5A6070; font-weight:600;
+    padding:10px 12px; font-family:'Instrument Sans',Arial,sans-serif; font-size:6.45pt;
+    letter-spacing:0.08em; text-transform:uppercase; color:#5A6070; font-weight:700;
     border-right: none;
   }
   thead th:last-child { border-right: none; }
@@ -8932,27 +8935,27 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     border-right: 1px solid rgba(0,0,0,0.04);
   }
   tbody td:last-child { border-right: none; }
-  .mono { font-family:'DM Mono',monospace; font-size:8.5pt; letter-spacing:0.02em; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .mono { font-family:'Instrument Sans',Arial,sans-serif; font-size:8.2pt; letter-spacing:0; font-variant-numeric:tabular-nums; white-space:nowrap; }
   .right { text-align:right; }
   .center { text-align:center; }
   /* Total row — strong, finance-grade */
   .total-row { background:#FAFAF8 !important; border: none !important; border-top: 2px solid #B8960C !important; }
-  .total-row td { color:#1A1D21; font-weight:700; padding:11px 12px; font-family:'DM Mono',monospace; font-size:9.5pt; border-right: 1px solid rgba(0,0,0,0.04) !important; }
+  .total-row td { color:#1A1D21; font-weight:700; padding:11px 12px; font-family:'Instrument Sans',Arial,sans-serif; font-size:8.6pt; border-right: 1px solid rgba(0,0,0,0.04) !important; }
   .total-row td:last-child { border-right: none !important; }
   .overview-table.tight thead th { padding:9px 8px; font-size:6pt; letter-spacing:0.1em; }
   .overview-table.tight tbody td { padding:10px 8px; }
-  .overview-table.tight .mono { font-size:7.8pt; }
+  .overview-table.tight .mono { font-size:7.3pt; }
 
   /* ── SUMMARY BOXES — Point 1: Stronger visual weight ──────────────────── */
   .summary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; background:transparent; border:none; margin:30px 0 28px 0; align-items:stretch; }
   .summary-box { background:#FAFAF8; padding:24px 12px; display:flex; flex-direction:column; border-right:1px solid #E0DDD5; }
   .summary-box:last-child { border-right:none; }
   .summary-box.highlight { background:#FAFAF8; border-right:none; }
-  .summary-label { font-family:'DM Mono',monospace; font-size:6pt; letter-spacing:0.18em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
+  .summary-label { font-family:'Instrument Sans',Arial,sans-serif; font-size:6.1pt; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#9AA0AC; margin-bottom:12px; }
 
   .summary-box.highlight .summary-label { color:#8A6B00; }
-  .summary-val { font-family:'DM Serif Display',serif; font-size:20pt; color:#0D1117; line-height:1.0; font-weight:400; white-space:nowrap; }
-  .summary-box.highlight .summary-val { font-size:20pt; white-space:nowrap; }
+  .summary-val { font-family:'Instrument Sans',Arial,sans-serif; font-size:16.4pt; color:#0D1117; line-height:1.0; font-weight:700; white-space:nowrap; }
+  .summary-box.highlight .summary-val { font-size:16.4pt; white-space:nowrap; }
 
   /* Compliance */
   .compliance-box { background:#FAFAF8; border:none; border-left: 3px solid #B8960C; border-radius:0; padding:14px 12px 14px 9px; margin-bottom:20px; font-size:9pt; line-height:1.7; color:#5A6070; page-break-inside:avoid; break-inside:avoid; }
@@ -9058,10 +9061,10 @@ onmouseout="this.style.color='#8A909E'">
     const _sc2 = (data.assets||[]).reduce((s,a)=>s+(a.stakingCount||0),0);
     const _ucColor = _uc===0?'#2D7A56':'#C0392B';
     return '<div class="validation-strip" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#D8D4CC;border-top:1px solid #D8D4CC;border-bottom:1px solid #D8D4CC;margin-bottom:20px;">'
-      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_bc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Buys Matched</div></div>'
-      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Sells Matched</div></div>'
-      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:'+_ucColor+';">'+_uc+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Unmatched Disposals</div></div>'
-      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'DM Serif Display\',serif;font-size:20pt;font-weight:700;color:#2D7A56;">'+_sc2+'</div><div style="font-family:\'DM Mono\',monospace;font-size:6pt;letter-spacing:0.12em;text-transform:uppercase;color:#8A909E;">Staking Events</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:17pt;font-weight:700;color:#2D7A56;">'+_bc+'</div><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:6pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;">Buys Matched</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:17pt;font-weight:700;color:#2D7A56;">'+_sc+'</div><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:6pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;">Sells Matched</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:17pt;font-weight:700;color:'+_ucColor+';">'+_uc+'</div><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:6pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;">Unmatched Disposals</div></div>'
+      +'<div style="background:#F5F2EB;padding:8px 12px;text-align:center;"><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:17pt;font-weight:700;color:#2D7A56;">'+_sc2+'</div><div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:6pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A909E;">Staking Events</div></div>'
       +'</div>';
   })()}
 
@@ -9077,19 +9080,19 @@ onmouseout="this.style.color='#8A909E'">
     const txCount = data.totalTransactions || 0;
     const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
     return '<div style="margin-bottom:16px;border-left:4px solid '+statusColor+';background:'+statusFill+';padding:12px 14px 12px 11px;">'
-      + '<div style="font-family:\'DM Mono\',monospace;font-size:8pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:'+statusColor+';margin-bottom:5px;">'+statusLabel+'</div>'
+      + '<div style="font-family:\'Instrument Sans\',Arial,sans-serif;font-size:7.4pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:'+statusColor+';margin-bottom:5px;">'+statusLabel+'</div>'
       + '<div style="font-size:8.7pt;color:#3D4451;line-height:1.65;">'+statusBody+'</div>'
       + '</div>';
   })()}
 
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
   <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
-    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'DM Mono',monospace;font-size:8pt;font-weight:600;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
+    <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:6.9pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
+    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'Instrument Sans',Arial,sans-serif;font-size:7.6pt;font-weight:700;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
   </div>` : ''}
   ${(data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0) ? `
   <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
-    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Transfer History Review</div>
+    <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:6.9pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Transfer History Review</div>
     <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>Number(a.unmatchedTransferOut||0) > 0).map(a=>a.symbol).join(', ')}</strong> — transfer-outs exceeded the imported FIFO lots. These quantities reduce year-end holdings but are not treated as taxable sells. Add the original acquisition history if you want a fully matched audit trail.</div>
   </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
