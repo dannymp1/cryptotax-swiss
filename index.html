@@ -8222,51 +8222,51 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       y += height + 6;
     };
 
-    const drawMethodologyBox = (items) => {
+    const drawMethodologyBox = (items, title = 'REFERENCE METHODOLOGY') => {
       const innerWidth = contentWidth - 10;
-      let height = 11;
+      let height = 10;
       items.forEach(([label, body]) => {
         doc.setFont('courier', 'bold');
-        doc.setFontSize(6.8);
+        doc.setFontSize(6.5);
         const labelLines = doc.splitTextToSize(pdfSafeText(label).toUpperCase(), innerWidth);
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.9);
+        doc.setFontSize(7.5);
         const bodyLines = doc.splitTextToSize(pdfSafeText(body), innerWidth);
-        height += labelLines.length * 3 + bodyLines.length * 3.9 + 4;
+        height += labelLines.length * 2.8 + bodyLines.length * 3.5 + 3.2;
       });
       ensureSpace(height + 2);
       setFill([247, 244, 238]);
       doc.rect(margin, y, contentWidth, height, 'F');
       setFill(colors.faint);
       doc.rect(margin, y, 2, height, 'F');
-      let innerY = y + 6;
+      let innerY = y + 5.5;
       doc.setFont('courier', 'bold');
       doc.setFontSize(7);
       setColor(colors.muted);
-      doc.text('REFERENCE METHODOLOGY', margin + 5, innerY);
-      innerY += 5;
+      doc.text(pdfSafeText(title).toUpperCase(), margin + 5, innerY);
+      innerY += 4.5;
       items.forEach(([label, body], index) => {
         if (index > 0) {
           setDraw(colors.faint);
           doc.setLineWidth(0.12);
           doc.line(margin + 5, innerY - 1.8, pageWidth - margin - 3, innerY - 1.8);
-          innerY += 3;
+          innerY += 2.5;
         }
         doc.setFont('courier', 'bold');
-        doc.setFontSize(6.8);
+        doc.setFontSize(6.5);
         setColor(colors.muted);
         doc.splitTextToSize(pdfSafeText(label).toUpperCase(), innerWidth).forEach(line => {
           doc.text(line, margin + 5, innerY);
-          innerY += 3;
+          innerY += 2.8;
         });
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.9);
+        doc.setFontSize(7.5);
         setColor(colors.ink);
         doc.splitTextToSize(pdfSafeText(body), innerWidth).forEach(line => {
           doc.text(line, margin + 5, innerY);
-          innerY += 3.9;
+          innerY += 3.5;
         });
-        innerY += 1;
+        innerY += 0.8;
       });
       y += height + 6;
     };
@@ -8476,7 +8476,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     }
 
     const legalSectionNumber = hasUnmatched ? 5 : 4;
-    const closingSectionNumber = legalSectionNumber + 1;
     const closingNotes = [
       data.notes || '',
       hasTransferGaps
@@ -8521,14 +8520,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     ];
     drawComplianceBox(legalBlocks);
 
-    addPage();
-    drawSectionTitle(closingSectionNumber, 'Methodology & Notes');
-
-    if (closingNotes) {
-      drawCallout('Notes', closingNotes, colors.gold, colors.soft);
-    }
-
     const methodologyItems = [
+      closingNotes ? ['Notes', closingNotes] : null,
       ['Cost basis method', 'FIFO (First In, First Out) — Swiss tax reporting standard.'],
       ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
       ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
@@ -8537,7 +8530,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       ['Data completeness', 'Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome.'],
       hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null
     ].filter(Boolean);
-    drawMethodologyBox(methodologyItems);
+    drawMethodologyBox(methodologyItems, 'Notes & Methodology');
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let page = 1; page <= totalPages; page++) {
