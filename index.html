@@ -7661,6 +7661,134 @@
     };
   }
 
+  function isStablecoinAsset(symbol) {
+    const sym = String(symbol || '').toUpperCase().trim().replace(/:FUT$/, '');
+    return ['USDT','USDC','BUSD','FDUSD','TUSD','DAI','USDP','PYUSD','EURC','EURI','USDS'].includes(sym);
+  }
+
+  function getAssetGainDisplayParts(value, hasSellActivity, formatter = fmtCHF) {
+    const amount = Number(value || 0);
+    if (!hasSellActivity && Math.abs(amount) < 0.005) {
+      return { text: '—', tone: 'muted', amount };
+    }
+    return {
+      text: amount >= 0 ? '+' + formatter(amount) : '−' + formatter(Math.abs(amount)),
+      tone: amount >= 0 ? 'positive' : 'negative',
+      amount
+    };
+  }
+
+  function buildLedgerDisplayRows(transactions, feeThresholdCHF = 1) {
+    const sourceRows = Array.isArray(transactions) ? transactions : [];
+    const visibleRows = [];
+    const feeBuckets = new Map();
+
+    sourceRows.forEach((tx) => {
+      const totalCHF = Math.abs(Number(tx && tx.totalCHF || 0));
+      const isTinyFee = !!(tx && tx._isFee) && totalCHF > 0 && totalCHF < feeThresholdCHF;
+      if (!isTinyFee) {
+        visibleRows.push(tx);
+        return;
+      }
+
+      const asset = String(tx.asset || '').toUpperCase().trim() || 'UNKNOWN';
+      const bucket = feeBuckets.get(asset) || {
+        asset,
+        qty: 0,
+        totalCHF: 0,
+        count: 0
+      };
+      bucket.qty += Math.abs(Number(tx.qty || 0));
+      bucket.totalCHF += totalCHF;
+      bucket.count += 1;
+      feeBuckets.set(asset, bucket);
+    });
+
+    const collapsedRows = Array.from(feeBuckets.values())
+      .sort((a, b) => a.asset.localeCompare(b.asset))
+      .map((bucket) => ({
+        date: '',
+        type: 'fee_summary',
+        asset: bucket.asset,
+        qty: bucket.qty,
+        priceCHF: null,
+        totalCHF: Math.round(bucket.totalCHF * 100) / 100,
+        _collapsedFeeSummary: true,
+        _collapsedFeeCount: bucket.count
+      }));
+
+    return {
+      rows: visibleRows.concat(collapsedRows),
+      collapsedFeeCount: collapsedRows.reduce((sum, row) => sum + Number(row._collapsedFeeCount || 0), 0),
+      collapsedFeeAssetCount: collapsedRows.length,
+      collapsedFeeTotalCHF: Math.round(collapsedRows.reduce((sum, row) => sum + Number(row.totalCHF || 0), 0) * 100) / 100
+    };
+  }
+
+  function getReportReviewState(data) {
+    const assets = Array.isArray(data && data.assets) ? data.assets : [];
+    const hasUnmatched = assets.some(asset => asset.missingCostBasis);
+    const hasTransferGaps = assets.some(asset => Number(asset.unmatchedTransferOut || 0) > 0);
+    const totalExcluded = Math.round(assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0) * 100) / 100;
+    const totalMatched = Math.abs(Number(data && data.totalGainLossCHF || 0));
+    const coverage = totalExcluded > 0 ? Math.round((totalMatched / (totalMatched + totalExcluded)) * 100) : 100;
+    const unmatchedDisposals = assets.filter(asset => asset.missingCostBasis).length;
+    const stakingEvents = assets.reduce((sum, asset) => sum + Number(asset.stakingCount || 0), 0);
+    const stablecoinReviewAssets = assets.filter(asset =>
+      isStablecoinAsset(asset.symbol) &&
+      Number(asset.sellCount || 0) > 0 &&
+      Math.abs(Number(asset.gainLossCHF || 0)) >= 0.01
+    );
+    const hasZeroStaking = Math.abs(Number(data && data.stakingIncomeCHF || 0)) < 0.005;
+
+    if (hasUnmatched) {
+      const noun = unmatchedDisposals === 1 ? 'disposal' : 'disposals';
+      return {
+        tone: coverage >= 80 ? 'review' : 'incomplete',
+        title: `INCOMPLETE — ${unmatchedDisposals} unmatched ${noun} worth ${fmtCHF(totalExcluded)}`,
+        body: 'Realised gain figures exclude these proceeds. Do not submit until the missing acquisition history is added.',
+        hasUnmatched,
+        hasTransferGaps,
+        totalExcluded,
+        coverage,
+        unmatchedDisposals,
+        stakingEvents,
+        stablecoinReviewAssets,
+        hasZeroStaking
+      };
+    }
+
+    if (hasTransferGaps) {
+      return {
+        tone: 'review',
+        title: 'REVIEW — transfer history exceeds imported acquisition lots',
+        body: 'Transfer-outs reduce holdings but are not treated as taxable sells. Check your imported history before submitting.',
+        hasUnmatched,
+        hasTransferGaps,
+        totalExcluded,
+        coverage,
+        unmatchedDisposals,
+        stakingEvents,
+        stablecoinReviewAssets,
+        hasZeroStaking
+      };
+    }
+
+    return {
+      tone: 'ready',
+      title: 'READY TO SUBMIT — all imported disposals matched',
+      body: 'Review any external wallets or exchanges before filing so your year-end wealth figure is complete.',
+      hasUnmatched,
+      hasTransferGaps,
+      totalExcluded,
+      coverage,
+      unmatchedDisposals,
+      stakingEvents,
+      stablecoinReviewAssets,
+      hasZeroStaking
+    };
+  }
+
   function displayReport(data) {
     document.getElementById('processing-indicator').classList.remove('visible');
     const exportAck = document.getElementById('export-ack');
@@ -7673,11 +7801,26 @@
       return;
     }
 
+    const reviewState = getReportReviewState(data);
     const gain = data.totalGainLossCHF;
     const gainStr = gain !== null && gain !== undefined
       ? (gain >= 0 ? '+' + fmtCHF(gain) : '−' + fmtCHF(Math.abs(gain)))
       : '—';
     const gainClass = gain > 0 ? 'positive' : gain < 0 ? 'negative' : '';
+    const gainLabel = reviewState.hasUnmatched ? 'Matched Gain / Loss' : 'Net Gain / Loss';
+    const bannerAccent = reviewState.tone === 'incomplete'
+      ? '#C0392B'
+      : reviewState.tone === 'review'
+        ? '#B8960C'
+        : '#2D7A56';
+    const bannerFill = reviewState.tone === 'incomplete'
+      ? 'rgba(192,57,43,0.14)'
+      : reviewState.tone === 'review'
+        ? 'rgba(184,150,12,0.12)'
+        : 'rgba(45,122,86,0.12)';
+    const stablecoinSymbols = reviewState.stablecoinReviewAssets
+      .map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol)
+      .join(', ');
 
     document.getElementById('report-stats').innerHTML = `
       <div class="report-stat">
@@ -7689,7 +7832,7 @@
         <div class="report-stat-val">${data.totalTransactions || '—'}</div>
       </div>
       <div class="report-stat">
-        <div class="report-stat-label">Net Gain / Loss</div>
+        <div class="report-stat-label">${gainLabel}</div>
         <div class="report-stat-val ${gainClass}">${gainStr}</div>
       </div>
     `;
@@ -7703,9 +7846,12 @@
     );
     const assetRows = assets.map(a => {
       const displayAsset = getReportAssetDisplay(a.symbol, a.name);
-      const gl = Number(a.gainLossCHF);
-      const glClass = gl >= 0 ? 'color:#2D7A56' : 'color:#C0392B';
-      const glStr = gl >= 0 ? '+' + fmtCHF(gl) : '−' + fmtCHF(Math.abs(gl));
+      const gainParts = getAssetGainDisplayParts(a.gainLossCHF, Number(a.sellCount || 0) > 0, fmtCHF);
+      const glStyle = gainParts.tone === 'muted'
+        ? 'color:rgba(245,242,235,0.35);font-weight:400;'
+        : gainParts.tone === 'positive'
+          ? 'color:#2D7A56;font-weight:600;'
+          : 'color:#C0392B;font-weight:600;';
       const hasUnmatched = (data.assets||[]).some(x=>x.missingCostBasis);
       return `<tr>
         <td style="font-weight:600">${escHtml(displayAsset.symbol)}</td>
@@ -7715,8 +7861,8 @@
         <td style="text-align:center;font-family:'DM Mono',monospace;color:#5A6070;">${a.stakingCount || 0}</td>
         <td style="text-align:right">${fmtNum(a.endHolding)}</td>
         <td style="text-align:right">${fmtCHF(a.endValueCHF)}</td>
-        <td style="text-align:right;font-weight:600;${glClass}">
-          ${glStr}
+        <td style="text-align:right;${glStyle}">
+          ${gainParts.text}
         </td>
         ${hasUnmatched ? `<td style="text-align:right;font-weight:600;color:#B8960C;font-size:11px;padding:10px 8px;">
           ${a.missingCostBasis ? 'CHF '+Number(a.unresolvedProceeds||0).toLocaleString('de-CH',{minimumFractionDigits:2}) : '<span style="color:rgba(245,242,235,0.2);">—</span>'}
@@ -7729,14 +7875,19 @@
 <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--paper);margin-bottom:4px">Crypto Tax Report ${data.taxYear || ''}</div>
 <div style="font-size:13px;color:rgba(245,242,235,0.45);margin-bottom:28px">${data.dateRange || ''} · ${data.totalTransactions} Transactions</div>
 
+<div style="margin:0 0 18px;border-left:4px solid ${bannerAccent};background:${bannerFill};padding:14px 16px;border-radius:4px;">
+  <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:${bannerAccent};margin-bottom:6px;">${reviewState.title}</div>
+  <div style="font-size:13px;line-height:1.65;color:rgba(245,242,235,0.78);">${reviewState.body}</div>
+</div>
+
 <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:24px">
   <thead>
     <tr style="background:rgba(255,255,255,0.05)">
       <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Symbol</th>
       <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Asset</th>
-      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buys</th>
-      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sells</th>
-      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Staking</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buy txns</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sell txns</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Reward txns</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
       <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
@@ -7758,11 +7909,20 @@
     <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--paper)">${fmtCHF(data.totalPortfolioValueCHF)}</div>
   </div>
   <div style="background:rgba(245,242,235,0.03);padding:16px 18px">
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Net Gain' : 'Net Taxable Gain'}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss'}</div>
     <div style="font-family:'DM Serif Display',serif;font-size:20px;${gain>=0?'color:#4caf82':'color:#e05c5c'}">${gainStr}</div>
   </div>
 </div>
 
+<div style="padding:12px 14px;background:rgba(245,242,235,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;font-size:12px;line-height:1.65;color:rgba(245,242,235,0.62);margin-bottom:12px;">
+  <strong style="color:var(--paper)">Wealth scope:</strong> Wealth reflects uploaded sources only. Add any self-custody wallets or other exchanges before submitting your tax return.
+</div>
+${reviewState.hasZeroStaking ? `<div style="padding:12px 14px;background:rgba(184,150,12,0.10);border-left:4px solid #B8960C;border-radius:4px;font-size:12px;line-height:1.65;color:rgba(245,242,235,0.75);margin-bottom:12px;">
+  <strong style="color:#F2D479">Review staking income:</strong> No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add it manually before submitting.
+</div>` : ''}
+${stablecoinSymbols ? `<div style="padding:12px 14px;background:rgba(184,150,12,0.08);border-left:4px solid #B8960C;border-radius:4px;font-size:12px;line-height:1.65;color:rgba(245,242,235,0.75);margin-bottom:12px;">
+  <strong style="color:#F2D479">Stablecoin review:</strong> ${escHtml(stablecoinSymbols)} show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain. Review separately if relevant.
+</div>` : ''}
 ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${escHtml(data.notes)}</div>` : ''}
     `;
 
@@ -8030,7 +8190,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       const boxes = [
         ['Staking / Reward Income', pdfFormatCHF(data.stakingIncomeCHF), colors.green],
         [`Wealth Value 31.12.${data.taxYear}`, pdfFormatCHF(data.totalPortfolioValueCHF), colors.ink],
-        ['Realised Gain / Loss', pdfFormatSignedCHF(data.totalGainLossCHF), Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red]
+        [hasUnmatched ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss', pdfFormatSignedCHF(data.totalGainLossCHF), Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red]
       ];
       boxes.forEach((box, index) => {
         const x = margin + index * (boxWidth + gap);
@@ -8049,30 +8209,33 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     };
 
     const assets = data.assets || [];
+    const reviewState = getReportReviewState(data);
     const taxpayer = {
       name: pdfSafeText((data.taxpayer && data.taxpayer.name) || ''),
       address: pdfSafeText((data.taxpayer && data.taxpayer.address) || ''),
       taxId: pdfSafeText((data.taxpayer && data.taxpayer.taxId) || '')
     };
-    const hasUnmatched = assets.some(asset => asset.missingCostBasis);
-    const hasTransferGaps = assets.some(asset => Number(asset.unmatchedTransferOut || 0) > 0);
-    const totalExcluded = assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0);
-    const totalMatched = Math.abs(Number(data.totalGainLossCHF || 0));
-    const coverage = totalExcluded > 0 ? Math.round(totalMatched / (totalMatched + totalExcluded) * 100) : 100;
+    const hasUnmatched = reviewState.hasUnmatched;
+    const hasTransferGaps = reviewState.hasTransferGaps;
+    const totalExcluded = reviewState.totalExcluded;
     const buyMatched = assets.reduce((sum, asset) => sum + Number(asset.buyCount || 0), 0);
     const sellMatched = assets.reduce((sum, asset) => sum + Number(asset.sellCount || 0), 0);
-    const stakingEvents = assets.reduce((sum, asset) => sum + Number(asset.stakingCount || 0), 0);
-    const unmatchedDisposals = assets.filter(asset => asset.missingCostBasis).length;
+    const stakingEvents = reviewState.stakingEvents;
+    const unmatchedDisposals = reviewState.unmatchedDisposals;
+    const stablecoinReviewAssets = reviewState.stablecoinReviewAssets;
+    const hasZeroStaking = reviewState.hasZeroStaking;
     const exchangeName = getReportExchangeLabel(data.notes).replace('—', 'Imported file');
     const generated = new Date(data.generatedAt || Date.now()).toLocaleDateString('de-CH');
-    const statusColor = hasUnmatched ? (coverage >= 80 ? colors.gold : colors.red) : hasTransferGaps ? colors.gold : colors.green;
-    const statusLabel = hasUnmatched
-      ? (coverage >= 80
-        ? 'Partial — minor gaps in acquisition history'
-        : 'Incomplete — additional data required for accurate tax reporting')
-      : hasTransferGaps
-        ? 'Review — transfer-outs exceed imported acquisition lots'
-        : 'Complete — all disposals matched';
+    const bannerAccent = reviewState.tone === 'incomplete'
+      ? colors.red
+      : reviewState.tone === 'review'
+        ? colors.gold
+        : colors.green;
+    const bannerFill = reviewState.tone === 'incomplete'
+      ? [252, 242, 240]
+      : reviewState.tone === 'review'
+        ? [255, 252, 245]
+        : [246, 250, 247];
 
     const drawMetricBar = () => {
       ensureSpace(20);
@@ -8105,15 +8268,36 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       y += boxHeight + 6;
     };
 
-    const drawStatusLine = () => {
-      ensureSpace(8);
-      setFill(statusColor);
-      doc.circle(margin + 2, y - 1.1, 1.2, 'F');
+    const drawStatusBanner = () => {
       doc.setFont('courier', 'bold');
       doc.setFontSize(8);
-      setColor(statusColor);
-      doc.text(statusLabel, margin + 6, y);
-      y += 6;
+      const titleLines = doc.splitTextToSize(pdfSafeText(reviewState.title), contentWidth - 10);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.3);
+      const bodyLines = doc.splitTextToSize(pdfSafeText(reviewState.body), contentWidth - 10);
+      const height = 8 + titleLines.length * 3 + bodyLines.length * 4 + 3;
+      ensureSpace(height + 2);
+      setFill(bannerFill);
+      doc.rect(margin, y, contentWidth, height, 'F');
+      setFill(bannerAccent);
+      doc.rect(margin, y, 2.4, height, 'F');
+      let innerY = y + 5;
+      doc.setFont('courier', 'bold');
+      doc.setFontSize(8);
+      setColor(bannerAccent);
+      titleLines.forEach(line => {
+        doc.text(line, margin + 5, innerY);
+        innerY += 3.1;
+      });
+      innerY += 1;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.3);
+      setColor(colors.muted);
+      bodyLines.forEach(line => {
+        doc.text(line, margin + 5, innerY);
+        innerY += 4;
+      });
+      y += height + 6;
     };
 
     const drawCallout = (title, body, accentColor, fillColor) => {
@@ -8355,8 +8539,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     doc.line(margin, y, pageWidth - margin, y);
     y += 7;
 
+    drawStatusBanner();
     drawMetricBar();
-    drawStatusLine();
 
     if (hasUnmatched) {
       drawCallout(
@@ -8380,27 +8564,27 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         ? [
             { key: 'symbol', label: 'Asset', width: 16 },
             { key: 'name', label: 'Name', width: 28 },
-            { key: 'buys', label: 'Buys', width: 11, align: 'right' },
-            { key: 'sells', label: 'Sells', width: 11, align: 'right' },
-            { key: 'rewards', label: 'Rewards', width: 13, align: 'right' },
+            { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
+            { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
+            { key: 'rewards', label: 'Reward Txns', width: 16, align: 'right' },
             { key: 'holding', label: 'Holding', width: 30, align: 'right' },
-            { key: 'value', label: 'Value CHF', width: 25, align: 'right' },
+            { key: 'value', label: 'Value CHF', width: 22, align: 'right' },
             { key: 'gain', label: 'Matched Gain', width: 25, align: 'right', color: row => row.gainColor },
-            { key: 'unmatched', label: 'Excluded', width: 27, align: 'right', color: colors.gold }
+            { key: 'unmatched', label: 'Excluded', width: 21, align: 'right', color: colors.gold }
           ]
         : [
             { key: 'symbol', label: 'Asset', width: 20 },
             { key: 'name', label: 'Name', width: 42 },
-            { key: 'buys', label: 'Buys', width: 14, align: 'right' },
-            { key: 'sells', label: 'Sells', width: 14, align: 'right' },
-            { key: 'rewards', label: 'Rewards', width: 16, align: 'right' },
+            { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
+            { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
+            { key: 'rewards', label: 'Reward Txns', width: 16, align: 'right' },
             { key: 'holding', label: 'Holding', width: 30, align: 'right' },
             { key: 'value', label: 'Value CHF', width: 25, align: 'right' },
             { key: 'gain', label: 'Gain / Loss', width: 25, align: 'right', color: row => row.gainColor }
           ],
       assets.map(asset => {
         const displayAsset = getReportAssetDisplay(asset.symbol, asset.name);
-        const gain = Number(asset.gainLossCHF || 0);
+        const gainParts = getAssetGainDisplayParts(asset.gainLossCHF, Number(asset.sellCount || 0) > 0, pdfFormatCHF);
         return {
           symbol: displayAsset.symbol,
           name: displayAsset.name,
@@ -8409,8 +8593,8 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
           rewards: asset.stakingCount || 0,
           holding: pdfFormatQty(asset.endHolding, 8),
           value: pdfFormatCHF(asset.endValueCHF),
-          gain: pdfFormatSignedCHF(gain),
-          gainColor: gain >= 0 ? colors.green : colors.red,
+          gain: gainParts.text,
+          gainColor: gainParts.tone === 'muted' ? colors.muted : gainParts.tone === 'positive' ? colors.green : colors.red,
           unmatched: asset.missingCostBasis ? pdfFormatCHF(asset.unresolvedProceeds) : '—'
         };
       }).concat([{
@@ -8461,13 +8645,43 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     drawSectionTitle(hasUnmatched ? 3 : 2, 'Tax Declaration Summary');
     drawSummaryBoxes();
 
-    const transactions = data.transactions || [];
+    drawCallout(
+      'Wealth scope',
+      'Wealth reflects uploaded sources only. Add any self-custody wallets or other exchanges held on 31.12 before submitting your tax return.',
+      colors.ink,
+      [247, 244, 238]
+    );
+
+    if (hasZeroStaking) {
+      drawCallout(
+        'Review staking income',
+        'No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.',
+        colors.gold,
+        [255, 252, 245]
+      );
+    }
+
+    if (stablecoinReviewAssets.length) {
+      drawCallout(
+        'Stablecoin FX variance review',
+        `${stablecoinReviewAssets.map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain. Review separately if relevant.`,
+        colors.gold,
+        [255, 252, 245]
+      );
+    }
+
+    const ledgerDisplay = buildLedgerDisplayRows(data.transactions || []);
+    const transactions = ledgerDisplay.rows;
     if (transactions.length) {
       drawSectionTitle(hasUnmatched ? 4 : 3, 'Transaction Ledger');
       drawParagraph('Complete record of imported transactions. Transfers are shown for completeness but are not treated as taxable disposals.', 8.2, colors.muted);
+      if (ledgerDisplay.collapsedFeeCount > 0) {
+        drawParagraph(`Tiny fee withdrawals below CHF 1.00 are collapsed into summary rows for readability. ${ledgerDisplay.collapsedFeeCount} fee entries were condensed here; full detail remains available in the ledger CSV export.`, 8.1, colors.muted);
+      }
       const formatLedgerType = (type) => {
         if (type === 'deposit') return 'Transfer In';
         if (type === 'withdrawal') return 'Transfer Out';
+        if (type === 'fee_summary') return 'Fee Summary';
         if (!type) return '';
         return type.charAt(0).toUpperCase() + type.slice(1);
       };
@@ -8479,15 +8693,17 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         { key: 'price', label: 'Price CHF', width: 38, align: 'right' },
         { key: 'total', label: 'Total CHF', width: 44, align: 'right' }
       ], transactions.map(tx => {
-        const date = (tx.date || '').slice(0, 10).replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$3.$2.$1');
-        const nonTransfer = tx.type !== 'deposit' && tx.type !== 'withdrawal';
+        const date = tx._collapsedFeeSummary
+          ? 'Summary'
+          : (tx.date || '').slice(0, 10).replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$3.$2.$1');
+        const nonTransfer = tx.type !== 'deposit' && tx.type !== 'withdrawal' && tx.type !== 'fee_summary';
         return {
           date,
-          type: formatLedgerType(tx.type),
+          type: tx._collapsedFeeSummary ? `Fee Summary (${tx._collapsedFeeCount})` : formatLedgerType(tx.type),
           asset: getReportAssetDisplay(tx.asset, tx.asset).ledger || tx.asset || '',
           qty: pdfFormatQty(tx.qty, 8),
           price: nonTransfer && tx.priceCHF != null ? pdfFormatCHF(tx.priceCHF) : '—',
-          total: nonTransfer && tx.totalCHF != null ? pdfFormatCHF(tx.totalCHF) : '—'
+          total: (nonTransfer || tx.type === 'fee_summary') && tx.totalCHF != null ? pdfFormatCHF(tx.totalCHF) : '—'
         };
       }), { fontSize: 7.0, rowHeight: 6.1, headerHeight: 7.3 });
     }
@@ -8537,17 +8753,23 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     ];
     drawComplianceBox(legalBlocks);
 
-    const methodologyItems = [
-      closingNotes ? ['Notes', closingNotes] : null,
+    const methodologySummaryItems = [
       ['Cost basis method', 'FIFO (First In, First Out) — commonly used in Swiss crypto tax reporting workflows.'],
-      ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
       ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
-      ['Ticker normalisation', 'Exchange-specific tickers are normalised to standard asset symbols, for example Kraken XBT to BTC.'],
       ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
-      ['Data completeness', 'Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome.'],
-      hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null
+      ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
+      ['Data scope', 'Realised results and wealth values reflect uploaded sources only. Add any self-custody wallets, other exchanges, opening balances, or prior-period history before filing.']
+    ];
+    const limitationItems = [
+      closingNotes ? ['Source notes', closingNotes] : null,
+      hasUnmatched ? ['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.'] : null,
+      hasZeroStaking ? ['Staking detection', 'No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.'] : null,
+      stablecoinReviewAssets.length ? ['Stablecoin FX variance', `${stablecoinReviewAssets.map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} show matched gains or losses that may largely reflect CHF FX variance.`] : null
     ].filter(Boolean);
-    drawMethodologyBox(methodologyItems, 'Methodology');
+    drawMethodologyBox(methodologySummaryItems, 'Methodology Summary');
+    if (limitationItems.length) {
+      drawMethodologyBox(limitationItems, 'Limitations & Review Items');
+    }
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let page = 1; page <= totalPages; page++) {
@@ -8577,20 +8799,23 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
     // Build a clean printable HTML page styled as a Swiss official document
     const assets = data.assets || [];
-    const _hasUnmatched = assets.some(a=>a.missingCostBasis);
+    const _reviewState = getReportReviewState(data);
+    const _hasUnmatched = _reviewState.hasUnmatched;
     const _totalExcluded = assets.reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
     const _hasZeroHoldingBuys = assets.some(a =>
       (a.buyCount || 0) > 0 &&
       (a.sellCount || 0) === 0 &&
       Math.abs(Number(a.endHolding || 0)) < 0.000001
     );
+    const _stablecoinReviewSymbols = _reviewState.stablecoinReviewAssets
+      .map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol)
+      .join(', ');
     const assetRows = assets.map(a => {
       const displayAsset = getReportAssetDisplay(a.symbol, a.name);
-      const gl = Number(a.gainLossCHF);
-      const glStr = gl >= 0
-        ? `+CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`
-        : `−CHF ${Math.abs(gl).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-      const glColor = gl >= 0 ? '#2D7A56' : '#C0392B';
+      const gainParts = getAssetGainDisplayParts(a.gainLossCHF, Number(a.sellCount || 0) > 0, fmtCHF);
+      const glStr = gainParts.text;
+      const glColor = gainParts.tone === 'muted' ? '#8A909E' : gainParts.tone === 'positive' ? '#2D7A56' : '#C0392B';
+      const glWeight = gainParts.tone === 'muted' ? '400' : '700';
       const holdingStr = Number(a.endHolding||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:8});
       const valueStr = `CHF ${Number(a.endValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
       const unmatchedStr = a.missingCostBasis
@@ -8604,7 +8829,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         <td class="center mono" style="color:#5A6070;">${a.stakingCount||0}</td>
         <td class="right mono" style="font-weight:600;">${holdingStr}</td>
         <td class="right mono">${valueStr}</td>
-        <td class="right mono" style="font-weight:700;color:${glColor};">
+        <td class="right mono" style="font-weight:${glWeight};color:${glColor};">
           ${glStr}
         </td>
         ${_hasUnmatched ? `<td class="right mono" style="font-weight:600;color:#B8960C;padding-right:8px;font-size:7.8pt;">
@@ -8630,16 +8855,13 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     const _totalMatched = Math.abs(totalGain);
     const _coverage = _totalExcluded > 0
       ? Math.round(_totalMatched / (_totalMatched + _totalExcluded) * 100) : 100;
-    const statusColor = !_hasUnmatched ? '#2D7A56' : _coverage >= 80 ? '#B8960C' : '#C0392B';
-    const statusIcon  = !_hasUnmatched ? '✓' : _coverage >= 80 ? '⚠' : '🔴';
+    const statusColor = _reviewState.tone === 'ready' ? '#2D7A56' : _reviewState.tone === 'review' ? '#B8960C' : '#C0392B';
+    const statusFill = _reviewState.tone === 'ready' ? '#F6FAF7' : _reviewState.tone === 'review' ? '#FFFCF5' : '#FCF2F0';
     const buyCount = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
     const sellCount = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
     const unmatchedCount = (data.assets||[]).filter(a=>a.missingCostBasis).length;
-    const statusLabel = !_hasUnmatched
-      ? 'Complete — all positions matched'
-      : _coverage >= 80
-        ? 'Partial — minor gaps in acquisition history'
-        : 'Incomplete — additional data required for accurate tax reporting';
+    const statusLabel = _reviewState.title;
+    const statusBody = _reviewState.body;
 
     const _buyCount  = (data.assets||[]).reduce((s,a)=>s+(a.buyCount||0),0);
     const _sellCount = (data.assets||[]).reduce((s,a)=>s+(a.sellCount||0),0);
@@ -8919,25 +9141,10 @@ onmouseout="this.style.color='#8A909E'">
     const dateRange = data.dateRange || data.taxYear;
     const txCount = data.totalTransactions || 0;
     const hasUnmatched = (data.assets||[]).some(a=>a.missingCostBasis);
-    const hasTransferGaps = (data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0);
-    const totalExcluded = (data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0);
-    const totalMatched = Number(data.totalGainLossCHF||0);
-    const coverage = totalExcluded > 0
-      ? Math.round(Math.abs(totalMatched) / (Math.abs(totalMatched) + totalExcluded) * 100)
-      : 100;
-
-    // Report status
-    const statusColor = hasUnmatched ? (coverage >= 80 ? '#B8960C' : '#C0392B') : hasTransferGaps ? '#B8960C' : '#2D7A56';
-    const statusIcon  = hasUnmatched ? (coverage >= 80 ? '⚠' : '🔴') : hasTransferGaps ? '⚠' : '✓';
-    const statusLabel = hasUnmatched
-      ? (coverage >= 80
-        ? 'Partial — minor gaps in acquisition history'
-        : 'Incomplete — additional data required for accurate tax reporting')
-      : hasTransferGaps
-        ? 'Review — transfer-outs exceed imported acquisition lots'
-        : 'Complete — all positions matched';
-
-    return '<div style="margin-bottom:12px;font-family:\'DM Mono\',monospace;font-size:8pt;font-weight:700;color:'+statusColor+';">'+statusIcon+' '+statusLabel+'</div>';
+    return '<div style="margin-bottom:16px;border-left:4px solid '+statusColor+';background:'+statusFill+';padding:12px 14px 12px 11px;">'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:8pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:'+statusColor+';margin-bottom:5px;">'+statusLabel+'</div>'
+      + '<div style="font-size:8.7pt;color:#3D4451;line-height:1.65;">'+statusBody+'</div>'
+      + '</div>';
   })()}
 
   ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
@@ -8955,7 +9162,7 @@ onmouseout="this.style.color='#8A909E'">
     <thead>
       <tr>
         <th>Symbol</th><th>Asset</th>
-        <th class="center">Buys</th><th class="center">Sells</th><th class="center">Staking</th>
+        <th class="center">Buy txns</th><th class="center">Sell txns</th><th class="center">Reward txns</th>
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
         <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
@@ -9027,14 +9234,29 @@ onmouseout="this.style.color='#8A909E'">
     </div>
   </div>
 
+  <div class="incomplete-box" style="border-left:3px solid #2D2D2D;padding:10px 12px 10px 9px;margin-bottom:12px;background:#F7F4EE;">
+    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3D4451;margin-bottom:5px;">Wealth Scope</div>
+    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;">Wealth reflects uploaded sources only. Add any self-custody wallets or other exchanges held on 31.12 before submitting your tax return.</div>
+  </div>
+  ${Math.abs(Number(data.stakingIncomeCHF||0)) < 0.005 ? `
+  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:12px;background:#FFFCF5;">
+    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Review Staking Income</div>
+    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;">No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.</div>
+  </div>` : ''}
+  ${_stablecoinReviewSymbols ? `
+  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:12px;background:#FFFCF5;">
+    <div style="font-family:'DM Mono',monospace;font-size:7pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Stablecoin FX Variance Review</div>
+    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${_stablecoinReviewSymbols}</strong> show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain. Review separately if relevant.</div>
+  </div>` : ''}
+
 
 
 
   ${(function(){
     // ── TRANSACTION LEDGER ───────────────────────────────────────────────
-    const txs = data.transactions || [];
+    const ledgerDisplay = buildLedgerDisplayRows(data.transactions || []);
+    const txs = ledgerDisplay.rows;
     if (!txs.length) return '';
-    const sectionNum = (data.assets||[]).some(a=>a.missingCostBasis) ? '03' : '02';
     const fmtDate = d => d ? d.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3.$2.$1') : '—';
     const fmtQty  = n => Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:4,maximumFractionDigits:6});
     const fmtCHF  = n => 'CHF ' + Number(n||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -9043,22 +9265,25 @@ onmouseout="this.style.color='#8A909E'">
       : t === 'sell'
         ? '▼ Sell'
         : t === 'staking'
-          ? '★ Staking'
-          : t === 'deposit'
-            ? '⇢ Transfer In'
-            : t === 'withdrawal'
-              ? '⇠ Transfer Out'
+        ? '★ Staking'
+        : t === 'deposit'
+          ? '⇢ Transfer In'
+          : t === 'withdrawal'
+            ? '⇠ Transfer Out'
+            : t === 'fee_summary'
+              ? '• Fee Summary'
               : t || '—';
-    const typeColor = t => t === 'buy' ? '#2E7D32' : t === 'sell' ? '#C0392B' : t === 'staking' ? '#B8960C' : '#3D4451';
+    const typeColor = t => t === 'buy' ? '#2E7D32' : t === 'sell' ? '#C0392B' : t === 'staking' ? '#B8960C' : t === 'fee_summary' ? '#5A6070' : '#3D4451';
 
     const rows = txs.map(tx => {
       const displayAsset = getReportAssetDisplay(tx.asset, tx.asset);
       const isTransfer = tx.type === 'deposit' || tx.type === 'withdrawal';
-      const priceFmt = !isTransfer && tx.priceCHF ? fmtCHF(tx.priceCHF) : '—';
-      const totalFmt = !isTransfer && tx.totalCHF ? fmtCHF(tx.totalCHF) : '—';
+      const isSummary = tx.type === 'fee_summary';
+      const priceFmt = !isTransfer && !isSummary && tx.priceCHF != null ? fmtCHF(tx.priceCHF) : '—';
+      const totalFmt = (!isTransfer || isSummary) && tx.totalCHF != null ? fmtCHF(tx.totalCHF) : '—';
       return '<tr>'
-        + '<td class="mono" style="font-size:8pt;white-space:nowrap;">' + fmtDate(tx.date) + '</td>'
-        + '<td style="font-weight:600;font-size:8.5pt;color:' + typeColor(tx.type) + ';">' + typeLabel(tx.type) + '</td>'
+        + '<td class="mono" style="font-size:8pt;white-space:nowrap;">' + (isSummary ? 'Summary' : fmtDate(tx.date)) + '</td>'
+        + '<td style="font-weight:600;font-size:8.5pt;color:' + typeColor(tx.type) + ';">' + (isSummary ? typeLabel(tx.type) + ' (' + Number(tx._collapsedFeeCount || 0) + ')' : typeLabel(tx.type)) + '</td>'
         + '<td style="font-weight:700;">' + escHtml(displayAsset.ledger||'—') + '</td>'
         + '<td class="right mono" style="font-size:8pt;">' + fmtQty(tx.qty) + '</td>'
         + '<td class="right mono" style="font-size:8pt;">' + priceFmt + '</td>'
@@ -9070,7 +9295,11 @@ onmouseout="this.style.color='#8A909E'">
     const hasMissingBasis = (data.assets||[]).some(a=>a.missingCostBasis);
     const secNum = hasMissingBasis ? '04' : '03';
     return '<div class="sec-title" style="margin-top:32px;page-break-before:auto;">' + secNum + ' — Transaction Ledger</div>'
-      + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.</p>'
+      + '<p style="font-size:8.5pt;color:#3D4451;line-height:1.6;margin-bottom:12px;">Complete record of all imported transactions. Attach as supporting documentation to your cantonal tax declaration.'
+      + (ledgerDisplay.collapsedFeeCount > 0
+        ? ' Tiny fee-only transfers under CHF 1 have been collapsed into summary rows for readability (' + Number(ledgerDisplay.collapsedFeeCount || 0) + ' entries across ' + Number(ledgerDisplay.collapsedFeeAssetCount || 0) + ' asset' + (Number(ledgerDisplay.collapsedFeeAssetCount || 0) === 1 ? '' : 's') + ', CHF ' + Number(ledgerDisplay.collapsedFeeTotalCHF || 0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' total).'
+        : '')
+      + '</p>'
       + '<table style="font-size:8pt;"><thead><tr>'
       + '<th style="text-align:left;white-space:nowrap;">Date</th>'
       + '<th style="text-align:left;">Type</th>'
@@ -9099,23 +9328,39 @@ onmouseout="this.style.color='#8A909E'">
     <span style="color:#2D7A56;font-weight:600;">✔ Particuliers suisses</span> — Gains en capital exonérés; avoirs à déclarer comme fortune. Revenus de staking imposables.<br/>
     <span style="color:#B8960C;font-weight:600;">⚠ Traders professionnels &amp; personnes morales</span> — Gains en capital imposables. Ce document est une annexe et non une déclaration fiscale officielle.
   </div>
+  ${(function(){
+    const methodologyItems = [
+      ['Cost basis method', 'FIFO (First In, First Out) — commonly used in Swiss crypto tax reporting workflows.'],
+      ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
+      ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
+      ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
+      ['Data scope', 'Realised results and wealth values reflect uploaded sources only. Add any self-custody wallets, other exchanges, opening balances, or prior-period history before filing.']
+    ];
+    const itemsHtml = methodologyItems.map(([label, text]) =>
+      `<li style="margin:0 0 8px 18px;padding-left:2px;"><strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.4pt;">${label}:</strong> ${text}</li>`
+    ).join('');
+    return `<div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8.4pt;color:#3D4451;line-height:1.72;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
+      <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:10px;">Methodology Summary</strong>
+      <ul style="margin:0;padding:0;list-style:disc;">${itemsHtml}</ul>
+    </div>`;
+  })()}
 
-
-
-
-  ${(data.notes || _hasZeroHoldingBuys) ? `<div class="notes-box"><strong>Notes:</strong> ${data.notes ? escHtml(data.notes) : ''}${_hasZeroHoldingBuys ? `${data.notes ? ' ' : ''}Assets can show buys but no year-end holding when they were later transferred out or consumed as fees. Transfers reduce holdings but are not taxable sells; include the receiving wallet or exchange if those assets were still owned at year-end.` : ''}</div>` : ''}
-
-  <div style="margin-top:24px;padding:14px 12px;background:#F7F4EE;border-radius:0;font-size:8pt;color:#3D4451;line-height:1.75;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
-    <strong style="display:block;color:#3D4451;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:8px;">Methodology</strong>
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Cost basis method:</strong> FIFO (First In, First Out) — commonly used in Swiss crypto tax reporting workflows. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transaction fees:</strong> Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Exchange rates:</strong> CHF values used directly where the exchange exports them (SwissBorg, Bitcoin Suisse, Swissquote, Kraken CHF pairs). USD-denominated values use the ESTV annual reference rate of ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}. Non-CHF fiat countervalues such as EUR and GBP are converted using historical FX references where available; otherwise annual reference rates are applied. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Ticker normalisation:</strong> Exchange-specific tickers are normalised to standard asset symbols (for example Kraken XBT to BTC). All assets identified by base currency. ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Year-end valuation:</strong> Dec 31 ${data.taxYear} closing prices (market reference rates). ·
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Data completeness:</strong> Results reflect imported files only. Missing exchanges, wallets, opening balances, or prior-period history can materially change the outcome. ·
-    ${_hasZeroHoldingBuys ? `<strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Transfers and fees:</strong> Assets can show buys but no year-end holding where later transfers out or fees reduced the balance. Transfers reduce holdings but are not treated as taxable disposals; include the receiving wallet or exchange if the assets were still owned at year-end. ·` : ''}
-    <strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.5pt;">Unmatched disposals:</strong> Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These represent assets likely acquired on other exchanges or in prior periods not included in this import.
-  </div>
+  ${(function(){
+    const limitationItems = [];
+    if (data.notes) limitationItems.push(['Source notes', escHtml(data.notes)]);
+    if (_hasZeroHoldingBuys) limitationItems.push(['Transfers and fees', 'Assets can show buys but no year-end holding when they were later transferred out or consumed as fees. Transfers reduce holdings but are not taxable sells; include the receiving wallet or exchange if those assets were still owned at year-end.']);
+    if (_hasUnmatched) limitationItems.push(['Unmatched disposals', 'Sales exceeding imported acquisition history are identified by FIFO lot exhaustion and excluded from realised gain. These assets were likely acquired on other exchanges or in prior periods not included in this import.']);
+    if (Math.abs(Number(data.stakingIncomeCHF||0)) < 0.005) limitationItems.push(['Staking detection', 'No staking, lending, or reward income was detected in the uploaded files. Confirm this is correct or add missing income manually before filing.']);
+    if (_stablecoinReviewSymbols) limitationItems.push(['Stablecoin FX variance', _stablecoinReviewSymbols + ' show matched gains or losses that may largely reflect CHF FX variance rather than an economically meaningful crypto gain.']);
+    if (!limitationItems.length) return '';
+    const itemsHtml = limitationItems.map(([label, text]) =>
+      `<li style="margin:0 0 8px 18px;padding-left:2px;"><strong style="font-family:'DM Mono','Courier New',monospace;font-size:7.4pt;">${label}:</strong> ${text}</li>`
+    ).join('');
+    return `<div style="margin-top:14px;padding:14px 12px;background:#FCF9F2;border-radius:0;font-size:8.4pt;color:#3D4451;line-height:1.72;font-family:'Instrument Sans',Arial,sans-serif;border-top:1px solid #E8E4DC;border-bottom:1px solid #E8E4DC;">
+      <strong style="display:block;color:#8A6B00;letter-spacing:0.08em;text-transform:uppercase;font-size:6.5pt;font-family:'DM Mono','Courier New',monospace;margin-bottom:10px;">Limitations &amp; Review Items</strong>
+      <ul style="margin:0;padding:0;list-style:disc;">${itemsHtml}</ul>
+    </div>`;
+  })()}
   <div class="doc-footer">
     <span>CryptoDeclare v${data.reportVersion||'2.1'} · cryptodeclare.ch · Switzerland / Schweiz / Suisse</span>
     <span>ID: ${data.reportId||'—'} · Generated: ${new Date().toLocaleDateString('de-CH')} · Supporting annex — not an official tax filing</span>
