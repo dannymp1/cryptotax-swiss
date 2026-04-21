@@ -8228,9 +8228,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       const segments = [];
       items.forEach(([label, body], index) => {
         if (index > 0) {
-          segments.push({ text: ' · ', font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
+          segments.push({ text: ' | ', font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
         }
-        segments.push({ text: `${pdfSafeText(label)}: `, font: 'courier', style: 'bold', size: 7.1, color: colors.ink });
+        segments.push({ text: `${pdfSafeText(label)}: `, font: 'helvetica', style: 'bold', size: 7.9, color: colors.ink });
         segments.push({ text: pdfSafeText(body), font: 'helvetica', style: 'normal', size: 7.9, color: colors.muted });
       });
 
@@ -8426,7 +8426,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         gainColor: Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red,
         unmatched: hasUnmatched ? pdfFormatCHF(assets.reduce((sum, asset) => sum + Number(asset.unresolvedProceeds || 0), 0)) : ''
       }]),
-      { fontSize: hasUnmatched ? 6.4 : 7.0, rowHeight: 6.35, headerHeight: 7.25 }
+      { fontSize: 7.2, rowHeight: 6.6, headerHeight: 7.4 }
     );
 
     if (hasUnmatched) {
