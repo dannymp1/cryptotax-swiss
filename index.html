@@ -7672,7 +7672,7 @@
       return { text: '—', tone: 'muted', amount };
     }
     return {
-      text: amount >= 0 ? '+' + formatter(amount) : '−' + formatter(Math.abs(amount)),
+      text: amount >= 0 ? '+' + formatter(amount) : '-' + formatter(Math.abs(amount)),
       tone: amount >= 0 ? 'positive' : 'negative',
       amount
     };
@@ -7804,7 +7804,7 @@
     const reviewState = getReportReviewState(data);
     const gain = data.totalGainLossCHF;
     const gainStr = gain !== null && gain !== undefined
-      ? (gain >= 0 ? '+' + fmtCHF(gain) : '−' + fmtCHF(Math.abs(gain)))
+      ? (gain >= 0 ? '+' + fmtCHF(gain) : '-' + fmtCHF(Math.abs(gain)))
       : '—';
     const gainClass = gain > 0 ? 'positive' : gain < 0 ? 'negative' : '';
     const gainLabel = reviewState.hasUnmatched ? 'Matched Gain / Loss' : 'Net Gain / Loss';
