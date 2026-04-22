@@ -2810,7 +2810,7 @@
     <div class="feature">
       <div class="feature-label">Compliance</div>
       <div class="feature-title">ESTV reference rates</div>
-      <div class="feature-body">CHF conversions use official ESTV annual reference rates together with transaction-date market and FX references where available.</div>
+      <div class="feature-body">CHF conversions use transaction-date market and FX references where available, with official ESTV annual reference rates as fallback.</div>
     </div>
     <div class="feature">
       <div class="feature-label">Accounting</div>
@@ -3238,7 +3238,7 @@
         <span class="faq-q-icon">+</span>
       </button>
       <div class="faq-a">
-        We use official ESTV annual reference rates together with transaction-date market prices and FX references where available, depending on the source data in your CSV export.
+        We use transaction-date market prices and FX references where available, with official ESTV annual reference rates as fallback depending on the source data in your CSV export.
       </div>
     </div>
 
@@ -3470,7 +3470,7 @@
       faq_label: '06 — FAQ', faq_title: 'Common<br><em>questions</em>',
       faq_q1: 'Is crypto taxable in Switzerland?', faq_a1: 'Yes. Capital gains on crypto are generally tax-free for private individuals in Switzerland — but the holdings must be declared as assets, and income from staking, mining, or professional trading is taxable. We calculate all of this for you.',
       faq_q2: 'Which cantons does the report work for?', faq_a2: 'Our report is designed around federal ESTV guidance, which is commonly used across Swiss cantons. We include guidance notes for Zurich, Geneva, Zug, Vaud, and Bern where local variations are commonly raised.',
-      faq_q3: 'What exchange rate do you use?', faq_a3: 'We use official ESTV annual reference rates together with transaction-date market prices and FX references where available, depending on the source data in your CSV export.',
+      faq_q3: 'What exchange rate do you use?', faq_a3: 'We use transaction-date market prices and FX references where available, with official ESTV annual reference rates as fallback depending on the source data in your CSV export.',
 
       faq_q5: 'Is my data secure?', faq_a5: 'We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).',
       faq_q6: 'Can I declare multiple tax years at once?', faq_a6: 'You can upload full transaction history from prior years, choose the tax year to report, and generate one annex per year. Earlier transactions are still used for FIFO cost basis.',
@@ -3478,7 +3478,7 @@
       faq_q8: 'What if my exchange is not listed?', faq_a8: 'Use our generic CSV format — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.',
       feat1_label: 'Compliance',
       feat1_title: 'ESTV reference rates',
-      feat1_body: 'CHF conversions use official ESTV annual reference rates together with transaction-date market and FX references where available.',
+      feat1_body: 'CHF conversions use transaction-date market and FX references where available, with official ESTV annual reference rates as fallback.',
       feat2_label: 'Accounting',
       feat2_title: 'FIFO reporting method',
       feat2_body: 'We apply FIFO — the method commonly used by Swiss fiduciaires in crypto tax reporting workflows.',
@@ -3650,7 +3650,7 @@
       faq_label: '06 — FAQ', faq_title: 'Questions<br><em>fréquentes</em>',
       faq_q1: 'Les cryptos sont-elles imposables en Suisse ?', faq_a1: "Oui. Les gains en capital sont généralement exonérés pour les particuliers — mais les avoirs doivent être déclarés comme fortune, et les revenus du staking, minage ou trading professionnel sont imposables.",
       faq_q2: 'Pour quels cantons le rapport est-il valable ?', faq_a2: 'Notre rapport est conçu autour des directives fédérales ESTV, couramment utilisées dans les cantons suisses. Nous incluons des notes pour Zurich, Genève, Zoug, Vaud et Berne lorsque des variations locales sont fréquemment soulevées.',
-      faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons les taux de référence annuels de l'AFC/ESTV ainsi que des références de prix de marché et de change à la date des transactions lorsque disponibles, selon les données fournies par votre export CSV.",
+      faq_q3: 'Quel taux de change utilisez-vous ?', faq_a3: "Nous utilisons des références de prix de marché et de change à la date des transactions lorsque disponibles, avec les taux de référence annuels de l'AFC/ESTV comme solution de secours selon les données fournies par votre export CSV.",
 
       faq_q5: 'Mes données sont-elles sécurisées ?', faq_a5: 'Nous traitons les transactions en session et ne conservons pas vos données après génération du rapport. Nous sommes établis en Suisse et soumis à la nLPD.',
       faq_q6: 'Puis-je déclarer plusieurs années fiscales ?', faq_a6: 'Vous pouvez importer un historique couvrant plusieurs années, choisir l’année fiscale du rapport et générer une annexe par année. Les transactions antérieures restent utilisées pour le coût FIFO.',
@@ -3658,7 +3658,7 @@
       faq_q8: 'Ma bourse n\'est pas listée — que faire ?', faq_a8: 'Utilisez notre format CSV générique — les fichiers avec date, actif, quantité, type et prix sont analysés automatiquement. Si votre export est inhabituel, contactez-nous et nous pourrons vous aider à le mapper.',
       feat1_label: 'Conformité',
       feat1_title: 'Taux de référence ESTV',
-      feat1_body: "Les conversions en CHF utilisent les taux de référence annuels ESTV ainsi que des références de marché et de change à la date des transactions lorsque disponibles.",
+      feat1_body: "Les conversions en CHF utilisent des références de marché et de change à la date des transactions lorsque disponibles, avec les taux de référence annuels ESTV comme solution de secours.",
       feat2_label: 'Comptabilité',
       feat2_title: 'Méthode de reporting FIFO',
       feat2_body: 'Nous appliquons la méthode FIFO — couramment utilisée par les fiduciaires suisses dans les workflows de fiscalité crypto.',
@@ -3830,7 +3830,7 @@
       faq_label: '06 — FAQ', faq_title: 'Häufige<br><em>Fragen</em>',
       faq_q1: 'Sind Kryptowährungen in der Schweiz steuerpflichtig?', faq_a1: 'Ja. Kursgewinne sind für Privatpersonen grundsätzlich steuerfrei — aber die Bestände müssen als Vermögen deklariert werden, und Erträge aus Staking, Mining oder professionellem Handel sind steuerpflichtig.',
       faq_q2: 'Für welche Kantone gilt der Bericht?', faq_a2: 'Unser Bericht orientiert sich an den bundesweiten ESTV-Leitlinien, die in den Schweizer Kantonen häufig verwendet werden. Wir fügen Hinweise für Zürich, Genf, Zug, Waadt und Bern hinzu, wo lokale Besonderheiten häufig auftreten.',
-      faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden offizielle ESTV-Jahresreferenzkurse sowie transaktionsdatumsbezogene Markt- und FX-Referenzen, sofern verfügbar, abhängig von den Daten in Ihrem CSV-Export.',
+      faq_q3: 'Welchen Wechselkurs verwenden Sie?', faq_a3: 'Wir verwenden transaktionsdatumsbezogene Markt- und FX-Referenzen, sofern verfügbar, und offizielle ESTV-Jahresreferenzkurse als Fallback – abhängig von den Daten in Ihrem CSV-Export.',
 
       faq_q5: 'Sind meine Daten sicher?', faq_a5: 'Wir verarbeiten Transaktionen sitzungsbasiert und speichern keine Portfoliodaten nach der Berichtserstellung. Wir unterliegen dem Schweizer Datenschutzgesetz (revDSG).',
       faq_q6: 'Kann ich mehrere Steuerjahre gleichzeitig deklarieren?', faq_a6: 'Sie können eine vollständige Historie aus Vorjahren hochladen, das Steuerjahr für den Bericht wählen und eine Beilage pro Jahr erstellen. Frühere Transaktionen bleiben für die FIFO-Kostenbasis berücksichtigt.',
@@ -3838,7 +3838,7 @@
       faq_q8: 'Was wenn meine Börse nicht aufgelistet ist?', faq_a8: 'Verwenden Sie unser generisches CSV-Format — Dateien mit Datum, Asset, Menge, Typ und Preis werden automatisch verarbeitet. Wenn Ihr Export ungewöhnlich ist, kontaktieren Sie uns und wir helfen beim Mapping.',
       feat1_label: 'Konformität',
       feat1_title: 'ESTV-Referenzkurse',
-      feat1_body: 'CHF-Umrechnungen verwenden offizielle ESTV-Jahresreferenzkurse zusammen mit transaktionsdatumsbezogenen Markt- und FX-Referenzen, sofern verfügbar.',
+      feat1_body: 'CHF-Umrechnungen verwenden transaktionsdatumsbezogene Markt- und FX-Referenzen, sofern verfügbar, und offizielle ESTV-Jahresreferenzkurse als Fallback.',
       feat2_label: 'Buchführung',
       feat2_title: 'FIFO-Methode',
       feat2_body: 'Wir wenden FIFO an — die Methode, die in Schweizer Krypto-Steuer-Workflows von Treuhändern häufig verwendet wird.',
@@ -5364,8 +5364,11 @@
     2026: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
   };
   const USD_LINKED_FIAT = ['USD','USDT','USDC','BUSD','DAI','FDUSD'];
+  const HISTORICAL_FIAT_CURRENCIES = ['USD','EUR','GBP'];
   const _fiatFxCache = {};
   const _fiatFxPromises = {};
+  const _fiatFxSeriesCache = {};
+  const _fiatFxSeriesPromises = {};
 
   // ── CSV PARSER ───────────────────────────────────────────────────────────
   function normalizeImportedNumericCell(value) {
@@ -5610,30 +5613,97 @@
   }
 
   function getReferenceFiatToChfRate(currency, dateStr) {
-    const cur = String(currency || '').toUpperCase().trim();
+    const rawCur = String(currency || '').toUpperCase().trim();
+    const cur = USD_LINKED_FIAT.includes(rawCur) ? 'USD' : rawCur;
     if (!cur || cur === 'CHF') return 1;
     const year = parseInt(String(dateStr || '').slice(0,4), 10);
     const yearlyRates = FIAT_REFERENCE_CHF[year] || FIAT_REFERENCE_CHF[2024];
-    if (USD_LINKED_FIAT.includes(cur)) return yearlyRates.USD;
     return yearlyRates[cur] || yearlyRates.USD;
   }
 
-  async function getFiatToChfRate(currency, dateStr) {
+  function getHistoricalFiatBaseCurrency(currency) {
     const cur = String(currency || '').toUpperCase().trim();
+    if (!cur || cur === 'CHF') return 'CHF';
+    if (USD_LINKED_FIAT.includes(cur)) return 'USD';
+    return cur;
+  }
+
+  function getSeriesRateOnOrBefore(series, dateStr, maxLookbackDays = 7) {
+    if (!series || !dateStr) return null;
+    if (series[dateStr]) return Number(series[dateStr]) || null;
+
+    const probe = new Date(`${String(dateStr).slice(0,10)}T00:00:00Z`);
+    if (Number.isNaN(probe.getTime())) return null;
+
+    for (let i = 1; i <= maxLookbackDays; i++) {
+      probe.setUTCDate(probe.getUTCDate() - 1);
+      const key = probe.toISOString().slice(0,10);
+      if (series[key]) return Number(series[key]) || null;
+    }
+    return null;
+  }
+
+  async function getHistoricalFiatToChfSeries(currency, year) {
+    const cur = getHistoricalFiatBaseCurrency(currency);
+    if (!cur || cur === 'CHF') return null;
+    if (!HISTORICAL_FIAT_CURRENCIES.includes(cur)) return null;
+
+    const yearNum = Number(year || 0);
+    if (!yearNum) return null;
+    const key = `${cur}_${yearNum}`;
+    if (_fiatFxSeriesCache[key] !== undefined) return _fiatFxSeriesCache[key];
+    if (_fiatFxSeriesPromises[key]) return _fiatFxSeriesPromises[key];
+
+    _fiatFxSeriesPromises[key] = (async () => {
+      try {
+        const start = `${yearNum}-01-01`;
+        const end = `${yearNum}-12-31`;
+        const url = `https://api.frankfurter.app/${start}..${end}?from=${cur}&to=CHF`;
+        const data = await fetchJsonWithTimeout(url, 12000);
+        const rates = data?.rates || {};
+        const series = {};
+        Object.entries(rates).forEach(([dateKey, dayRates]) => {
+          const rate = Number(dayRates?.CHF || 0);
+          if (rate) series[dateKey] = rate;
+        });
+        if (!Object.keys(series).length) throw new Error('fx_series_missing_rate');
+        _fiatFxSeriesCache[key] = series;
+        return series;
+      } catch (e) {
+        _fiatFxSeriesCache[key] = null;
+        return null;
+      } finally {
+        delete _fiatFxSeriesPromises[key];
+      }
+    })();
+
+    return _fiatFxSeriesPromises[key];
+  }
+
+  async function getFiatToChfRate(currency, dateStr) {
+    const cur = getHistoricalFiatBaseCurrency(currency);
     if (!cur || cur === 'CHF') return 1;
-    if (USD_LINKED_FIAT.includes(cur) || !['EUR','GBP'].includes(cur)) {
-      return getReferenceFiatToChfRate(cur, dateStr);
+    const safeDate = /^\d{4}-\d{2}-\d{2}$/.test(String(dateStr || '').slice(0,10))
+      ? String(dateStr).slice(0,10)
+      : '2024-12-31';
+
+    if (!HISTORICAL_FIAT_CURRENCIES.includes(cur)) {
+      return getReferenceFiatToChfRate(cur, safeDate);
     }
 
-    const key = cur + '_' + String(dateStr || '').slice(0,10);
+    const key = `${cur}_${safeDate}`;
     if (_fiatFxCache[key] !== undefined) return _fiatFxCache[key];
     if (_fiatFxPromises[key]) return _fiatFxPromises[key];
 
     _fiatFxPromises[key] = (async () => {
       try {
-        const safeDate = /^\d{4}-\d{2}-\d{2}$/.test(String(dateStr || '').slice(0,10))
-          ? String(dateStr).slice(0,10)
-          : '2024-12-31';
+        const year = Number(safeDate.slice(0,4));
+        const yearlySeries = await getHistoricalFiatToChfSeries(cur, year);
+        const seriesRate = getSeriesRateOnOrBefore(yearlySeries, safeDate);
+        if (seriesRate) {
+          _fiatFxCache[key] = seriesRate;
+          return seriesRate;
+        }
         const url = `https://api.frankfurter.app/${safeDate}?from=${cur}&to=CHF`;
         const data = await fetchJsonWithTimeout(url, 8000);
         const rate = Number(data?.rates?.CHF || 0);
@@ -5669,7 +5739,8 @@
         const data = await fetchJsonWithTimeout(url, 10000);
         const usdPrice = Number(data?.data?.amount || 0);
         if (!usdPrice) throw new Error('coinbase_hist_missing_price');
-        const chfPrice = usdPrice * getReferenceFiatToChfRate('USD', safeDate);
+        const usdChfRate = await getFiatToChfRate('USD', safeDate);
+        const chfPrice = usdPrice * usdChfRate;
         _coinbaseHistPriceCache[key] = chfPrice;
         return chfPrice;
       } catch (e) {
@@ -5696,13 +5767,15 @@
         const to = Math.floor(Date.UTC(year, 11, 31, 23, 59, 59) / 1000);
         const url = `https://api.coingecko.com/api/v3/coins/${cgId}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
         const data = await fetchJsonWithTimeout(url, 15000);
+        const usdFxSeries = await getHistoricalFiatToChfSeries('USD', year);
         const daily = {};
         for (const point of (data?.prices || [])) {
           const ts = Array.isArray(point) ? point[0] : null;
           const usdPrice = Array.isArray(point) ? Number(point[1] || 0) : 0;
           if (!ts || !usdPrice) continue;
           const dateKey = new Date(ts).toISOString().slice(0,10);
-          daily[dateKey] = usdPrice * getReferenceFiatToChfRate('USD', dateKey);
+          const usdChfRate = getSeriesRateOnOrBefore(usdFxSeries, dateKey) || getReferenceFiatToChfRate('USD', dateKey);
+          daily[dateKey] = usdPrice * usdChfRate;
         }
         _krakenRangeCache[seriesKey] = daily;
         return daily;
@@ -5824,7 +5897,8 @@
       const data = await fetchJsonWithTimeout(url, 10000);
       const usdPrice = data?.market_data?.current_price?.usd || 0;
       if (!usdPrice) throw new Error('cg_hist_missing_price');
-      const chfPrice = usdPrice * getReferenceFiatToChfRate('USD', dateStr);
+      const usdChfRate = await getFiatToChfRate('USD', dateStr);
+      const chfPrice = usdPrice * usdChfRate;
       _krakenPriceCache[key] = chfPrice;
       return chfPrice;
       } catch (e) {
@@ -7486,46 +7560,48 @@
 
   function getReportNotesMap(taxYear) {
     const usdRef = getUsdReferenceRateText(taxYear);
+    const usdFxMethod = `USD and USD-linked amounts converted to CHF using transaction-date FX references where available; ESTV annual fallback ${usdRef} CHF/USD.`;
+    const fiatFxMethod = 'Fiat quote currencies converted to CHF using transaction-date FX references where available; ESTV annual reference rates retained as fallback.';
     return {
-      kraken: `Exchange format detected: Kraken (ledger). Trade values derived from paired ledger entries; reward income valued using Coinbase and CoinGecko historical market references where available. USD-denominated trades converted at ${usdRef} CHF/USD. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kraken: `Exchange format detected: Kraken (ledger). Trade values derived from paired ledger entries; reward income valued using Coinbase and CoinGecko historical market references where available. ${usdFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       kraken_trades: `Exchange format detected: Kraken (trades). Quote-currency values converted to CHF using exchange quote currency and historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       swissborg: `Exchange format detected: SwissBorg. CHF values used directly where exported; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      binance: `Exchange format detected: Binance. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      binance_ledger: `Exchange format detected: Binance. Trade values derived from matched account-history debit/credit entries, including Buy/Sell/Fee rows paired by timestamp and Binance Convert debit/credit rows paired where possible. Airdrops are classified under reward income for review. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat and crypto countervalues converted using historical market and FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitstamp: `Exchange format detected: Bitstamp. Fiat quote currencies converted to CHF using historical FX references where available; inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitstamp_trades: `Exchange format detected: Bitstamp trades. Fiat quote currencies converted to CHF using historical FX references where available; crypto-to-crypto pairs are recorded as both disposal and acquisition legs. This trade export does not include deposits, withdrawals, staking, or separate fee rows, so combine it with the full Bitstamp transaction export where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bybit: `Exchange format detected: Bybit. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      coinbase: `Exchange format detected: Coinbase. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      okx: `Exchange format detected: OKX. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
-      hyperliquid: `Exchange format detected: Hyperliquid derivatives. Gains and losses derived from closed P&L net of exported fees. USDC-denominated values converted using the USD/CHF reference rate of ${usdRef}. Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
-      crypto_com: `Exchange format detected: Crypto.com. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      nexo: `Exchange format detected: Nexo. USD equivalent values converted to CHF at ${usdRef} (ESTV reference rate, 31.12.${taxYear}); inbound deposits preserved as transfer-ins with unresolved basis. Interest and dividend income treated as taxable staking income.`,
+      binance: `Exchange format detected: Binance. ${usdFxMethod} Non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      binance_ledger: `Exchange format detected: Binance. Trade values derived from matched account-history debit/credit entries, including Buy/Sell/Fee rows paired by timestamp and Binance Convert debit/credit rows paired where possible. Airdrops are classified under reward income for review. ${usdFxMethod} Non-CHF fiat and crypto countervalues converted using historical market and FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitstamp: `Exchange format detected: Bitstamp. ${fiatFxMethod} Inbound deposits preserved as transfer-ins with unresolved basis. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitstamp_trades: `Exchange format detected: Bitstamp trades. ${fiatFxMethod} Crypto-to-crypto pairs are recorded as both disposal and acquisition legs. This trade export does not include deposits, withdrawals, staking, or separate fee rows, so combine it with the full Bitstamp transaction export where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bybit: `Exchange format detected: Bybit. ${usdFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      coinbase: `Exchange format detected: Coinbase. ${usdFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx: `Exchange format detected: OKX. ${usdFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      okx_derivatives: `Exchange format detected: OKX Derivatives (perpetual swaps & futures). Gains and losses derived from Realized P&L per closed position. Funding fees received treated as income. ${usdFxMethod} Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
+      hyperliquid: `Exchange format detected: Hyperliquid derivatives. Gains and losses derived from closed P&L net of exported fees. ${usdFxMethod} Note: derivative positions do not represent direct crypto ownership — consult a tax advisor on wealth declaration treatment.`,
+      crypto_com: `Exchange format detected: Crypto.com. ${usdFxMethod} Native USD amounts converted to CHF. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      crypto_com_ex: `Exchange format detected: Crypto.com Exchange. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      nexo: `Exchange format detected: Nexo. ${usdFxMethod} Inbound deposits preserved as transfer-ins with unresolved basis. Interest and dividend income treated as taxable staking income.`,
       nexo_pro: `Exchange format detected: Nexo Pro. Spot trades parsed from pair, side, executed price and filled amount. Fiat and stablecoin quote currencies converted to CHF using historical FX/reference rates where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      revolut: `Exchange format detected: Revolut. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as transfer-ins with unresolved basis; outgoing transactions without countervalue treated as withdrawals. Non-CHF countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      kucoin: `Exchange format detected: KuCoin. USD/CHF rate: ${usdRef} (ESTV reference rate, 31.12.${taxYear}); non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      gemini: `Exchange format detected: Gemini. USD amounts converted to CHF at ${usdRef} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitfinex: `Exchange format detected: Bitfinex. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      gate: `Exchange format detected: Gate.io. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      mexc: `Exchange format detected: MEXC. Fiat quote currencies converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      swissquote: `Exchange format detected: Swissquote. CHF values used directly where exported; non-CHF countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      revolut: `Exchange format detected: Revolut. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      ledger: `Exchange format detected: Ledger Live. Incoming transactions treated as transfer-ins with unresolved basis; outgoing transactions without countervalue treated as withdrawals. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      kucoin: `Exchange format detected: KuCoin. ${usdFxMethod} Non-CHF fiat quote currencies converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gemini: `Exchange format detected: Gemini. ${usdFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitfinex: `Exchange format detected: Bitfinex. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      gate: `Exchange format detected: Gate.io. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      mexc: `Exchange format detected: MEXC. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      swissquote: `Exchange format detected: Swissquote. CHF values used directly where exported; ${fiatFxMethod.toLowerCase()} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
-      bitpanda: `Exchange format detected: Bitpanda. Non-CHF fiat amounts converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
+      bitpanda: `Exchange format detected: Bitpanda. ${fiatFxMethod} Portfolio valued at Dec 31, ${taxYear} closing prices.`,
       manual: `Exchange format detected: Manual entries. Values entered by the user are treated as source data and included in FIFO, staking income, and year-end wealth calculations. Portfolio valued at Dec 31, ${taxYear} closing prices.`,
     };
   }
 
   function buildExchangeNotes(format, taxYear, lowParseWarning='') {
     const notesMap = getReportNotesMap(taxYear);
-    const base = notesMap[format] || `Exchange format: ${format}. USD/CHF rate: ${getUsdReferenceRateText(taxYear)} (ESTV reference rate, 31.12.${taxYear}). Portfolio valued at Dec 31, ${taxYear} closing prices.`;
+    const base = notesMap[format] || `Exchange format: ${format}. USD and USD-linked amounts converted to CHF using transaction-date FX references where available; ESTV annual fallback ${getUsdReferenceRateText(taxYear)} CHF/USD. Portfolio valued at Dec 31, ${taxYear} closing prices.`;
     if (format === 'manual') return base + lowParseWarning;
     return base + ` Transaction fees included where explicitly exported by the source file.` + lowParseWarning;
   }
 
   function buildMultiExchangeNotes(format, taxYear) {
-    return `Multiple exchanges: ${formatExchangeList(format)}. USD/CHF rate: ${getUsdReferenceRateText(taxYear)} (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices. Transaction fees included where explicitly exported by the source files.`;
+    return `Multiple exchanges: ${formatExchangeList(format)}. USD and USD-linked amounts converted to CHF using transaction-date FX references where available; ESTV annual fallback ${getUsdReferenceRateText(taxYear)} CHF/USD. Non-CHF fiat countervalues converted to CHF using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices. Transaction fees included where explicitly exported by the source files.`;
   }
 
   function buildFinalReport(meta, transactions, computed, assetNames, notes) {
@@ -7543,7 +7619,7 @@
   }
 
   async function enrichAssetNamesAndNotes(format, taxYear, computed, assetNames, notes) {
-    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD/CHF rate: ${getUsdReferenceRateText(taxYear)} (ESTV reference rate, 31.12.${taxYear}). Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices. Transaction fees included where explicitly exported by the source file."}`;
+    const enrichPrompt = `Return ONLY this JSON (no prose): {"assetNames":{"BTC":"Bitcoin","ETH":"Ethereum","SOL":"Solana","BNB":"BNB Chain","ADA":"Cardano","XRP":"Ripple","DOT":"Polkadot","AVAX":"Avalanche","MATIC":"Polygon","USDC":"USD Coin","LINK":"Chainlink","UNI":"Uniswap","ATOM":"Cosmos","LTC":"Litecoin","BCH":"Bitcoin Cash"}, "notes":"Exchange format detected: ${format}. All values in CHF. USD and USD-linked amounts converted using transaction-date FX references where available; ESTV annual fallback ${getUsdReferenceRateText(taxYear)} CHF/USD. Non-CHF fiat countervalues converted using historical FX references where available. Portfolio valued at Dec 31, ${taxYear} closing prices. Transaction fees included where explicitly exported by the source file."}`;
 
     try {
       const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:enrichPrompt}]}),signal:AbortSignal.timeout(8000)});
@@ -8751,7 +8827,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
     const methodologySummaryItems = [
       ['Cost basis method', 'FIFO (First In, First Out) — commonly used in Swiss crypto tax reporting workflows.'],
-      ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
+      ['Exchange rates', `CHF values use imported CHF values where exported, transaction-date FX references for USD, EUR, GBP, and USD-linked amounts where available, and ESTV annual reference rates as fallback. Year-end USD reference for 31.12.${data.taxYear}: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD.`],
       ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
       ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
       ['Data scope', 'Realised results and wealth values reflect uploaded sources only. Add any self-custody wallets, other exchanges, opening balances, or prior-period history before filing.']
@@ -9293,7 +9369,7 @@ onmouseout="this.style.color='#8A909E'">
   ${(function(){
     const methodologyItems = [
       ['Cost basis method', 'FIFO (First In, First Out) — commonly used in Swiss crypto tax reporting workflows.'],
-      ['Exchange rates', `CHF values use imported CHF values where exported, historical FX references where available, and ESTV annual reference rates where applicable. USD annual reference used: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD for 31.12.${data.taxYear}.`],
+      ['Exchange rates', `CHF values use imported CHF values where exported, transaction-date FX references for USD, EUR, GBP, and USD-linked amounts where available, and ESTV annual reference rates as fallback. Year-end USD reference for 31.12.${data.taxYear}: ${data.usdReferenceRateText || getUsdReferenceRateText(data.taxYear)} CHF/USD.`],
       ['Year-end valuation', `Dec 31 ${data.taxYear} closing market reference rates.`],
       ['Transaction fees', 'Included where explicitly exported by the source file. Fees charged in the trade currency are incorporated into cost basis and disposal proceeds; fees charged in separate assets are reflected as reductions in those asset holdings.'],
       ['Data scope', 'Realised results and wealth values reflect uploaded sources only. Add any self-custody wallets, other exchanges, opening balances, or prior-period history before filing.']
