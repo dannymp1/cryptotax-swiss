@@ -6846,6 +6846,9 @@
             totalCHF = subtotal > 0 ? subtotal * quoteRate : qty * priceCHF;
             if (totalInclFees > 0) {
               totalCHF = totalInclFees * quoteRate;
+              priceCHF = qty > 0 ? totalCHF / qty : priceCHF;
+            } else if (subtotal > 0) {
+              priceCHF = qty > 0 ? totalCHF / qty : priceCHF;
             } else if (feeTotal > 0 && (type === 'buy' || type === 'sell')) {
               ({ qty, priceCHF, totalCHF } = await applyTradeFeeAdjustments(out, {
                 date, type, asset, qty, priceCHF, totalCHF,
@@ -7441,6 +7444,8 @@
   function buildReportMeta(transactions, forcedTaxYear) {
     const dates = transactions.map(t=>t.date).filter(Boolean).sort();
     const taxYear = forcedTaxYear || (dates.length ? String(dates[dates.length-1]).slice(0,4) || '2024' : '2024');
+    const firstTransactionDate = dates[0] ? String(dates[0]).slice(0,10) : '';
+    const lastTransactionDate = dates.length ? String(dates[dates.length-1]).slice(0,10) : '';
     const dateRange = dates.length >= 2
       ? formatDate(dates[0]) + ' – ' + formatDate(dates[dates.length-1])
       : (dates[0] ? formatDate(dates[0]) : taxYear);
@@ -7449,6 +7454,8 @@
       taxYear,
       clientRef: 'Auto-generated',
       dateRange,
+      firstTransactionDate,
+      lastTransactionDate,
       reportId: 'CD-' + taxYear + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
       reportVersion: '2.1',
       generatedAt: new Date().toISOString(),
@@ -7622,6 +7629,35 @@
     const d=new Date(dateStr);
     if(isNaN(d)) return dateStr.slice(0,10);
     return d.toLocaleDateString('de-CH');
+  }
+
+  function getReportPeriodLabel(data) {
+    const taxYear = String((data && data.taxYear) || '').trim();
+    const start = String((data && data.firstTransactionDate) || '').slice(0,10);
+    const end = String((data && data.lastTransactionDate) || '').slice(0,10);
+    if (!start && !end) return (data && data.dateRange) || taxYear || '—';
+
+    const importedRange = start && end
+      ? (start === end ? formatDate(start) : `${formatDate(start)} – ${formatDate(end)}`)
+      : formatDate(start || end);
+    const yearEnd = /^\d{4}$/.test(taxYear) ? `${taxYear}-12-31` : '';
+
+    if (yearEnd && end && end < yearEnd) {
+      return `${importedRange} · valued at 31.12.${taxYear}`;
+    }
+
+    return importedRange || (data && data.dateRange) || taxYear || '—';
+  }
+
+  function getGainSummaryLabel(hasUnmatched) {
+    return hasUnmatched ? 'Informational Matched Gain / Loss' : 'Informational Gain / Loss';
+  }
+
+  function getGainSummaryNote(hasUnmatched) {
+    if (hasUnmatched) {
+      return 'For Swiss private individuals, capital gains are generally not taxable. This informational figure excludes unmatched disposals.';
+    }
+    return 'For Swiss private individuals, capital gains are generally not taxable. This figure is shown for completeness.';
   }
 
 
@@ -7807,7 +7843,9 @@
       ? (gain >= 0 ? '+' + fmtCHF(gain) : '-' + fmtCHF(Math.abs(gain)))
       : '—';
     const gainClass = gain > 0 ? 'positive' : gain < 0 ? 'negative' : '';
-    const gainLabel = reviewState.hasUnmatched ? 'Matched Gain / Loss' : 'Net Gain / Loss';
+    const gainLabel = getGainSummaryLabel(reviewState.hasUnmatched);
+    const periodLabel = getReportPeriodLabel(data);
+    const gainSummaryNote = getGainSummaryNote(reviewState.hasUnmatched);
     const bannerAccent = reviewState.tone === 'incomplete'
       ? '#C0392B'
       : reviewState.tone === 'review'
@@ -7869,7 +7907,7 @@
     const reportHTML = `
 <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,242,235,0.4);margin-bottom:6px">Report generated ${new Date().toLocaleDateString('de-CH')} · Based on imported data · ${data.complianceMethod || 'FIFO'}</div>
 <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--paper);margin-bottom:4px">Crypto Tax Report ${data.taxYear || ''}</div>
-<div style="font-size:13px;color:rgba(245,242,235,0.45);margin-bottom:28px">${data.dateRange || ''} · ${data.totalTransactions} Transactions</div>
+<div style="font-size:13px;color:rgba(245,242,235,0.45);margin-bottom:28px">${periodLabel} · ${data.totalTransactions} Transactions</div>
 
 <div style="margin:0 0 18px;border-left:4px solid ${bannerAccent};background:${bannerFill};padding:14px 16px;border-radius:4px;">
   <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:${bannerAccent};margin-bottom:6px;">${reviewState.title}</div>
@@ -7905,10 +7943,11 @@
     <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--paper)">${fmtCHF(data.totalPortfolioValueCHF)}</div>
   </div>
   <div style="background:rgba(245,242,235,0.03);padding:16px 18px">
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss'}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.35);margin-bottom:6px">${getGainSummaryLabel((data.assets||[]).some(a=>a.missingCostBasis))}</div>
     <div style="font-family:'DM Serif Display',serif;font-size:20px;${gain>=0?'color:#4caf82':'color:#e05c5c'}">${gainStr}</div>
   </div>
 </div>
+<div style="font-size:12px;line-height:1.65;color:rgba(245,242,235,0.5);margin:-6px 0 20px;">${gainSummaryNote}</div>
 ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:4px;font-size:12px;color:rgba(245,242,235,0.55);line-height:1.7"><strong style="color:var(--gold-light)">Notes: </strong>${escHtml(data.notes)}</div>` : ''}
     `;
 
@@ -8172,14 +8211,14 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     };
 
     const drawSummaryBoxes = () => {
-      ensureSpace(26);
+      ensureSpace(31);
       const gap = 4;
       const boxWidth = (contentWidth - gap * 2) / 3;
       const boxHeight = 23;
       const boxes = [
         ['Staking / Reward Income', pdfFormatCHF(data.stakingIncomeCHF), colors.green],
         [`Wealth Value 31.12.${data.taxYear}`, pdfFormatCHF(data.totalPortfolioValueCHF), colors.ink],
-        [hasUnmatched ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss', pdfFormatSignedCHF(data.totalGainLossCHF), Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red]
+        [getGainSummaryLabel(hasUnmatched), pdfFormatSignedCHF(data.totalGainLossCHF), Number(data.totalGainLossCHF || 0) >= 0 ? colors.green : colors.red]
       ];
       boxes.forEach((box, index) => {
         const x = margin + index * (boxWidth + gap);
@@ -8195,6 +8234,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         doc.text(fitText(box[1], boxWidth - 6), x + 3, y + 17);
       });
       y += boxHeight + 7;
+      drawParagraph(getGainSummaryNote(hasUnmatched), 7.5, colors.muted);
     };
 
     const assets = data.assets || [];
@@ -8509,10 +8549,11 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     doc.setFont('courier', 'normal');
     doc.setFontSize(6.8);
     setColor(colors.muted);
+    const periodLabel = getReportPeriodLabel(data);
     [
       `GENERATED ${generated}`,
       `METHOD ${data.complianceMethod || 'FIFO'}`,
-      `PERIOD ${data.dateRange || data.taxYear || '—'}`,
+      `PERIOD ${periodLabel}`,
       `SOURCE ${exchangeName}`,
       `ID ${data.reportId || '—'} · v${data.reportVersion || '2.1'}`
     ].forEach(line => {
@@ -9027,7 +9068,7 @@ onmouseout="this.style.color='#8A909E'">
       <div class="doc-meta">
         Generated: ${new Date().toLocaleDateString('en-CH')}<br/>
         Method: ${data.complianceMethod || 'FIFO'}<br/>
-        Period: ${data.dateRange || data.taxYear}<br/>
+        Period: ${getReportPeriodLabel(data)}<br/>
         ID: ${data.reportId||'—'} · v${data.reportVersion||'2.1'}
       </div>
     </div>
@@ -9167,10 +9208,11 @@ onmouseout="this.style.color='#8A909E'">
       <div class="summary-val" style="color:#0D1117">CHF ${Number(data.totalPortfolioValueCHF||0).toLocaleString('de-CH',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     </div>
     <div class="summary-box highlight">
-      <div class="summary-label">${_hasUnmatched ? 'Matched Realised Gain / Loss' : 'Realised Gain / Loss'}</div>
+      <div class="summary-label">${getGainSummaryLabel(_hasUnmatched)}</div>
       <div class="summary-val" style="color:${totalColor}">${totalGainStr}</div>
     </div>
   </div>
+  <div style="font-size:8.4pt;color:#6E7480;line-height:1.65;margin:-10px 0 18px 0;">${getGainSummaryNote(_hasUnmatched)}</div>
 
   ${(function(){
     // ── TRANSACTION LEDGER ───────────────────────────────────────────────
@@ -9330,7 +9372,7 @@ onmouseout="this.style.color='#8A909E'">
     const meta = [
       `"CryptoDeclare — Transaction Ledger"`,
       `"Tax Year: ${data.taxYear}"`,
-      `"Period: ${data.dateRange||data.taxYear}"`,
+      `"Period: ${getReportPeriodLabel(data)}"`,
       `"Exchange: ${exchangeName}"`,
       `"Generated: ${new Date().toLocaleDateString('de-CH')}"`,
       `"Transactions: ${data.transactions.length}"`,
