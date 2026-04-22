@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://www.googleadservices.com; frame-ancestors 'none';"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://api.coingecko.com https://api.coinbase.com https://api.anthropic.com https://formspree.io https://api.frankfurter.app https://api.frankfurter.dev https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://www.googleadservices.com; frame-ancestors 'none';"/>
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <meta http-equiv="X-Frame-Options" content="DENY"/>
 
@@ -5658,7 +5658,7 @@
       try {
         const start = `${yearNum}-01-01`;
         const end = `${yearNum}-12-31`;
-        const url = `https://api.frankfurter.app/${start}..${end}?from=${cur}&to=CHF`;
+        const url = `https://api.frankfurter.dev/v1/${start}..${end}?from=${cur}&to=CHF`;
         const data = await fetchJsonWithTimeout(url, 12000);
         const rates = data?.rates || {};
         const series = {};
@@ -5704,7 +5704,7 @@
           _fiatFxCache[key] = seriesRate;
           return seriesRate;
         }
-        const url = `https://api.frankfurter.app/${safeDate}?from=${cur}&to=CHF`;
+        const url = `https://api.frankfurter.dev/v1/${safeDate}?from=${cur}&to=CHF`;
         const data = await fetchJsonWithTimeout(url, 8000);
         const rate = Number(data?.rates?.CHF || 0);
         if (!rate) throw new Error('fx_missing_rate');
