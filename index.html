@@ -7726,14 +7726,14 @@
   }
 
   function getGainSummaryLabel(hasUnmatched) {
-    return hasUnmatched ? 'Informational Matched Gain / Loss' : 'Informational Gain / Loss';
+    return hasUnmatched ? 'Realised Matched Gain / Loss' : 'Realised Gain / Loss';
   }
 
   function getGainSummaryNote(hasUnmatched) {
     if (hasUnmatched) {
-      return 'For Swiss private individuals, capital gains are generally not taxable. This informational figure excludes unmatched disposals.';
+      return 'For Swiss private individuals, capital gains are generally not taxable. This realised figure excludes unmatched disposals.';
     }
-    return 'For Swiss private individuals, capital gains are generally not taxable. This figure is shown for completeness.';
+    return 'For Swiss private individuals, capital gains are generally not taxable. This realised figure is shown for completeness.';
   }
 
 
