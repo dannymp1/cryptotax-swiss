@@ -7855,10 +7855,14 @@
 
     if (hasUnmatched) {
       const noun = unmatchedDisposals === 1 ? 'disposal' : 'disposals';
+      const affectedAssets = assets
+        .filter(asset => asset.missingCostBasis)
+        .map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol)
+        .join(', ');
       return {
         tone: coverage >= 80 ? 'review' : 'incomplete',
         title: `INCOMPLETE — ${unmatchedDisposals} unmatched ${noun} worth ${fmtCHF(totalExcluded)}`,
-        body: 'Realised gain figures exclude these proceeds. Do not submit until the missing acquisition history is added.',
+        body: `${affectedAssets} show disposals with no corresponding purchase history under FIFO. Realised gain figures exclude ${fmtCHF(totalExcluded)} of unmatched proceeds. Do not submit until the missing acquisition history is added.`,
         hasUnmatched,
         hasTransferGaps,
         totalExcluded,
@@ -8646,14 +8650,7 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     drawStatusBanner();
     drawMetricBar();
 
-    if (hasUnmatched) {
-      drawCallout(
-        'Incomplete acquisition history',
-        `${assets.filter(asset => asset.missingCostBasis).map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} show disposals with no corresponding purchase history under FIFO. Unmatched proceeds of ${pdfFormatCHF(totalExcluded)} are excluded from realised gain until the missing acquisition history is added.`,
-        colors.gold,
-        [255, 252, 245]
-      );
-    } else if (hasTransferGaps) {
+    if (hasTransferGaps && !hasUnmatched) {
       drawCallout(
         'Transfer history review',
         `${assets.filter(asset => Number(asset.unmatchedTransferOut || 0) > 0).map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} include transfer-outs that exceeded imported FIFO lots. These quantities reduce holdings but are not treated as taxable disposals.`,
@@ -9202,12 +9199,7 @@ onmouseout="this.style.color='#8A909E'">
       + '</div>';
   })()}
 
-  ${(data.assets||[]).some(a=>a.missingCostBasis) ? `
-  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
-    <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:6.9pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Incomplete Acquisition History</div>
-    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>a.missingCostBasis).map(a=>a.symbol).join(', ')}</strong> — insufficient purchase history to match all disposals under FIFO. Unmatched quantities excluded from realised gain. Upload the CSV from the exchange where these assets were originally acquired. <span style="color:#B8960C;font-family:'Instrument Sans',Arial,sans-serif;font-size:7.6pt;font-weight:700;">CHF ${(data.assets||[]).reduce((s,a)=>s+(a.unresolvedProceeds||0),0).toLocaleString('de-CH',{minimumFractionDigits:2})} excluded.</span></div>
-  </div>` : ''}
-  ${(data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0) ? `
+  ${(data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0) && !(data.assets||[]).some(a=>a.missingCostBasis) ? `
   <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
     <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:6.9pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Transfer History Review</div>
     <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>Number(a.unmatchedTransferOut||0) > 0).map(a=>a.symbol).join(', ')}</strong> — transfer-outs exceeded the imported FIFO lots. These quantities reduce year-end holdings but are not treated as taxable sells. Add the original acquisition history if you want a fully matched audit trail.</div>
