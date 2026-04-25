@@ -48,7 +48,7 @@
 
 <!-- ── Primary SEO ── -->
 <title>CryptoDeclare — Swiss Crypto Tax Report | Krypto Steuern Schweiz</title>
-<meta name="description" content="Generate your Swiss crypto tax report in minutes. FIFO method commonly used by Swiss fiduciaires, official Swiss FX references, and ICTax / ESTV year-end wealth values. Supports Coinbase, Kraken, Binance, SwissBorg and more. From CHF 99."/>
+<meta name="description" content="Generate your Swiss crypto tax report in minutes. FIFO method commonly used by Swiss fiduciaires, official Swiss FX references, and ICTax / ESTV year-end wealth values. Supports Coinbase, Kraken, Binance, SwissBorg and more. From CHF 89."/>
 <meta name="keywords" content="crypto tax switzerland, crypto steuern schweiz, déclaration crypto suisse, krypto steuererklärung, bitcoin steuer schweiz, ESTV crypto, cryptodeclare, crypto tax report CHF, coinbase tax switzerland, kraken tax switzerland"/>
 <meta name="author" content="CryptoDeclare"/>
 <meta name="robots" content="index, follow"/>
@@ -69,7 +69,7 @@
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://www.cryptodeclare.ch/"/>
 <meta property="og:title" content="CryptoDeclare — Swiss Crypto Tax Reporting"/>
-<meta property="og:description" content="Swiss crypto tax reports in minutes, with FIFO-based reporting, official Swiss FX references, and ICTax / ESTV year-end wealth values. From CHF 99."/>
+<meta property="og:description" content="Swiss crypto tax reports in minutes, with FIFO-based reporting, official Swiss FX references, and ICTax / ESTV year-end wealth values. From CHF 89."/>
 <meta property="og:image" content="https://www.cryptodeclare.ch/og-image.png"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -82,7 +82,7 @@
 <!-- ── Twitter / X Card ── -->
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="CryptoDeclare — Swiss Crypto Tax Reporting"/>
-<meta name="twitter:description" content="Swiss crypto tax reports in minutes, with FIFO-based reporting, official Swiss FX references, and ICTax / ESTV year-end wealth values. From CHF 99."/>
+<meta name="twitter:description" content="Swiss crypto tax reports in minutes, with FIFO-based reporting, official Swiss FX references, and ICTax / ESTV year-end wealth values. From CHF 89."/>
 <meta name="twitter:image" content="https://www.cryptodeclare.ch/og-image.png"/>
 
 <!-- ── Structured Data (Google Rich Results) ── -->
@@ -98,17 +98,24 @@
   "offers": [
     {
       "@type": "Offer",
-      "name": "Starter",
+      "name": "Free",
       "price": "0",
       "priceCurrency": "CHF",
-      "description": "Up to 250 transactions, free forever"
+      "description": "Unlimited on-screen preview before export"
     },
     {
       "@type": "Offer",
-      "name": "Professional",
-      "price": "99",
+      "name": "Standard",
+      "price": "89",
       "priceCurrency": "CHF",
       "description": "Up to 1,000 transactions per tax year"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      "price": "149",
+      "priceCurrency": "CHF",
+      "description": "Up to 5,000 transactions per tax year"
     },
     {
       "@type": "Offer",
@@ -1071,7 +1078,7 @@
   /* ── PRICING ── */
   .pricing-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 2px;
     background: var(--rule);
     border: 1px solid var(--rule);
@@ -1094,6 +1101,22 @@
     box-shadow: 0 12px 40px rgba(13,17,23,0.12);
     z-index: 2;
     position: relative;
+  }
+
+  .pricing-card.coming-soon {
+    position: relative;
+  }
+
+  .pricing-card.coming-soon::after {
+    content: "UI updated · checkout next";
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
   }
 
   .pricing-card.featured:hover {
@@ -1456,6 +1479,7 @@
     margin-left: 8px;
   }
   .plan-badge.free { background: rgba(13,17,23,0.08); color: var(--ink-muted); }
+  .plan-badge.standard { background: rgba(184,150,12,0.08); color: var(--paper); border: 1px solid rgba(184,150,12,0.3); }
   .plan-badge.pro { background: var(--gold-pale); color: var(--gold); border: 1px solid var(--gold); }
   .plan-badge.business { background: var(--ink); color: var(--gold-light); border: 1px solid var(--gold-light); }
   .tx-counter {
@@ -1535,6 +1559,28 @@
     font-size: 14px;
     color: rgba(245,242,235,0.45);
     margin-bottom: 24px;
+  }
+
+  .upload-code-prompt {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .upload-code-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: rgba(212,175,55,0.82);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .upload-code-link:hover {
+    color: var(--gold-light);
   }
 
   .upload-formats {
@@ -2345,6 +2391,10 @@
   .hero-actions { animation: fadeUp 0.7s ease both 0.55s; }
 
   /* ── Responsive ── */
+  @media (max-width: 1180px) {
+    .pricing-grid { grid-template-columns: 1fr 1fr; }
+  }
+
   @media (max-width: 900px) {
     nav { padding: 0 24px; }
     .nav-links { display: none; }
@@ -2708,7 +2758,7 @@
         <a href="#" onclick="navScrollTo('team');return false;" role="menuitem" data-i18n="nav_founder">About the founder</a>
       </div>
     </li>
-    <li><a href="#" onclick="navScrollTo('upload-area');return false;" class="nav-cta" data-i18n="nav_start">Start free report</a></li>
+    <li><a href="#" onclick="navScrollTo('upload-area');return false;" class="nav-cta" data-i18n="nav_start">Start free preview</a></li>
   </ul>
   <div class="lang-switcher">
     <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -2733,7 +2783,7 @@
     <div class="hero-actions">
       <a href="#" onclick="navScrollTo('upload-area');return false;" class="btn-primary">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Declare now — it's free
+        Declare now — free preview
       </a>
       <a href="#" onclick="navScrollTo('report');return false;" class="btn-secondary">
         View sample report
@@ -2963,30 +3013,44 @@
   </div>
   <div class="pricing-grid">
     <div class="pricing-card">
-      <div class="pricing-name">Starter</div>
+      <div class="pricing-name">Free</div>
       <div class="pricing-price" id="starter-price">Free</div>
-      <div class="pricing-period">Per tax year · up to 250 transactions</div>
+      <div class="pricing-period">Preview your report before paying</div>
       <ul class="pricing-features">
-        <li>Up to 250 transactions</li>
-        <li>CSV import (1 exchange)</li>
-        <li>CHF conversion</li>
-        <li>Basic PDF report</li>
+        <li>Unlimited on-screen preview</li>
+        <li>Upload CSV or Excel from supported exchanges</li>
+        <li>See realised gain, wealth value, and unmatched issues</li>
+        <li>Clean PDF + CSV export locked until upgrade</li>
       </ul>
-      <a href="#" onclick="navScrollTo('upload-area');return false;" class="btn-outline">Get started free</a>
+      <a href="#" onclick="navScrollTo('upload-area');return false;" class="btn-outline">Preview for free</a>
     </div>
-    <div class="pricing-card">
-      <div class="pricing-name">Professional</div>
-      <div class="pricing-price">CHF 99</div>
+    <div class="pricing-card coming-soon">
+      <div class="pricing-name">Standard</div>
+      <div class="pricing-price" id="standard-price">CHF 89</div>
       <div class="pricing-period">Per tax year · up to 1,000 transactions</div>
       <ul class="pricing-features">
         <li>Up to 1,000 transactions</li>
         <li>1 portfolio / entity</li>
         <li>20+ supported formats</li>
-        <li>Full history imports</li>
         <li>Full PDF + CSV export</li>
-        <li>FIFO reporting method</li>
+        <li>Full history imports</li>
+        <li>Unlock code delivered by email</li>
       </ul>
-      <a href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Pro</a>
+      <a href="#" onclick="navScrollTo('contact');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Request Standard</a>
+    </div>
+    <div class="pricing-card coming-soon">
+      <div class="pricing-name">Pro</div>
+      <div class="pricing-price" id="pro-price">CHF 149</div>
+      <div class="pricing-period">Per tax year · up to 5,000 transactions</div>
+      <ul class="pricing-features">
+        <li>Up to 5,000 transactions</li>
+        <li>Everything in Standard</li>
+        <li>High-activity portfolios</li>
+        <li>Clean PDF + CSV export</li>
+        <li>Historical imports across files</li>
+        <li>Priority review support</li>
+      </ul>
+      <a href="#" onclick="navScrollTo('contact');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Request Pro</a>
     </div>
     <div class="pricing-card business">
       <div class="pricing-name">Business</div>
@@ -3017,7 +3081,7 @@
 <section class="app-section" id="declare" role="main">
   <div class="section-header">
     <span class="section-number">05 — Declare</span>
-    <span class="plan-badge free" id="plan-badge">Free · 250 tx</span>
+    <span class="plan-badge free" id="plan-badge">Free · Preview</span>
     <h2 class="section-title">Upload your<br><em>transactions</em></h2>
   </div>
 
@@ -3033,7 +3097,7 @@
           </svg>
         </div>
         <div class="upload-title">Drop your file here</div>
-        <div class="upload-sub">CSV or Excel (.xlsx) — your first report is <span style="color:var(--gold-light);font-weight:600;">free</span></div>
+        <div class="upload-sub">CSV or Excel (.xlsx) — preview your report for <span style="color:var(--gold-light);font-weight:600;">free</span></div>
         <div class="upload-formats">
           <span class="upload-format-pill">Kraken CSV</span>
           <span class="upload-format-pill">Binance CSV</span>
@@ -3041,7 +3105,10 @@
           <span class="upload-format-pill">Excel .xlsx</span>
           <span class="upload-format-pill">Generic CSV</span>
         </div>
-        </div>
+      </div>
+      <div class="upload-code-prompt">
+        <button class="upload-code-link" type="button" onclick="showUnlockBanner()" data-i18n="upload_unlock_cta">Already have an unlock code?</button>
+      </div>
         <div class="processing-indicator" id="processing-indicator">
           <div class="processing-spinner"></div>
           <span class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Reading your transactions...</span>
@@ -3069,7 +3136,7 @@
       <!-- UNLOCK CODE BANNER -->
       <div class="unlock-banner" id="unlock-banner">
         <div class="unlock-title">Enter your unlock code</div>
-        <div class="unlock-sub" id="unlock-sub">Your file has more than 250 transactions. Enter a Pro or Business unlock code to generate your report.</div>
+        <div class="unlock-sub" id="unlock-sub">Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.</div>
         <div class="unlock-row">
           <label for="unlock-input" class="sr-only">Unlock code</label>
           <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
@@ -3181,8 +3248,8 @@
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Ledger CSV
         </button>
-        <a class="btn-outline btn-upgrade-pro" href="https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00" target="_blank" rel="noopener" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-          Upgrade to Pro
+        <a class="btn-outline btn-upgrade-pro" href="#" onclick="navScrollTo('pricing');return false;" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+          Unlock clean export
         </a>
       </div>
     </div>
@@ -3286,8 +3353,8 @@
   <div class="modal">
     <div class="modal-header">
       <div>
-        <div class="modal-plan-name" id="modal-plan-name">Professional</div>
-        <div class="modal-plan-price" id="modal-plan-price">CHF 99</div>
+        <div class="modal-plan-name" id="modal-plan-name">Standard</div>
+        <div class="modal-plan-price" id="modal-plan-price">CHF 89</div>
       </div>
       <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
     </div>
@@ -3424,14 +3491,15 @@
   const TRANSLATIONS = {
     en: {
       nav_how: 'How it works', nav_features: 'Features', nav_pricing: 'Pricing',
-      nav_declare: 'Declare', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Resources', nav_guides: 'Swiss crypto tax guides', nav_glossary: 'Glossary', nav_founder: 'About the founder', nav_start: 'Start free report',
+      nav_declare: 'Declare', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Resources', nav_guides: 'Swiss crypto tax guides', nav_glossary: 'Glossary', nav_founder: 'About the founder', nav_start: 'Start free preview',
       hero_eyebrow: 'Swiss crypto tax reporting',
       hero_headline: 'Swiss crypto<br><em>tax report</em><br>in minutes.',
       hero_sub: 'Upload your exchange transactions, we calculate the report, and you receive a clean Swiss tax annex to review for your cantonal declaration.',
-      hero_cta1: 'Declare now — it\'s free',
+      hero_cta1: 'Declare now — free preview',
       hero_cta2: 'View sample report',
       upload_title: 'Drop your files here',
-      upload_sub: 'CSV or Excel (.xlsx) · upload multiple exchanges — your first report is <span style="color:var(--gold-light);font-weight:600;">free</span>',
+      upload_sub: 'CSV or Excel (.xlsx) · upload multiple exchanges — preview your report for <span style="color:var(--gold-light);font-weight:600;">free</span>',
+      upload_unlock_cta: 'Already have an unlock code?',
       tax_year_label: 'Tax year to report',
       tax_year_hint: 'For multi-year files, choose the year you want. Earlier transactions are still used for FIFO history.',
       tax_year_auto: 'Auto-detect latest year',
@@ -3457,7 +3525,7 @@
       info_priv_body: 'Your transaction files are processed in your browser and are not uploaded to our servers. When your session ends, no portfolio data is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
       btn_download: '⬇ Download PDF',
-      btn_upgrade: 'Upgrade to Pro',
+      btn_upgrade: 'Unlock clean export',
       report_generated_title: 'Tax Declaration Annex — Generated Report',
       disclaimer_title: 'Document Disclaimer',
       disclaimer_text: 'This report has been prepared using a FIFO methodology commonly used in Swiss crypto tax reporting workflows and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, professional trading), please consult a certified Swiss tax advisor.',
@@ -3494,19 +3562,26 @@
       feat6_label: 'Coverage',
       feat6_title: '20+ supported formats and major exchanges',
       feat6_body: 'Supports mainstream crypto tax workflows across Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg and more, with clear handling for staking and missing cost basis.',
-      starter_name: 'Starter', starter_price: 'Free',
-      pro_name: 'Professional',
+      starter_name: 'Free', starter_price: 'Free',
+      standard_name: 'Standard', standard_price: 'CHF 89',
+      pro_name: 'Pro', pro_price: 'CHF 149',
       biz_name: 'Business',
-      starter_f1: 'Up to 250 transactions',
-      starter_f2: 'CSV import (1 exchange)',
-      starter_f3: 'CHF conversion',
-      starter_f4: 'Basic PDF report',
-      pro_f1: 'Up to 1,000 transactions',
-      pro_f2: '1 portfolio / entity',
-      pro_f3: '20+ supported formats',
-      pro_f4: 'Full history imports',
-      pro_f5: 'Full PDF + CSV export',
-      pro_f6: 'FIFO reporting method',
+      starter_f1: 'Unlimited on-screen preview',
+      starter_f2: 'Upload CSV or Excel from supported exchanges',
+      starter_f3: 'See realised gain, wealth value, and unmatched issues',
+      starter_f4: 'Clean PDF + CSV export locked until upgrade',
+      standard_f1: 'Up to 1,000 transactions',
+      standard_f2: '1 portfolio / entity',
+      standard_f3: '20+ supported formats',
+      standard_f4: 'Clean PDF + CSV export',
+      standard_f5: 'Full history imports',
+      standard_f6: 'Unlock code delivered by email',
+      pro_f1: 'Up to 5,000 transactions',
+      pro_f2: 'Everything in Standard',
+      pro_f3: 'High-activity portfolios',
+      pro_f4: 'Clean PDF + CSV export',
+      pro_f5: 'Historical imports across files',
+      pro_f6: 'Priority review support',
       biz_f1: 'Unlimited transactions',
       biz_f2: 'All supported exchanges & unlimited portfolios',
       biz_f3: 'Historical data imports',
@@ -3520,7 +3595,7 @@
       team_bio: 'I built CryptoDeclare after facing the same problem every crypto holder in Switzerland faces at tax time: hours spent manually reconciling transactions, converting prices, and hoping the numbers are right.<br><br>With a background across Swiss private banking and institutional digital assets, I understand both the regulatory landscape and the real complexity of crypto portfolios. CryptoDeclare applies the same FIFO rigour Swiss fiduciaires expect, fully automated.',
       contact_label: '08 — Contact',
       contact_title: 'Get in<br><em>touch</em>',
-      contact_body: "Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.",
+      contact_body: "Have a question about your report, need help with a specific exchange format, or want Standard, Pro, or Business activated? We're here to help.",
       contact_name: 'Name',
       contact_email: 'Email',
       contact_message: 'Message',
@@ -3535,9 +3610,24 @@
       cookie_reject: 'Reject',
       cookie_saved: 'Cookie preferences saved.',
       unlock_title: 'Enter your unlock code',
-      unlock_sub: 'Your file has more than 250 transactions. Enter a Pro or Business unlock code to generate your report.',
+      unlock_sub: 'Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.',
+      unlock_export_prompt: 'Preview ready. Enter your paid unlock code to export the clean PDF and ledger CSV, or choose a plan below.',
+      unlock_over_standard: 'Your file has {count} transactions. Standard covers up to 1,000 · Pro covers up to 5,000 · Business is unlimited.',
+      unlock_over_pro: 'Your file has {count} transactions. Pro covers up to 5,000 · Business is unlimited.',
+      badge_free: 'Free · Preview',
+      badge_standard: 'Standard · 1,000 tx',
+      badge_pro: 'Pro · 5,000 tx',
+      badge_business: 'Business · Unlimited',
+      unlock_label_standard: 'Standard — up to 1,000 transactions',
+      unlock_label_pro: 'Pro — up to 5,000 transactions',
+      unlock_label_business: 'Business — unlimited transactions',
+      unlock_success: '✓ {plan} unlocked!',
+      toast_welcome: '🎉 {plan} unlocked! You can now upload your CSV.',
+      toast_checkout_pending: 'Standard and Pro checkout links are being connected. Contact us and we will activate the plan for you.',
       unlock_btn: 'Unlock',
       unlock_error: 'Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch',
+      toast_export_pdf_locked: 'Free preview ready — unlock a paid plan to export the clean PDF.',
+      toast_export_csv_locked: 'Free preview ready — unlock a paid plan to export the ledger CSV.',
       manual_optional_label: 'Advanced',
       manual_title: 'Add missing transactions',
       manual_sub: 'Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.',
@@ -3593,8 +3683,9 @@
       report_badge: 'Based on imported data',
       report_body: 'Clean, structured, and built for Swiss tax reporting. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation based on imported data.',
       report_cta: 'Generate my report',
-      starter_period: 'Up to 250 transactions', starter_cta: 'Get started free',
-      pro_period: 'Per tax year · up to 1,000 transactions', pro_cta: 'Get Pro',
+      starter_period: 'Preview your report before paying', starter_cta: 'Preview for free',
+      standard_period: 'Per tax year · up to 1,000 transactions', standard_cta: 'Request Standard',
+      pro_period: 'Per tax year · up to 5,000 transactions', pro_cta: 'Request Pro',
       biz_period: 'Per entity / year · unlimited transactions', biz_cta: 'Get Business',
       footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Structured, fast, and private.',
       footer_product: 'Product', footer_legal: 'Legal', footer_support: 'Support',
@@ -3604,14 +3695,15 @@
     },
     fr: {
       nav_how: 'Comment ça marche', nav_features: 'Fonctionnalités', nav_pricing: 'Tarifs',
-      nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_team: 'Équipe', nav_resources: 'Ressources', nav_guides: 'Guides fiscaux crypto suisses', nav_glossary: 'Glossaire', nav_founder: 'À propos du fondateur', nav_start: 'Commencer gratuitement',
+      nav_declare: 'Déclarer', nav_faq: 'FAQ', nav_team: 'Équipe', nav_resources: 'Ressources', nav_guides: 'Guides fiscaux crypto suisses', nav_glossary: 'Glossaire', nav_founder: 'À propos du fondateur', nav_start: 'Aperçu gratuit',
       hero_eyebrow: 'Déclaration fiscale crypto suisse',
       hero_headline: 'Rapport fiscal<br><em>crypto suisse</em><br>en minutes.',
       hero_sub: 'Importez vos transactions, nous calculons le rapport, et vous recevez une annexe fiscale suisse claire à relire pour votre déclaration cantonale.',
-      hero_cta1: 'Déclarer maintenant — gratuit',
+      hero_cta1: 'Déclarer maintenant — aperçu gratuit',
       hero_cta2: 'Voir un exemple de rapport',
       upload_title: 'Déposez vos fichiers ici',
-      upload_sub: 'CSV ou Excel (.xlsx) · importez plusieurs plateformes — votre premier rapport est <span style="color:var(--gold-light);font-weight:600;">gratuit</span>',
+      upload_sub: 'CSV ou Excel (.xlsx) · importez plusieurs plateformes — prévisualisez votre rapport <span style="color:var(--gold-light);font-weight:600;">gratuitement</span>',
+      upload_unlock_cta: "J'ai déjà un code d'activation",
       tax_year_label: 'Année fiscale du rapport',
       tax_year_hint: 'Pour les fichiers sur plusieurs années, choisissez l’année voulue. Les transactions antérieures restent utilisées pour l’historique FIFO.',
       tax_year_auto: 'Détecter automatiquement la dernière année',
@@ -3637,7 +3729,7 @@
       info_priv_body: 'Vos fichiers de transaction sont traités dans votre navigateur et ne sont pas envoyés à nos serveurs. À la fin de votre session, aucune donnée de portefeuille n\'est conservée.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
       btn_download: '⬇ Télécharger PDF',
-      btn_upgrade: 'Passer à Pro',
+      btn_upgrade: "Débloquer l'export propre",
       report_generated_title: 'Annexe fiscale crypto — Rapport généré',
       disclaimer_title: 'Avis de non-responsabilité',
       disclaimer_text: 'Ce rapport a été préparé selon une méthodologie FIFO couramment utilisée dans les workflows fiscaux crypto en Suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
@@ -3674,19 +3766,26 @@
       feat6_label: 'Couverture',
       feat6_title: '20+ formats supportés et grandes bourses',
       feat6_body: "Prend en charge les flux fiscaux crypto les plus courants sur Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg et d'autres, avec gestion claire du staking et des coûts d'acquisition manquants.",
-      starter_name: 'Starter', starter_price: 'Gratuit',
-      pro_name: 'Professionnel',
+      starter_name: 'Gratuit', starter_price: 'Gratuit',
+      standard_name: 'Standard', standard_price: 'CHF 89',
+      pro_name: 'Pro', pro_price: 'CHF 149',
       biz_name: 'Business',
-      starter_f1: "Jusqu'à 250 transactions",
-      starter_f2: 'Import CSV (1 bourse)',
-      starter_f3: 'Conversion CHF',
-      starter_f4: 'Rapport PDF basique',
-      pro_f1: "Jusqu'à 1'000 transactions",
-      pro_f2: '1 portefeuille / entité',
-      pro_f3: '20+ formats supportés',
-      pro_f4: 'Import historique complet',
-      pro_f5: 'Export PDF + CSV complet',
-      pro_f6: 'Méthode FIFO',
+      starter_f1: 'Prévisualisation illimitée à l’écran',
+      starter_f2: 'Import CSV ou Excel depuis les plateformes supportées',
+      starter_f3: 'Visualisez gain réalisé, fortune et avertissements',
+      starter_f4: "Export PDF + CSV propre bloqué jusqu'à l'upgrade",
+      standard_f1: "Jusqu'à 1'000 transactions",
+      standard_f2: '1 portefeuille / entité',
+      standard_f3: '20+ formats supportés',
+      standard_f4: 'Export PDF + CSV complet',
+      standard_f5: 'Import historique complet',
+      standard_f6: 'Code envoyé par e-mail',
+      pro_f1: "Jusqu'à 5'000 transactions",
+      pro_f2: 'Tout le contenu de Standard',
+      pro_f3: 'Portefeuilles plus actifs',
+      pro_f4: 'Export PDF + CSV complet',
+      pro_f5: 'Imports historiques sur plusieurs fichiers',
+      pro_f6: 'Support prioritaire',
       biz_f1: 'Transactions illimitées',
       biz_f2: 'Toutes les plateformes supportées & portefeuilles illimités',
       biz_f3: 'Import de données historiques',
@@ -3700,7 +3799,7 @@
       team_bio: "J'ai créé CryptoDeclare après avoir été confronté au même problème que chaque détenteur de crypto en Suisse à la période fiscale : des heures passées à réconcilier manuellement des transactions, convertir des prix et espérer que les chiffres soient justes.<br><br>Fort d'une expérience en banque privée suisse et dans les actifs numériques institutionnels, je comprends le paysage réglementaire et la complexité réelle des portefeuilles crypto. CryptoDeclare applique la même rigueur FIFO qu'attendent les fiduciaires suisses, entièrement automatisée.",
       contact_label: '08 — Contact',
       contact_title: 'Nous<br><em>contacter</em>',
-      contact_body: "Une question sur votre rapport, besoin d'aide ou intéressé par le plan Business ? Nous sommes là pour vous aider.",
+      contact_body: "Une question sur votre rapport, besoin d'aide avec un format d'exchange, ou envie d'activer Standard, Pro ou Business ? Nous sommes là pour vous aider.",
       contact_name: 'Nom',
       contact_email: 'E-mail',
       contact_message: 'Message',
@@ -3715,9 +3814,24 @@
       cookie_reject: 'Refuser',
       cookie_saved: 'Préférences de cookies enregistrées.',
       unlock_title: "Entrez votre code d'activation",
-      unlock_sub: 'Votre fichier contient plus de 250 transactions. Entrez un code Pro ou Business pour générer votre rapport.',
+      unlock_sub: "Les aperçus sont gratuits. Entrez votre code payant pour exporter le PDF propre et le CSV du grand livre.",
+      unlock_export_prompt: "Aperçu prêt. Entrez votre code payant pour exporter le PDF propre et le CSV du grand livre, ou choisissez une offre ci-dessous.",
+      unlock_over_standard: 'Votre fichier contient {count} transactions. Standard couvre jusqu’à 1’000 · Pro jusqu’à 5’000 · Business est illimité.',
+      unlock_over_pro: 'Votre fichier contient {count} transactions. Pro couvre jusqu’à 5’000 · Business est illimité.',
+      badge_free: 'Gratuit · Aperçu',
+      badge_standard: 'Standard · 1’000 tx',
+      badge_pro: 'Pro · 5’000 tx',
+      badge_business: 'Business · Illimité',
+      unlock_label_standard: 'Standard — jusqu’à 1’000 transactions',
+      unlock_label_pro: 'Pro — jusqu’à 5’000 transactions',
+      unlock_label_business: 'Business — transactions illimitées',
+      unlock_success: '✓ {plan} activé !',
+      toast_welcome: '🎉 {plan} activé ! Vous pouvez maintenant importer votre CSV.',
+      toast_checkout_pending: 'Les liens de paiement Standard et Pro sont en cours de connexion. Contactez-nous et nous activerons l’offre pour vous.',
       unlock_btn: 'Activer',
       unlock_error: 'Code invalide. Vérifiez votre e-mail de CryptoDeclare ou contactez hello@cryptodeclare.ch',
+      toast_export_pdf_locked: "Aperçu gratuit prêt — débloquez une offre payante pour exporter le PDF propre.",
+      toast_export_csv_locked: "Aperçu gratuit prêt — débloquez une offre payante pour exporter le CSV du grand livre.",
       manual_optional_label: 'Avancé',
       manual_title: 'Ajouter des transactions manquantes',
       manual_sub: "Utilisez ceci pour un historique d'acquisition manquant, des récompenses de staking ou des mouvements de wallet ponctuels. Les lignes manuelles sont enregistrées localement et incluses dans le FIFO.",
@@ -3773,8 +3887,9 @@
       report_badge: 'Basé sur les données importées',
       report_body: "Propre, structuré et conçu pour le reporting fiscal suisse. Votre rapport téléchargeable inclut un journal complet des transactions, un résumé des résultats réalisés et une valorisation de fin d'année basée sur les données importées.",
       report_cta: 'Générer mon rapport',
-      starter_period: "Jusqu'à 250 transactions", starter_cta: 'Commencer gratuitement',
-      pro_period: 'Par année fiscale · jusqu\'à 1000 transactions', pro_cta: 'Obtenir Pro',
+      starter_period: 'Prévisualisez votre rapport avant de payer', starter_cta: 'Prévisualiser gratuitement',
+      standard_period: "Par année fiscale · jusqu'à 1'000 transactions", standard_cta: 'Demander Standard',
+      pro_period: "Par année fiscale · jusqu'à 5'000 transactions", pro_cta: 'Demander Pro',
       biz_period: 'Par entité / an · transactions illimitées', biz_cta: 'Obtenir Business',
       footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Structurée, rapide et privée.',
       footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
@@ -3784,14 +3899,15 @@
     },
     de: {
       nav_how: 'So funktioniert\'s', nav_features: 'Funktionen', nav_pricing: 'Preise',
-      nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Ressourcen', nav_guides: 'Schweizer Krypto-Steuerguides', nav_glossary: 'Glossar', nav_founder: 'Über den Gründer', nav_start: 'Kostenlos starten',
+      nav_declare: 'Deklarieren', nav_faq: 'FAQ', nav_team: 'Team', nav_resources: 'Ressourcen', nav_guides: 'Schweizer Krypto-Steuerguides', nav_glossary: 'Glossar', nav_founder: 'Über den Gründer', nav_start: 'Kostenlose Vorschau',
       hero_eyebrow: 'Schweizer Krypto-Steuerreporting',
       hero_headline: 'Schweizer Krypto-<br><em>Steuerbericht</em><br>in Minuten.',
       hero_sub: 'Laden Sie Ihre Transaktionen hoch, wir berechnen den Bericht, und Sie erhalten eine klare Schweizer Steuerbeilage zur Prüfung für Ihre kantonale Steuererklärung.',
-      hero_cta1: 'Jetzt deklarieren — kostenlos',
+      hero_cta1: 'Jetzt deklarieren — kostenlose Vorschau',
       hero_cta2: 'Beispielbericht ansehen',
       upload_title: 'Dateien hier ablegen',
-      upload_sub: 'CSV oder Excel (.xlsx) · mehrere Börsen hochladen — Ihr erster Bericht ist <span style="color:var(--gold-light);font-weight:600;">kostenlos</span>',
+      upload_sub: 'CSV oder Excel (.xlsx) · mehrere Boersen hochladen — Vorschau Ihres Berichts <span style="color:var(--gold-light);font-weight:600;">kostenlos</span>',
+      upload_unlock_cta: 'Ich habe bereits einen Freischaltcode',
       tax_year_label: 'Steuerjahr für den Bericht',
       tax_year_hint: 'Bei Dateien mit mehreren Jahren wählen Sie das gewünschte Jahr. Frühere Transaktionen werden weiterhin für die FIFO-Historie genutzt.',
       tax_year_auto: 'Letztes Jahr automatisch erkennen',
@@ -3817,7 +3933,7 @@
       info_priv_body: 'Ihre Transaktionsdateien werden in Ihrem Browser verarbeitet und nicht auf unsere Server hochgeladen. Nach Sitzungsende werden keine Portfoliodaten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
       btn_download: '⬇ PDF herunterladen',
-      btn_upgrade: 'Auf Pro upgraden',
+      btn_upgrade: 'Sauberen Export freischalten',
       report_generated_title: 'Krypto-Steuerbeilage — Generierter Bericht',
       disclaimer_title: 'Haftungsausschluss',
       disclaimer_text: 'Dieser Bericht wurde mit einer FIFO-Methodik erstellt, die in Schweizer Krypto-Steuer-Workflows häufig verwendet wird, und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
@@ -3854,19 +3970,26 @@
       feat6_label: 'Abdeckung',
       feat6_title: '20+ unterstützte Formate und grosse Börsen',
       feat6_body: 'Unterstützt gängige Krypto-Steuer-Workflows für Coinbase, Binance, Kraken, Bybit, Swissquote, SwissBorg und weitere, mit klarer Behandlung von Staking und fehlender Anschaffungshistorie.',
-      starter_name: 'Starter', starter_price: 'Kostenlos',
-      pro_name: 'Professionell',
+      starter_name: 'Kostenlos', starter_price: 'Kostenlos',
+      standard_name: 'Standard', standard_price: 'CHF 89',
+      pro_name: 'Pro', pro_price: 'CHF 149',
       biz_name: 'Business',
-      starter_f1: 'Bis 250 Transaktionen',
-      starter_f2: 'CSV-Import (1 Börse)',
-      starter_f3: 'CHF-Umrechnung',
-      starter_f4: 'Einfacher PDF-Bericht',
-      pro_f1: "Bis 1'000 Transaktionen",
-      pro_f2: '1 Portfolio / Unternehmen',
-      pro_f3: '20+ unterstützte Formate',
-      pro_f4: 'Import vollständiger Historien',
-      pro_f5: 'Vollständiger PDF + CSV-Export',
-      pro_f6: 'FIFO-Methode',
+      starter_f1: 'Unbegrenzte Vorschau im Browser',
+      starter_f2: 'CSV- oder Excel-Upload von unterstützten Börsen',
+      starter_f3: 'Realisierter Gewinn, Vermoegen und Warnhinweise direkt sichtbar',
+      starter_f4: 'Sauberer PDF- und CSV-Export erst nach Upgrade',
+      standard_f1: "Bis 1'000 Transaktionen",
+      standard_f2: '1 Portfolio / Einheit',
+      standard_f3: '20+ unterstützte Formate',
+      standard_f4: 'Vollständiger PDF- und CSV-Export',
+      standard_f5: 'Import vollständiger Historien',
+      standard_f6: 'Freischaltcode per E-Mail',
+      pro_f1: "Bis 5'000 Transaktionen",
+      pro_f2: 'Alles aus Standard',
+      pro_f3: 'Für aktivere Portfolios',
+      pro_f4: 'Vollständiger PDF- und CSV-Export',
+      pro_f5: 'Historische Importe über mehrere Dateien',
+      pro_f6: 'Priorisierter Support',
       biz_f1: 'Unbegrenzte Transaktionen',
       biz_f2: 'Alle unterstützten Börsen & unbegrenzte Portfolios',
       biz_f3: 'Import historischer Daten',
@@ -3880,7 +4003,7 @@
       team_bio: 'Ich habe CryptoDeclare entwickelt, nachdem ich mit demselben Problem konfrontiert war, mit dem jeder Krypto-Inhaber in der Schweiz zur Steuerzeit konfrontiert ist: stundenlange manuelle Abstimmung von Transaktionen, Umrechnung von Preisen und die Hoffnung, dass die Zahlen stimmen.<br><br>Mit Erfahrung im Schweizer Privatbanking und im institutionellen Bereich digitaler Vermögenswerte verstehe ich sowohl die regulatorische Landschaft als auch die reale Komplexität von Krypto-Portfolios. CryptoDeclare wendet dieselbe FIFO-Strenge an, die Schweizer Treuhänder erwarten – vollständig automatisiert.',
       contact_label: '08 — Kontakt',
       contact_title: 'Kontakt<br><em>aufnehmen</em>',
-      contact_body: 'Haben Sie Fragen zu Ihrem Bericht oder Interesse am Business-Plan? Wir helfen Ihnen gerne.',
+      contact_body: 'Haben Sie Fragen zu Ihrem Bericht, brauchen Sie Hilfe mit einem Exchange-Format oder möchten Sie Standard, Pro oder Business aktivieren? Wir helfen gerne.',
       contact_name: 'Name',
       contact_email: 'E-Mail',
       contact_message: 'Nachricht',
@@ -3895,9 +4018,24 @@
       cookie_reject: 'Ablehnen',
       cookie_saved: 'Cookie-Einstellungen gespeichert.',
       unlock_title: 'Ihren Freischaltcode eingeben',
-      unlock_sub: 'Ihre Datei enthält mehr als 50 Transaktionen. Geben Sie einen Pro- oder Business-Code ein, um Ihren Bericht zu erstellen.',
+      unlock_sub: 'Vorschauen sind kostenlos. Geben Sie Ihren bezahlten Freischaltcode ein, um den sauberen PDF- und CSV-Export zu aktivieren.',
+      unlock_export_prompt: 'Vorschau fertig. Geben Sie Ihren bezahlten Freischaltcode ein, um den sauberen PDF- und CSV-Export zu aktivieren, oder wählen Sie unten einen Plan.',
+      unlock_over_standard: 'Ihre Datei enthält {count} Transaktionen. Standard deckt bis 1’000 ab · Pro bis 5’000 · Business ist unbegrenzt.',
+      unlock_over_pro: 'Ihre Datei enthält {count} Transaktionen. Pro deckt bis 5’000 ab · Business ist unbegrenzt.',
+      badge_free: 'Kostenlos · Vorschau',
+      badge_standard: 'Standard · 1’000 Tx',
+      badge_pro: 'Pro · 5’000 Tx',
+      badge_business: 'Business · Unbegrenzt',
+      unlock_label_standard: 'Standard — bis zu 1’000 Transaktionen',
+      unlock_label_pro: 'Pro — bis zu 5’000 Transaktionen',
+      unlock_label_business: 'Business — unbegrenzte Transaktionen',
+      unlock_success: '✓ {plan} freigeschaltet!',
+      toast_welcome: '🎉 {plan} freigeschaltet! Sie koennen jetzt Ihre CSV hochladen.',
+      toast_checkout_pending: 'Die Checkout-Links fuer Standard und Pro werden gerade verbunden. Kontaktieren Sie uns, dann aktivieren wir den Plan fuer Sie.',
       unlock_btn: 'Freischalten',
       unlock_error: 'Ungültiger Code. Prüfen Sie Ihre E-Mail von CryptoDeclare oder kontaktieren Sie hello@cryptodeclare.ch',
+      toast_export_pdf_locked: 'Kostenlose Vorschau bereit — aktivieren Sie einen bezahlten Plan, um das saubere PDF zu exportieren.',
+      toast_export_csv_locked: 'Kostenlose Vorschau bereit — aktivieren Sie einen bezahlten Plan, um das Ledger-CSV zu exportieren.',
       manual_optional_label: 'Erweitert',
       manual_title: 'Fehlende Transaktionen hinzufügen',
       manual_sub: 'Für fehlende Anschaffungshistorie, Staking-Erträge oder einzelne Wallet-Bewegungen. Manuelle Zeilen werden lokal gespeichert und in FIFO einbezogen.',
@@ -3953,8 +4091,9 @@
       report_badge: 'Basiert auf importierten Daten',
       report_body: 'Sauber, strukturiert und für das Schweizer Steuerreporting aufgebaut. Ihr herunterladbarer Bericht enthält ein vollständiges Transaktionsprotokoll, eine Zusammenfassung der realisierten Resultate und eine Jahresendbewertung auf Basis der importierten Daten.',
       report_cta: 'Bericht erstellen',
-      starter_period: 'Bis 250 Transaktionen', starter_cta: 'Kostenlos starten',
-      pro_period: 'Pro Steuerjahr · bis 1000 Transaktionen', pro_cta: 'Pro kaufen',
+      starter_period: 'Bericht ansehen, bevor Sie bezahlen', starter_cta: 'Kostenlos ansehen',
+      standard_period: "Pro Steuerjahr · bis 1'000 Transaktionen", standard_cta: 'Standard anfragen',
+      pro_period: "Pro Steuerjahr · bis 5'000 Transaktionen", pro_cta: 'Pro anfragen',
       biz_period: 'Pro Unternehmen / Jahr · unbegrenzte Transaktionen', biz_cta: 'Business kaufen',
       footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Strukturiert, schnell und privat.',
       footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
@@ -4022,6 +4161,10 @@
     syncCookieBanner();
     const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
     if (typeof showToast === 'function') showToast(t.cookie_saved || 'Cookie preferences saved.');
+  }
+
+  function fillTemplate(template, vars = {}) {
+    return String(template || '').replace(/\{(\w+)\}/g, (_, key) => vars[key] != null ? vars[key] : '');
   }
 
   function setLang(lang) {
@@ -4178,14 +4321,20 @@
 
     // Pricing cards
     const pricingCards = document.querySelectorAll('.pricing-card');
-    if (pricingCards.length >= 3) {
-      const starterPrice = document.getElementById('starter-price');
-      if (starterPrice && t.starter_price) starterPrice.textContent = t.starter_price;
+    if (pricingCards.length >= 4) {
+      const setPrice = (id, key) => {
+        const el = document.getElementById(id);
+        if (el && t[key]) el.textContent = t[key];
+      };
+      setPrice('starter-price', 'starter_price');
+      setPrice('standard-price', 'standard_price');
+      setPrice('pro-price', 'pro_price');
       const setPeriod = (card, key) => { const el = card.querySelector('.pricing-period'); if (el && t[key]) el.textContent = t[key]; };
       const setCta = (card, key) => { const el = card.querySelector('.btn-outline'); if (el && t[key]) el.textContent = t[key]; };
-      setPeriod(pricingCards[0], 'starter_period'); setCta(pricingCards[0], 'starter_cta');
-      setPeriod(pricingCards[1], 'pro_period');     setCta(pricingCards[1], 'pro_cta');
-      setPeriod(pricingCards[2], 'biz_period');     setCta(pricingCards[2], 'biz_cta');
+      setPeriod(pricingCards[0], 'starter_period');  setCta(pricingCards[0], 'starter_cta');
+      setPeriod(pricingCards[1], 'standard_period'); setCta(pricingCards[1], 'standard_cta');
+      setPeriod(pricingCards[2], 'pro_period');      setCta(pricingCards[2], 'pro_cta');
+      setPeriod(pricingCards[3], 'biz_period');      setCta(pricingCards[3], 'biz_cta');
     }
 
     // Footer
@@ -4229,9 +4378,10 @@
     // Pricing plan names and feature lists
     const pCards = document.querySelectorAll('.pricing-card');
     const planKeys = [
-      { name:'starter_name', features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
-      { name:'pro_name',     features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5','pro_f6'] },
-      { name:'biz_name',     features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6','biz_f7'] },
+      { name:'starter_name',  features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
+      { name:'standard_name', features:['standard_f1','standard_f2','standard_f3','standard_f4','standard_f5','standard_f6'] },
+      { name:'pro_name',      features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5','pro_f6'] },
+      { name:'biz_name',      features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6','biz_f7'] },
     ];
     pCards.forEach((card, i) => {
       const pk = planKeys[i];
@@ -4298,6 +4448,8 @@
       const key = el.getAttribute('data-i18n-html');
       if (t[key]) el.innerHTML = t[key];
     });
+    const badge = document.getElementById('plan-badge');
+    if (badge && badge.dataset.planTier) setPlanBadge(badge.dataset.planTier);
     renderManualTransactions();
 
     // Footer links
@@ -4339,7 +4491,7 @@
   }
 
   initTaxYearSelector();
-  if (currentLang !== 'en') setLang(currentLang);
+  setLang(currentLang);
 
   function navScrollTo(id) {
     const scrollAliases = {
@@ -4408,16 +4560,18 @@
 
   // ── Stripe Modal ──
   const STRIPE_LINKS = {
-    professional: 'https://buy.stripe.com/9B65kDg6jb195NVb5i0Jq00',
+    standard: '',
+    pro: '',
     business: 'https://buy.stripe.com/6oU9AT8DR5GPekr3CQ0Jq01',
   };
 
   const PLAN_DETAILS = {
-    professional: { name: 'Professional', price: 'CHF 99' },
+    standard: { name: 'Standard', price: 'CHF 89' },
+    pro: { name: 'Pro', price: 'CHF 149' },
     business: { name: 'Business', price: 'CHF 299' }
   };
 
-  let currentPlan = 'professional';
+  let currentPlan = 'standard';
 
   function openModal(plan) {
     currentPlan = plan;
@@ -4435,7 +4589,13 @@
   function proceedToStripe(e) {
     e.preventDefault();
     const url = STRIPE_LINKS[currentPlan];
-    if (!url) return;
+    if (!url) {
+      closeModal();
+      navScrollTo('contact');
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+      showToast(t.toast_checkout_pending || 'Standard and Pro checkout links are being connected. Contact us and we will activate the plan for you.');
+      return;
+    }
     window.open(url, '_blank');
     closeModal();
   }
@@ -4451,11 +4611,12 @@
 
   // ── Unlock Code System ──
   // Codes are SHA-256 hashed — not reversible from source
-  const PRO_HASHES = [
+  const STANDARD_HASHES = [
     '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598',
     'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8',
     '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b',
   ];
+  const PRO_HASHES = [];
   const BIZ_HASHES = [
     'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d',
     '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90',
@@ -4463,10 +4624,10 @@
   ];
 
   // Plan limits
-  const LIMITS = { free: 250, pro: 1000, business: Infinity };
-  const WARN_AT = 900; // warn before hitting pro limit
+  const LIMITS = { free: Infinity, standard: 1000, pro: 5000, business: Infinity };
+  const WARN_AT = { standard: 900, pro: 4500 };
 
-  let currentPlanTier = 'free'; // 'free' | 'pro' | 'business'
+  let currentPlanTier = 'free'; // 'free' | 'standard' | 'pro' | 'business'
   let pendingFile = null; // store single file while waiting for unlock code
   let pendingFiles = null; // store multi-file uploads while waiting for unlock code
   let pendingManualOnly = false; // generate manual-only report after unlock
@@ -4693,6 +4854,7 @@
       const stored = storage.getItem('cd_plan');
       if (stored) {
         const { tier, hash } = JSON.parse(stored);
+        if ((tier === 'standard' || tier === 'pro') && STANDARD_HASHES.includes(hash)) return 'standard';
         if (tier === 'pro' && PRO_HASHES.includes(hash)) return 'pro';
         if (tier === 'business' && BIZ_HASHES.includes(hash)) return 'business';
       }
@@ -4738,17 +4900,35 @@
     updateTrialUI();
   }
 
+  function getTierBadgeLabel(tier) {
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    if (tier === 'standard') return t.badge_standard || 'Standard · 1,000 tx';
+    if (tier === 'pro') return t.badge_pro || 'Pro · 5,000 tx';
+    if (tier === 'business') return t.badge_business || 'Business · Unlimited';
+    return t.badge_free || 'Free · Preview';
+  }
+
+  function getTierUnlockLabel(tier) {
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    if (tier === 'standard') return t.unlock_label_standard || 'Standard — up to 1,000 transactions';
+    if (tier === 'pro') return t.unlock_label_pro || 'Pro — up to 5,000 transactions';
+    if (tier === 'business') return t.unlock_label_business || 'Business — unlimited transactions';
+    return '';
+  }
+
   function setPlanBadge(tier) {
     const badge = document.getElementById('plan-badge');
     if (!badge) return;
     badge.className = 'plan-badge ' + tier;
-    badge.textContent = tier === 'free' ? 'Free · 250 tx' : tier === 'pro' ? 'Pro · 1,000 tx' : 'Business · Unlimited';
+    badge.dataset.planTier = tier;
+    badge.textContent = getTierBadgeLabel(tier);
   }
 
   async function applyUnlockCode() {
     const input = document.getElementById('unlock-input');
     const errorEl = document.getElementById('unlock-error');
     const successEl = document.getElementById('unlock-success');
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
     const code = input.value.trim().toUpperCase();
     if (!code) return;
 
@@ -4758,7 +4938,8 @@
 
     const hash = await sha256hex(code);
     let tier = null;
-    if (PRO_HASHES.includes(hash)) tier = 'pro';
+    if (STANDARD_HASHES.includes(hash)) tier = 'standard';
+    else if (PRO_HASHES.includes(hash)) tier = 'pro';
     else if (BIZ_HASHES.includes(hash)) tier = 'business';
 
     if (!tier) {
@@ -4769,8 +4950,8 @@
 
     activateUnlockedPlan(tier, hash, { hidePrompt: false });
 
-    const label = tier === 'pro' ? 'Pro — up to 1,000 transactions' : 'Business — unlimited transactions';
-    successEl.textContent = '✓ ' + label + ' unlocked!';
+    const label = getTierUnlockLabel(tier);
+    successEl.textContent = fillTemplate(t.unlock_success || '✓ {plan} unlocked!', { plan: label });
     successEl.classList.add('visible');
 
     // If there's a pending file, process it now
@@ -4792,15 +4973,31 @@
   }
 
   function getTxLimit() {
-    return LIMITS[currentPlanTier] || LIMITS.free;
+    return LIMITS[currentPlanTier] ?? LIMITS.free;
   }
 
-  function showUnlockBanner(txCount) {
+  function showUnlockBanner(txCount, customMessage = '') {
     const banner = document.getElementById('unlock-banner');
     const sub = document.getElementById('unlock-sub');
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    if (!banner) return;
     banner.classList.add('visible');
-    if (txCount > LIMITS.free) {
-      sub.textContent = `Your file has ${txCount.toLocaleString()} transactions. Pro unlocks up to 1,000 · Business unlocks unlimited.`;
+    if (sub) {
+      if (customMessage) {
+        sub.textContent = customMessage;
+      } else if (Number.isFinite(txCount) && currentPlanTier === 'standard') {
+        sub.textContent = fillTemplate(
+          t.unlock_over_standard || 'Your file has {count} transactions. Standard covers up to 1,000 · Pro covers up to 5,000 · Business is unlimited.',
+          { count: txCount.toLocaleString('de-CH') }
+        );
+      } else if (Number.isFinite(txCount) && currentPlanTier === 'pro') {
+        sub.textContent = fillTemplate(
+          t.unlock_over_pro || 'Your file has {count} transactions. Pro covers up to 5,000 · Business is unlimited.',
+          { count: txCount.toLocaleString('de-CH') }
+        );
+      } else {
+        sub.textContent = t.unlock_sub || 'Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.';
+      }
     }
     setTimeout(() => document.getElementById('unlock-input')?.focus(), 80);
   }
@@ -4809,29 +5006,16 @@
   const TRIAL_KEY = 'cryptotax_trial_used';
 
   function hasUsedTrial() {
-    // Pro and Business users never hit the trial wall
-    if (currentPlanTier === 'pro' || currentPlanTier === 'business') return false;
-    try { return localStorage.getItem(TRIAL_KEY) === 'true'; } catch(e) { return false; }
+    return false;
   }
 
   function markTrialUsed() {
-    try { localStorage.setItem(TRIAL_KEY, 'true'); } catch(e) {}
+    try { localStorage.removeItem(TRIAL_KEY); } catch(e) {}
   }
 
   function updateTrialUI() {
     const area = document.getElementById('upload-area');
-    if (hasUsedTrial() && currentPlanTier === 'free') {
-      // Lock the upload area and show upgrade prompt
-      if (area) area.classList.add('locked');
-      // Show unlock banner immediately for returning free users
-      const unlockBanner = document.getElementById('unlock-banner');
-      if (unlockBanner) unlockBanner.classList.add('visible');
-      const sub = document.getElementById('unlock-sub');
-      if (sub) sub.textContent = 'You\'ve used your free trial. Enter a Pro or Business unlock code to generate more reports.';
-      setTimeout(() => document.getElementById('unlock-input')?.focus(), 80);
-    } else {
-      if (area) area.classList.remove('locked');
-    }
+    if (area) area.classList.remove('locked');
   }
 
   // Run on load
@@ -4853,13 +5037,13 @@
       const code = urlCode.trim().toUpperCase();
       const hash = await sha256hex(code);
       let tier = null;
-      if (PRO_HASHES.includes(hash)) tier = 'pro';
+      if (STANDARD_HASHES.includes(hash)) tier = 'standard';
+      else if (PRO_HASHES.includes(hash)) tier = 'pro';
       else if (BIZ_HASHES.includes(hash)) tier = 'business';
       if (tier) {
         activateUnlockedPlan(tier, hash);
-        // Show a welcome toast
-        const label = tier === 'pro' ? 'Pro — up to 1,000 transactions' : 'Business — unlimited transactions';
-        showToast('🎉 ' + label + ' unlocked! You can now upload your CSV.');
+        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+        showToast(fillTemplate(t.toast_welcome || '🎉 {plan} unlocked! You can now upload your CSV.', { plan: getTierUnlockLabel(tier) }));
         // Clean URL so code doesn't stay visible
         window.history.replaceState({}, '', window.location.pathname);
         // Optional: scroll to upload area
@@ -4959,7 +5143,7 @@
 
       // ── Step 2: Check transaction limit ──
       const limit = getTxLimit();
-      if (totalTxCount > limit) {
+      if (currentPlanTier !== 'free' && totalTxCount > limit) {
         indicator.classList.remove('visible');
         pendingFiles = files.slice();
         pendingFile = null;
@@ -5013,7 +5197,7 @@
     }
 
     const limit = getTxLimit();
-    if (manualTxs.length > limit) {
+    if (currentPlanTier !== 'free' && manualTxs.length > limit) {
       pendingFile = null;
       pendingFiles = null;
       pendingManualOnly = true;
@@ -5093,8 +5277,7 @@
       const combinedTransactions = mergeManualTransactions(transactions, manualTxs);
       const txCount = combinedTransactions.length;
       const limit = getTxLimit();
-
-      if (txCount > limit) {
+      if (currentPlanTier !== 'free' && txCount > limit) {
         indicator.classList.remove('visible');
         pendingFile = file;
         pendingFiles = null;
@@ -5103,8 +5286,10 @@
         return;
       }
 
-      if (currentPlanTier === 'pro' && txCount >= WARN_AT) {
-        setProcessingText(`Processing ${txCount} transactions — approaching Pro limit of 1,000...`);
+      const warnAt = WARN_AT[currentPlanTier];
+      if (warnAt && txCount >= warnAt) {
+        const planLabel = currentPlanTier === 'standard' ? 'Standard limit of 1,000' : 'Pro limit of 5,000';
+        setProcessingText(`Processing ${txCount} transactions — approaching ${planLabel}...`);
       }
 
       setProcessingText('Calculating your tax report...');
@@ -8192,9 +8377,14 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     ];
     buttons.forEach(btn => {
       if (!btn) return;
-      btn.disabled = !ready;
-      btn.setAttribute('aria-disabled', ready ? 'false' : 'true');
+      const shouldDisable = !ready;
+      btn.disabled = shouldDisable;
+      btn.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
     });
+    const upgradeBtn = document.getElementById('report-upgrade-btn');
+    if (upgradeBtn) {
+      upgradeBtn.style.display = currentPlanTier === 'free' ? 'inline-flex' : 'none';
+    }
   }
 
   function isExportAcknowledged() {
@@ -8994,6 +9184,13 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
   async function downloadReport() {
     if (!isExportAcknowledged()) return;
+    if (currentPlanTier === 'free') {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+      showUnlockBanner(undefined, t.unlock_export_prompt || 'Preview ready. Enter your paid unlock code to export the clean PDF and ledger CSV, or choose a plan below.');
+      navScrollTo('declare');
+      showToast(t.toast_export_pdf_locked || 'Free preview ready — unlock a paid plan to export the clean PDF.');
+      return;
+    }
     const data = window._reportData;
     if (!data) return;
     saveTaxpayerDetails();
@@ -9558,6 +9755,13 @@ onmouseout="this.style.color='#8A909E'">
 
   function downloadLedgerCSV() {
     if (!isExportAcknowledged()) return;
+    if (currentPlanTier === 'free') {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+      showUnlockBanner(undefined, t.unlock_export_prompt || 'Preview ready. Enter your paid unlock code to export the clean PDF and ledger CSV, or choose a plan below.');
+      navScrollTo('declare');
+      showToast(t.toast_export_csv_locked || 'Free preview ready — unlock a paid plan to export the ledger CSV.');
+      return;
+    }
     const data = window._reportData;
     if (!data || !data.transactions || !data.transactions.length) {
       showToast('No transaction data available — please re-upload your file.');
