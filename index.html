@@ -1404,6 +1404,29 @@
     border: 1px solid rgba(212,175,55,0.3);
     box-shadow: 0 28px 90px rgba(0,0,0,0.45), 0 0 0 100vmax rgba(0,0,0,0.62);
   }
+  .unlock-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(245,242,235,0.12);
+    border-radius: 999px;
+    background: rgba(245,242,235,0.04);
+    color: rgba(245,242,235,0.72);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .unlock-close:hover {
+    background: rgba(245,242,235,0.08);
+    border-color: rgba(245,242,235,0.22);
+    color: var(--paper);
+  }
   .unlock-banner.visible {
     display: block;
     animation: unlockPop 0.18s ease-out;
@@ -3034,7 +3057,7 @@
         <li>20+ supported formats</li>
         <li>Full PDF + CSV export</li>
         <li>Full history imports</li>
-        <li>Unlock code delivered by email</li>
+        <li>Instant access after payment</li>
       </ul>
       <a href="#" onclick="openModal('standard');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Standard</a>
     </div>
@@ -3135,6 +3158,7 @@
 
       <!-- UNLOCK CODE BANNER -->
       <div class="unlock-banner" id="unlock-banner">
+        <button class="unlock-close" type="button" onclick="hideUnlockBanner()" aria-label="Close unlock prompt">×</button>
         <div class="unlock-title">Enter your unlock code</div>
         <div class="unlock-sub" id="unlock-sub">Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.</div>
         <div class="unlock-row">
@@ -3575,7 +3599,7 @@
       standard_f3: '20+ supported formats',
       standard_f4: 'Clean PDF + CSV export',
       standard_f5: 'Full history imports',
-      standard_f6: 'Unlock code delivered by email',
+      standard_f6: 'Instant access after payment',
       pro_f1: 'Up to 5,000 transactions',
       pro_f2: 'Everything in Standard',
       pro_f3: 'High-activity portfolios',
@@ -3779,7 +3803,7 @@
       standard_f3: '20+ formats supportés',
       standard_f4: 'Export PDF + CSV complet',
       standard_f5: 'Import historique complet',
-      standard_f6: 'Code envoyé par e-mail',
+      standard_f6: 'Accès immédiat après paiement',
       pro_f1: "Jusqu'à 5'000 transactions",
       pro_f2: 'Tout le contenu de Standard',
       pro_f3: 'Portefeuilles plus actifs',
@@ -3983,7 +4007,7 @@
       standard_f3: '20+ unterstützte Formate',
       standard_f4: 'Vollständiger PDF- und CSV-Export',
       standard_f5: 'Import vollständiger Historien',
-      standard_f6: 'Freischaltcode per E-Mail',
+      standard_f6: 'Sofortiger Zugriff nach Zahlung',
       pro_f1: "Bis 5'000 Transaktionen",
       pro_f2: 'Alles aus Standard',
       pro_f3: 'Für aktivere Portfolios',
@@ -4604,7 +4628,9 @@
   });
 
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
+    if (e.key !== 'Escape') return;
+    closeModal();
+    hideUnlockBanner();
   });
 
   // ── Unlock Code System ──
