@@ -3024,7 +3024,7 @@
       </ul>
       <a href="#" onclick="navScrollTo('upload-area');return false;" class="btn-outline">Preview for free</a>
     </div>
-    <div class="pricing-card coming-soon">
+    <div class="pricing-card">
       <div class="pricing-name">Standard</div>
       <div class="pricing-price" id="standard-price">CHF 89</div>
       <div class="pricing-period">Per tax year · up to 1,000 transactions</div>
@@ -3036,9 +3036,9 @@
         <li>Full history imports</li>
         <li>Unlock code delivered by email</li>
       </ul>
-      <a href="#" onclick="navScrollTo('contact');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Request Standard</a>
+      <a href="#" onclick="openModal('standard');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Standard</a>
     </div>
-    <div class="pricing-card coming-soon">
+    <div class="pricing-card">
       <div class="pricing-name">Pro</div>
       <div class="pricing-price" id="pro-price">CHF 149</div>
       <div class="pricing-period">Per tax year · up to 5,000 transactions</div>
@@ -3050,7 +3050,7 @@
         <li>Historical imports across files</li>
         <li>Priority review support</li>
       </ul>
-      <a href="#" onclick="navScrollTo('contact');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Request Pro</a>
+      <a href="#" onclick="openModal('pro');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Pro</a>
     </div>
     <div class="pricing-card business">
       <div class="pricing-name">Business</div>
@@ -3684,8 +3684,8 @@
       report_body: 'Clean, structured, and built for Swiss tax reporting. Your downloadable report includes a full transaction log, realised results summary, and end-of-year portfolio valuation based on imported data.',
       report_cta: 'Generate my report',
       starter_period: 'Preview your report before paying', starter_cta: 'Preview for free',
-      standard_period: 'Per tax year · up to 1,000 transactions', standard_cta: 'Request Standard',
-      pro_period: 'Per tax year · up to 5,000 transactions', pro_cta: 'Request Pro',
+      standard_period: 'Per tax year · up to 1,000 transactions', standard_cta: 'Get Standard',
+      pro_period: 'Per tax year · up to 5,000 transactions', pro_cta: 'Get Pro',
       biz_period: 'Per entity / year · unlimited transactions', biz_cta: 'Get Business',
       footer_tagline: 'Swiss crypto tax reporting for individuals and businesses. Structured, fast, and private.',
       footer_product: 'Product', footer_legal: 'Legal', footer_support: 'Support',
@@ -3888,8 +3888,8 @@
       report_body: "Propre, structuré et conçu pour le reporting fiscal suisse. Votre rapport téléchargeable inclut un journal complet des transactions, un résumé des résultats réalisés et une valorisation de fin d'année basée sur les données importées.",
       report_cta: 'Générer mon rapport',
       starter_period: 'Prévisualisez votre rapport avant de payer', starter_cta: 'Prévisualiser gratuitement',
-      standard_period: "Par année fiscale · jusqu'à 1'000 transactions", standard_cta: 'Demander Standard',
-      pro_period: "Par année fiscale · jusqu'à 5'000 transactions", pro_cta: 'Demander Pro',
+      standard_period: "Par année fiscale · jusqu'à 1'000 transactions", standard_cta: 'Obtenir Standard',
+      pro_period: "Par année fiscale · jusqu'à 5'000 transactions", pro_cta: 'Obtenir Pro',
       biz_period: 'Par entité / an · transactions illimitées', biz_cta: 'Obtenir Business',
       footer_tagline: 'Déclaration fiscale crypto suisse pour particuliers et entreprises. Structurée, rapide et privée.',
       footer_product: 'Produit', footer_legal: 'Légal', footer_support: 'Support',
@@ -4092,8 +4092,8 @@
       report_body: 'Sauber, strukturiert und für das Schweizer Steuerreporting aufgebaut. Ihr herunterladbarer Bericht enthält ein vollständiges Transaktionsprotokoll, eine Zusammenfassung der realisierten Resultate und eine Jahresendbewertung auf Basis der importierten Daten.',
       report_cta: 'Bericht erstellen',
       starter_period: 'Bericht ansehen, bevor Sie bezahlen', starter_cta: 'Kostenlos ansehen',
-      standard_period: "Pro Steuerjahr · bis 1'000 Transaktionen", standard_cta: 'Standard anfragen',
-      pro_period: "Pro Steuerjahr · bis 5'000 Transaktionen", pro_cta: 'Pro anfragen',
+      standard_period: "Pro Steuerjahr · bis 1'000 Transaktionen", standard_cta: 'Standard kaufen',
+      pro_period: "Pro Steuerjahr · bis 5'000 Transaktionen", pro_cta: 'Pro kaufen',
       biz_period: 'Pro Unternehmen / Jahr · unbegrenzte Transaktionen', biz_cta: 'Business kaufen',
       footer_tagline: 'Schweizer Krypto-Steuerreporting für Privatpersonen und Unternehmen. Strukturiert, schnell und privat.',
       footer_product: 'Produkt', footer_legal: 'Rechtliches', footer_support: 'Support',
@@ -4558,8 +4558,8 @@
 
   // ── Stripe Modal ──
   const STRIPE_LINKS = {
-    standard: '',
-    pro: '',
+    standard: 'https://buy.stripe.com/cNidR96vJgltdgn4GU0Jq04',
+    pro: 'https://buy.stripe.com/8x2aEXbQ36KTekr2yM0Jq05',
     business: 'https://buy.stripe.com/6oU9AT8DR5GPekr3CQ0Jq01',
   };
 
