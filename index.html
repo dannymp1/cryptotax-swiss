@@ -8353,9 +8353,9 @@
     <tr style="background:rgba(255,255,255,0.05)">
       <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Symbol</th>
       <th style="padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Asset</th>
-      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buy txns</th>
-      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sell txns</th>
-      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Reward txns</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Buys</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Sells</th>
+      <th style="padding:10px 12px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Rewards</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Holdings 31.12</th>
       <th style="padding:10px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">Value CHF</th>
       <th style="padding:10px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,242,235,0.4);border-bottom:1px solid rgba(255,255,255,0.08)">${(data.assets||[]).some(a=>a.missingCostBasis) ? 'Matched Gain' : 'Gain / Loss'}</th>
@@ -9024,9 +9024,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         ? [
             { key: 'symbol', label: 'Asset', width: 16 },
             { key: 'name', label: 'Name', width: 23 },
-            { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
-            { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
-            { key: 'rewards', label: 'Reward Txns', width: 15, align: 'right' },
+            { key: 'buys', label: 'Buys', width: 14, align: 'right' },
+            { key: 'sells', label: 'Sells', width: 14, align: 'right' },
+            { key: 'rewards', label: 'Rewards', width: 15, align: 'right' },
             { key: 'holding', label: 'Holding', width: 25, align: 'right' },
             { key: 'value', label: 'Value CHF', width: 23, align: 'right' },
             { key: 'gain', label: 'Matched Gain', width: 34, align: 'right', color: row => row.gainColor },
@@ -9035,9 +9035,9 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
         : [
             { key: 'symbol', label: 'Asset', width: 20 },
             { key: 'name', label: 'Name', width: 35 },
-            { key: 'buys', label: 'Buy Txns', width: 14, align: 'right' },
-            { key: 'sells', label: 'Sell Txns', width: 14, align: 'right' },
-            { key: 'rewards', label: 'Reward Txns', width: 15, align: 'right' },
+            { key: 'buys', label: 'Buys', width: 14, align: 'right' },
+            { key: 'sells', label: 'Sells', width: 14, align: 'right' },
+            { key: 'rewards', label: 'Rewards', width: 15, align: 'right' },
             { key: 'holding', label: 'Holding', width: 26, align: 'right' },
             { key: 'value', label: 'Value CHF', width: 26, align: 'right' },
             { key: 'gain', label: 'Gain / Loss', width: 36, align: 'right', color: row => row.gainColor }
@@ -9577,7 +9577,7 @@ onmouseout="this.style.color='#8A909E'">
     <thead>
       <tr>
         <th>Symbol</th><th>Asset</th>
-        <th class="center">Buy txns</th><th class="center">Sell txns</th><th class="center">Reward txns</th>
+        <th class="center">Buys</th><th class="center">Sells</th><th class="center">Rewards</th>
         <th class="right">${holdingsLabel}</th>
         <th class="right">Value CHF</th>
         <th class="right">${_hasUnmatched ? 'Matched Gain' : 'Gain / Loss'}</th>
