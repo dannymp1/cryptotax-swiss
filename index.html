@@ -3052,8 +3052,7 @@
         <li>1 portfolio / entity</li>
         <li>20+ supported formats</li>
         <li>Full PDF + CSV export</li>
-        <li>Full history imports</li>
-        <li>Instant access after payment</li>
+        <li>Historical imports for 1 portfolio</li>
       </ul>
       <a href="#" onclick="openModal('standard');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Standard</a>
     </div>
@@ -3064,9 +3063,8 @@
       <ul class="pricing-features">
         <li>Up to 5,000 transactions</li>
         <li>Everything in Standard</li>
-        <li>High-activity portfolios</li>
-        <li>Clean PDF + CSV export</li>
-        <li>Historical imports across files</li>
+        <li>Multiple exchange and wallet files</li>
+        <li>Historical imports across multiple files</li>
         <li>Priority review support</li>
       </ul>
       <a href="#" onclick="openModal('pro');return false;" class="btn-outline" style="display:block;text-align:center;text-decoration:none;">Get Pro</a>
@@ -3078,7 +3076,7 @@
       <ul class="pricing-features">
         <li>Unlimited transactions</li>
         <li>All supported exchanges & unlimited portfolios</li>
-        <li>Historical data imports</li>
+        <li>Historical imports across multiple entities</li>
         <li>Full PDF + CSV export</li>
         <li>FIFO reporting method</li>
         <li>Multi-entity support</li>
@@ -3594,17 +3592,15 @@
       standard_f2: '1 portfolio / entity',
       standard_f3: '20+ supported formats',
       standard_f4: 'Clean PDF + CSV export',
-      standard_f5: 'Full history imports',
-      standard_f6: 'Instant access after payment',
+      standard_f5: 'Historical imports for 1 portfolio',
       pro_f1: 'Up to 5,000 transactions',
       pro_f2: 'Everything in Standard',
-      pro_f3: 'High-activity portfolios',
-      pro_f4: 'Clean PDF + CSV export',
-      pro_f5: 'Historical imports across files',
-      pro_f6: 'Priority review support',
+      pro_f3: 'Multiple exchange and wallet files',
+      pro_f4: 'Historical imports across multiple files',
+      pro_f5: 'Priority review support',
       biz_f1: 'Unlimited transactions',
       biz_f2: 'All supported exchanges & unlimited portfolios',
-      biz_f3: 'Historical data imports',
+      biz_f3: 'Historical imports across multiple entities',
       biz_f4: 'Full PDF + CSV export',
       biz_f5: 'FIFO reporting method',
       biz_f6: 'Multi-entity support',
@@ -3798,17 +3794,15 @@
       standard_f2: '1 portefeuille / entité',
       standard_f3: '20+ formats supportés',
       standard_f4: 'Export PDF + CSV complet',
-      standard_f5: 'Import historique complet',
-      standard_f6: 'Accès immédiat après paiement',
+      standard_f5: 'Imports historiques pour 1 portefeuille',
       pro_f1: "Jusqu'à 5'000 transactions",
       pro_f2: 'Tout le contenu de Standard',
-      pro_f3: 'Portefeuilles plus actifs',
-      pro_f4: 'Export PDF + CSV complet',
-      pro_f5: 'Imports historiques sur plusieurs fichiers',
-      pro_f6: 'Support prioritaire',
+      pro_f3: 'Plusieurs fichiers d’exchanges et wallets',
+      pro_f4: 'Imports historiques sur plusieurs fichiers',
+      pro_f5: 'Support prioritaire',
       biz_f1: 'Transactions illimitées',
       biz_f2: 'Toutes les plateformes supportées & portefeuilles illimités',
-      biz_f3: 'Import de données historiques',
+      biz_f3: 'Imports historiques sur plusieurs entités',
       biz_f4: 'Export PDF + CSV complet',
       biz_f5: 'Méthode FIFO',
       biz_f6: 'Support multi-entités',
@@ -4002,17 +3996,15 @@
       standard_f2: '1 Portfolio / Einheit',
       standard_f3: '20+ unterstützte Formate',
       standard_f4: 'Vollständiger PDF- und CSV-Export',
-      standard_f5: 'Import vollständiger Historien',
-      standard_f6: 'Sofortiger Zugriff nach Zahlung',
+      standard_f5: 'Historische Importe für 1 Portfolio',
       pro_f1: "Bis 5'000 Transaktionen",
       pro_f2: 'Alles aus Standard',
-      pro_f3: 'Für aktivere Portfolios',
-      pro_f4: 'Vollständiger PDF- und CSV-Export',
-      pro_f5: 'Historische Importe über mehrere Dateien',
-      pro_f6: 'Priorisierter Support',
+      pro_f3: 'Mehrere Exchange- und Wallet-Dateien',
+      pro_f4: 'Historische Importe über mehrere Dateien',
+      pro_f5: 'Priorisierter Support',
       biz_f1: 'Unbegrenzte Transaktionen',
       biz_f2: 'Alle unterstützten Börsen & unbegrenzte Portfolios',
-      biz_f3: 'Import historischer Daten',
+      biz_f3: 'Historische Importe über mehrere Einheiten',
       biz_f4: 'Vollständiger PDF + CSV-Export',
       biz_f5: 'FIFO-Methode',
       biz_f6: 'Multi-Entitäten-Support',
@@ -4397,8 +4389,8 @@
     const pCards = document.querySelectorAll('.pricing-card');
     const planKeys = [
       { name:'starter_name',  features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
-      { name:'standard_name', features:['standard_f1','standard_f2','standard_f3','standard_f4','standard_f5','standard_f6'] },
-      { name:'pro_name',      features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5','pro_f6'] },
+      { name:'standard_name', features:['standard_f1','standard_f2','standard_f3','standard_f4','standard_f5'] },
+      { name:'pro_name',      features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] },
       { name:'biz_name',      features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6','biz_f7'] },
     ];
     pCards.forEach((card, i) => {
