@@ -2808,7 +2808,7 @@
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Declare now — free preview
       </a>
-      <a href="#" onclick="navScrollTo('report');return false;" class="btn-secondary">
+      <a href="#" onclick="downloadSampleReport();return false;" class="btn-secondary" data-sample-report-trigger="true">
         View sample report
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -5616,6 +5616,43 @@
     2025: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
     2026: { USD: 0.899000, EUR: 0.939470, GBP: 1.136060 },
   };
+  const SAMPLE_REPORT_CSV = `date,exchange,type,asset,amount,price_chf,total_chf,fee_chf
+2024-01-09,Coinbase,Buy,BNB,90.00,275.00,24750.00,0
+2024-01-15,Coinbase,Buy,BTC,0.40,38250.00,15300.00,0
+2024-01-22,Coinbase,Buy,ADA,15000.00,0.49,7350.00,0
+2024-01-25,Coinbase,Buy,XRP,12000.00,0.54,6480.00,0
+2024-01-27,Coinbase,Buy,SOL,120.00,92.00,11040.00,0
+2024-01-30,Coinbase,Buy,LINK,900.00,13.20,11880.00,0
+2024-02-03,Coinbase,Buy,ETH,6.00,2150.00,12900.00,0
+2024-02-11,Coinbase,Buy,DOT,900.00,7.10,6390.00,0
+2024-02-18,Coinbase,Buy,ATOM,300.00,10.80,3240.00,0
+2024-03-04,Coinbase,Buy,AVAX,500.00,36.50,18250.00,0
+2024-03-14,Coinbase,Buy,ADA,8000.00,0.72,5760.00,0
+2024-03-19,Coinbase,Buy,SOL,80.00,145.00,11600.00,0
+2024-04-09,Coinbase,Buy,XRP,5000.00,0.62,3100.00,0
+2024-04-18,Coinbase,Buy,BTC,0.30,55100.00,16530.00,0
+2024-05-06,Coinbase,Buy,ETH,4.00,2940.00,11760.00,0
+2024-06-17,Coinbase,Buy,LINK,400.00,16.40,6560.00,0
+2024-07-08,Coinbase,Buy,BNB,40.00,468.00,18720.00,0
+2024-07-31,Coinbase,Reward,ADA,400.00,0.88,352.00,0
+2024-08-31,Coinbase,Reward,SOL,6.00,155.00,930.00,0
+2024-09-15,Coinbase,Reward,DOT,45.00,6.95,312.75,0
+2024-09-30,Coinbase,Reward,ETH,0.20,2280.00,456.00,0
+2024-10-10,Coinbase,Reward,AVAX,20.00,31.20,624.00,0
+2024-10-20,Coinbase,Reward,ATOM,18.00,9.75,175.50,0
+2024-10-31,Coinbase,Reward,ADA,350.00,1.02,357.00,0
+2024-11-12,Coinbase,Sell,BTC,0.20,84200.00,16840.00,0
+2024-11-21,Coinbase,Reward,SOL,4.00,210.00,840.00,0
+2024-11-28,Coinbase,Sell,DOT,300.00,7.85,2355.00,0
+2024-12-05,Coinbase,Sell,ADA,7000.00,1.07,7490.00,0
+2024-12-09,Coinbase,Sell,SOL,70.00,208.00,14560.00,0
+2024-12-10,Coinbase,Sell,XRP,7000.00,1.12,7840.00,0
+2024-12-11,Coinbase,Sell,LINK,500.00,24.80,12400.00,0
+2024-12-12,Coinbase,Reward,ETH,0.18,3460.00,622.80,0
+2024-12-14,Coinbase,Sell,ATOM,120.00,8.95,1074.00,0
+2024-12-16,Coinbase,Sell,AVAX,180.00,48.90,8802.00,0
+2024-12-18,Coinbase,Sell,ETH,3.00,3615.00,10845.00,0
+2024-12-19,Coinbase,Sell,BNB,35.00,645.00,22575.00,0`;
   const USD_LINKED_FIAT = ['USD','USDT','USDC','BUSD','DAI','FDUSD'];
   const HISTORICAL_FIAT_CURRENCIES = ['USD','EUR','GBP'];
   const _fiatFxCache = {};
@@ -8040,6 +8077,50 @@
     return buildSingleExchangeReport(transactions, format, lowParseWarning);
   }
 
+  async function downloadSampleReport() {
+    const triggers = Array.from(document.querySelectorAll('[data-sample-report-trigger="true"]'));
+    triggers.forEach(el => {
+      el.style.pointerEvents = 'none';
+      el.setAttribute('aria-busy', 'true');
+    });
+    showToast('Preparing sample report...');
+    try {
+      const rows = parseCSVRows(SAMPLE_REPORT_CSV);
+      if (!rows.length) throw new Error('Sample data unavailable');
+      const transactions = await normaliseRows(rows, 'generic');
+      if (!transactions.length) throw new Error('Sample data could not be parsed');
+      transactions.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+      const taxYear = '2024';
+      const fifoTransactions = getTransactionsUpToTaxYear(transactions, taxYear);
+      const reportTransactions = getTransactionsForTaxYear(fifoTransactions, taxYear);
+      const meta = buildReportMeta(reportTransactions, taxYear);
+      meta.clientRef = 'Sample';
+      meta.reportId = `CD-SAMPLE-${taxYear}`;
+      const computed = await computeFIFO(fifoTransactions, taxYear);
+      const data = buildFinalReport(
+        meta,
+        reportTransactions,
+        computed,
+        getDefaultAssetNames(),
+        buildExchangeNotes('coinbase', taxYear)
+      );
+      data.taxpayer = { name: '', address: '', taxId: '' };
+      data.generatedAt = new Date().toISOString();
+      data.reportId = `CD-SAMPLE-${taxYear}`;
+      await exportReportDataToPdf(data, `CryptoDeclare-Sample-TaxReport-${taxYear}.pdf`);
+      showToast('Sample report downloaded.');
+    } catch (err) {
+      console.warn('Sample report download failed', err);
+      showToast('Could not prepare the sample report right now.');
+    } finally {
+      triggers.forEach(el => {
+        el.style.pointerEvents = '';
+        el.removeAttribute('aria-busy');
+      });
+    }
+  }
+
   // Sanitize user-supplied strings before inserting into HTML
   function escHtml(str) {
     return String(str||'')
@@ -8073,6 +8154,29 @@
     }
 
     return importedRange || (data && data.dateRange) || taxYear || '—';
+  }
+
+  function getReportYearEndDate(data) {
+    const taxYear = String((data && data.taxYear) || '').trim();
+    return /^\d{4}$/.test(taxYear) ? `${taxYear}-12-31` : '';
+  }
+
+  function getReportYearEndCoverageGapDays(data) {
+    const end = String((data && data.lastTransactionDate) || '').slice(0,10);
+    const yearEnd = getReportYearEndDate(data);
+    if (!end || !yearEnd || end >= yearEnd) return 0;
+    const endDate = new Date(`${end}T00:00:00Z`);
+    const yearEndDate = new Date(`${yearEnd}T00:00:00Z`);
+    if (Number.isNaN(endDate.getTime()) || Number.isNaN(yearEndDate.getTime())) return 0;
+    return Math.round((yearEndDate - endDate) / 86400000);
+  }
+
+  function getPartialYearCoverageNote(data) {
+    const taxYear = String((data && data.taxYear) || '').trim();
+    const end = String((data && data.lastTransactionDate) || '').slice(0,10);
+    const gapDays = getReportYearEndCoverageGapDays(data);
+    if (!taxYear || !end || gapDays <= 31) return '';
+    return `Imported activity ends on ${formatDate(end)}. Wealth at 31.12.${taxYear} is valued using holdings implied by the uploaded data through that date only, so add any later ${taxYear} activity or confirm there was none before submitting.`;
   }
 
   function getGainSummaryLabel(hasUnmatched) {
@@ -8206,6 +8310,8 @@
       Math.abs(Number(asset.gainLossCHF || 0)) >= 0.01
     );
     const hasZeroStaking = Math.abs(Number(data && data.stakingIncomeCHF || 0)) < 0.005;
+    const partialYearNote = getPartialYearCoverageNote(data);
+    const hasPartialYearGap = !!partialYearNote;
 
     if (hasUnmatched) {
       const noun = unmatchedDisposals === 1 ? 'disposal' : 'disposals';
@@ -8216,9 +8322,10 @@
       return {
         tone: coverage >= 80 ? 'review' : 'incomplete',
         title: `INCOMPLETE — ${unmatchedDisposals} unmatched ${noun} worth ${fmtCHF(totalExcluded)}`,
-        body: `${affectedAssets} show disposals with no corresponding purchase history under FIFO. Realised gain figures exclude ${fmtCHF(totalExcluded)} of unmatched proceeds. Do not submit until the missing acquisition history is added.`,
+        body: `${affectedAssets} show disposals with no corresponding purchase history under FIFO. Realised gain figures exclude ${fmtCHF(totalExcluded)} of unmatched proceeds. Do not submit until the missing acquisition history is added.${hasPartialYearGap ? ' ' + partialYearNote : ''}`,
         hasUnmatched,
         hasTransferGaps,
+        hasPartialYearGap,
         totalExcluded,
         coverage,
         unmatchedDisposals,
@@ -8229,12 +8336,35 @@
     }
 
     if (hasTransferGaps) {
+      const affectedAssets = assets
+        .filter(asset => Number(asset.unmatchedTransferOut || 0) > 0)
+        .map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol)
+        .join(', ');
       return {
         tone: 'review',
         title: 'REVIEW — transfer history exceeds imported acquisition lots',
-        body: 'Transfer-outs reduce holdings but are not treated as taxable sells. Review your imported history before submitting.',
+        body: `${affectedAssets} include transfer-outs that exceeded imported FIFO lots. These quantities reduce year-end holdings but are not treated as taxable disposals. Add the original acquisition history if you want a fully matched audit trail before submitting.${hasPartialYearGap ? ' ' + partialYearNote : ''}`,
         hasUnmatched,
         hasTransferGaps,
+        hasPartialYearGap,
+        totalExcluded,
+        coverage,
+        unmatchedDisposals,
+        stakingEvents,
+        stablecoinReviewAssets,
+        hasZeroStaking
+      };
+    }
+
+    if (hasPartialYearGap) {
+      const lastImportedDate = String((data && data.lastTransactionDate) || '').slice(0,10);
+      return {
+        tone: 'review',
+        title: `REVIEW — imported activity ends on ${formatDate(lastImportedDate)}`,
+        body: partialYearNote,
+        hasUnmatched,
+        hasTransferGaps,
+        hasPartialYearGap,
         totalExcluded,
         coverage,
         unmatchedDisposals,
@@ -8250,6 +8380,7 @@
       body: 'All imported disposals matched successfully under FIFO. Review the annex before attaching it to your tax return.',
       hasUnmatched,
       hasTransferGaps,
+      hasPartialYearGap,
       totalExcluded,
       coverage,
       unmatchedDisposals,
@@ -9009,15 +9140,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
     drawStatusBanner();
     drawMetricBar();
 
-    if (hasTransferGaps && !hasUnmatched) {
-      drawCallout(
-        'Transfer history review',
-        `${assets.filter(asset => Number(asset.unmatchedTransferOut || 0) > 0).map(asset => getReportAssetDisplay(asset.symbol, asset.name).symbol).join(', ')} include transfer-outs that exceeded imported FIFO lots. These quantities reduce holdings but are not treated as taxable disposals.`,
-        colors.gold,
-        [255, 252, 245]
-      );
-    }
-
     drawSectionTitle(1, 'Transaction Overview by Asset');
     drawTable(
       hasUnmatched
@@ -9567,11 +9689,6 @@ onmouseout="this.style.color='#8A909E'">
       + '</div>';
   })()}
 
-  ${(data.assets||[]).some(a=>Number(a.unmatchedTransferOut||0) > 0) && !(data.assets||[]).some(a=>a.missingCostBasis) ? `
-  <div class="incomplete-box" style="border-left:3px solid #B8960C;padding:10px 12px 10px 9px;margin-bottom:20px;background:#FFFCF5;">
-    <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:6.9pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8A6B00;margin-bottom:5px;">⚠ Transfer History Review</div>
-    <div style="font-size:8.5pt;color:#3D4451;line-height:1.6;"><strong>${(data.assets||[]).filter(a=>Number(a.unmatchedTransferOut||0) > 0).map(a=>a.symbol).join(', ')}</strong> — transfer-outs exceeded the imported FIFO lots. These quantities reduce year-end holdings but are not treated as taxable sells. Add the original acquisition history if you want a fully matched audit trail.</div>
-  </div>` : ''}
   <div class="sec-title">01 — Transaction Overview by Asset</div>
   <table class="overview-table${_hasUnmatched ? ' tight' : ''}">
     <thead>
