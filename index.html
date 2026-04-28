@@ -3265,9 +3265,6 @@
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v7M2 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Ledger CSV
         </button>
-        <a class="btn-outline btn-upgrade-pro" href="#" onclick="navScrollTo('pricing');return false;" id="report-upgrade-btn" style="font-size:12px;padding:10px 20px;background:transparent;color:var(--paper);border-color:rgba(245,242,235,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-          Unlock clean export
-        </a>
       </div>
     </div>
     <div class="report-ack-box">
@@ -3542,7 +3539,6 @@
       info_priv_body: 'Your transaction files are processed in your browser and are not uploaded to our servers. When your session ends, no portfolio data is retained.',
       report_ready: 'Your <em>tax report</em> is ready',
       btn_download: '⬇ Download PDF',
-      btn_upgrade: 'Unlock clean export',
       report_generated_title: 'Tax Declaration Annex — Generated Report',
       disclaimer_title: 'Document Disclaimer',
       disclaimer_text: 'This report has been prepared using a FIFO methodology commonly used in Swiss crypto tax reporting workflows and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, professional trading), please consult a certified Swiss tax advisor.',
@@ -3743,7 +3739,6 @@
       info_priv_body: 'Vos fichiers de transaction sont traités dans votre navigateur et ne sont pas envoyés à nos serveurs. À la fin de votre session, aucune donnée de portefeuille n\'est conservée.',
       report_ready: 'Votre <em>rapport fiscal</em> est prêt',
       btn_download: '⬇ Télécharger PDF',
-      btn_upgrade: "Débloquer l'export propre",
       report_generated_title: 'Annexe fiscale crypto — Rapport généré',
       disclaimer_title: 'Avis de non-responsabilité',
       disclaimer_text: 'Ce rapport a été préparé selon une méthodologie FIFO couramment utilisée dans les workflows fiscaux crypto en Suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
@@ -3944,7 +3939,6 @@
       info_priv_body: 'Ihre Transaktionsdateien werden in Ihrem Browser verarbeitet und nicht auf unsere Server hochgeladen. Nach Sitzungsende werden keine Portfoliodaten gespeichert.',
       report_ready: 'Ihr <em>Steuerbericht</em> ist bereit',
       btn_download: '⬇ PDF herunterladen',
-      btn_upgrade: 'Sauberen Export freischalten',
       report_generated_title: 'Krypto-Steuerbeilage — Generierter Bericht',
       disclaimer_title: 'Haftungsausschluss',
       disclaimer_text: 'Dieser Bericht wurde mit einer FIFO-Methodik erstellt, die in Schweizer Krypto-Steuer-Workflows häufig verwendet wird, und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
@@ -4282,9 +4276,6 @@
     if (reportBadge && t.report_badge) reportBadge.textContent = t.report_badge;
     const generatedTitle = document.querySelector('.report-generated-title');
     if (generatedTitle && t.report_generated_title) generatedTitle.textContent = t.report_generated_title;
-    const upBtn = document.getElementById('report-upgrade-btn');
-    if (upBtn && t.btn_upgrade) upBtn.textContent = t.btn_upgrade;
-
     // Integrations section
     const intLabel = document.querySelector('#exchanges .section-number');
     if (intLabel && t.integrations_label) intLabel.textContent = t.integrations_label;
@@ -8523,10 +8514,6 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
       btn.disabled = shouldDisable;
       btn.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
     });
-    const upgradeBtn = document.getElementById('report-upgrade-btn');
-    if (upgradeBtn) {
-      upgradeBtn.style.display = currentPlanTier === 'free' ? 'inline-flex' : 'none';
-    }
   }
 
   function isExportAcknowledged() {
