@@ -3039,7 +3039,6 @@
         <li>Unlimited on-screen preview</li>
         <li>Upload CSV or Excel from supported exchanges</li>
         <li>See realised gain, wealth value, and unmatched issues</li>
-        <li>Clean PDF + CSV export locked until upgrade</li>
       </ul>
       <a href="#" onclick="navScrollTo('upload-area');return false;" class="btn-outline">Preview for free</a>
     </div>
@@ -3582,7 +3581,6 @@
       starter_f1: 'Unlimited on-screen preview',
       starter_f2: 'Upload CSV or Excel from supported exchanges',
       starter_f3: 'See realised gain, wealth value, and unmatched issues',
-      starter_f4: 'Clean PDF + CSV export locked until upgrade',
       standard_f1: 'Up to 1,000 transactions',
       standard_f2: '1 portfolio / entity',
       standard_f3: '20+ supported formats',
@@ -3782,7 +3780,6 @@
       starter_f1: 'Prévisualisation illimitée à l’écran',
       starter_f2: 'Import CSV ou Excel depuis les plateformes supportées',
       starter_f3: 'Visualisez gain réalisé, fortune et avertissements',
-      starter_f4: "Export PDF + CSV propre bloqué jusqu'à l'upgrade",
       standard_f1: "Jusqu'à 1'000 transactions",
       standard_f2: '1 portefeuille / entité',
       standard_f3: '20+ formats supportés',
@@ -3982,7 +3979,6 @@
       starter_f1: 'Unbegrenzte Vorschau im Browser',
       starter_f2: 'CSV- oder Excel-Upload von unterstützten Börsen',
       starter_f3: 'Realisierter Gewinn, Vermoegen und Warnhinweise direkt sichtbar',
-      starter_f4: 'Sauberer PDF- und CSV-Export erst nach Upgrade',
       standard_f1: "Bis 1'000 Transaktionen",
       standard_f2: '1 Portfolio / Einheit',
       standard_f3: '20+ unterstützte Formate',
@@ -4375,7 +4371,7 @@
     // Pricing plan names and feature lists
     const pCards = document.querySelectorAll('.pricing-card');
     const planKeys = [
-      { name:'starter_name',  features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
+      { name:'starter_name',  features:['starter_f1','starter_f2','starter_f3'] },
       { name:'standard_name', features:['standard_f1','standard_f2','standard_f3','standard_f4','standard_f5'] },
       { name:'pro_name',      features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] },
       { name:'biz_name',      features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6'] },
@@ -5744,6 +5740,7 @@
   }
   function detectFormat(headers) {
     const h = headers.join(',').toLowerCase();
+    if (h.includes('tx_id') && h.includes('datetime_utc') && h.includes('asset_sold') && h.includes('asset_bought') && h.includes('net_proceeds_usd') && h.includes('cost_basis_usd')) return 'normalized_usd';
     // ── Swiss-specific ───────────────────────────────────────────────────────
     if (h.includes('local time') && h.includes('net amount (chf)')) return 'swissborg';
     if (h.includes('bitcoin suisse') || (h.includes('type') && h.includes('asset') && h.includes('amount') && h.includes('price chf'))) return 'bitcoin_suisse';
@@ -5811,7 +5808,7 @@
     bitcoin_suisse:'Bitcoin Suisse', crypto_com:'Crypto.com',
       crypto_com_ex:'Crypto.com Exchange', nexo:'Nexo', nexo_pro:'Nexo Pro', revolut:'Revolut',
     ledger:'Ledger Live', kucoin:'KuCoin', gemini:'Gemini', bitfinex:'Bitfinex',
-    gate:'Gate.io', mexc:'MEXC', generic:'Generic CSV', manual:'Manual entries', unknown:'Unknown',
+    gate:'Gate.io', mexc:'MEXC', generic:'Generic CSV', normalized_usd:'Normalized portfolio CSV', manual:'Manual entries', unknown:'Unknown',
   };
 
   function formatExchangeName(exchangeId) {
@@ -5864,7 +5861,8 @@
       LTC:'litecoin', BCH:'bitcoin-cash', DOGE:'dogecoin', XLM:'stellar',
       TLM:'alien-worlds', OMG:'omg-network', GLM:'golem',
       AGI:'singularitynet', AGIX:'singularitynet',
-      NEXO:'nexo',
+      NEXO:'nexo', AAVE:'aave', ARB:'arbitrum', OP:'optimism',
+      NEAR:'near', MKR:'maker', LDO:'lido-dao', CRV:'curve-dao-token',
   };
 
   async function fetchJsonWithTimeout(url, timeoutMs) {
@@ -6378,6 +6376,42 @@
     const out = [];
     const krakenTradeValues = {};
     const krakenYearEndBalances = {};
+    const TRUE_FIAT = ['USD','EUR','GBP','CHF'];
+    const normalizePortfolioAsset = (raw) => String(raw || '').toUpperCase().trim().replace(/\s+/g, '-');
+    const isTrueFiatAsset = (sym) => TRUE_FIAT.includes(normalizePortfolioAsset(sym));
+    const parsePortfolioAbs = (value) => Math.abs(parseFloat(value || 0) || 0);
+    const getNormalizedUsdValue = (row) => {
+      const net = parsePortfolioAbs(row['net_proceeds_usd']);
+      const costBasis = parsePortfolioAbs(row['cost_basis_usd']);
+      const priceUsd = parsePortfolioAbs(row['price_usd']);
+      const amountSold = parsePortfolioAbs(row['amount_sold']);
+      const amountBought = parsePortfolioAbs(row['amount_bought']);
+      return net || (amountBought > 0 && priceUsd > 0 ? amountBought * priceUsd : 0) || (amountSold > 0 && priceUsd > 0 ? amountSold * priceUsd : 0) || costBasis || 0;
+    };
+    const pushNormalizedUsdTx = async ({ date, type, asset, qty, totalUSD, fallbackPriceUSD = 0 }) => {
+      const sym = normalizePortfolioAsset(asset);
+      const amount = parsePortfolioAbs(qty);
+      if (!date || !sym || isTrueFiatAsset(sym) || amount <= 0 || totalUSD < 0) return;
+      const dateKey = String(date || '').slice(0,10);
+      const quoteRate = await getFiatToChfRate('USD', dateKey);
+      const totalCHF = totalUSD > 0
+        ? totalUSD * quoteRate
+        : amount * parsePortfolioAbs(fallbackPriceUSD) * quoteRate;
+      const priceCHF = amount > 0 && totalCHF > 0 ? totalCHF / amount : 0;
+      out.push({ date, type, asset: sym, qty: amount, priceCHF, totalCHF });
+    };
+    const pushNormalizedUsdTradePair = async ({ date, soldAsset, soldQty, buyAsset, buyQty, totalUSD }) => {
+      const sellSym = normalizePortfolioAsset(soldAsset);
+      const buySym = normalizePortfolioAsset(buyAsset);
+      const soldAmount = parsePortfolioAbs(soldQty);
+      const boughtAmount = parsePortfolioAbs(buyQty);
+      if (sellSym && soldAmount > 0 && sellSym !== 'NFT' && !isTrueFiatAsset(sellSym)) {
+        await pushNormalizedUsdTx({ date, type: 'sell', asset: sellSym, qty: soldAmount, totalUSD });
+      }
+      if (buySym && boughtAmount > 0 && buySym !== 'NFT' && !isTrueFiatAsset(buySym)) {
+        await pushNormalizedUsdTx({ date, type: 'buy', asset: buySym, qty: boughtAmount, totalUSD });
+      }
+    };
 
     if (format === 'kraken') {
       for (const r of rows) {
@@ -7281,6 +7315,69 @@
             }
           }
         }
+        else if (format === 'normalized_usd') {
+          date = normalizeImportedDate(r['datetime_utc'] || r['date'] || r['timestamp'] || '');
+          const rowType = String(r['type'] || '').toUpperCase().trim();
+          const soldAsset = normalizePortfolioAsset(r['asset_sold']);
+          const buyAsset = normalizePortfolioAsset(r['asset_bought']);
+          const soldQty = parsePortfolioAbs(r['amount_sold']);
+          const buyQty = parsePortfolioAbs(r['amount_bought']);
+          const priceUSD = parsePortfolioAbs(r['price_usd']);
+          const totalUSD = getNormalizedUsdValue(r);
+
+          if (!date || !rowType) continue;
+
+          if (rowType === 'BUY' || rowType === 'SELL' || rowType === 'SWAP' || rowType === 'LIQUIDITY_ADD' || rowType === 'LIQUIDITY_REMOVE') {
+            await pushNormalizedUsdTradePair({
+              date,
+              soldAsset,
+              soldQty,
+              buyAsset,
+              buyQty,
+              totalUSD
+            });
+            continue;
+          }
+
+          if (rowType === 'AIRDROP' || rowType === 'STAKING_REWARD' || rowType === 'REWARD') {
+            await pushNormalizedUsdTx({
+              date,
+              type: 'staking',
+              asset: buyAsset,
+              qty: buyQty,
+              totalUSD,
+              fallbackPriceUSD: priceUSD
+            });
+            continue;
+          }
+
+          if (rowType === 'TRANSFER' || rowType === 'BRIDGE') {
+            if ((soldAsset && buyAsset) && soldAsset !== buyAsset) continue;
+            const transferAsset = soldAsset || buyAsset;
+            if (!transferAsset || isTrueFiatAsset(transferAsset)) continue;
+            const delta = soldQty - buyQty;
+            if (delta > 0.00000001) {
+              out.push({ date, type: 'withdrawal', asset: transferAsset, qty: delta, priceCHF: 0, totalCHF: 0 });
+            } else if (delta < -0.00000001) {
+              out.push({ date, type: 'deposit', asset: transferAsset, qty: Math.abs(delta), priceCHF: 0, totalCHF: 0 });
+            }
+            continue;
+          }
+
+          if (rowType === 'NFT_SALE') {
+            await pushNormalizedUsdTx({
+              date,
+              type: 'buy',
+              asset: buyAsset,
+              qty: buyQty,
+              totalUSD,
+              fallbackPriceUSD: priceUSD
+            });
+            continue;
+          }
+
+          continue;
+        }
         else if (format === 'generic') {
           date = r['date']||'';
           const t = (r['type']||'').toLowerCase();
@@ -7917,6 +8014,16 @@
       ATOM:'Cosmos',
       LTC:'Litecoin',
       BCH:'Bitcoin Cash',
+      AAVE:'Aave',
+      ARB:'Arbitrum',
+      OP:'Optimism',
+      NEAR:'NEAR Protocol',
+      MKR:'Maker',
+      LDO:'Lido DAO',
+      CRV:'Curve DAO',
+      DAI:'Dai',
+      USDT:'Tether',
+      'LP-TOKEN':'LP Token',
     };
   }
 
@@ -7951,6 +8058,7 @@
       swissquote: `Exchange format detected: Swissquote. CHF values used directly where exported. ${fiatFxMethod} ${yearEndMethod}`,
       bitcoin_suisse: `Exchange format detected: Bitcoin Suisse. CHF values used directly as exported. ${yearEndMethod}`,
       bitpanda: `Exchange format detected: Bitpanda. ${fiatFxMethod} ${marketMethod} ${yearEndMethod}`,
+      normalized_usd: `Exchange format detected: Normalized portfolio CSV. USD-denominated transaction values converted to CHF using official ESTV / BAZG monthly average FX rates for the relevant month. Internal transfers and bridges are netted to the quantity delta only; swaps, LP adds/removes, and NFT sale proceeds are reconstructed from the sold and bought asset legs in the file. ${yearEndMethod}`,
       manual: `Exchange format detected: Manual entries. Values entered by the user are treated as source data and included in FIFO, staking income, and year-end wealth calculations. ${yearEndMethod}`,
     };
   }
@@ -7958,7 +8066,7 @@
   function buildExchangeNotes(format, taxYear, lowParseWarning='') {
     const notesMap = getReportNotesMap(taxYear);
     const base = notesMap[format] || `Exchange format: ${format}. ${getFiatFxMethodText()} ${getTransactionMarketMethodText()} ${getYearEndValuationMethodText(taxYear)}`;
-    if (format === 'manual') return base + lowParseWarning;
+    if (format === 'manual' || format === 'normalized_usd') return base + lowParseWarning;
     return base + ` Transaction fees included where explicitly exported by the source file.` + lowParseWarning;
   }
 
