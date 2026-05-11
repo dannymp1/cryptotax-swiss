@@ -3033,13 +3033,14 @@
   <div class="pricing-grid">
     <div class="pricing-card">
       <div class="pricing-name">Free</div>
-      <div class="pricing-price" id="starter-price">Free</div>
-      <div class="pricing-period">Preview for free</div>
-      <ul class="pricing-features">
-        <li>Unlimited on-screen preview</li>
-        <li>Upload CSV or Excel from supported exchanges</li>
-        <li>See realised gain, wealth value, and unmatched issues</li>
-      </ul>
+    <div class="pricing-price" id="starter-price">Free</div>
+    <div class="pricing-period">Preview for free</div>
+    <ul class="pricing-features">
+      <li>Unlimited on-screen preview</li>
+      <li>1 clean PDF report up to 250 transactions</li>
+      <li>Upload CSV or Excel from supported exchanges</li>
+      <li>See realised gain, wealth value, and unmatched issues</li>
+    </ul>
       <a href="#" onclick="navScrollTo('upload-area');return false;" class="btn-outline">Preview for free</a>
     </div>
     <div class="pricing-card">
@@ -3152,7 +3153,7 @@
       <div class="unlock-banner" id="unlock-banner">
         <button class="unlock-close" type="button" onclick="hideUnlockBanner()" aria-label="Close unlock prompt">×</button>
         <div class="unlock-title">Enter your unlock code</div>
-        <div class="unlock-sub" id="unlock-sub">Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.</div>
+        <div class="unlock-sub" id="unlock-sub">Previews are free. Your first clean PDF is free up to 250 transactions. Enter your paid unlock code for larger reports or ledger CSV export.</div>
         <div class="unlock-row">
           <label for="unlock-input" class="sr-only">Unlock code</label>
           <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
@@ -3579,8 +3580,9 @@
       pro_name: 'Pro', pro_price: 'CHF 149',
       biz_name: 'Business',
       starter_f1: 'Unlimited on-screen preview',
-      starter_f2: 'Upload CSV or Excel from supported exchanges',
-      starter_f3: 'See realised gain, wealth value, and unmatched issues',
+      starter_f2: '1 clean PDF report up to 250 transactions',
+      starter_f3: 'Upload CSV or Excel from supported exchanges',
+      starter_f4: 'See realised gain, wealth value, and unmatched issues',
       standard_f1: 'Up to 1,000 transactions',
       standard_f2: '1 portfolio / entity',
       standard_f3: '20+ supported formats',
@@ -3618,8 +3620,11 @@
       cookie_reject: 'Reject',
       cookie_saved: 'Cookie preferences saved.',
       unlock_title: 'Enter your unlock code',
-      unlock_sub: 'Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.',
-      unlock_export_prompt: 'Preview ready. Enter your paid unlock code to export the clean PDF and ledger CSV, or choose a plan below.',
+      unlock_sub: 'Previews are free. Your first clean PDF is free up to 250 transactions. Enter your paid unlock code for larger reports or ledger CSV export.',
+      unlock_export_prompt: 'Preview ready. Your first clean PDF is free up to 250 transactions. Enter your paid unlock code for larger reports or ledger CSV export, or choose a plan below.',
+      unlock_over_free_pdf: 'Your report has {count} transactions. The free plan includes 1 clean PDF up to 250 transactions. Standard covers up to 1,000 · Pro covers up to 5,000 · Business is unlimited.',
+      unlock_pdf_used_prompt: 'Your free PDF has already been used in this browser. Enter a paid unlock code to export additional PDFs or the ledger CSV.',
+      unlock_csv_prompt: 'Your free plan includes preview and 1 clean PDF up to 250 transactions. Enter a paid unlock code to export the ledger CSV.',
       unlock_over_standard: 'Your file has {count} transactions. Standard covers up to 1,000 · Pro covers up to 5,000 · Business is unlimited.',
       unlock_over_pro: 'Your file has {count} transactions. Pro covers up to 5,000 · Business is unlimited.',
       badge_free: 'Free · Preview',
@@ -3634,8 +3639,11 @@
       toast_checkout_pending: 'Standard and Pro checkout links are being connected. Contact us and we will activate the plan for you.',
       unlock_btn: 'Unlock',
       unlock_error: 'Invalid code. Check your email from CryptoDeclare or contact hello@cryptodeclare.ch',
-      toast_export_pdf_locked: 'Free preview ready — unlock a paid plan to export the clean PDF.',
-      toast_export_csv_locked: 'Free preview ready — unlock a paid plan to export the ledger CSV.',
+      toast_export_pdf_locked: 'Free preview ready — your first clean PDF is free up to 250 transactions. Larger reports require a paid plan.',
+      toast_export_pdf_over_limit: 'Free clean PDF export covers up to 250 transactions. Larger reports require a paid plan.',
+      toast_export_pdf_used: 'Your free clean PDF has already been used on this browser. Unlock a paid plan to export another PDF.',
+      toast_export_pdf_free_used: 'Your free clean PDF has been downloaded. Ledger CSV export remains available on paid plans.',
+      toast_export_csv_locked: 'Ledger CSV export is available on paid plans.',
       manual_optional_label: 'Advanced',
       manual_title: 'Add missing transactions',
       manual_sub: 'Use this for missing acquisition history, staking rewards, or one-off wallet movements. Manual rows are saved locally and included in FIFO.',
@@ -3778,8 +3786,9 @@
       pro_name: 'Pro', pro_price: 'CHF 149',
       biz_name: 'Business',
       starter_f1: 'Prévisualisation illimitée à l’écran',
-      starter_f2: 'Import CSV ou Excel depuis les plateformes supportées',
-      starter_f3: 'Visualisez gain réalisé, fortune et avertissements',
+      starter_f2: '1 PDF propre offert jusqu’à 250 transactions',
+      starter_f3: 'Import CSV ou Excel depuis les plateformes supportées',
+      starter_f4: 'Visualisez gain réalisé, fortune et avertissements',
       standard_f1: "Jusqu'à 1'000 transactions",
       standard_f2: '1 portefeuille / entité',
       standard_f3: '20+ formats supportés',
@@ -3817,8 +3826,11 @@
       cookie_reject: 'Refuser',
       cookie_saved: 'Préférences de cookies enregistrées.',
       unlock_title: "Entrez votre code d'activation",
-      unlock_sub: "Les aperçus sont gratuits. Entrez votre code payant pour exporter le PDF propre et le CSV du grand livre.",
-      unlock_export_prompt: "Aperçu prêt. Entrez votre code payant pour exporter le PDF propre et le CSV du grand livre, ou choisissez une offre ci-dessous.",
+      unlock_sub: "Les aperçus sont gratuits. Votre premier PDF propre est offert jusqu’à 250 transactions. Entrez un code payant pour les rapports plus volumineux ou l’export CSV du grand livre.",
+      unlock_export_prompt: "Aperçu prêt. Votre premier PDF propre est offert jusqu’à 250 transactions. Entrez un code payant pour les rapports plus volumineux ou l’export CSV du grand livre, ou choisissez une offre ci-dessous.",
+      unlock_over_free_pdf: "Votre rapport contient {count} transactions. L’offre gratuite inclut 1 PDF propre jusqu’à 250 transactions. Standard couvre jusqu’à 1’000 · Pro jusqu’à 5’000 · Business est illimité.",
+      unlock_pdf_used_prompt: "Votre PDF gratuit a déjà été utilisé sur ce navigateur. Entrez un code payant pour exporter d’autres PDF ou le CSV du grand livre.",
+      unlock_csv_prompt: "L’offre gratuite inclut l’aperçu et 1 PDF propre jusqu’à 250 transactions. Entrez un code payant pour exporter le CSV du grand livre.",
       unlock_over_standard: 'Votre fichier contient {count} transactions. Standard couvre jusqu’à 1’000 · Pro jusqu’à 5’000 · Business est illimité.',
       unlock_over_pro: 'Votre fichier contient {count} transactions. Pro couvre jusqu’à 5’000 · Business est illimité.',
       badge_free: 'Gratuit · Aperçu',
@@ -3833,8 +3845,11 @@
       toast_checkout_pending: 'Les liens de paiement Standard et Pro sont en cours de connexion. Contactez-nous et nous activerons l’offre pour vous.',
       unlock_btn: 'Activer',
       unlock_error: 'Code invalide. Vérifiez votre e-mail de CryptoDeclare ou contactez hello@cryptodeclare.ch',
-      toast_export_pdf_locked: "Aperçu gratuit prêt — débloquez une offre payante pour exporter le PDF propre.",
-      toast_export_csv_locked: "Aperçu gratuit prêt — débloquez une offre payante pour exporter le CSV du grand livre.",
+      toast_export_pdf_locked: "Aperçu gratuit prêt — votre premier PDF propre est offert jusqu’à 250 transactions. Les rapports plus volumineux nécessitent une offre payante.",
+      toast_export_pdf_over_limit: "Le PDF gratuit couvre jusqu’à 250 transactions. Les rapports plus volumineux nécessitent une offre payante.",
+      toast_export_pdf_used: "Votre PDF gratuit a déjà été utilisé sur ce navigateur. Débloquez une offre payante pour exporter un autre PDF.",
+      toast_export_pdf_free_used: "Votre PDF gratuit a été téléchargé. L’export CSV du grand livre reste disponible avec les offres payantes.",
+      toast_export_csv_locked: "L’export CSV du grand livre est disponible avec les offres payantes.",
       manual_optional_label: 'Avancé',
       manual_title: 'Ajouter des transactions manquantes',
       manual_sub: "Utilisez ceci pour un historique d'acquisition manquant, des récompenses de staking ou des mouvements de wallet ponctuels. Les lignes manuelles sont enregistrées localement et incluses dans le FIFO.",
@@ -3977,8 +3992,9 @@
       pro_name: 'Pro', pro_price: 'CHF 149',
       biz_name: 'Business',
       starter_f1: 'Unbegrenzte Vorschau im Browser',
-      starter_f2: 'CSV- oder Excel-Upload von unterstützten Börsen',
-      starter_f3: 'Realisierter Gewinn, Vermoegen und Warnhinweise direkt sichtbar',
+      starter_f2: '1 sauberes PDF gratis bis 250 Transaktionen',
+      starter_f3: 'CSV- oder Excel-Upload von unterstützten Börsen',
+      starter_f4: 'Realisierter Gewinn, Vermoegen und Warnhinweise direkt sichtbar',
       standard_f1: "Bis 1'000 Transaktionen",
       standard_f2: '1 Portfolio / Einheit',
       standard_f3: '20+ unterstützte Formate',
@@ -4016,8 +4032,11 @@
       cookie_reject: 'Ablehnen',
       cookie_saved: 'Cookie-Einstellungen gespeichert.',
       unlock_title: 'Ihren Freischaltcode eingeben',
-      unlock_sub: 'Vorschauen sind kostenlos. Geben Sie Ihren bezahlten Freischaltcode ein, um den sauberen PDF- und CSV-Export zu aktivieren.',
-      unlock_export_prompt: 'Vorschau fertig. Geben Sie Ihren bezahlten Freischaltcode ein, um den sauberen PDF- und CSV-Export zu aktivieren, oder wählen Sie unten einen Plan.',
+      unlock_sub: 'Vorschauen sind kostenlos. Ihr erstes sauberes PDF ist bis 250 Transaktionen gratis. Geben Sie einen bezahlten Freischaltcode für größere Berichte oder den Ledger-CSV-Export ein.',
+      unlock_export_prompt: 'Vorschau fertig. Ihr erstes sauberes PDF ist bis 250 Transaktionen gratis. Geben Sie einen bezahlten Freischaltcode für größere Berichte oder den Ledger-CSV-Export ein oder wählen Sie unten einen Plan.',
+      unlock_over_free_pdf: 'Ihr Bericht enthält {count} Transaktionen. Der kostenlose Plan beinhaltet 1 sauberes PDF bis 250 Transaktionen. Standard deckt bis 1’000 ab · Pro bis 5’000 · Business ist unbegrenzt.',
+      unlock_pdf_used_prompt: 'Ihr kostenloses PDF wurde in diesem Browser bereits verwendet. Geben Sie einen bezahlten Freischaltcode ein, um weitere PDFs oder das Ledger-CSV zu exportieren.',
+      unlock_csv_prompt: 'Der kostenlose Plan beinhaltet Vorschau und 1 sauberes PDF bis 250 Transaktionen. Geben Sie einen bezahlten Freischaltcode ein, um das Ledger-CSV zu exportieren.',
       unlock_over_standard: 'Ihre Datei enthält {count} Transaktionen. Standard deckt bis 1’000 ab · Pro bis 5’000 · Business ist unbegrenzt.',
       unlock_over_pro: 'Ihre Datei enthält {count} Transaktionen. Pro deckt bis 5’000 ab · Business ist unbegrenzt.',
       badge_free: 'Kostenlos · Vorschau',
@@ -4032,8 +4051,11 @@
       toast_checkout_pending: 'Die Checkout-Links fuer Standard und Pro werden gerade verbunden. Kontaktieren Sie uns, dann aktivieren wir den Plan fuer Sie.',
       unlock_btn: 'Freischalten',
       unlock_error: 'Ungültiger Code. Prüfen Sie Ihre E-Mail von CryptoDeclare oder kontaktieren Sie hello@cryptodeclare.ch',
-      toast_export_pdf_locked: 'Kostenlose Vorschau bereit — aktivieren Sie einen bezahlten Plan, um das saubere PDF zu exportieren.',
-      toast_export_csv_locked: 'Kostenlose Vorschau bereit — aktivieren Sie einen bezahlten Plan, um das Ledger-CSV zu exportieren.',
+      toast_export_pdf_locked: 'Kostenlose Vorschau bereit — Ihr erstes sauberes PDF ist bis 250 Transaktionen gratis. Grössere Berichte benötigen einen bezahlten Plan.',
+      toast_export_pdf_over_limit: 'Der kostenlose PDF-Export gilt bis 250 Transaktionen. Größere Berichte benötigen einen bezahlten Plan.',
+      toast_export_pdf_used: 'Ihr kostenloses PDF wurde in diesem Browser bereits verwendet. Aktivieren Sie einen bezahlten Plan, um ein weiteres PDF zu exportieren.',
+      toast_export_pdf_free_used: 'Ihr kostenloses PDF wurde heruntergeladen. Ledger-CSV-Export bleibt den bezahlten Plänen vorbehalten.',
+      toast_export_csv_locked: 'Ledger-CSV-Export ist in den bezahlten Plänen verfügbar.',
       manual_optional_label: 'Erweitert',
       manual_title: 'Fehlende Transaktionen hinzufügen',
       manual_sub: 'Für fehlende Anschaffungshistorie, Staking-Erträge oder einzelne Wallet-Bewegungen. Manuelle Zeilen werden lokal gespeichert und in FIFO einbezogen.',
@@ -4371,7 +4393,7 @@
     // Pricing plan names and feature lists
     const pCards = document.querySelectorAll('.pricing-card');
     const planKeys = [
-      { name:'starter_name',  features:['starter_f1','starter_f2','starter_f3'] },
+      { name:'starter_name',  features:['starter_f1','starter_f2','starter_f3','starter_f4'] },
       { name:'standard_name', features:['standard_f1','standard_f2','standard_f3','standard_f4','standard_f5'] },
       { name:'pro_name',      features:['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] },
       { name:'biz_name',      features:['biz_f1','biz_f2','biz_f3','biz_f4','biz_f5','biz_f6'] },
@@ -4994,26 +5016,43 @@
           { count: txCount.toLocaleString('de-CH') }
         );
       } else {
-        sub.textContent = t.unlock_sub || 'Previews are free. Enter your paid unlock code to export the clean PDF and ledger CSV.';
+        sub.textContent = t.unlock_sub || 'Previews are free. Your first clean PDF is free up to 250 transactions. Enter your paid unlock code for larger reports or ledger CSV export.';
       }
     }
     setTimeout(() => document.getElementById('unlock-input')?.focus(), 80);
   }
 
-  // ── Free Trial Logic ──
+  // ── Free PDF Trial Logic ──
+  const FREE_PDF_TX_LIMIT = 250;
   const TRIAL_KEY = 'cryptotax_trial_used';
 
   function hasUsedTrial() {
-    return false;
+    try {
+      return localStorage.getItem(TRIAL_KEY) === 'used';
+    } catch (e) {
+      return false;
+    }
   }
 
   function markTrialUsed() {
-    try { localStorage.removeItem(TRIAL_KEY); } catch(e) {}
+    try { localStorage.setItem(TRIAL_KEY, 'used'); } catch(e) {}
   }
 
   function updateTrialUI() {
     const area = document.getElementById('upload-area');
     if (area) area.classList.remove('locked');
+  }
+
+  function getReportTransactionCount(data = window._reportData) {
+    if (!data) return 0;
+    const count = Number(data.totalTransactions || (data.transactions || []).length || 0);
+    return Number.isFinite(count) ? count : 0;
+  }
+
+  function canUseFreePdfExport(data = window._reportData) {
+    if (currentPlanTier !== 'free' || hasUsedTrial()) return false;
+    const txCount = getReportTransactionCount(data);
+    return txCount > 0 && txCount <= FREE_PDF_TX_LIMIT;
   }
 
   // Run on load
@@ -5056,7 +5095,7 @@
 
   uploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
-    if (!hasUsedTrial()) uploadArea.classList.add('drag-over');
+    uploadArea.classList.add('drag-over');
   });
 
   uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
@@ -5064,7 +5103,6 @@
   uploadArea.addEventListener('drop', (e) => {
     e.preventDefault();
     uploadArea.classList.remove('drag-over');
-    if (hasUsedTrial()) return;
     const files = Array.from(e.dataTransfer.files).filter(f =>
       /\.(csv|xlsx|xls|xlsm)$/i.test(f.name)
     );
@@ -5072,7 +5110,6 @@
   });
 
   csvInput.addEventListener('change', (e) => {
-    if (hasUsedTrial()) return;
     const files = Array.from(e.target.files);
     if (files.length > 0) processFiles(files);
     csvInput.value = '';
@@ -5099,7 +5136,6 @@
   }
 
   async function processFiles(files) {
-    if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     if (files.length === 1) return processFile(files[0]);
 
     const indicator = document.getElementById('processing-indicator');
@@ -5177,8 +5213,6 @@
           setTimeout(() => { clearInterval(interval); resolve(); }, 7000);
         })
       ]);
-      markTrialUsed();
-      updateTrialUI();
       displayReport(result);
     } catch (err) {
       setProcessingText('Error: ' + err.message);
@@ -5187,7 +5221,6 @@
   }
 
   async function processManualTransactionsOnly() {
-    if (hasUsedTrial()) { updateTrialUI(); return; }
     const manualTxs = getManualTransactions();
     if (!manualTxs.length) {
       showToast('Add at least one manual transaction first.');
@@ -5225,8 +5258,6 @@
           setTimeout(() => { clearInterval(interval); resolve(); }, 3500);
         })
       ]);
-      markTrialUsed();
-      updateTrialUI();
       displayReport(result);
     } catch (err) {
       setProcessingText('Error: ' + err.message);
@@ -5235,7 +5266,6 @@
   }
 
   async function processFile(file) {
-    if (hasUsedTrial()) { updateTrialUI(); return; } // double-lock safety
     const indicator = document.getElementById('processing-indicator');
     indicator.classList.add('visible');
     setProcessingText('Reading your file...');
@@ -5315,8 +5345,6 @@
           setTimeout(() => { clearInterval(interval); resolve(); }, 7000);
         })
       ]);
-      markTrialUsed();
-      updateTrialUI();
       displayReport(result);
     } catch (err) {
       setProcessingText('Error: ' + err.message);
@@ -9412,15 +9440,29 @@ ${data.notes ? `<div style="padding:14px 12px;background:rgba(212,175,55,0.07);b
 
   async function downloadReport() {
     if (!isExportAcknowledged()) return;
-    if (currentPlanTier === 'free') {
-      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-      showUnlockBanner(undefined, t.unlock_export_prompt || 'Preview ready. Enter your paid unlock code to export the clean PDF and ledger CSV, or choose a plan below.');
-      navScrollTo('declare');
-      showToast(t.toast_export_pdf_locked || 'Free preview ready — unlock a paid plan to export the clean PDF.');
-      return;
-    }
     const data = window._reportData;
     if (!data) return;
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    const txCount = getReportTransactionCount(data);
+    const freePdfEligible = canUseFreePdfExport(data);
+    if (currentPlanTier === 'free' && !freePdfEligible) {
+      let bannerMessage = t.unlock_export_prompt || 'Preview ready. Your first clean PDF is free up to 250 transactions. Enter your paid unlock code for larger reports or ledger CSV export, or choose a plan below.';
+      let toastMessage = t.toast_export_pdf_locked || 'Free preview ready — your first clean PDF is free up to 250 transactions. Larger reports require a paid plan.';
+      if (txCount > FREE_PDF_TX_LIMIT) {
+        bannerMessage = fillTemplate(
+          t.unlock_over_free_pdf || 'Your report has {count} transactions. The free plan includes 1 clean PDF up to 250 transactions. Standard covers up to 1,000 · Pro covers up to 5,000 · Business is unlimited.',
+          { count: txCount.toLocaleString('de-CH') }
+        );
+        toastMessage = t.toast_export_pdf_over_limit || 'Free clean PDF export covers up to 250 transactions. Larger reports require a paid plan.';
+      } else if (hasUsedTrial()) {
+        bannerMessage = t.unlock_pdf_used_prompt || 'Your free PDF has already been used in this browser. Enter a paid unlock code to export additional PDFs or the ledger CSV.';
+        toastMessage = t.toast_export_pdf_used || 'Your free clean PDF has already been used on this browser. Unlock a paid plan to export another PDF.';
+      }
+      showUnlockBanner(txCount, bannerMessage);
+      navScrollTo('declare');
+      showToast(toastMessage);
+      return;
+    }
     saveTaxpayerDetails();
     data.taxpayer = getTaxpayerDetails();
     window._reportData = data;
@@ -9958,14 +10000,32 @@ onmouseout="this.style.color='#8A909E'">
     showToast('Preparing a clean PDF download...');
     try {
       await exportReportDataToPdf(data, filename);
-      showToast('PDF downloaded without browser headers or footers.');
+      if (freePdfEligible) {
+        markTrialUsed();
+        updateTrialUI();
+        showToast(t.toast_export_pdf_free_used || 'Your free clean PDF has been downloaded. Ledger CSV export remains available on paid plans.');
+      } else {
+        showToast('PDF downloaded without browser headers or footers.');
+      }
       return;
     } catch (e) {
       console.warn('Direct PDF export failed; falling back to browser print.', e);
       showToast('Automatic PDF export failed. Opening the print fallback...');
       const reportWindow = window.open('', '_blank');
-      if (mobileExport && openPrintableReportForMobile(pdfHTML, filename, reportWindow)) return;
-      if (openPrintableReportWindow(pdfHTML, filename, reportWindow, true)) return;
+      if (mobileExport && openPrintableReportForMobile(pdfHTML, filename, reportWindow)) {
+        if (freePdfEligible) {
+          markTrialUsed();
+          updateTrialUI();
+        }
+        return;
+      }
+      if (openPrintableReportWindow(pdfHTML, filename, reportWindow, true)) {
+        if (freePdfEligible) {
+          markTrialUsed();
+          updateTrialUI();
+        }
+        return;
+      }
       showToast('Please allow pop-ups so CryptoDeclare can open the PDF export dialog.');
     } finally {
       if (downloadButton) {
@@ -9980,9 +10040,9 @@ onmouseout="this.style.color='#8A909E'">
     if (!isExportAcknowledged()) return;
     if (currentPlanTier === 'free') {
       const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-      showUnlockBanner(undefined, t.unlock_export_prompt || 'Preview ready. Enter your paid unlock code to export the clean PDF and ledger CSV, or choose a plan below.');
+      showUnlockBanner(undefined, t.unlock_csv_prompt || 'Your free plan includes preview and 1 clean PDF up to 250 transactions. Enter a paid unlock code to export the ledger CSV.');
       navScrollTo('declare');
-      showToast(t.toast_export_csv_locked || 'Free preview ready — unlock a paid plan to export the ledger CSV.');
+      showToast(t.toast_export_csv_locked || 'Ledger CSV export is available on paid plans.');
       return;
     }
     const data = window._reportData;
