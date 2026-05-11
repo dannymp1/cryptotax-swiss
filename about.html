@@ -34,11 +34,6 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-i
 .profile-name { font-family:'DM Serif Display',serif; font-size:34px; letter-spacing:-0.02em; margin-bottom:4px; }
 .profile-role { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; }
 .intro { font-size:17px; color:var(--ink); line-height:1.8; margin-bottom:24px; }
-.bio-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; margin-bottom:40px; }
-.bio-box { background:white; border:1px solid var(--rule); border-radius:4px; padding:24px; }
-.bio-box-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:12px; }
-.bio-box p { color:var(--ink-muted); }
-h2 { font-family:'DM Serif Display',serif; font-size:28px; letter-spacing:-0.02em; margin:40px 0 14px; }
 p { color:var(--ink-muted); margin-bottom:16px; }
 .linkedin-btn { display:inline-flex; align-items:center; gap:10px; background:#0A66C2; color:white; font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600; padding:11px 20px; border-radius:3px; text-decoration:none; transition:background 0.2s; }
 .linkedin-btn:hover { background:#004182; text-decoration:none; }
@@ -54,7 +49,6 @@ footer a { color:var(--gold); text-decoration:none; }
   .title { font-size:42px; }
   .profile-card { grid-template-columns:1fr; gap:28px; padding:28px 24px; }
   .profile-photo { max-width:180px; }
-  .bio-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -96,36 +90,15 @@ footer a { color:var(--gold); text-decoration:none; }
       <div>
         <div class="profile-name">Daniel Michaud-Payet</div>
         <div class="profile-role">Founder · CryptoDeclare</div>
-        <p class="intro">I built CryptoDeclare after running into the same frustration many Swiss crypto holders face at tax time: multiple exchange exports, inconsistent price history, manual CHF conversions, FIFO tracking across years, and no clear Swiss-focused way to turn that into a clean annex a fiduciary can actually review.</p>
-        <p>My background spans Swiss private banking and institutional digital assets. That combination made one thing obvious to me: most global crypto tax tools are built as generic software products first, while Swiss users often need something much narrower and more practical. They need a report that reflects Swiss tax workflows, Swiss year-end wealth treatment, and the kind of documentation a tax advisor can understand quickly.</p>
-        <p>CryptoDeclare is my attempt to close that gap. The goal is not to replace tax advice. The goal is to reduce the spreadsheet burden, surface missing history clearly, and help users produce a structured first-draft annex that is faster to review, cleaner to file, and easier to trust.</p>
+        <p class="intro">Daniel Michaud-Payet’s background spans Swiss private banking, markets, and institutional digital assets, with earlier experience across firms including Deutsche Bank, JPMorgan, and Brevan Howard before focusing more directly on digital assets.</p>
+        <p>Through that work, he saw firsthand how fragmented exchange exports, manual CHF conversions, FIFO tracking, and missing transaction history make Swiss crypto tax reporting unnecessarily difficult.</p>
+        <p>He built CryptoDeclare to make that process cleaner: less spreadsheet work, clearer handling of incomplete history, and a more structured tax annex that Swiss users and tax advisors can review with confidence.</p>
         <a class="linkedin-btn" href="https://www.linkedin.com/in/daniel-michaud-payet-528a5aa5" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           View full profile on LinkedIn
         </a>
       </div>
     </div>
-
-    <div class="bio-grid">
-      <div class="bio-box">
-        <div class="bio-box-label">Focus</div>
-        <p>Swiss crypto tax reporting workflows, not generic global tax software.</p>
-      </div>
-      <div class="bio-box">
-        <div class="bio-box-label">Approach</div>
-        <p>Structured reports, explicit limitations, and clear handling of missing acquisition history.</p>
-      </div>
-      <div class="bio-box">
-        <div class="bio-box-label">Goal</div>
-        <p>Save users hours of manual reconciliation before they hand a report to their tax advisor or canton.</p>
-      </div>
-    </div>
-
-    <h2>Why a Swiss-specific tool?</h2>
-    <p>Switzerland is not just “another jurisdiction” for crypto reporting. Wealth declaration, year-end valuation, and the practical treatment of rewards, transfers, and missing acquisition history all require a more specific approach than a one-size-fits-all international tax dashboard. CryptoDeclare is designed around those Swiss-specific constraints and expectations.</p>
-
-    <h2>How I think about the product</h2>
-    <p>I want CryptoDeclare to be useful for normal people first: someone who has used a few exchanges, received staking rewards, maybe moved assets between wallets, and now needs a report that is clean enough to review seriously. That means the product should be transparent about what it knows, honest about what is missing, and pragmatic about what still needs human review.</p>
   </section>
 
   <section class="lang-section" id="lang-fr">
@@ -140,36 +113,15 @@ footer a { color:var(--gold); text-decoration:none; }
       <div>
         <div class="profile-name">Daniel Michaud-Payet</div>
         <div class="profile-role">Fondateur · CryptoDeclare</div>
-        <p class="intro">J’ai créé CryptoDeclare après avoir rencontré la même frustration que de nombreux détenteurs de crypto en Suisse au moment de la déclaration: plusieurs exports d’exchanges, des historiques de prix incohérents, des conversions manuelles en CHF, un suivi FIFO sur plusieurs années, et aucun outil vraiment pensé pour transformer cela en une annexe suisse propre et exploitable.</p>
-        <p>Mon parcours se situe à l’intersection de la banque privée suisse et des actifs numériques institutionnels. Cela m’a rapidement montré une chose: la plupart des outils fiscaux crypto internationaux sont conçus comme des produits globaux avant tout, alors que les utilisateurs suisses ont souvent besoin d’un outil plus spécifique, plus lisible et plus pratique. Ils ont besoin d’un rapport adapté aux flux fiscaux suisses, à la logique de valorisation au 31.12 et aux attentes d’un conseiller fiscal local.</p>
-        <p>CryptoDeclare est ma réponse à ce besoin. L’objectif n’est pas de remplacer un conseil fiscal. L’objectif est de réduire le travail manuel, de signaler clairement les données manquantes et d’aider l’utilisateur à produire une première annexe structurée, plus simple à relire, plus propre à déposer et plus facile à expliquer.</p>
+        <p class="intro">Le parcours de Daniel Michaud-Payet couvre la banque privée suisse, les marchés et les actifs numériques institutionnels, avec des expériences antérieures notamment chez Deutsche Bank, JPMorgan et Brevan Howard avant de se concentrer plus directement sur les actifs numériques.</p>
+        <p>À travers ce parcours, il a constaté de première main à quel point les exports fragmentés, les conversions manuelles en CHF, le suivi FIFO et l’historique de transactions incomplet compliquent inutilement la fiscalité crypto en Suisse.</p>
+        <p>Il a créé CryptoDeclare pour rendre ce processus plus propre: moins de travail sur tableur, une gestion plus claire de l’historique incomplet et une annexe fiscale plus structurée que les utilisateurs suisses et leurs conseillers fiscaux peuvent relire avec confiance.</p>
         <a class="linkedin-btn" href="https://www.linkedin.com/in/daniel-michaud-payet-528a5aa5" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           Voir le profil LinkedIn
         </a>
       </div>
     </div>
-
-    <div class="bio-grid">
-      <div class="bio-box">
-        <div class="bio-box-label">Focus</div>
-        <p>Les flux de déclaration fiscale crypto suisses, et non un logiciel fiscal mondial générique.</p>
-      </div>
-      <div class="bio-box">
-        <div class="bio-box-label">Approche</div>
-        <p>Des rapports structurés, des limites explicites et une gestion claire de l’historique d’acquisition manquant.</p>
-      </div>
-      <div class="bio-box">
-        <div class="bio-box-label">Objectif</div>
-        <p>Faire gagner des heures de réconciliation manuelle avant la revue par une fiduciaire ou un conseiller fiscal.</p>
-      </div>
-    </div>
-
-    <h2>Pourquoi un outil spécifiquement suisse ?</h2>
-    <p>La Suisse n’est pas simplement “une juridiction de plus” pour la fiscalité crypto. La déclaration de fortune, la valorisation au 31.12 et le traitement pratique des rewards, transferts ou historiques manquants demandent une approche plus précise qu’un tableau de bord fiscal international standardisé. CryptoDeclare a été pensé autour de ces contraintes et attentes suisses.</p>
-
-    <h2>Ma vision du produit</h2>
-    <p>Je veux que CryptoDeclare soit d’abord utile aux utilisateurs réels: quelqu’un qui a utilisé plusieurs plateformes, reçu des rewards, déplacé des actifs entre wallets, et qui a maintenant besoin d’un rapport suffisamment propre pour être relu sérieusement. Cela implique un produit transparent sur ce qu’il sait, honnête sur ce qui manque, et pragmatique sur ce qui doit encore être revu humainement.</p>
   </section>
 
   <section class="lang-section" id="lang-de">
@@ -184,36 +136,15 @@ footer a { color:var(--gold); text-decoration:none; }
       <div>
         <div class="profile-name">Daniel Michaud-Payet</div>
         <div class="profile-role">Gründer · CryptoDeclare</div>
-        <p class="intro">Ich habe CryptoDeclare aufgebaut, nachdem ich genau dieselbe Frustration erlebt habe wie viele Krypto-Halter in der Schweiz zur Steuerzeit: mehrere Exchange-Exporte, uneinheitliche Preisverläufe, manuelle CHF-Umrechnungen, FIFO-Nachverfolgung über mehrere Jahre und kein wirklich schweizerisch gedachtes Werkzeug, das daraus eine saubere Beilage macht.</p>
-        <p>Mein beruflicher Hintergrund liegt zwischen Schweizer Private Banking und institutionellen digitalen Vermögenswerten. Dadurch wurde mir schnell klar: Die meisten globalen Krypto-Steuer-Tools sind zuerst als internationale Softwareprodukte gebaut worden, während Schweizer Nutzer oft etwas Engeres und Praktischeres brauchen. Sie brauchen einen Bericht, der zu Schweizer Steuerabläufen, zur Bewertung per 31.12 und zu den Erwartungen eines lokalen Steuerberaters passt.</p>
-        <p>CryptoDeclare ist mein Versuch, diese Lücke zu schliessen. Das Ziel ist nicht, Steuerberatung zu ersetzen. Das Ziel ist, den Spreadsheet-Aufwand zu reduzieren, fehlende Historie klar sichtbar zu machen und dem Nutzer zu helfen, eine strukturierte erste Annex-Version zu erstellen, die schneller geprüft, sauberer eingereicht und leichter erklärt werden kann.</p>
+        <p class="intro">Der berufliche Hintergrund von Daniel Michaud-Payet umfasst Schweizer Private Banking, Kapitalmärkte und institutionelle digitale Vermögenswerte, mit früheren Stationen unter anderem bei Deutsche Bank, JPMorgan und Brevan Howard, bevor er sich direkter auf digitale Assets konzentrierte.</p>
+        <p>Durch diese Arbeit hat er aus erster Hand gesehen, wie fragmentierte Exporte, manuelle CHF-Umrechnungen, FIFO-Nachverfolgung und unvollständige Transaktionshistorien die Krypto-Steuerberichterstattung in der Schweiz unnötig erschweren.</p>
+        <p>Er hat CryptoDeclare aufgebaut, um diesen Prozess sauberer zu machen: weniger Tabellenarbeit, klarerer Umgang mit unvollständiger Historie und eine strukturiertere Steuerbeilage, die Schweizer Nutzer und Steuerberater mit mehr Vertrauen prüfen können.</p>
         <a class="linkedin-btn" href="https://www.linkedin.com/in/daniel-michaud-payet-528a5aa5" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn-Profil ansehen
         </a>
       </div>
     </div>
-
-    <div class="bio-grid">
-      <div class="bio-box">
-        <div class="bio-box-label">Fokus</div>
-        <p>Schweizer Krypto-Steuerabläufe statt generischer globaler Steuer-Software.</p>
-      </div>
-      <div class="bio-box">
-        <div class="bio-box-label">Ansatz</div>
-        <p>Strukturierte Berichte, explizite Grenzen und klare Behandlung fehlender Anschaffungshistorie.</p>
-      </div>
-      <div class="bio-box">
-        <div class="bio-box-label">Ziel</div>
-        <p>Nutzern Stunden manueller Abstimmung zu sparen, bevor ein Treuhänder oder Steuerberater den Bericht prüft.</p>
-      </div>
-    </div>
-
-    <h2>Warum ein schweizspezifisches Tool?</h2>
-    <p>Die Schweiz ist für Krypto-Steuerberichte nicht einfach nur “eine weitere Jurisdiktion”. Vermögensdeklaration, Bewertung per 31.12 und der praktische Umgang mit Rewards, Transfers und fehlender Historie verlangen einen präziseren Ansatz als ein internationales Standard-Dashboard. CryptoDeclare wurde genau um diese schweizerischen Anforderungen herum gebaut.</p>
-
-    <h2>Wie ich über das Produkt denke</h2>
-    <p>Ich möchte, dass CryptoDeclare zuerst für reale Nutzer nützlich ist: für jemanden, der mehrere Plattformen genutzt, Rewards erhalten und Assets zwischen Wallets bewegt hat und nun einen Bericht braucht, der sauber genug ist, um ernsthaft geprüft zu werden. Das bedeutet: transparent darin, was das Produkt weiss, ehrlich darin, was fehlt, und pragmatisch darin, was noch menschlich geprüft werden sollte.</p>
   </section>
 </main>
 
