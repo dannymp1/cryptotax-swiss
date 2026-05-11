@@ -2778,7 +2778,7 @@
         <a href="/guides/" role="menuitem" data-i18n="nav_guides">Swiss crypto tax guides</a>
         <a href="/guides/glossary.html" role="menuitem" data-i18n="nav_glossary">Glossary</a>
         <a href="#" onclick="navScrollTo('faq');return false;" role="menuitem" data-i18n="nav_faq">FAQ</a>
-        <a href="#" onclick="navScrollTo('team');return false;" role="menuitem" data-i18n="nav_founder">About the founder</a>
+        <a href="about.html" role="menuitem" data-i18n="nav_founder">About the founder</a>
       </div>
     </li>
     <li><a href="#" onclick="navScrollTo('upload-area');return false;" class="nav-cta" data-i18n="nav_start">Start free preview</a></li>
@@ -2842,7 +2842,7 @@
         </svg>
       </div>
       <h3 class="step-title">Import transactions</h3>
-      <p class="step-body">Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our generic CSV format for other exports.</p>
+      <p class="step-body">Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our structured CSV import for other exports.</p>
     </div>
     <div class="step">
       <div class="step-num">02</div>
@@ -3018,10 +3018,8 @@
     <span class="exchange-pill"><span class="exchange-dot"></span>Gate.io</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>MEXC</span>
     <span class="exchange-pill"><span class="exchange-dot"></span>Hyperliquid</span>
-    <span class="exchange-pill"><span class="exchange-dot"></span>Manual CSV</span>
-    <span class="exchange-pill" style="border-style:dashed;opacity:0.6">+ custom CSV</span>
   </div>
-  <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--ink-faint);text-align:center;" data-i18n="exchange_note">Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.</p>
+  <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--ink-faint);text-align:center;" data-i18n="exchange_note">Don't see your exchange? Contact us — we can help map unusual exports or guide you on our structured CSV import.</p>
 </div>
 
 <!-- PRICING -->
@@ -3356,7 +3354,7 @@
         <span class="faq-q-icon">+</span>
       </button>
       <div class="faq-a">
-        You can use our generic CSV format — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.
+        You can use our structured CSV import — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.
       </div>
     </div>
   </div>
@@ -3387,40 +3385,15 @@
   </div>
 </div>
 
-<!-- TEAM -->
-<section class="team-section" id="team">
-  <div class="section-header">
-    <span class="section-number" data-i18n="team_label">07 — Team</span>
-    <h2 class="section-title" data-i18n-html="team_title">Meet the<br><em>founder</em></h2>
-  </div>
-  <div class="team-card">
-    <div class="team-photo">
-      <img src="daniel-founder-2026.jpg" loading="lazy" alt="Daniel Michaud-Payet — Founder, CryptoDeclare"/>
-    </div>
-    <div class="team-info">
-      <div class="team-name">Daniel Michaud-Payet</div>
-      <div class="team-role" data-i18n="team_role">Founder · CryptoDeclare</div>
-      <p class="team-bio">
-        <span data-i18n-html="team_bio">I built CryptoDeclare after facing the same problem every crypto holder in Switzerland faces at tax time: hours spent manually reconciling transactions, converting prices, and hoping the numbers are right.<br><br>With a background across Swiss private banking and institutional digital assets, I understand both the regulatory landscape and the real complexity of crypto portfolios. CryptoDeclare applies the same FIFO rigour Swiss fiduciaires expect, fully automated.</span>
-      </p>
-
-      <a href="https://www.linkedin.com/in/daniel-michaud-payet-528a5aa5" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:#0A66C2;color:white;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:3px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#004182'" onmouseout="this.style.background='#0A66C2'">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        View full profile on LinkedIn
-      </a>
-    </div>
-  </div>
-</section>
-
 <!-- CONTACT -->
 <section class="contact-section" id="contact">
   <div class="section-header">
-    <span class="section-number">08 — Contact</span>
+    <span class="section-number">07 — Contact</span>
     <h2 class="section-title">Get in<br><em>touch</em></h2>
   </div>
   <div class="contact-layout">
     <div class="contact-left">
-      <p>Have a question about your report, need help with a specific exchange format, or interested in the Business plan? We're here to help.</p>
+      <p>Have a question about your report, need help with a specific exchange format, or need a hand choosing the right plan? We're here to help.</p>
       <p style="margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;color:rgba(245,242,235,0.45);">
         <span data-i18n="contact_email_label">Or email us directly:</span><br/>
         <a href="mailto:hello@cryptodeclare.ch" style="color:var(--gold-light);text-decoration:none;letter-spacing:0.04em;">hello@cryptodeclare.ch</a>
@@ -3531,7 +3504,7 @@
       taxpayer_id: 'AHV / Tax ID (optional)',
       taxpayer_note: 'Saved locally in your browser and added to the generated report header if provided.',
       info_need_label: 'What we need', info_need_title: 'A standard transaction export',
-      info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and any generic CSV with date, asset, amount, and price columns.',
+      info_need_body: 'Export your transaction history from your exchange as a CSV file. We accept exports from Kraken, Binance, Coinbase, Swissquote, and our structured CSV import with date, asset, amount, and price columns.',
       info_get_label: 'What you get', info_get_title: 'A Swiss tax reporting annex',
       info_get_body: 'Our automated calculation engine applies FIFO to your transactions, converts fiat values to CHF using official ESTV / BAZG monthly average rates, values 31.12 holdings using ICTax / ESTV token values where available, and produces a structured annex based on the data you import.',
       info_side_note: '<strong>Privacy:</strong> processed in your session only. <strong>Completeness:</strong> results reflect imported files, so missing wallets, exchanges, or prior-period history should be reviewed before export. See our <a href="terms.html">Terms of Service</a>.',
@@ -3543,7 +3516,7 @@
       disclaimer_title: 'Document Disclaimer',
       disclaimer_text: 'This report has been prepared using a FIFO methodology commonly used in Swiss crypto tax reporting workflows and is intended as a supporting document for your Swiss tax declaration. It should be attached as an annex to your standard cantonal tax return. Values are calculated based on transaction data provided. For complex cases (DeFi, professional trading), please consult a certified Swiss tax advisor.',
       how_label: '01 — Process', how_title: 'Three steps to a<br><em>clean declaration</em>',
-      step1_title: 'Import transactions', step1_body: 'Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our generic CSV format for other exports.',
+      step1_title: 'Import transactions', step1_body: 'Upload a CSV from supported exchanges such as Kraken, Binance, Coinbase, Swissquote, and SwissBorg — or use our structured CSV import for other exports.',
       step2_title: 'We calculate', step2_body: 'Our engine applies FIFO, converts fiat values to CHF using official ESTV / BAZG monthly average rates, values 31.12 holdings using ICTax / ESTV token values where available, and identifies reportable income events.',
       step3_title: 'Download your report', step3_body: 'Receive a downloadable report formatted for Swiss tax reporting. Review it and attach it as supporting documentation to your annual declaration.',
       features_label: '02 — Features', features_title: 'Built for<br><em>Swiss residents</em>',
@@ -3556,7 +3529,7 @@
       faq_q5: 'Is my data secure?', faq_a5: 'We process transactions in-session and do not persist your portfolio data to our servers after your report is generated. We are incorporated in Switzerland and subject to Swiss data protection law (nDSG).',
       faq_q6: 'Can I declare multiple tax years at once?', faq_a6: 'You can upload full transaction history from prior years, choose the tax year to report, and generate one annex per year. Earlier transactions are still used for FIFO cost basis.',
       faq_q7: 'How is staking and DeFi income handled?', faq_a7: 'Staking rewards and similar income events identified in supported CSV exports are reported separately from capital gains. For complex DeFi activity, professional trading, or edge cases, we recommend review by a Swiss tax advisor.',
-      faq_q8: 'What if my exchange is not listed?', faq_a8: 'Use our generic CSV format — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.',
+      faq_q8: 'What if my exchange is not listed?', faq_a8: 'Use our structured CSV import — files with date, asset, quantity, type, and price columns are parsed automatically. If your exchange export is unusual, contact us and we can help you map it.',
       feat1_label: 'Compliance',
       feat1_title: 'Official Swiss reference rates',
       feat1_body: 'Fiat conversions use official ESTV / BAZG monthly average CHF rates. Year-end wealth values use ICTax / ESTV published 31.12 token values where available.',
@@ -3603,7 +3576,7 @@
       team_title: 'Meet the<br><em>founder</em>',
       team_role: 'Founder · CryptoDeclare',
       team_bio: 'I built CryptoDeclare after facing the same problem every crypto holder in Switzerland faces at tax time: hours spent manually reconciling transactions, converting prices, and hoping the numbers are right.<br><br>With a background across Swiss private banking and institutional digital assets, I understand both the regulatory landscape and the real complexity of crypto portfolios. CryptoDeclare applies the same FIFO rigour Swiss fiduciaires expect, fully automated.',
-      contact_label: '08 — Contact',
+      contact_label: '07 — Contact',
       contact_title: 'Get in<br><em>touch</em>',
       contact_body: "Have a question about your report, need help with a specific exchange format, or want Standard, Pro, or Business activated? We're here to help.",
       contact_name: 'Name',
@@ -3693,7 +3666,7 @@
       report_table_holdings: 'Holdings',
       report_table_value: 'Value CHF',
       report_table_gain_loss: 'Gain / loss',
-      exchange_note: "Don't see your exchange? Use Manual CSV or contact us — we can help map unusual exports.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
+      exchange_note: "Don't see your exchange? Contact us — we can help map unusual exports or guide you on our structured CSV import.", integrations_title: 'Supported exchanges <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Declare', declare_title: 'Upload your<br><em>transactions</em>',
       report_eyebrow: 'Your output', report_headline: 'A report ready<br>for your<br><em>Swiss tax return</em>',
       report_badge: 'Based on imported data',
@@ -3737,7 +3710,7 @@
       taxpayer_id: 'AVS / identifiant fiscal (optionnel)',
       taxpayer_note: 'Enregistré localement dans votre navigateur et ajouté à l\'en-tête du rapport si renseigné.',
       info_need_label: 'Ce dont nous avons besoin', info_need_title: 'Un export de transactions standard',
-      info_need_body: 'Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et tout CSV générique avec date, actif, montant et prix.',
+      info_need_body: "Exportez votre historique de transactions depuis votre plateforme au format CSV. Nous acceptons les exports de Kraken, Binance, Coinbase, Swissquote et notre import CSV structuré avec date, actif, montant et prix.",
       info_get_label: 'Ce que vous obtenez', info_get_title: 'Une annexe de reporting fiscal suisse',
       info_get_body: "Notre moteur applique la méthode FIFO, convertit les montants en devises fiduciaires en CHF à l’aide des moyennes mensuelles officielles ESTV / OFDF, valorise les avoirs au 31.12 avec les valeurs de jetons ICTax / ESTV lorsqu’elles existent, puis génère une annexe structurée à partir des données importées.",
       info_side_note: '<strong>Confidentialité :</strong> traitement dans votre session uniquement. <strong>Complétude :</strong> les résultats reflètent les fichiers importés ; les wallets, plateformes ou historiques antérieurs manquants doivent être vérifiés avant l\'export. Consultez nos <a href="terms.html">conditions d\'utilisation</a>.',
@@ -3749,7 +3722,7 @@
       disclaimer_title: 'Avis de non-responsabilité',
       disclaimer_text: 'Ce rapport a été préparé selon une méthodologie FIFO couramment utilisée dans les workflows fiscaux crypto en Suisse et constitue un document justificatif pour votre déclaration fiscale suisse. Il doit être joint en annexe à votre déclaration d\'impôt cantonale ordinaire. Les valeurs sont calculées sur la base des données de transaction fournies. Pour les cas complexes (DeFi, trading professionnel), veuillez consulter un conseiller fiscal suisse qualifié (Treuhänder).',
       how_label: '01 — Processus', how_title: 'Trois étapes pour une<br><em>déclaration impeccable</em>',
-      step1_title: 'Importez vos transactions', step1_body: "Importez un CSV depuis des plateformes supportées comme Kraken, Binance, Coinbase, Swissquote ou SwissBorg — ou utilisez notre format CSV générique pour d'autres exports.",
+      step1_title: 'Importez vos transactions', step1_body: "Importez un CSV depuis des plateformes supportées comme Kraken, Binance, Coinbase, Swissquote ou SwissBorg — ou utilisez notre import CSV structuré pour d'autres exports.",
       step2_title: 'Nous calculons', step2_body: "Notre moteur applique la méthode FIFO, convertit les montants en devises fiduciaires en CHF avec les moyennes mensuelles officielles ESTV / OFDF, valorise les avoirs au 31.12 avec les valeurs ICTax / ESTV lorsqu’elles existent, puis identifie les revenus déclarables.",
       step3_title: 'Téléchargez votre rapport', step3_body: 'Recevez un rapport téléchargeable formaté pour le reporting fiscal suisse. Relisez-le puis joignez-le comme pièce justificative à votre déclaration annuelle.',
       features_label: '02 — Fonctionnalités', features_title: 'Conçu pour<br><em>les résidents suisses</em>',
@@ -3762,7 +3735,7 @@
       faq_q5: 'Mes données sont-elles sécurisées ?', faq_a5: 'Nous traitons les transactions en session et ne conservons pas vos données après génération du rapport. Nous sommes établis en Suisse et soumis à la nLPD.',
       faq_q6: 'Puis-je déclarer plusieurs années fiscales ?', faq_a6: 'Vous pouvez importer un historique couvrant plusieurs années, choisir l’année fiscale du rapport et générer une annexe par année. Les transactions antérieures restent utilisées pour le coût FIFO.',
       faq_q7: 'Comment le staking et les revenus DeFi sont-ils traités ?', faq_a7: 'Les récompenses de staking et revenus similaires identifiés dans les exports CSV supportés sont rapportés séparément des plus-values. Pour les cas DeFi complexes, le trading professionnel ou certains cas limites, nous recommandons une vérification par un conseiller fiscal suisse.',
-      faq_q8: 'Ma bourse n\'est pas listée — que faire ?', faq_a8: 'Utilisez notre format CSV générique — les fichiers avec date, actif, quantité, type et prix sont analysés automatiquement. Si votre export est inhabituel, contactez-nous et nous pourrons vous aider à le mapper.',
+      faq_q8: 'Ma bourse n\'est pas listée — que faire ?', faq_a8: 'Utilisez notre import CSV structuré — les fichiers avec date, actif, quantité, type et prix sont analysés automatiquement. Si votre export est inhabituel, contactez-nous et nous pourrons vous aider à le mapper.',
       feat1_label: 'Conformité',
       feat1_title: 'Références suisses officielles',
       feat1_body: "Les conversions fiduciaires utilisent les moyennes mensuelles officielles ESTV / OFDF. Les valorisations de fortune au 31.12 utilisent les valeurs de jetons ICTax / ESTV publiées lorsqu’elles existent.",
@@ -3809,7 +3782,7 @@
       team_title: 'Rencontrez le<br><em>fondateur</em>',
       team_role: 'Fondateur · CryptoDeclare',
       team_bio: "J'ai créé CryptoDeclare après avoir été confronté au même problème que chaque détenteur de crypto en Suisse à la période fiscale : des heures passées à réconcilier manuellement des transactions, convertir des prix et espérer que les chiffres soient justes.<br><br>Fort d'une expérience en banque privée suisse et dans les actifs numériques institutionnels, je comprends le paysage réglementaire et la complexité réelle des portefeuilles crypto. CryptoDeclare applique la même rigueur FIFO qu'attendent les fiduciaires suisses, entièrement automatisée.",
-      contact_label: '08 — Contact',
+      contact_label: '07 — Contact',
       contact_title: 'Nous<br><em>contacter</em>',
       contact_body: "Une question sur votre rapport, besoin d'aide avec un format d'exchange, ou envie d'activer Standard, Pro ou Business ? Nous sommes là pour vous aider.",
       contact_name: 'Nom',
@@ -3899,7 +3872,7 @@
       report_table_holdings: 'Avoirs',
       report_table_value: 'Valeur CHF',
       report_table_gain_loss: 'Gain / perte',
-      exchange_note: "Votre bourse n'est pas listée ? Utilisez le CSV manuel ou contactez-nous — nous pouvons aider à mapper les exports inhabituels.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
+      exchange_note: "Votre plateforme n'est pas listée ? Contactez-nous — nous pouvons aider à mapper les exports inhabituels ou vous guider sur notre import CSV structuré.", integrations_title: 'Plateformes supportées <em style="font-style:italic;color:var(--gold);">&amp; wallets</em>',
       declare_label: '05 — Déclarer', declare_title: 'Importez vos<br><em>transactions</em>',
       report_eyebrow: 'Votre résultat', report_headline: 'Un rapport prêt<br>pour votre<br><em>déclaration fiscale</em>',
       report_badge: 'Basé sur les données importées',
@@ -3943,7 +3916,7 @@
       taxpayer_id: 'AHV / Steuer-ID (optional)',
       taxpayer_note: 'Lokal in Ihrem Browser gespeichert und dem Berichtskopf hinzugefügt, wenn angegeben.',
       info_need_label: 'Was wir benötigen', info_need_title: 'Ein Standard-Transaktionsexport',
-      info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und jedes generische CSV mit Datum, Vermögenswert, Betrag und Preis.',
+      info_need_body: 'Exportieren Sie Ihren Transaktionsverlauf von Ihrer Börse als CSV-Datei. Wir akzeptieren Exporte von Kraken, Binance, Coinbase, Swissquote und unseren strukturierten CSV-Import mit Datum, Vermögenswert, Betrag und Preis.',
       info_get_label: 'Was Sie erhalten', info_get_title: 'Eine Schweizer Steuerbeilage',
       info_get_body: 'Unser Berechnungssystem wendet FIFO auf Ihre Transaktionen an, rechnet Fiat-Betraege mit den offiziellen monatlichen ESTV-/BAZG-Durchschnittskursen in CHF um, bewertet den Bestand per 31.12 mit den publizierten ICTax-/ESTV-Tokenwerten soweit vorhanden und erstellt daraus eine strukturierte Beilage.',
       info_side_note: '<strong>Datenschutz:</strong> Verarbeitung nur in Ihrer Sitzung. <strong>Vollständigkeit:</strong> Ergebnisse basieren auf importierten Dateien; fehlende Wallets, Börsen oder frühere Historien sollten vor dem Export geprüft werden. Siehe unsere <a href="terms.html">Nutzungsbedingungen</a>.',
@@ -3955,7 +3928,7 @@
       disclaimer_title: 'Haftungsausschluss',
       disclaimer_text: 'Dieser Bericht wurde mit einer FIFO-Methodik erstellt, die in Schweizer Krypto-Steuer-Workflows häufig verwendet wird, und dient als Beilagedokument für Ihre Schweizer Steuererklärung. Er ist als Anhang zur ordentlichen kantonalen Steuererklärung beizulegen. Die Werte werden auf Basis der bereitgestellten Transaktionsdaten berechnet. Bei komplexen Fällen (DeFi, professioneller Handel) wenden Sie sich bitte an einen qualifizierten Schweizer Steuerberater (Treuhänder).',
       how_label: '01 — Prozess', how_title: 'Drei Schritte zu einer<br><em>sauberen Deklaration</em>',
-      step1_title: 'Transaktionen importieren', step1_body: 'Laden Sie eine CSV-Datei von unterstützten Plattformen wie Kraken, Binance, Coinbase, Swissquote oder SwissBorg hoch — oder verwenden Sie unser generisches CSV-Format für andere Exporte.',
+      step1_title: 'Transaktionen importieren', step1_body: 'Laden Sie eine CSV-Datei von unterstützten Plattformen wie Kraken, Binance, Coinbase, Swissquote oder SwissBorg hoch — oder verwenden Sie unseren strukturierten CSV-Import für andere Exporte.',
       step2_title: 'Wir berechnen', step2_body: 'Unser System wendet FIFO an, rechnet Fiat-Betraege mit den offiziellen monatlichen ESTV-/BAZG-Durchschnittskursen in CHF um, bewertet den Bestand per 31.12 mit publizierten ICTax-/ESTV-Tokenwerten soweit vorhanden und identifiziert meldepflichtige Ertraege.',
       step3_title: 'Bericht herunterladen', step3_body: 'Erhalten Sie einen herunterladbaren Bericht für das Schweizer Steuerreporting. Prüfen Sie ihn und legen Sie ihn Ihrer Steuererklärung als Beilage bei.',
       features_label: '02 — Funktionen', features_title: 'Entwickelt für<br><em>Schweizer Einwohner</em>',
@@ -4015,7 +3988,7 @@
       team_title: 'Der<br><em>Gründer</em>',
       team_role: 'Gründer · CryptoDeclare',
       team_bio: 'Ich habe CryptoDeclare entwickelt, nachdem ich mit demselben Problem konfrontiert war, mit dem jeder Krypto-Inhaber in der Schweiz zur Steuerzeit konfrontiert ist: stundenlange manuelle Abstimmung von Transaktionen, Umrechnung von Preisen und die Hoffnung, dass die Zahlen stimmen.<br><br>Mit Erfahrung im Schweizer Privatbanking und im institutionellen Bereich digitaler Vermögenswerte verstehe ich sowohl die regulatorische Landschaft als auch die reale Komplexität von Krypto-Portfolios. CryptoDeclare wendet dieselbe FIFO-Strenge an, die Schweizer Treuhänder erwarten – vollständig automatisiert.',
-      contact_label: '08 — Kontakt',
+      contact_label: '07 — Kontakt',
       contact_title: 'Kontakt<br><em>aufnehmen</em>',
       contact_body: 'Haben Sie Fragen zu Ihrem Bericht, brauchen Sie Hilfe mit einem Exchange-Format oder möchten Sie Standard, Pro oder Business aktivieren? Wir helfen gerne.',
       contact_name: 'Name',
@@ -4105,7 +4078,7 @@
       report_table_holdings: 'Bestand',
       report_table_value: 'Wert CHF',
       report_table_gain_loss: 'Gewinn / Verlust',
-      exchange_note: "Ihre Börse nicht dabei? Nutzen Sie den manuellen CSV-Import oder kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
+      exchange_note: "Ihre Plattform nicht dabei? Kontaktieren Sie uns — wir helfen beim Mapping ungewöhnlicher Exporte oder beim strukturierten CSV-Import.", integrations_title: 'Unterstützte Börsen <em style="font-style:italic;color:var(--gold);">&amp; Wallets</em>',
       declare_label: '05 — Deklarieren', declare_title: 'Laden Sie Ihre<br><em>Transaktionen</em> hoch',
       report_eyebrow: 'Ihr Ergebnis', report_headline: 'Ein Bericht bereit<br>für Ihre<br><em>Steuererklärung</em>',
       report_badge: 'Basiert auf importierten Daten',
