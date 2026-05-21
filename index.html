@@ -8082,6 +8082,38 @@
     return selected || getReportTaxYear(transactions);
   }
 
+  function getTransactionYearBounds(transactions) {
+    const years = (transactions || [])
+      .map(t => String(t.date || '').slice(0,4))
+      .filter(year => /^\d{4}$/.test(year))
+      .map(Number)
+      .sort((a, b) => a - b);
+    if (!years.length) return { minYear: '', maxYear: '' };
+    return {
+      minYear: String(years[0]),
+      maxYear: String(years[years.length - 1])
+    };
+  }
+
+  function resolveReportScope(transactions) {
+    const taxYear = getSelectedReportTaxYear(transactions);
+    const fifoTransactions = getTransactionsUpToTaxYear(transactions, taxYear);
+    if (!fifoTransactions.length) {
+      const { minYear, maxYear } = getTransactionYearBounds(transactions);
+      if (minYear && maxYear) {
+        throw new Error(
+          `No transactions found on or before selected tax year ${taxYear}. This file contains activity from ${minYear}${minYear !== maxYear ? ` to ${maxYear}` : ''}. Switch the tax year selector to Auto or ${maxYear} and try again.`
+        );
+      }
+      throw new Error(`No transactions found on or before selected tax year ${taxYear}.`);
+    }
+    return {
+      taxYear,
+      fifoTransactions,
+      reportTransactions: getTransactionsForTaxYear(fifoTransactions, taxYear)
+    };
+  }
+
   function getTransactionsForTaxYear(transactions, taxYear) {
     return (transactions || []).filter(t => String(t.date || '').slice(0,4) === String(taxYear));
   }
@@ -8252,10 +8284,7 @@
   }
 
   async function buildSingleExchangeReport(transactions, format, lowParseWarning='') {
-    const taxYear = getSelectedReportTaxYear(transactions);
-    const fifoTransactions = getTransactionsUpToTaxYear(transactions, taxYear);
-    if (!fifoTransactions.length) throw new Error(`No transactions found on or before selected tax year ${taxYear}.`);
-    const reportTransactions = getTransactionsForTaxYear(fifoTransactions, taxYear);
+    const { taxYear, fifoTransactions, reportTransactions } = resolveReportScope(transactions);
     const meta = buildReportMeta(reportTransactions, taxYear);
     const computed = await computeFIFO(fifoTransactions, meta.taxYear);
     let assetNames = getDefaultAssetNames();
@@ -8266,10 +8295,7 @@
 
   async function generateTaxReportFromTransactions(transactions, filename, format) {
     if (!transactions.length) throw new Error('No transactions found');
-    const taxYear = getSelectedReportTaxYear(transactions);
-    const fifoTransactions = getTransactionsUpToTaxYear(transactions, taxYear);
-    if (!fifoTransactions.length) throw new Error(`No transactions found on or before selected tax year ${taxYear}.`);
-    const reportTransactions = getTransactionsForTaxYear(fifoTransactions, taxYear);
+    const { taxYear, fifoTransactions, reportTransactions } = resolveReportScope(transactions);
     const meta = buildReportMeta(reportTransactions, taxYear);
     const computed = await computeFIFO(fifoTransactions, meta.taxYear);
     const assetNames = getDefaultAssetNames();
