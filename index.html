@@ -6439,7 +6439,7 @@
     };
 
     if (format === 'bitmex') {
-      rows = [...rows].sort((a, b) => getNormalizedSortTimestamp(a['transactTime'] || a['TransactTime']) - getNormalizedSortTimestamp(b['transactTime'] || b['TransactTime']));
+      rows = [...rows].sort((a, b) => getNormalizedSortTimestamp(a['transacttime']) - getNormalizedSortTimestamp(b['transacttime']));
     }
 
     if (format === 'kraken') {
@@ -7032,9 +7032,9 @@
           // We reconstruct realised P&L when an existing long/short position is
           // reduced or closed, and emit synthetic FIFO pairs so the report can
           // show informative gains/losses without creating phantom BTC holdings.
-          date = normalizeImportedDate(r['transactTime'] || r['TransactTime'] || '');
-          const execType = String(r['execType'] || r['ExecType'] || '').toLowerCase();
-          const symbol = String(r['symbol'] || r['Symbol'] || '').toUpperCase().trim();
+          date = normalizeImportedDate(r['transacttime'] || '');
+          const execType = String(r['exectype'] || '').toLowerCase();
+          const symbol = String(r['symbol'] || '').toUpperCase().trim();
           const baseAsset = (symbol.startsWith('XBT') ? 'BTC' : (symbol.split(/[-/]/)[0] || 'DERIV')).replace(/[^A-Z0-9]/g, '') || 'DERIV';
           asset = `${baseAsset}:PERP`;
           const dateKey = String(date || '').slice(0, 10);
@@ -7043,7 +7043,7 @@
           if (!date || !asset || !btcPriceCHF) continue;
 
           if (execType === 'funding') {
-            const fundingBtc = -(parseFloat(r['execComm'] || r['ExecComm'] || 0) || 0) / 1e8;
+            const fundingBtc = -(parseFloat(r['execcomm'] || 0) || 0) / 1e8;
             if (fundingBtc > 0) {
               out.push({ date, type: 'staking', asset, qty: 0, priceCHF: 0, totalCHF: fundingBtc * btcPriceCHF, _noLot: true });
             }
@@ -7051,12 +7051,12 @@
           }
 
           if (execType !== 'trade') continue;
-          const side = String(r['side'] || r['Side'] || '').toLowerCase();
+          const side = String(r['side'] || '').toLowerCase();
           if (!['buy', 'sell'].includes(side)) continue;
 
-          const contracts = Math.abs(parseFloat(r['lastQty'] || r['LastQty'] || 0) || 0);
-          const priceUsd = Math.abs(parseFloat(r['lastPx'] || r['LastPx'] || r['price'] || r['Price'] || 0) || 0);
-          const feeBtcSigned = (parseFloat(r['execComm'] || r['ExecComm'] || 0) || 0) / 1e8;
+          const contracts = Math.abs(parseFloat(r['lastqty'] || 0) || 0);
+          const priceUsd = Math.abs(parseFloat(r['lastpx'] || r['price'] || 0) || 0);
+          const feeBtcSigned = (parseFloat(r['execcomm'] || 0) || 0) / 1e8;
           if (!(contracts > 0) || !(priceUsd > 0)) continue;
 
           const targetSide = side === 'buy' ? 'long' : 'short';
