@@ -3175,7 +3175,7 @@
         <div class="unlock-sub" id="unlock-sub">Previews are free. Your first clean PDF is free up to 250 transactions. Enter your paid unlock code for larger reports or ledger CSV export.</div>
         <div class="unlock-row">
           <label for="unlock-input" class="sr-only">Unlock code</label>
-          <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="20" autocomplete="off" aria-label="Enter unlock code"/>
+          <input class="unlock-input" type="text" id="unlock-input" placeholder="Enter your unlock code" maxlength="1024" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Enter unlock code"/>
           <button class="unlock-btn" onclick="applyUnlockCode()">Unlock</button>
         </div>
         <div class="unlock-error" id="unlock-error">Invalid code. Check your email from CryptoDeclare or contact <a href="mailto:hello@cryptodeclare.ch" style="color:inherit;">hello@cryptodeclare.ch</a></div>
@@ -4621,21 +4621,8 @@
   });
 
   // ── Unlock Code System ──
-  // Codes are SHA-256 hashed — not reversible from source
-  const STANDARD_HASHES = [
-    '5be154912175ca17df6e3c8111f764fb4476caad08505742974e91b35abbe598',
-    'c51759dead2a7c894a49601a773bcca5b6e4671994bd7b6fd6475521807bd8e8',
-    '1d3cff6bf20db629b3cbf6ab089ad5a43a29ea06b9a6512192dfb717536a808b',
-    '2e2c05aa1ae1317b5c3b6f230d9dc73201b8d87254f62c623221aa312779c874',
-  ];
-  const PRO_HASHES = [
-    '3aeb31ecbecb359f96c81f1d7676f732f591dfebc1b90bdb9d3ab1ef01e2e1ba',
-  ];
-  const BIZ_HASHES = [
-    'db08ded8414f5182952868fc754e62421232be0c56f1acf10a2d4b424d13c86d',
-    '101663e7ca700cda3b251eef6eea82caf9f28e83d69c0a26167a93bd5f9f2a90',
-    '2e27cda7b84c5c2681f6270224d8a3352958c550d6e7049a2e74a7c58c5b467b',
-  ];
+  // Paid entitlements are signed server-side and revalidated against Stripe.
+  const ENTITLEMENT_STORAGE_KEY = 'cd_entitlement_v1';
 
   // Plan limits
   const LIMITS = { free: Infinity, standard: 1000, pro: 5000, business: Infinity };
@@ -4648,11 +4635,6 @@
   const TAXPAYER_KEY = 'cd_taxpayer_details';
   const MANUAL_TX_KEY = 'cd_manual_transactions_v1';
   let taxpayerDetailsHydrated = false;
-
-  async function sha256hex(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
 
   function getStoredTaxpayerDetails() {
     try {
@@ -4863,32 +4845,51 @@
       : '';
   }
 
-  function getPlanFromStorage() {
-    const readPlan = (storage) => {
-      const stored = storage.getItem('cd_plan');
-      if (stored) {
-        const { tier, hash } = JSON.parse(stored);
-        if ((tier === 'standard' || tier === 'pro') && STANDARD_HASHES.includes(hash)) return 'standard';
-        if (tier === 'pro' && PRO_HASHES.includes(hash)) return 'pro';
-        if (tier === 'business' && BIZ_HASHES.includes(hash)) return 'business';
-      }
-      return '';
-    };
+  function readCachedEntitlement(storage) {
     try {
-      const localPlan = readPlan(localStorage);
-      if (localPlan) return localPlan;
-    } catch(e) {}
-    try {
-      const sessionPlan = readPlan(sessionStorage);
-      if (sessionPlan) return sessionPlan;
-    } catch(e) {}
-    return 'free';
+      const value = JSON.parse(storage.getItem(ENTITLEMENT_STORAGE_KEY) || 'null');
+      const validTier = value && ['standard', 'pro', 'business'].includes(value.tier);
+      const validCode = value && typeof value.code === 'string' && value.code.startsWith('CD1.');
+      const validExpiry = value && Date.parse(value.expiresAt || '') > Date.now();
+      return validTier && validCode && validExpiry ? value : null;
+    } catch (e) {
+      return null;
+    }
   }
 
-  function rememberUnlockedPlan(tier, hash) {
-    const payload = JSON.stringify({ tier, hash, unlockedAt: new Date().toISOString() });
-    try { localStorage.setItem('cd_plan', payload); } catch(e) {}
-    try { sessionStorage.setItem('cd_plan', payload); } catch(e) {}
+  function getStoredEntitlement() {
+    return readCachedEntitlement(localStorage) || readCachedEntitlement(sessionStorage);
+  }
+
+  function getPlanFromStorage() {
+    return getStoredEntitlement()?.tier || 'free';
+  }
+
+  function rememberUnlockedPlan(tier, code, expiresAt) {
+    const payload = JSON.stringify({ tier, code, expiresAt, verifiedAt: new Date().toISOString() });
+    try { localStorage.setItem(ENTITLEMENT_STORAGE_KEY, payload); } catch(e) {}
+    try { sessionStorage.setItem(ENTITLEMENT_STORAGE_KEY, payload); } catch(e) {}
+    try { localStorage.removeItem('cd_plan'); } catch(e) {}
+    try { sessionStorage.removeItem('cd_plan'); } catch(e) {}
+  }
+
+  function clearStoredEntitlement() {
+    try { localStorage.removeItem(ENTITLEMENT_STORAGE_KEY); } catch(e) {}
+    try { sessionStorage.removeItem(ENTITLEMENT_STORAGE_KEY); } catch(e) {}
+    try { localStorage.removeItem('cd_plan'); } catch(e) {}
+    try { sessionStorage.removeItem('cd_plan'); } catch(e) {}
+  }
+
+  async function verifyEntitlementCode(code) {
+    const response = await fetch('/api/verify-entitlement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ code }),
+      signal: AbortSignal.timeout(12000)
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.valid) throw new Error(result.error || 'This unlock code could not be verified.');
+    return result;
   }
 
   function hideUnlockBanner() {
@@ -4905,9 +4906,9 @@
     if (successEl) successEl.classList.remove('visible');
   }
 
-  function activateUnlockedPlan(tier, hash, options = {}) {
+  function activateUnlockedPlan(tier, code, expiresAt, options = {}) {
     const { hidePrompt = true } = options;
-    rememberUnlockedPlan(tier, hash);
+    rememberUnlockedPlan(tier, code, expiresAt);
     currentPlanTier = tier;
     setPlanBadge(tier);
     if (hidePrompt) hideUnlockBanner();
@@ -4943,26 +4944,25 @@
     const errorEl = document.getElementById('unlock-error');
     const successEl = document.getElementById('unlock-success');
     const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-    const code = input.value.trim().toUpperCase();
+    const code = input.value.trim();
     if (!code) return;
 
     input.classList.remove('error');
     errorEl.classList.remove('visible');
     successEl.classList.remove('visible');
 
-    const hash = await sha256hex(code);
-    let tier = null;
-    if (STANDARD_HASHES.includes(hash)) tier = 'standard';
-    else if (PRO_HASHES.includes(hash)) tier = 'pro';
-    else if (BIZ_HASHES.includes(hash)) tier = 'business';
-
-    if (!tier) {
+    let entitlement;
+    try {
+      entitlement = await verifyEntitlementCode(code);
+    } catch (error) {
       input.classList.add('error');
+      errorEl.textContent = error.message || t.unlock_error || 'Invalid or expired unlock code.';
       errorEl.classList.add('visible');
       return;
     }
 
-    activateUnlockedPlan(tier, hash, { hidePrompt: false });
+    const tier = entitlement.tier;
+    activateUnlockedPlan(tier, code, entitlement.expiresAt, { hidePrompt: false });
 
     const label = getTierUnlockLabel(tier);
     successEl.textContent = fillTemplate(t.unlock_success || '✓ {plan} unlocked!', { plan: label });
@@ -5057,28 +5057,32 @@
   updateTrialUI();
   setPlanBadge(currentPlanTier);
 
-  // ── Auto-unlock from Stripe redirect URL ──
-  // If you set Stripe success URL to:
-  // cryptodeclare.ch/?code=UNLOCK_CODE
-  // the app will auto-unlock on arrival.
+  // ── Restore or activate a server-verified entitlement ──
   (async () => {
     const params = new URLSearchParams(window.location.search);
-    const urlCode = params.get('code');
-    if (urlCode) {
-      const code = urlCode.trim().toUpperCase();
-      const hash = await sha256hex(code);
-      let tier = null;
-      if (STANDARD_HASHES.includes(hash)) tier = 'standard';
-      else if (PRO_HASHES.includes(hash)) tier = 'pro';
-      else if (BIZ_HASHES.includes(hash)) tier = 'business';
-      if (tier) {
-        activateUnlockedPlan(tier, hash);
-        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-        showToast(fillTemplate(t.toast_welcome || '🎉 {plan} unlocked! You can now upload your CSV.', { plan: getTierUnlockLabel(tier) }));
-        // Clean URL so code doesn't stay visible
-        window.history.replaceState({}, '', window.location.pathname);
-        // Optional: scroll to upload area
-        setTimeout(() => navScrollTo('declare'), 600);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    // Query-string support is retained only for previously issued links. New
+    // links use a fragment so the signed credential is never sent to a server.
+    const urlCode = hashParams.get('code') || params.get('code');
+    const storedEntitlement = getStoredEntitlement();
+    const code = urlCode ? urlCode.trim() : storedEntitlement?.code;
+    if (code) {
+      try {
+        const entitlement = await verifyEntitlementCode(code);
+        activateUnlockedPlan(entitlement.tier, code, entitlement.expiresAt);
+        if (urlCode) {
+          const tier = entitlement.tier;
+          const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+          showToast(fillTemplate(t.toast_welcome || '🎉 {plan} unlocked! You can now upload your CSV.', { plan: getTierUnlockLabel(tier) }));
+          window.history.replaceState({}, '', window.location.pathname);
+          setTimeout(() => navScrollTo('declare'), 600);
+        }
+      } catch (error) {
+        clearStoredEntitlement();
+        currentPlanTier = 'free';
+        setPlanBadge('free');
+        updateTrialUI();
+        if (urlCode) showToast(error.message || 'The unlock link is invalid or expired.');
       }
     }
   })();

@@ -162,6 +162,8 @@ h1 em { color:var(--gold-soft); font-style:italic; }
   font-weight:800;
   flex:0 0 auto;
 }
+.check.error { color:#ef8b82; background:rgba(224,86,74,0.13); border-color:rgba(224,86,74,0.42); }
+.hidden { display:none !important; }
 .status-title {
   font-family:'DM Serif Display', serif;
   font-size:30px;
@@ -244,39 +246,39 @@ h1 em { color:var(--gold-soft); font-style:italic; }
 
   <main class="main">
     <section>
-      <div class="eyebrow">Payment received</div>
-      <h1>Your <em id="plan-name">CryptoDeclare</em> plan is ready.</h1>
-      <p class="lead">
-        Thank you for your purchase. Your unlock code is being sent to the email address used at checkout.
-        Once it arrives, open CryptoDeclare and enter the code to activate your report limit.
+      <div class="eyebrow" id="payment-eyebrow">Secure payment check</div>
+      <h1 id="payment-heading">We’re verifying your <em>payment</em>.</h1>
+      <p class="lead" id="payment-lead">
+        Please keep this page open while CryptoDeclare confirms the Checkout Session directly with Stripe.
       </p>
       <div class="actions">
-        <a class="btn btn-primary" href="/#declare">Return to upload</a>
+        <a class="btn btn-primary hidden" id="activate-plan" href="/#declare">Activate plan</a>
+        <a class="btn btn-secondary" href="/">Return home</a>
         <a class="btn btn-secondary" href="mailto:hello@cryptodeclare.ch?subject=CryptoDeclare%20unlock%20code%20help">Need help?</a>
       </div>
     </section>
 
-    <aside class="card" aria-label="Next steps">
+    <aside class="card" aria-label="Payment status and next steps" aria-live="polite">
       <div class="status">
-        <div class="check">✓</div>
+        <div class="check" id="payment-icon">…</div>
         <div>
-          <div class="status-title">Payment confirmed</div>
-          <div class="status-sub">Stripe has processed your payment successfully.</div>
+          <div class="status-title" id="payment-status">Verifying payment</div>
+          <div class="status-sub" id="payment-status-detail">Waiting for a verified response from Stripe.</div>
         </div>
       </div>
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
           <div>
-            <div class="step-title">Check your inbox</div>
-            <div class="step-body">Your Pro or Business unlock code should arrive by email shortly.</div>
+            <div class="step-title">Confirm your purchase</div>
+            <div class="step-body">This page activates only after Stripe confirms a paid Checkout Session.</div>
           </div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
           <div>
-            <div class="step-title">Unlock your plan</div>
-            <div class="step-body">Use the code or the direct unlock link in the email to activate CryptoDeclare in this browser.</div>
+            <div class="step-title">Activate your plan</div>
+            <div class="step-body">After verification, use the activation button here or the signed unlock link sent by email.</div>
           </div>
         </div>
         <div class="step">
@@ -298,13 +300,54 @@ h1 em { color:var(--gold-soft); font-style:italic; }
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const plan = String(params.get('plan') || '').toLowerCase();
-  const planName = document.getElementById('plan-name');
-  if (planName) {
-    if (plan === 'pro') planName.textContent = 'Pro';
-    if (plan === 'business') planName.textContent = 'Business';
+  const PLAN_NAMES = { standard: 'Standard', pro: 'Pro', business: 'Business' };
+  const heading = document.getElementById('payment-heading');
+  const lead = document.getElementById('payment-lead');
+  const status = document.getElementById('payment-status');
+  const detail = document.getElementById('payment-status-detail');
+  const icon = document.getElementById('payment-icon');
+  const activation = document.getElementById('activate-plan');
+
+  function showVerificationError(message) {
+    document.getElementById('payment-eyebrow').textContent = 'Payment not verified';
+    heading.innerHTML = 'We could not confirm this <em>payment</em>.';
+    lead.textContent = 'No plan has been activated. Return here from Stripe Checkout or contact support if you completed a payment.';
+    status.textContent = 'Verification failed';
+    detail.textContent = message || 'The Checkout Session is missing, incomplete or invalid.';
+    icon.textContent = '!';
+    icon.classList.add('error');
+    activation.classList.add('hidden');
   }
+
+  (async () => {
+    const sessionId = new URLSearchParams(window.location.search).get('session_id');
+    if (!sessionId) {
+      showVerificationError('No Stripe Checkout Session was provided.');
+      return;
+    }
+    try {
+      const response = await fetch(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`, {
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(12000)
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.paid || !result.entitlementCode) {
+        throw new Error(result.error || 'Stripe has not confirmed this payment.');
+      }
+      const planName = PLAN_NAMES[result.tier] || 'CryptoDeclare';
+      document.getElementById('payment-eyebrow').textContent = 'Payment verified';
+      heading.innerHTML = `Your <em>${planName}</em> plan is ready.`;
+      lead.textContent = 'Stripe confirmed your payment. Activate this browser now; a signed unlock link is also being sent to the email address used at checkout.';
+      status.textContent = 'Payment confirmed';
+      detail.textContent = `Your ${planName} entitlement was issued securely.`;
+      icon.textContent = '✓';
+      activation.href = `/#code=${encodeURIComponent(result.entitlementCode)}`;
+      activation.classList.remove('hidden');
+      window.history.replaceState({}, '', '/success.html');
+    } catch (error) {
+      showVerificationError(error.message);
+    }
+  })();
 </script>
 </body>
 </html>
